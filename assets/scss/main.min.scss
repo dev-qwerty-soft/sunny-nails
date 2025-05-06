@@ -1,13 +1,13 @@
-@import "./base/_base.scss";
-@import "./base/_container.scss";
-@import "utilc/_variables.scss";
+@use "./base/base" as *;
+@use "./base/container" as *;
+@use "utilc/variables" as *;
 
-@import "./component/preloader";
-@import "./component/header";
-@import "./component/search";
-@import "./component/burger";
-@import "./component/breadcump";
+@use "./component/preloader" as *;
+@use "./component/header" as *;
+@use "./component/search" as *;
+@use "./component/burger" as *;
+@use "./component/breadcump" as *;
 
-@import "./layout/hero";
+@use "./layout/hero" as *;
 
-@import "./component/footer";
+@use "./component/footer" as *;
