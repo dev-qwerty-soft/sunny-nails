@@ -104,9 +104,9 @@
     justify-content: flex-start;
     flex-direction: column;
     padding: 51px;
-    gap: 28px;
-    -webkit-gap: 28px;
-    -moz-gap: 28px;
+    // gap: 28px;
+    // -webkit-gap: 28px;
+    // -moz-gap: 28px;
     list-style: none;
     position: static;
     transform: rotate(0deg);
@@ -206,9 +206,9 @@
     transform: translate(0, 0);
 
     ul {
-      gap: 48px;
-      -webkit-gap: 48px;
-      -moz-gap: 48px;
+      // gap: 48px;
+      // -webkit-gap: 48px;
+      // -moz-gap: 48px;
       a {
         color: var(--Black);
         text-align: center;

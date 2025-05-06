@@ -3,11 +3,11 @@
 }
 body {
   margin: 0;
-  font-family: Poppins, sans-serif !important;
+  font-family: Montserrat, sans-serif !important;
   font-style: normal;
   font-weight: normal;
   overflow-x: hidden;
-  background: var(--White);
+  background: $bg-color;
 }
 .hidden {
   overflow: hidden;

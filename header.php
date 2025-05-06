@@ -8,13 +8,15 @@
     <?php wp_head(); ?>
 </head>
 <body <?php body_class(); ?>>
-
 <header id="masthead" class="site-header header-three">
     <div class="container">
         <div class="logo">
             <?php if (has_custom_logo()): ?>
                 <?php the_custom_logo(); ?>
             <?php endif; ?>
+        </div>
+        <div class="location">
+            Singapore
         </div>
         <div class="menu-container">
             <div id="nav__burger-menu" class="nav__burger-menu">
@@ -24,12 +26,12 @@
             </div>
             <nav id="burger-menu_nav" class="burger-menu_nav">
                 <?php
-                wp_nav_menu(
-                    array(
-                        'theme_location' => 'main-menu',
-                        'container' => 'ul',
-                    )
-                );
+                    wp_nav_menu(
+                        array(
+                            'theme_location' => 'main-menu',
+                            'container' => 'ul',
+                        )
+                    );
                 ?>
             </nav>
         </div>

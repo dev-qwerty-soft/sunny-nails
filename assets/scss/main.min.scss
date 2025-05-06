@@ -1,8 +1,11 @@
-@import "./base/_base.scss";
-@import "./base/_container.scss";
 @import "utilc/_variables.scss";
 
+@import "./base/_base.scss";
+@import "./base/_container.scss";
+
+
 @import "./component/preloader";
+@import "./component/_btn.scss";
 @import "./component/header";
 @import "./component/search";
 @import "./component/burger";

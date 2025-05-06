@@ -8,11 +8,11 @@
 
 body {
   margin: 0;
-  font-family: Poppins, sans-serif !important;
+  font-family: Montserrat, sans-serif !important;
   font-style: normal;
   font-weight: normal;
   overflow-x: hidden;
-  background: var(--White);
+  background: #F7F1E0;
 }
 
 .hidden {
@@ -80,27 +80,6 @@ button:hover, button:focus, button:active {
     padding: 0;
   }
 }
-:root {
-  --green-green: #219c35;
-  --green-green-hover: #005c0f;
-  --green-hover-green: #48c35c;
-  --green-gray-green: #bbf0c4;
-  --green-light-green: #e8ffeb;
-  --blue-dark-blue: #202b4f;
-  --blue-bg-blue: #6d78a4;
-  --blue-elements-blue: #9faad1;
-  --blue-light-blue: #f4f8fb;
-  --Black: #2d2d2d;
-  --Dark-Gray: #b6b6b6;
-  --Light-Gray: #e9e9e9;
-  --White: #fff;
-  --Error: #f00;
-  --Yellow: #f8d207;
-  --First-place-stars: #ff8617;
-  --header-height: 470px;
-  transition: all 0.3s ease-in-out;
-}
-
 .preloader {
   position: fixed;
   left: 0;
@@ -138,6 +117,64 @@ button:hover, button:focus, button:active {
 
 .loaded .preloader {
   display: none;
+}
+
+.btn {
+  padding: 20px 25px;
+  font-family: Inter;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 100%;
+  letter-spacing: 0%;
+  border: 1px solid #302F34;
+  border-radius: 100px;
+}
+.btn.yellow {
+  background: #FDC41F;
+  border-color: #FDC41F;
+  padding-right: 72px;
+  position: relative;
+  overflow: hidden;
+}
+.btn.yellow::before {
+  position: absolute;
+  height: calc(100% - 8px);
+  background: url("images/circle%20with%20arrow.png") center/cover no-repeat;
+  content: "";
+  aspect-ratio: 1/1;
+  right: 4px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.site-header {
+  padding: 15px 60px 0 60px;
+}
+.site-header .container {
+  display: grid;
+  grid-template-columns: max-content 1fr max-content;
+  grid-gap: 40px;
+  align-items: center;
+  border-bottom: 2px solid rgba(48, 47, 52, 0.5);
+  padding-bottom: 15px;
+}
+.site-header .container .menu .current_page_item {
+  background: #FDC41F;
+  border-radius: 100px;
+}
+.site-header .container .menu a {
+  font-weight: 600;
+  font-size: 12px;
+  line-height: 100%;
+  letter-spacing: -2%;
+  text-transform: uppercase;
+  padding: 10px 14px;
+  color: rgba(48, 47, 52, 0.9);
+}
+
+.logo img {
+  height: auto;
+  width: 190px;
 }
 
 .searchform-area__button {
@@ -504,9 +541,6 @@ button:hover, button:focus, button:active {
   justify-content: flex-start;
   flex-direction: column;
   padding: 51px;
-  gap: 28px;
-  -webkit-gap: 28px;
-  -moz-gap: 28px;
   list-style: none;
   position: static;
   transform: rotate(0deg);
@@ -596,11 +630,6 @@ button:hover, button:focus, button:active {
     width: 100%;
     transform: translate(0, 0);
   }
-  .burger-menu_nav ul {
-    gap: 48px;
-    -webkit-gap: 48px;
-    -moz-gap: 48px;
-  }
   .burger-menu_nav ul a {
     color: var(--Black);
     text-align: center;
@@ -639,6 +668,15 @@ button:hover, button:focus, button:active {
   font-style: normal;
   font-weight: 400;
   line-height: 157.143%;
+}
+
+.hero-section .container {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+}
+.hero-section__buttons {
+  display: flex;
 }
 
 /*# sourceMappingURL=main.css.map*/
