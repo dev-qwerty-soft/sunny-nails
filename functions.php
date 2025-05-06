@@ -35,11 +35,3 @@ require_once get_template_directory() . '/inc/cpt/service.php';
 require_once get_template_directory() . '/inc/api/altegio-sync.php';
 require_once get_template_directory() . '/inc/api/altegio-client.php';
 require_once get_template_directory() . '/inc/helpers/api.php';
-if (is_admin()) {
-    add_action('admin_init', function () {
-        if (isset($_GET['sync_altegio']) && current_user_can('manage_options')) {
-            do_action('altegio_sync_services');
-            echo '<div class="notice notice-success"><p>Сервіси синхронізовано.</p></div>';
-        }
-    });
-}
