@@ -1,27 +1,26 @@
 .btn {
-  padding: 20px 25px;
-  font-family: Inter;
+  padding: get-d(20px) get-d(25px);
+  font-family: $font-family-inter;
   font-weight: 400;
-  font-size: 14px;
+  font-size: get-d(14px);
   line-height: 100%;
-  letter-spacing: 0%;
-  border: 1px solid $bg-grey;
+  border: get-d(1px) solid $bg-grey;
   border-radius: 100px;
   &.yellow {
     background: $bg-yellow;
     border-color: $bg-yellow;
-    padding-right: 25px + 47px;
+    padding-right: get-d(25px + 47px);
     position: relative;
     overflow: hidden;
     &::before {
       position: absolute;
-      height: calc(100% - 8px);
-      background: url("../svg/circle\ with\ arrow.png") center / cover no-repeat;
+      height: calc(100% - get-d(8px));
+      background: url("../svg/circle.svg") center / cover no-repeat;
       content: "";
       aspect-ratio: 1 / 1;
-      right: 4px;
+      right: get-d(4px);
       top: 50%;
-      transform: translateY(-50%);  
+      transform: translateY(-50%);
     }
   }
 }

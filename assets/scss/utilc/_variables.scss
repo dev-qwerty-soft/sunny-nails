@@ -21,7 +21,81 @@
 // }
 
 $bg-color: #F7F1E0;
-
 $bg-grey: #302F34;
-
 $bg-yellow: #FDC41F;
+
+$font-family: "Montserrat", sans-serif;
+$font-family-inter: "Inter", sans-serif;
+
+@mixin respond($breakpoint) {
+  @if $breakpoint == xs {
+    @media (max-width: 480px) {
+      @content;
+    }
+  }
+
+  @if $breakpoint == sm {
+    @media (max-width: 640px) {
+      @content;
+    }
+  }
+
+  @if $breakpoint == md {
+    @media (max-width: 768px) {
+      @content;
+    }
+  }
+
+  @if $breakpoint == lg {
+    @media (max-width: 1024px) {
+      @content;
+    }
+  }
+
+  @if $breakpoint == xl {
+    @media (max-width: 1280px) {
+      @content;
+    }
+  }
+
+  @if $breakpoint == 2xl {
+    @media (min-width: 1536px) {
+      @content;
+    }
+  }
+}
+
+@mixin textGradient($gradientColor) {
+  background: $gradientColor;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-fill-color: transparent;
+  color: transparent;
+}
+
+
+@function get-d($target) {
+  $vw-context: calc((1536 * 0.01) * 1px);
+  @return calc(($target / $vw-context) * 1vw);
+}
+@function get-xl($target) {
+  $vw-context: calc((1280 * 0.01) * 1px);
+  @return calc(($target / $vw-context) * 1vw);
+}
+@function get-lg($target) {
+  $vw-context: calc((1024 * 0.01) * 1px);
+  @return calc(($target / $vw-context) * 1vw);
+}
+@function get-md($target) {
+  $vw-context: calc((768 * 0.01) * 1px);
+  @return calc(($target / $vw-context) * 1vw);
+}
+@function get-sm($target) {
+  $vw-context: calc((640 * 0.01) * 1px);
+  @return calc(($target / $vw-context) * 1vw);
+}
+@function get-xs($target) {
+  $vw-context: calc((480 * 0.01) * 1px);
+  @return calc(($target / $vw-context) * 1vw);
+};

@@ -1,13 +1,13 @@
 .site-header {
-  padding: 15px 60px 0 60px;
+  padding: get-d(15px) get-d(60px) 0 get-d(60px);
   
   & .container {
     display: grid;
     grid-template-columns: max-content 1fr max-content;
-    grid-gap: 40px;
+    grid-gap: get-d(40px);
     align-items: center;
-    border-bottom: 2px solid rgba($bg-grey, 50%);
-    padding-bottom: 15px;
+    border-bottom: get-d(2px) solid rgba($bg-grey, 50%);
+    padding-bottom: get-d(15px);
 
     & .menu {
       & .current_page_item {
@@ -16,13 +16,19 @@
       }
       & a {
         font-weight: 600;
-        font-size: 12px;
+        font-size: get-d(12px);
         line-height: 100%;
-        letter-spacing: -2%;
         text-transform: uppercase;
-        padding: 10px 14px;
+        padding: get-d(10px) get-d(14px);
         color: rgba($bg-grey, 90%);
       }
+    }
+
+    & .location {
+      font-weight: 500;
+      font-size: get-d(14px);
+      line-height: 100%;
+      text-transform: capitalize;
     }
   }
   
@@ -31,6 +37,6 @@
 .logo {
   & img {
     height: auto;
-    width: 190px;
+    width: get-d(190px);
   }
 }

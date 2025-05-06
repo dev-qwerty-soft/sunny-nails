@@ -4,7 +4,6 @@
     <meta charset="<?php bloginfo('charset'); ?>">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="profile" href="http://gmpg.org/xfn/11">
-    <link rel="preload" href="<?php echo esc_url(get_template_directory_uri()) ?>/assets/src/fonts/font.css" as="style" type="text/css" crossorigin>
     <?php wp_head(); ?>
 </head>
 <body <?php body_class(); ?>>
@@ -16,7 +15,7 @@
             <?php endif; ?>
         </div>
         <div class="location">
-            Singapore
+            <span>Singapore</span>
         </div>
         <div class="menu-container">
             <div id="nav__burger-menu" class="nav__burger-menu">
