@@ -1,0 +1,25 @@
+{
+  "name": "custom-base-theme",
+  "version": "1.0.0",
+  "description": "WordPress theme frontend build",
+  "main": "index.js",
+  "scripts": {
+    "dev": "NODE_ENV=development webpack --config webpack.config.js",
+    "build": "NODE_ENV=production webpack --config webpack.config.js"
+  },
+  "keywords": [],
+  "author": "Oleksandr Vasylchuk",
+  "license": "ISC",
+  "devDependencies": {
+    "autoprefixer": "^10.4.14",
+    "clean-webpack-plugin": "^4.0.0",
+    "css-loader": "^6.7.3",
+    "css-minimizer-webpack-plugin": "^5.0.1",
+    "mini-css-extract-plugin": "^2.7.6",
+    "postcss-loader": "^7.3.3",
+    "sass": "^1.69.5",
+    "sass-loader": "^13.3.2",
+    "webpack": "^5.89.0",
+    "webpack-cli": "^5.1.4"
+  }
+}
