@@ -1,4 +1,3 @@
-</main>
 <footer class="footer">
   <div class="container">
     <div class="footer__logo">
@@ -37,5 +36,4 @@
 </div>
 <?php wp_footer(); ?>
 </body>
-
 </html>
