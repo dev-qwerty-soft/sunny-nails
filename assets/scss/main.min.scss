@@ -1,13 +1,15 @@
-@use "./base/base" as *;
-@use "./base/container" as *;
-@use "utilc/variables" as *;
+@import "utilc/_variables.scss";
+@import "./fonts.scss";
+@import "./base/_base.scss";
+@import "./base/_container.scss";
 
-@use "./component/preloader" as *;
-@use "./component/header" as *;
-@use "./component/search" as *;
-@use "./component/burger" as *;
-@use "./component/breadcump" as *;
+@import "./component/preloader";
+@import "./component/_btn.scss";
+@import "./component/header";
+@import "./component/search";
+@import "./component/burger";
+@import "./component/breadcump";
 
-@use "./layout/main.min.scss" as *;
+@import "./layout/main.min.scss";
 
-@use "./component/footer" as *;
+@import "./component/footer";

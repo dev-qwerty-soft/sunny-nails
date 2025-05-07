@@ -1,0 +1,85 @@
+.site-header {
+  padding: get-d(15px) get-d(60px) 0 get-d(60px);
+  @include respond(md) {
+    padding: 45px 25px 22px 25px;
+  }
+
+  & .container {
+    display: grid;
+    grid-template-columns: max-content 1fr max-content;
+    grid-gap: get-d(40px);
+    align-items: center;
+    border-bottom: get-d(2px) solid rgba($bg-grey, 50%);
+    padding-bottom: get-d(15px);
+    @include respond(md) {
+      grid-gap: 16px;
+      padding-bottom: 0;
+      border-bottom: 0;
+    }
+
+    & .menu {
+      display: flex;
+      align-items: center;
+      list-style: none;
+      @include respond(md) {
+        display: none;
+      }
+      & .current_page_item {
+        background: $bg-yellow;
+        border-radius: 100px;
+        @include respond(md) {
+          background: none;
+          border-radius: none;
+        }
+      }
+      & a {
+        font-weight: 600;
+        font-size: get-d(12px);
+        line-height: 100%;
+        text-transform: uppercase;
+        padding: get-d(10px) get-d(14px);
+        color: rgba($bg-grey, 90%);
+        @include respond(md) {
+          font-size: 20px;
+          padding: 0;
+        }
+      }
+    }
+
+    & .location {
+      font-weight: 500;
+      font-size: get-d(14px);
+      line-height: 100%;
+      text-transform: capitalize;
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: get-d(4px);
+      @include respond(md) {
+        font-size: 12px;
+        gap: 4px;
+      }
+      &::before {
+        content: "";
+        display: block;
+        width: get-d(26px);
+        height: get-d(26px);
+        background: url("../svg/location.svg") center / cover no-repeat;
+        @include respond(md) {
+          width: 26px;
+          height: 26px;
+        }
+      }
+    }
+  }
+}
+
+.logo {
+  & img {
+    height: auto;
+    width: get-d(190px);
+    @include respond(md) {
+      width: 112px;
+    }
+  }
+}

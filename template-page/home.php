@@ -3,93 +3,60 @@
 /**
  * Template Name: Home
  */
-
 get_header();
 
-
-// require_once get_template_directory() . '/inc/api/altegio-client.php';
-
-// $services_response = AltegioClient::getServices();
-// $categories_response = AltegioClient::getCategories();
-
-// $services = $services_response['data'] ?? [];
-// $categories = $categories_response['data'] ?? [];
-
-// $cat_map = [];
-// foreach ($categories as $cat) {
-//     $cat_map[$cat['category_id']] = $cat['title'];
-// }
-
-// foreach ($services as &$service) {
-//     $cat_id = $service['category_id'] ?? null;
-//     $service['category_title'] = $cat_id && isset($cat_map[$cat_id]) ? $cat_map[$cat_id] : 'Без категорії';
-// }
-
-// echo '<pre>';
-// print_r($services);
-// echo '</pre>';
-// exit;
-
 ?>
-
-<main class="container" style="padding: 40px 0;">
-    <h1>Available Services</h1>
-
-    <?php if (!empty($services['data'])): ?>
-        <table style="width: 100%; border-collapse: collapse; margin-bottom: 60px;">
-            <thead>
-                <tr style="text-align: left; border-bottom: 2px solid #ccc;">
-                    <th style="padding: 8px;">#</th>
-                    <th style="padding: 8px;">Title</th>
-                    <th style="padding: 8px;">Min Price</th>
-                    <th style="padding: 8px;">Max Price</th>
-                    <th style="padding: 8px;">Duration (min)</th>
-                    <th style="padding: 8px;">Comment</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php foreach ($services['data'] as $i => $service): ?>
-                    <tr style="border-bottom: 1px solid #eee;">
-                        <td style="padding: 8px;"><?php echo $i + 1; ?></td>
-                        <td style="padding: 8px;"><?php echo esc_html($service['title'] ?? '—'); ?></td>
-                        <td style="padding: 8px;"><?php echo esc_html($service['price_min'] ?? '-'); ?> ₴</td>
-                        <td style="padding: 8px;"><?php echo esc_html($service['price_max'] ?? '-'); ?> ₴</td>
-                        <td style="padding: 8px;"><?php echo isset($service['duration']) ? round($service['duration'] / 60) : '-'; ?></td>
-                        <td style="padding: 8px;"><?php echo esc_html($service['comment'] ?? ''); ?></td>
-                    </tr>
-                <?php endforeach; ?>
-            </tbody>
-        </table>
-    <?php else: ?>
-        <p style="color: red;">Failed to fetch services: <?php echo esc_html($services['error'] ?? 'Unknown issue'); ?></p>
-    <?php endif; ?>
-
-    <h1>Our Team</h1>
-    <pre style="background: #f6f6f6; padding: 20px; border-radius: 10px; overflow-x: auto;">
-<?php
-function render_pretty_array($array, $depth = 0)
-{
-    $indent = str_repeat('    ', $depth);
-    foreach ($array as $key => $value) {
-        if (is_array($value)) {
-            echo "{$indent}<strong>$key:</strong><br>";
-            render_pretty_array($value, $depth + 1);
-        } else {
-            $safeVal = is_bool($value) ? ($value ? 'true' : 'false') : htmlspecialchars((string)$value);
-            echo "{$indent}<strong>$key:</strong> $safeVal<br>";
-        }
-    }
-}
-
-$firstStaff = $staff['data'][0] ?? [];
-render_pretty_array($firstStaff);
-?>
-</pre>
-
-
-
-
-
+<main>
+    <div class="hero-section">
+        <div class="container">
+            <div class="hero-section__top">
+                <h1 class="title">
+                    <?php the_field('hero_title'); ?>
+                </h1>
+                <div class="hero-section__buttons">
+                    <a href="#" class="btn yellow">Free Manicure</a>
+                    <a href="#" class="btn">Free Manicure</a>
+                </div>
+            </div>
+            <div class="swiper hero-swiper">
+                <div class="swiper-wrapper">
+                    <?php
+                    foreach (get_field('hero_slides') as $slide) {
+                        $img = $slide["url"];
+                        $title = $slide["title"];
+                        echo "<div class='swiper-slide'>
+                <img src='$img' alt='$title'>
+              </div>";
+                    }
+                    ?>
+                </div>
+                <div class="swiper-pagination"></div>
+                <button type="button" aria-label="Next slide" class="button swiper-button-next"></button>
+                <button type="button" aria-label="Previous slide" class="button swiper-button-prev"></button>
+            </div>
+        </div>
+    </div>
+    <div class="reasons-section">
+        <div class="container">
+            <h2 class="title"><?php the_field('choose_title'); ?></h2>
+            <div class="reasons-section__items">
+                <?php
+                foreach (get_field('choose_cards') as $card) {
+                    $text = $card["card_text"];
+                    $image = $card["card_image"];
+                    $url = $image["url"];
+                    $title = $image["title"];
+                    echo "<div class='item'>
+              <img src='$url' alt='$title'>
+              <span>$text</span>
+            </div>";
+                };
+                ?>
+            </div>
+        </div>
+    </div>
+    <?php
+    get_template_part("template-parts/sections/contact");
+    ?>
 </main>
-
 <?php get_footer(); ?>
