@@ -1,0 +1,115 @@
+.footer {
+  & .container {
+    @include respond(md) {
+      display: grid;
+      grid-template-columns: repeat(2, max-content);
+      justify-content: space-between;
+      grid-gap: 38px;
+      align-items: center;
+      & .icons {
+        grid-column: 1 / 2;
+        grid-row: 1 / 2;
+      }
+      & .menu-aside-container {
+        grid-column: 2 / 3;
+        grid-row: 1 / 2;
+        justify-self: flex-end;
+      }
+    }
+  }
+  background: $bg-yellow;
+  padding: get-d(50px) get-d(60px) get-d(15px) get-d(60px);
+  @include respond(lg) {
+    padding: get-lg(50px) get-lg(60px) get-lg(15px) get-lg(60px);
+  }
+  @include respond(md) {
+    padding: 25px;
+  }
+  &__top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    @include respond(md) {
+      display: contents;
+    }
+  }
+  &__bottom {
+    margin-top: get-d(52px);
+    display: grid;
+    grid-template-columns: 1fr max-content 1fr;
+    padding-top: get-d(20px);
+    border-top: get-d(1px) solid #0000004D;
+    @include respond(lg) {
+      margin-top: get-lg(52px);
+      padding-top: get-lg(20px);
+    }
+    @include respond(md) {
+      margin-top: 0;
+      padding-top: 0;
+      display: contents;
+    }
+  }
+  & .copyright {
+    font-weight: 500;
+    font-size: get-d(14px);
+    line-height: 100%;
+    @include respond(lg) {
+      font-size: get-lg(14px);
+    }
+    @include respond(md) {
+      font-size: 12px;
+    }
+  }
+  & .menu-footer-container {
+    @include respond(md) {
+      display: none;
+    }
+  }
+  & ul {
+    display: flex;
+    list-style: none;
+    gap: get-d(24px);
+    @include respond(lg) {
+      gap: get-lg(24px);
+    }
+    @include respond(md) {
+      gap: 16px;
+    }
+    & a {
+      font-weight: 600;
+      font-size: get-d(12px);
+      line-height: 100%;
+      text-transform: uppercase;
+      @include respond(lg) {
+        font-size: get-lg(12px);
+      }
+      @include respond(md) {
+        font-size: 12px;
+      }
+    }
+  }
+}
+
+.icons {
+  display: flex;
+  align-items: center;
+  gap: get-d(8px);
+  @include respond(lg) {
+    gap: get-lg(8px);
+  }
+  @include respond(md) {
+    gap: 4px;
+  }
+  & img {
+    width: get-d(36px);
+    height: get-d(36px);
+    @include respond(lg) {
+      width: get-lg(36px);
+      height: get-lg(36px);
+    }
+    @include respond(md) {
+      width: 40px;
+      height: 40px;
+    }
+  }
+}

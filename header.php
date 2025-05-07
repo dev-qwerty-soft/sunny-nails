@@ -7,6 +7,7 @@
     <?php wp_head(); ?>
 </head>
 <body <?php body_class(); ?>>
+    
 <header id="masthead" class="site-header header-three">
     <div class="container">
         <div class="logo">
@@ -18,12 +19,12 @@
             <span>Singapore</span>
         </div>
         <div class="menu-container">
-            <div id="nav__burger-menu" class="nav__burger-menu">
-                <div class="burger-menu_button">
-                    <span class="burger-menu_lines"></span>
-                </div>
-            </div>
-            <nav id="burger-menu_nav" class="burger-menu_nav">
+            <button id="burger" class="burger">
+                <span class="bar bar--top"></span>
+                <span class="bar bar--middle"></span>
+                <span class="bar bar--bottom"></span>
+            </button>
+            <nav>
                 <?php
                     wp_nav_menu(
                         array(
@@ -36,3 +37,27 @@
         </div>
     </div>
 </header>
+<div class="burger-menu">
+    <nav>
+        <?php
+            wp_nav_menu(
+                array(
+                    'theme_location' => 'main-menu',
+                    'container' => 'ul',
+                )
+            );
+        ?>
+    </nav>
+    <div class="icons">
+        <?php
+        foreach(getIcon() as $icon) {
+            $text = $icon['text'];
+            $image = $icon['image'];
+            echo "<a target='_blank' rel='noopener noreferrer' href='$text'>
+                <img src='$image' alt='image'>
+            </a>";
+        };
+        ?>
+    </div>
+    <a href="#" class="btn white">Book an Appointment</a>
+</div>

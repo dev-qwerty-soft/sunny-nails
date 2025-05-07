@@ -1,13 +1,23 @@
 .hero-section {
   &__top {
-    display: flex;
+    display: grid;
+    grid-template-columns: 1fr max-content;
     align-items: flex-end;
-    justify-content: space-between;
-    margin-bottom: get-d(50px);
     padding: get-d(40px) get-d(60px);
+    @include respond(lg) {
+      padding: get-lg(40px) get-lg(60px);
+    }
+    @include respond(md) {
+      padding: 0 25px 16px 25px;
+      flex-direction: column;
+      align-items: flex-start;
+    }
   }
   &__buttons {
     display: flex;
+    @include respond(md) {
+      margin-top: 12px;
+    }
   }
 }
 
@@ -15,9 +25,16 @@
   width: 100%;
   height: get-d(610px);
   position: relative;
+  @include respond(lg) {
+    height: get-lg(610px);
+  }
+  @include respond(md) {
+    height: 520px;
+  }
   & img {
     width: 100%;
     height: 100%;
+    object-fit: cover;
   }
   & .button {
     position: absolute;
@@ -28,12 +45,33 @@
     background: url("../svg/arrows.svg") center / cover no-repeat;
     right: 0;
     z-index: 1;
+    cursor: pointer;
+    @include respond(lg) {
+      width: get-lg(40px);
+      height: get-lg(40px);
+    }
+    @include respond(md) {
+      width: 32px;
+      height: 32px;
+    }
     &.swiper-button-next {
       right: get-d(20px);
       transform: translateY(-50%) rotate(180deg);
+      @include respond(lg) {
+        right: get-lg(20px);
+      }
+      @include respond(md) {
+        right: 10px;
+      }
     }
     &.swiper-button-prev {
       left: get-d(20px);
+      @include respond(lg) {
+        left: get-lg(20px);
+      }
+      @include respond(md) {
+        left: 10px;
+      }
     }
   }
   & .swiper-pagination {
@@ -43,8 +81,160 @@
       height: get-d(10px);
       opacity: 1;
       transition: background 0.5s;
+      @include respond(lg) {
+        width: get-lg(10px);
+        height: get-lg(10px);
+      }
+      @include respond(md) {
+        width: 8px;
+        height: 8px;
+      }
       &.swiper-pagination-bullet-active {
         background: $bg-yellow;
+      }
+    }
+  }
+}
+
+.reasons-section {
+  padding: get-d(150px) get-d(60px) get-d(75px) get-d(60px);
+  @include respond(lg) {
+    padding: get-lg(150px) get-lg(60px) get-lg(75px) get-lg(60px);
+  }
+  @include respond(md) {
+    padding: 75px 25px;
+  }
+  &__items {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-gap: get-d(20px);
+    grid-auto-rows: 1fr;
+    margin-top: get-d(30px);
+    @include respond(lg) {
+      grid-gap: get-lg(20px);
+      margin-top: get-lg(30px);
+    }
+    @include respond(md) {
+      grid-template-columns: repeat(2, 1fr);
+      grid-gap: 10px;
+      margin-top: 28px;
+    }
+    & .item {
+      background: #FFFFFFBF;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: get-d(16px);
+      border-radius: get-d(10px);
+      padding-bottom: get-d(30px);
+      @include respond(lg) {
+        gap: get-lg(16px);
+        padding-bottom: get-lg(30px);
+        border-radius: get-lg(10px);
+      }
+      @include respond(md) {
+        gap: 0;
+        padding-bottom: 20px;
+        border-radius: 6px;
+        height: 145px;
+        justify-content: center;
+      }
+      & img {
+        aspect-ratio: 1 / 1;
+        width: get-d(126px);
+        @include respond(lg) {
+          width: get-lg(126px);
+        }
+        @include respond(md) {
+          width: 80px;
+        }
+      }
+      & span {
+        font-weight: 500;
+        font-size: get-d(24px);
+        line-height: 120%;
+        text-align: center;
+        max-width: get-d(250px);
+        @include respond(lg) {
+          font-size: get-lg(24px);
+          max-width: get-lg(250px);
+        }
+        @include respond(md) {
+          font-size: 12px;
+          max-width: 200px;
+        }
+      }
+    }
+  }
+}
+
+.contact-section {
+  padding: get-d(150px) get-d(60px);
+  @include respond(lg) {
+    padding: get-lg(150px) get-lg(60px);
+  }
+  @include respond(md) {
+    padding: 75px 25px;
+  }
+  & .container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    @include respond(lg) {
+      grid-template-columns: 1fr;
+      grid-gap: get-lg(32px);
+    }
+    @include respond(md) {
+      grid-template-columns: 1fr;
+      grid-gap: 20px;
+    }
+  }
+  &__text {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-direction: column;
+    gap: get-d(16px);
+    @include respond(lg) {
+      gap: get-lg(16px);
+    }
+    @include respond(md) {
+      gap: 10px;
+    }
+  }
+  &__content {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-gap: get-d(36px) get-d(10px);
+    @include respond(lg) {
+      grid-gap: get-lg(36px) get-lg(10px);
+    }
+    @include respond(md) {
+      grid-template-columns: 1fr;
+      grid-gap: 20px;
+    }
+  }
+  &__map {
+    position: relative;
+    overflow: hidden;
+    border-radius: get-d(10px);
+    @include respond(lg) {
+      border-radius: get-lg(10px);
+      aspect-ratio: 1/1;
+    }
+    @include respond(md) {
+      border-radius: 6px;
+    }
+    & .btn {
+      position: absolute;
+      left: get-d(20px);
+      bottom: get-d(24px);
+      z-index: 1;
+      @include respond(lg) {
+        left: get-lg(20px);
+        bottom: get-lg(24px);
+      }
+      @include respond(md) {
+        left: 20px;
+        bottom: 24px;
       }
     }
   }

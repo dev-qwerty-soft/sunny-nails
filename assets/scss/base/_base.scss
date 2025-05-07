@@ -53,6 +53,11 @@ p {
   padding: 0;
 }
 
+#map {
+  width: 100%;
+  height: 100%;
+}
+
 button {
   border: none;
   cursor: pointer;
@@ -70,4 +75,10 @@ button {
   font-weight: 500;
   font-size: get-d(65px);
   line-height: 90%;
+  @include respond(lg) {
+    font-size: get-lg(40px);
+  }
+  @include respond(md) {
+    font-size: 32px;
+  }
 }

@@ -4,6 +4,7 @@ import "./js/index.js";
 import "swiper/css"
 import "swiper/css/pagination"
 import Swiper from 'swiper';
+import "./js/map.js";
 import { Navigation, Pagination } from "swiper/modules";
 
 const heroSwiper = new Swiper('.hero-swiper', {
@@ -17,3 +18,10 @@ const heroSwiper = new Swiper('.hero-swiper', {
     prevEl: '.swiper-button-prev',
   },
 })
+
+const btn = document.getElementById("burger");
+
+btn?.addEventListener("click", () => {
+  document.querySelector(".burger-menu")?.classList.toggle("active");
+  btn.classList.toggle("active");
+});
