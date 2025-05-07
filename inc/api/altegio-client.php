@@ -45,4 +45,21 @@ class AltegioClient
     {
         return self::request('company/' . self::COMPANY_ID . '/staff');
     }
+    public static function getCategories(): array
+    {
+        $response = self::request('goods/search/' . self::COMPANY_ID);
+
+        if (!isset($response['success']) || !$response['success'] || !isset($response['data'])) {
+            return ['success' => 0, 'data' => []];
+        }
+
+        $categories = array_filter($response['data'], function ($item) {
+            return isset($item['is_category']) && $item['is_category'] === true;
+        });
+
+        return [
+            'success' => 1,
+            'data' => array_values($categories),
+        ];
+    }
 }

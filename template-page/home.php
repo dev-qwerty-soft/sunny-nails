@@ -6,8 +6,30 @@
 
 get_header();
 
-$services = AltegioClient::getServices();
-$staff = AltegioClient::getStaff();
+
+// require_once get_template_directory() . '/inc/api/altegio-client.php';
+
+// $services_response = AltegioClient::getServices();
+// $categories_response = AltegioClient::getCategories();
+
+// $services = $services_response['data'] ?? [];
+// $categories = $categories_response['data'] ?? [];
+
+// $cat_map = [];
+// foreach ($categories as $cat) {
+//     $cat_map[$cat['category_id']] = $cat['title'];
+// }
+
+// foreach ($services as &$service) {
+//     $cat_id = $service['category_id'] ?? null;
+//     $service['category_title'] = $cat_id && isset($cat_map[$cat_id]) ? $cat_map[$cat_id] : 'Без категорії';
+// }
+
+// echo '<pre>';
+// print_r($services);
+// echo '</pre>';
+// exit;
+
 ?>
 
 <main class="container" style="padding: 40px 0;">
