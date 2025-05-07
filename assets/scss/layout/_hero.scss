@@ -9,8 +9,7 @@
     }
     @include respond(md) {
       padding: 0 25px 16px 25px;
-      flex-direction: column;
-      align-items: flex-start;
+      grid-template-columns: 1fr;
     }
   }
   &__buttons {

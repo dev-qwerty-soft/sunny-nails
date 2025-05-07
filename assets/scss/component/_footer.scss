@@ -58,6 +58,16 @@
     }
     @include respond(md) {
       font-size: 12px;
+      position: relative;
+      &::before {
+        width: calc(100vw - 65px);
+        height: 1px;
+        background: #302F3466;
+        position: absolute;
+        top: -10px;
+        content: "";
+        right: 0;
+      }
     }
   }
   & .menu-footer-container {
@@ -87,6 +97,9 @@
         font-size: 12px;
       }
     }
+  }
+  & .menu-aside-container {
+    justify-self: flex-end;
   }
 }
 

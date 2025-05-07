@@ -38,24 +38,20 @@ get_header();
   </div>
   <div class="reasons-section">
     <div class="container">
-      <h2 class="title">4 Reasons to Choose Sunny Nails</h2>
+      <h2 class="title"><?php the_field('choose_title'); ?></h2>
       <div class="reasons-section__items">
-        <div class="item">
-          <img src="<?= getUrl("images/icons.svg") ?>" alt="images">
-          <span>High-quality nail work</span>
-        </div>
-        <div class="item">
-          <img src="<?= getUrl("images/icons-1.svg") ?>" alt="images">
-          <span>Exceptional hygiene</span>
-        </div>
-        <div class="item">
-          <img src="<?= getUrl("images/icons-2.svg") ?>" alt="images">
-          <span>Russian manicure techniques</span>
-        </div>
-        <div class="item">
-          <img src="<?= getUrl("images/icons-3.svg") ?>" alt="images">
-          <span>Outstanding service at accessible prices</span>
-        </div>
+        <?php
+          foreach (get_field('choose_cards') as $card) {
+            $text = $card["card_text"];
+            $image = $card["card_image"];
+            $url = $image["url"];
+            $title = $image["title"];
+            echo "<div class='item'>
+              <img src='$url' alt='$title'>
+              <span>$text</span>
+            </div>";
+          };
+        ?>
       </div>
     </div>
   </div>
