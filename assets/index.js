@@ -1,14 +1,15 @@
 import "./scss/main.min.scss";
 import "./js/index.js";
+import "./js/booking.js";
 import "swiper/css";
 import "swiper/css/pagination";
 import Swiper from "swiper";
 import "./js/map.js";
 import { Navigation, Pagination } from "swiper/modules";
 
-import {has, g, add, remove, toggle, respond} from "./js/function.js"
+import { has, g, add, remove, toggle, respond } from "./js/function.js";
 
-if(g(".hero-swiper")) {
+if (g(".hero-swiper")) {
   new Swiper(".hero-swiper", {
     modules: [Navigation, Pagination],
     slidesPerView: 1,
@@ -21,11 +22,11 @@ if(g(".hero-swiper")) {
       prevEl: ".hero-swiper .swiper-button-prev",
     },
   });
-} 
+}
 
 let gallerySwiper;
 
-if(g(".gallery-swiper")) {
+if (g(".gallery-swiper")) {
   gallerySwiper = new Swiper(".gallery-swiper", {
     modules: [Navigation],
     slidesPerView: 1,
@@ -56,7 +57,6 @@ if (g(".reviews-swiper")) {
   });
 }
 
-
 const filters = g(".gallery-section__filters .filter", document, true);
 const images = g(".gallery-section__images .image", document, true);
 const filterSection = g(".gallery-section");
@@ -64,7 +64,7 @@ const isFull = has(filterSection, ".full");
 const modal = g(".gallery-modal");
 
 const filterFn = (filter) => {
-  if(!filters) return;
+  if (!filters) return;
   const slug = filter.getAttribute("data-slug");
   remove(filters);
   add(filter);
@@ -80,19 +80,19 @@ const filterFn = (filter) => {
 filterFn(filters[0]);
 
 document.onclick = (e) => {
-  if(has(e.target, ".gallery-section__filters .filter")) {
+  if (has(e.target, ".gallery-section__filters .filter")) {
     filterFn(e.target);
   } else if (has(e.target, "#burger")) {
     const btn = g("#burger");
     const menu = g(".burger-menu");
     toggle([btn, menu]);
-  } else if(has(e.target, ".gallery-section__images .image")) {
+  } else if (has(e.target, ".gallery-section__images .image")) {
     const image = e.target.closest(".image");
     const index = Number(image.getAttribute("data-index"));
     gallerySwiper?.slideTo(index);
     add(modal);
-  } else if(has(e.target, ".gallery-modal .cross")) {
+  } else if (has(e.target, ".gallery-modal .cross")) {
     remove(modal);
     gallerySwiper?.slideTo(0);
   }
-}
+};
