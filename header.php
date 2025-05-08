@@ -7,7 +7,6 @@
     <?php wp_head(); ?>
 </head>
 <body <?php body_class(); ?>>
-    
 <header id="masthead" class="site-header header-three">
     <div class="container">
         <div class="logo">
@@ -49,15 +48,7 @@
         ?>
     </nav>
     <div class="icons">
-        <?php
-        foreach(getIcon() as $icon) {
-            $text = $icon['text'];
-            $image = $icon['image'];
-            echo "<a target='_blank' rel='noopener noreferrer' href='$text'>
-                <img src='$image' alt='image'>
-            </a>";
-        };
-        ?>
+        <?php displayIcon(); ?>
     </div>
     <a href="#" class="btn white">Book an Appointment</a>
 </div>

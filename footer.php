@@ -3,28 +3,20 @@
     <div class="footer__top">
       <div class="logo">
         <?php
-        $footer_logo = get_field('footer_logo', 'option');
-        if ($footer_logo): ?>
-          <img src="<?php echo esc_url($footer_logo['url']); ?>"
-            alt="<?php echo esc_attr($footer_logo['alt']); ?>"
-            draggable="false">
-        <?php else:
-          if (has_custom_logo()):
-            the_custom_logo();
+          $footer_logo = get_field('footer_logo', 'option');
+          if ($footer_logo): ?>
+            <img src="<?php echo esc_url($footer_logo['url']); ?>"
+              alt="<?php echo esc_attr($footer_logo['alt']); ?>"
+              draggable="false">
+          <?php else:
+            if (has_custom_logo()):
+              the_custom_logo();
+            endif;
           endif;
-        endif;
         ?>
       </div>
       <div class="icons">
-        <?php
-          foreach(getIcon() as $icon) {
-            $text = $icon['text'];
-            $image = $icon['image'];
-            echo "<a target='_blank' rel='noopener noreferrer' href='$text'>
-              <img src='$image' alt='image'>
-            </a>";
-          };
-        ?>
+        <?php displayIcon(); ?>
       </div>
     </div>
     <div class="footer__bottom">
