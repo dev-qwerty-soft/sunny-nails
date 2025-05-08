@@ -1,6 +1,97 @@
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
+/***/ "./js/index.js":
+/*!*********************!*\
+  !*** ./js/index.js ***!
+  \*********************/
+/***/ (() => {
+
+window.onload = () => {
+  document.body.classList.add("loaded_hiding");
+  setTimeout(() => {
+    document.body.classList.add("loaded");
+    document.body.classList.remove("loaded_hiding");
+  }, 500);
+};
+
+
+/***/ }),
+
+/***/ "./js/map.js":
+/*!*******************!*\
+  !*** ./js/map.js ***!
+  \*******************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _googlemaps_js_api_loader__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @googlemaps/js-api-loader */ "../node_modules/@googlemaps/js-api-loader/dist/index.mjs");
+
+
+(async function () {
+  const cont = document.querySelector('#map');
+  if (!cont) return;
+  const attr = cont.dataset?.center;
+  const token = cont.dataset?.token;
+  const cords = attr ? JSON.parse(attr) : { lat: 0, lng: 0 };
+  const loader = new _googlemaps_js_api_loader__WEBPACK_IMPORTED_MODULE_0__.Loader({
+    apiKey: token,
+    version: 'weekly',
+    libraries: ['maps'],
+  });
+  const { Map } = await loader.importLibrary('maps');
+  new Map(cont, {
+    center: cords,
+    zoomControl: false,
+    streetViewControl: false,
+    mapTypeControl: false,
+    fullscreenControl: false,
+    zoom: 7,
+  });
+})();
+
+/***/ }),
+
+/***/ "./scss/main.min.scss":
+/*!****************************!*\
+  !*** ./scss/main.min.scss ***!
+  \****************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+// extracted by mini-css-extract-plugin
+
+
+/***/ }),
+
+/***/ "../node_modules/swiper/modules/pagination.css":
+/*!*****************************************************!*\
+  !*** ../node_modules/swiper/modules/pagination.css ***!
+  \*****************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+// extracted by mini-css-extract-plugin
+
+
+/***/ }),
+
+/***/ "../node_modules/swiper/swiper.css":
+/*!*****************************************!*\
+  !*** ../node_modules/swiper/swiper.css ***!
+  \*****************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+// extracted by mini-css-extract-plugin
+
+
+/***/ }),
+
 /***/ "../node_modules/@googlemaps/js-api-loader/dist/index.mjs":
 /*!****************************************************************!*\
   !*** ../node_modules/@googlemaps/js-api-loader/dist/index.mjs ***!
@@ -3933,19 +4024,6 @@ function Navigation(_ref) {
 }
 
 
-
-
-/***/ }),
-
-/***/ "../node_modules/swiper/modules/pagination.css":
-/*!*****************************************************!*\
-  !*** ../node_modules/swiper/modules/pagination.css ***!
-  \*****************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-// extracted by mini-css-extract-plugin
 
 
 /***/ }),
@@ -10995,19 +11073,6 @@ function getRotateFix(swiper) {
 
 /***/ }),
 
-/***/ "../node_modules/swiper/swiper.css":
-/*!*****************************************!*\
-  !*** ../node_modules/swiper/swiper.css ***!
-  \*****************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-// extracted by mini-css-extract-plugin
-
-
-/***/ }),
-
 /***/ "../node_modules/swiper/swiper.mjs":
 /*!*****************************************!*\
   !*** ../node_modules/swiper/swiper.mjs ***!
@@ -11034,71 +11099,6 @@ __webpack_require__.r(__webpack_exports__);
  */
 
 
-
-
-/***/ }),
-
-/***/ "./js/index.js":
-/*!*********************!*\
-  !*** ./js/index.js ***!
-  \*********************/
-/***/ (() => {
-
-window.onload = () => {
-  document.body.classList.add("loaded_hiding");
-  setTimeout(() => {
-    document.body.classList.add("loaded");
-    document.body.classList.remove("loaded_hiding");
-  }, 500);
-};
-
-
-/***/ }),
-
-/***/ "./js/map.js":
-/*!*******************!*\
-  !*** ./js/map.js ***!
-  \*******************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _googlemaps_js_api_loader__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @googlemaps/js-api-loader */ "../node_modules/@googlemaps/js-api-loader/dist/index.mjs");
-
-
-(async function () {
-  const cont = document.querySelector('#map');
-  if (!cont) return;
-  const attr = cont.dataset?.center;
-  const token = cont.dataset?.token;
-  const cords = attr ? JSON.parse(attr) : { lat: 0, lng: 0 };
-  const loader = new _googlemaps_js_api_loader__WEBPACK_IMPORTED_MODULE_0__.Loader({
-    apiKey: token,
-    version: 'weekly',
-    libraries: ['maps'],
-  });
-  const { Map } = await loader.importLibrary('maps');
-  new Map(cont, {
-    center: cords,
-    zoomControl: false,
-    streetViewControl: false,
-    mapTypeControl: false,
-    fullscreenControl: false,
-    zoom: 7,
-  });
-})();
-
-/***/ }),
-
-/***/ "./scss/main.min.scss":
-/*!****************************!*\
-  !*** ./scss/main.min.scss ***!
-  \****************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-// extracted by mini-css-extract-plugin
 
 
 /***/ })
@@ -11172,7 +11172,7 @@ __webpack_require__.r(__webpack_exports__);
 /******/ 	
 /************************************************************************/
 var __webpack_exports__ = {};
-// This entry needs to be wrapped in an IIFE because it needs to be in strict mode.
+// This entry need to be wrapped in an IIFE because it need to be in strict mode.
 (() => {
 "use strict";
 /*!******************!*\

@@ -53,4 +53,14 @@ function getIcon() {
   return $icons;
 }
 
+function displayIcon() {
+    foreach(getIcon() as $icon) {
+        $text = $icon['text'];
+        $image = $icon['image'];
+        echo "<a target='_blank' rel='noopener noreferrer' href='$text'>
+            <img src='$image' alt='image'>
+        </a>";
+    };
+}
+
 add_action('customize_register', 'mytheme_customize_register');
