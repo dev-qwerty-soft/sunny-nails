@@ -5,6 +5,54 @@
  */
 get_header();
 
+$services = [
+    "Women’s Manicure",
+    "Women’s Pedicure",
+    "Men’s Manicure",
+    "Men’s Pedicure",
+    "Children’s Manicure",
+    "Children’s Pedicure"
+];
+
+$reviews = [
+    [
+        "text" => "I had an amazing experience at Sunny Nails! The staff is super friendly, and the manicure was flawless. The salon is clean and cozy. Definitely coming back!",
+        "name" => "Sunny Inferno",
+        "date" => "3 days ago",
+        "image" => getUrl("images/image.png"),
+    ],
+    [
+        "text" => "I had an amazing experience at Sunny Nails! The staff is super friendly, and the manicure was flawless. The salon is clean and cozy. Definitely coming back!",
+        "name" => "Sunny Inferno",
+        "date" => "3 days ago",
+        "image" => getUrl("images/image.png"),
+    ],
+    [
+        "text" => "I had an amazing experience at Sunny Nails! The staff is super friendly, and the manicure was flawless. The salon is clean and cozy. Definitely coming back!",
+        "name" => "Sunny Inferno",
+        "date" => "3 days ago",
+        "image" => getUrl("images/image.png"),
+    ],
+    [
+        "text" => "I had an amazing experience at Sunny Nails! The staff is super friendly, and the manicure was flawless. The salon is clean and cozy. Definitely coming back!",
+        "name" => "Sunny Inferno",
+        "date" => "3 days ago",
+        "image" => getUrl("images/image.png"),
+    ],
+    [
+        "text" => "I had an amazing experience at Sunny Nails! The staff is super friendly, and the manicure was flawless. The salon is clean and cozy. Definitely coming back!",
+        "name" => "Sunny Inferno",
+        "date" => "3 days ago",
+        "image" => getUrl("images/image.png"),
+    ],
+    [
+        "text" => "I had an amazing experience at Sunny Nails! The staff is super friendly, and the manicure was flawless. The salon is clean and cozy. Definitely coming back!",
+        "name" => "Sunny Inferno",
+        "date" => "3 days ago",
+        "image" => getUrl("images/image.png"),
+    ],
+];
+
 ?>
 <main>
     <section class="hero-section">
@@ -24,7 +72,7 @@ get_header();
                     ?>
                 </div>
             </div>
-            <div class="swiper hero-swiper">
+            <div class="swiper hero-swiper button-container">
                 <div class="swiper-wrapper">
                     <?php
                     foreach (get_field('hero_slides') as $slide) {
@@ -65,6 +113,79 @@ get_header();
         get_template_part("template-parts/gallery/gallery-grid", null, [
             "full" => false
         ]);
+    ?>
+    <section class="services-preview-section">
+        <div class="container">
+            <div class="services-preview-section__top">
+                <h2 class="title"><?php the_field('services_title', 'option'); ?></h2>
+                <?php
+                    $url = get_field('services_link_url', 'option');
+                    $text = get_field('services_link_text', 'option');
+                    if($url && $text) {
+                        echo "<a href='$url' class='btn yellow'>$text</a>";
+                    }
+                ?>
+            </div>
+            <div class="services-preview-section__items">
+                <?php
+                    $index = 1;
+                    foreach ($services as $service) {
+                        $indexPretty = $index < 9 ? "0$index" : $index;
+                        echo "<div class='item'>
+                            <span class='item__number'>/$indexPretty</span>
+                            <span class='item__title'>$service</span>
+                            <span class='item__arrow'></span>
+                        </div>";
+                        $index++;
+                    };
+                ?>
+            </div>
+        </div>
+    </section>
+    <section class="reviews-section">
+        <div class="container">
+            <div class="reviews-section__top">
+                <h2 class="title">What Our Clients Say</h2>
+                <a href="#" class="btn white">Leave a Review</a>
+            </div>
+            <div class="reviews-section__wrapper button-container">
+                <div class="swiper reviews-swiper">
+                    <div class="swiper-wrapper">
+                        <?php
+                            foreach ($reviews as $slide) {
+                                $image = $slide["image"];
+                                $date = $slide["date"];
+                                $name = $slide["name"];
+                                $text = $slide["text"];
+                                echo "<div class='swiper-slide'>
+                                    <div class='review'>
+                                        <div class='review__message'>
+                                            <div class='review__rate'>
+                                                <div class='star'></div>
+                                                <div class='star'></div>
+                                                <div class='star'></div>
+                                                <div class='star'></div>
+                                                <div class='star'></div>
+                                            </div>
+                                            <p>$text</p>
+                                        </div>
+                                        <div class='review__info'>
+                                            <img src='$image' alt='$name'>
+                                            <span class='review__name'>$name</span>
+                                            <span class='review__date'>$date</span>
+                                        </div>
+                                    </div>
+                                </div>";
+                            };
+                        ?>
+                    </div>
+                </div>
+                <button type="button" aria-label="Next slide" class="button swiper-button-next"></button>
+                <button type="button" aria-label="Previous slide" class="button swiper-button-prev"></button>
+            </div>
+        </div>
+    </section>
+    <?php
         get_template_part("template-parts/sections/contact");
     ?>
 </main>

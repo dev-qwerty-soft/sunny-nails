@@ -4,7 +4,7 @@
 ?>
 <div class="gallery-modal">
   <button type="button" aria-label="Close" class="cross"></button>
-  <div class="swiper gallery-swiper">
+  <div class="swiper gallery-swiper button-container">
     <div class="swiper-wrapper">
       <?php
         $index = 0;
@@ -44,9 +44,7 @@
   <div class="container">
     <div class="gallery-section__top">
       <h2 class="title"><?php the_field('gallery_title', 'option'); ?></h2>
-      <p class="paragraph">
-        <?php the_field('gallery_description', 'option'); ?>
-      </p>
+      <p class="paragraph"><?php the_field('gallery_description', 'option'); ?></p>
     </div>
     <div class="gallery-section__filters">
       <?php
@@ -97,9 +95,11 @@
         ?>
     </div>
     <?php
-      if(!$isFull) {
-        echo "<a href='/gallery' class='btn yellow'>Show all</a>";
-      }
+      $link = get_field('gallery_link_url', "option");
+      $text_btn = get_field('gallery_link_text', "option");
+      if(!$isFull && $link && $text_btn) {
+        echo "<a href='$link' class='btn yellow'>$text_btn</a>";
+      };
     ?>
   </div>
 </section>

@@ -11371,7 +11371,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 if((0,_js_function_js__WEBPACK_IMPORTED_MODULE_7__.g)(".hero-swiper")) {
-  const heroSwiper = new swiper__WEBPACK_IMPORTED_MODULE_4__["default"](".hero-swiper", {
+  new swiper__WEBPACK_IMPORTED_MODULE_4__["default"](".hero-swiper", {
     modules: [swiper_modules__WEBPACK_IMPORTED_MODULE_6__.Navigation, swiper_modules__WEBPACK_IMPORTED_MODULE_6__.Pagination],
     slidesPerView: 1,
     pagination: {
@@ -11397,6 +11397,27 @@ if((0,_js_function_js__WEBPACK_IMPORTED_MODULE_7__.g)(".gallery-swiper")) {
     },
   });
 }
+
+if ((0,_js_function_js__WEBPACK_IMPORTED_MODULE_7__.g)(".reviews-swiper")) {
+  new swiper__WEBPACK_IMPORTED_MODULE_4__["default"](".reviews-swiper", {
+    modules: [swiper_modules__WEBPACK_IMPORTED_MODULE_6__.Navigation],
+    slidesPerView: 1,
+    spaceBetween: 20,
+    navigation: {
+      nextEl: ".reviews-section .swiper-button-next",
+      prevEl: ".reviews-section .swiper-button-prev",
+    },
+    breakpoints: {
+      768: {
+        slidesPerView: 2,
+      },
+      1024: {
+        slidesPerView: 3,
+      },
+    },
+  });
+}
+
 
 const filters = (0,_js_function_js__WEBPACK_IMPORTED_MODULE_7__.g)(".gallery-section__filters .filter", document, true);
 const images = (0,_js_function_js__WEBPACK_IMPORTED_MODULE_7__.g)(".gallery-section__images .image", document, true);

@@ -6,6 +6,7 @@
   line-height: 100%;
   border: get-d(1px) solid $bg-grey;
   border-radius: 100px;
+  transition: background 0.5s, border-color 0.5s, color 0.5s;
   @include respond(lg) {
     padding: get-lg(20px) get-lg(25px);
     font-size: get-lg(14px);
@@ -15,6 +16,9 @@
     padding: 14px 24px;
     font-size: 12px;
     border-width: 1px;
+  }
+  &:hover {
+    background: #F1E3BE;
   }
   &.white {
     background: $bg-white;
@@ -37,6 +41,7 @@
       right: get-d(4px);
       top: 50%;
       transform: translateY(-50%);
+      transition: transform 0.5s;
       @include respond(lg) {
         right: get-lg(4px);
         height: calc(100% - get-lg(8px));
@@ -44,6 +49,13 @@
       @include respond(md) {
         right: 2px;
         height: calc(100% - 4px);
+      }
+    }
+    &:hover {
+      background: #F1E3BE;
+      border-color: #F1E3BE;
+      &::before {
+        transform: translateY(-50%) rotate(45deg);
       }
     }
   }
@@ -68,6 +80,7 @@
       right: get-d(4px);
       top: 50%;
       transform: translateY(-50%);
+      transition: transform 0.5s;
       @include respond(lg) {
         right: get-lg(4px);
         height: calc(100% - get-lg(8px));
@@ -75,6 +88,13 @@
       @include respond(md) {
         right: 2px;
         height: calc(100% - 4px);
+      }
+    }
+    &:hover {
+      background: #EEB614;
+      border-color: #EEB614;
+      &::before {
+        transform: translateY(-50%) rotate(45deg);
       }
     }
   }

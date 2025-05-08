@@ -35,6 +35,30 @@
     height: 100%;
     object-fit: cover;
   }
+  & .swiper-pagination {
+    & .swiper-pagination-bullet {
+      background: #f7f1e0;
+      width: get-d(10px);
+      height: get-d(10px);
+      opacity: 1;
+      transition: background 0.5s;
+      @include respond(lg) {
+        width: get-lg(10px);
+        height: get-lg(10px);
+      }
+      @include respond(md) {
+        width: 8px;
+        height: 8px;
+      }
+      &.swiper-pagination-bullet-active {
+        background: $bg-yellow;
+      }
+    }
+  }
+}
+
+.button-container {
+  position: relative;
   & .button {
     position: absolute;
     width: get-d(40px);
@@ -68,26 +92,6 @@
       }
       @include respond(md) {
         left: 10px;
-      }
-    }
-  }
-  & .swiper-pagination {
-    & .swiper-pagination-bullet {
-      background: #f7f1e0;
-      width: get-d(10px);
-      height: get-d(10px);
-      opacity: 1;
-      transition: background 0.5s;
-      @include respond(lg) {
-        width: get-lg(10px);
-        height: get-lg(10px);
-      }
-      @include respond(md) {
-        width: 8px;
-        height: 8px;
-      }
-      &.swiper-pagination-bullet-active {
-        background: $bg-yellow;
       }
     }
   }
@@ -674,6 +678,282 @@
     }
     &.swiper-button-prev {
       left: 2.5px;
+    }
+  }
+}
+
+.services-preview-section {
+  padding: get-d(75px) get-d(60px);
+  @include respond(lg) {
+    padding: get-lg(75px) get-lg(60px);
+  }
+  @include respond(md) {
+    padding: 75px 25px;
+  }
+  & .container {
+    @include respond(md) {
+      display: grid;
+      grid-template-columns: 1fr;
+      grid-gap: 24px;
+      & .btn {
+        grid-row: 3 / 4;
+        justify-self: center;
+      }
+    }
+  }
+  &__top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 0 0 get-d(30px) 0;
+    @include respond(lg) {
+      margin: 0 0 get-lg(30px) 0;
+    }
+    @include respond(md) {
+      margin: 0 0 22px 0;
+      display: contents;
+    }
+  }
+  &__items {
+    display: flex;
+    flex-direction: column;
+    gap: get-d(24px);
+    @include respond(lg) {
+      gap: get-lg(24px);
+    }
+    @include respond(md) {
+      gap: 24px;
+    }
+    & .item {
+      display: grid;
+      grid-template-columns: max-content 1fr max-content;
+      grid-gap: get-d(72px);
+      align-items: center;
+      padding-bottom: get-d(24px);
+      border-bottom: 1px solid $bg-grey;
+      @include respond(lg) {
+        grid-gap: get-lg(72px);
+        padding-bottom: get-lg(24px);
+      }
+      @include respond(md) {
+        grid-gap: 18px;
+        padding-bottom: 12px;
+      }
+      &__title {
+        font-weight: 400;
+        font-size: get-d(45px);
+        line-height: 100%;
+        @include respond(lg) {
+          font-size: get-lg(45px);
+        }
+        @include respond(md) {
+          font-size: 20px;
+        }
+      }
+      &__number {
+        font-weight: 400;
+        font-size: get-d(20px);
+        line-height: 100%;
+        text-transform: uppercase;
+        @include respond(lg) {
+          font-size: get-lg(20px);
+        }
+        @include respond(md) {
+          font-size: 14px;
+        }
+      }
+      &__arrow {
+        width: get-d(48px);
+        height: get-d(48px);
+        background: url("../svg/arrow-down-outline.svg") center / contain no-repeat;
+        @include respond(lg) {
+          width: get-lg(48px);
+          height: get-lg(48px);
+        }
+        @include respond(md) {
+          width: 26px;
+          height: 26px;
+        }
+      }
+    }
+  }
+}
+
+.reviews-section {
+  padding: get-d(160px) 0;
+  background: $bg-yellow;
+  @include respond(lg) {
+    padding: get-lg(160px) 0;
+  }
+  @include respond(md) {
+    padding: 50px 0;
+    & .container {
+      display: grid;
+      grid-template-columns: 100%;
+      grid-gap: 18px;
+      & .btn {
+        grid-row: 3 / 4;
+        justify-self: center;
+      }
+      & .swiper-button-next {
+        right: 0;
+      }
+      & .swiper-button-prev {
+        left: 0;
+      }
+    }
+    
+  }
+  &__top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: get-d(30px);
+    padding: 0 get-d(60px);
+    @include respond(lg) {
+      margin-bottom: get-lg(30px);
+      padding: 0 get-lg(60px);
+    }
+    @include respond(md) {
+      display: contents;
+      & > * {
+        margin: 0 25px;
+      }
+    }
+  }
+  &__wrapper {
+    position: relative;
+    padding: 0 get-d(60px);
+    @include respond(lg) {
+      padding: 0 get-lg(60px);
+    }
+    @include respond(md) {
+      padding: 0 25px;
+    }
+  }
+  & .button {
+    top: 40%;
+  }
+}
+
+.review {
+  &__message {
+    background: $bg-white;
+    padding: get-d(72px) get-d(25px);
+    border-radius: get-d(20px);
+    position: relative;
+    margin-bottom: get-d(30px);
+    display: flex;
+    flex-direction: column;
+    gap: get-d(24px);
+    @include respond(lg) {
+      padding: get-lg(72px) get-lg(25px);
+      margin-bottom: get-lg(30px);
+      gap: get-lg(24px);
+      border-radius: get-lg(20px);
+    }
+    @include respond(md) {
+      padding: 40px 25px;
+      margin-bottom: 30px;
+      gap: 24px;
+      border-radius: 20px;
+    }
+    &::before {
+      content: "";
+      position: absolute;
+      width: get-d(13px);
+      height: get-d(15px);
+      top: 100%;
+      left: get-d(25px);
+      background: url("../svg/Vector\ 2.svg") center / contain no-repeat;
+      @include respond(lg) {
+        left: get-lg(25px);
+        width: get-lg(13px);
+        height: get-lg(15px);
+      }
+      @include respond(md) {
+        left: 25px;
+        width: 13px;
+        height: 15px;
+      }
+    }
+    & p {
+      font-weight: 500;
+      font-size: get-d(16px);
+      line-height: 120%;
+      @include respond(lg) {
+        font-size: get-lg(16px);
+      }
+      @include respond(md) {
+        font-size: 12px;
+      }
+    }
+  }
+  &__info {
+    display: grid;
+    grid-template-columns: repeat(2, max-content);
+    grid-template-rows: repeat(2, max-content);
+    grid-gap: 0 get-d(10px);
+    @include respond(lg) {
+      grid-gap: 0 get-lg(10px);
+    }
+    @include respond(md) {
+      grid-gap: 0 10px;
+    }
+  }
+  & img {
+    width: get-d(50px);
+    height: get-d(50px);
+    border-radius: 50%;
+    object-fit: cover;
+    grid-row: 1 / 3;
+    grid-column: 1 / 2;
+    @include respond(lg) {
+      width: get-lg(50px);
+      height: get-lg(50px);
+    }
+    @include respond(md) {
+      width: 50px;
+      height: 50px;
+    }
+  }
+  &__name {
+    font-weight: 600;
+    font-size: get-d(20px);
+    line-height: 130%;
+    @include respond(lg) {
+      font-size: get-lg(20px);
+    }
+    @include respond(md) {
+      font-size: 14px;
+    }
+  }
+  &__date {
+    font-weight: 400;
+    font-size: get-d(16px);
+    line-height: 130%;
+    @include respond(lg) {
+      font-size: get-lg(16px);
+    }
+    @include respond(md) {
+      font-size: 12px;
+    }
+  }
+  &__rate {
+    display: flex;
+    align-items: center;
+    & .star {
+      width: get-d(26px);
+      height: get-d(26px);
+      background: url("../svg/gold-star.svg") center / contain no-repeat;
+      @include respond(lg) {
+        width: get-lg(26px);
+        height: get-lg(26px);
+      }
+      @include respond(md) {
+        width: 26px;
+        height: 26px;
+      }
     }
   }
 }
