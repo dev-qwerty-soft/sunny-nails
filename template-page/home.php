@@ -14,8 +14,14 @@ get_header();
                     <?php the_field('hero_title'); ?>
                 </h1>
                 <div class="hero-section__buttons">
-                    <a href="#" class="btn yellow">Free Manicure</a>
-                    <a href="#" class="btn">Free Manicure</a>
+                    <button type="button open-popup" class="btn yellow">Free Manicure</button>
+                    <?php
+                        $link = get_field('hero_link');
+                        $text = get_field('hero_link_text');
+                        if($link && $text) {
+                            echo "<a href='$link' class='btn'>$text</a>";
+                        }
+                    ?>
                 </div>
             </div>
             <div class="swiper hero-swiper">
@@ -25,8 +31,8 @@ get_header();
                         $img = $slide["url"];
                         $title = $slide["title"];
                         echo "<div class='swiper-slide'>
-                <img src='$img' alt='$title'>
-              </div>";
+                            <img src='$img' alt='$title'>
+                        </div>";
                     }
                     ?>
                 </div>
