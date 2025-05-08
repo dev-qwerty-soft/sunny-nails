@@ -56,7 +56,7 @@ get_header();
         </div>
     </div>
     <?php
-    get_template_part("template-parts/sections/contact");
+        get_template_part("template-parts/sections/contact");
     ?>
 </main>
 <?php get_footer(); ?>
