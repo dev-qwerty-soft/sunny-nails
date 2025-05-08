@@ -7,7 +7,7 @@ get_header();
 
 ?>
 <main>
-    <div class="hero-section">
+    <section class="hero-section">
         <div class="container">
             <div class="hero-section__top">
                 <h1 class="title">
@@ -41,8 +41,8 @@ get_header();
                 <button type="button" aria-label="Previous slide" class="button swiper-button-prev"></button>
             </div>
         </div>
-    </div>
-    <div class="reasons-section">
+    </section>
+    <section class="reasons-section">
         <div class="container">
             <h2 class="title"><?php the_field('choose_title'); ?></h2>
             <div class="reasons-section__items">
@@ -60,13 +60,11 @@ get_header();
                 ?>
             </div>
         </div>
-    </div>
+    </section>
     <?php
         get_template_part("template-parts/gallery/gallery-grid", null, [
             "full" => false
         ]);
-    ?>
-    <?php
         get_template_part("template-parts/sections/contact");
     ?>
 </main>

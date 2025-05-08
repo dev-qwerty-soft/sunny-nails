@@ -6,50 +6,72 @@ import Swiper from "swiper";
 import "./js/map.js";
 import { Navigation, Pagination } from "swiper/modules";
 
-const heroSwiper = new Swiper(".hero-swiper", {
-  modules: [Navigation, Pagination],
-  pagination: {
-    el: ".swiper-pagination",
-    clickable: true,
-  },
-  navigation: {
-    nextEl: ".swiper-button-next",
-    prevEl: ".swiper-button-prev",
-  },
-});
+import {has, g, add, remove, toggle, respond} from "./js/function.js"
 
-const btn = document.getElementById("burger");
+if(g(".hero-swiper")) {
+  const heroSwiper = new Swiper(".hero-swiper", {
+    modules: [Navigation, Pagination],
+    slidesPerView: 1,
+    pagination: {
+      el: ".hero-swiper .swiper-pagination",
+      clickable: true,
+    },
+    navigation: {
+      nextEl: ".hero-swiper .swiper-button-next",
+      prevEl: ".hero-swiper .swiper-button-prev",
+    },
+  });
+} 
 
-btn?.addEventListener("click", () => {
-  document.querySelector(".burger-menu")?.classList.toggle("active");
-  btn.classList.toggle("active");
-});
+let gallerySwiper;
 
-const filters = document.querySelectorAll(".gallery-section__filters .filter");
-const filterSection = document.querySelector(".gallery-section");
-const isFull = filterSection.classList.contains("full");
+if(g(".gallery-swiper")) {
+  gallerySwiper = new Swiper(".gallery-swiper", {
+    modules: [Navigation],
+    slidesPerView: 1,
+    navigation: {
+      nextEl: ".gallery-swiper .swiper-button-next",
+      prevEl: ".gallery-swiper .swiper-button-prev",
+    },
+  });
+}
+
+const filters = g(".gallery-section__filters .filter", document, true);
+const images = g(".gallery-section__images .image", document, true);
+const filterSection = g(".gallery-section");
+const isFull = has(filterSection, ".full");
+const modal = g(".gallery-modal");
 
 const filterFn = (filter) => {
+  if(!filters) return;
   const slug = filter.getAttribute("data-slug");
-  filters.forEach((f) => f.classList.remove("active"));
-  filter.classList.add("active");
-  
-  const images = [...document.querySelectorAll(".gallery-section__images .image")];
+  remove(filters);
+  add(filter);
 
   const filteredImages = images.filter((image) => {
     return slug === "all" || image.getAttribute("data-slug") === slug;
   });
-  
-  const array = isFull ? filteredImages : filteredImages.slice(0, 5);
 
-  images.forEach((image) => image.classList.remove("active"));
-  array.forEach((image) => image.classList.add("active"));
-}
+  remove(images);
+  add(isFull ? filteredImages : filteredImages.slice(0, respond("md") ? 6 : 5));
+};
 
 filterFn(filters[0]);
 
-filters.forEach((filter) => {
-  filter.addEventListener("click", () => {
-    filterFn(filter);
-  });
-});
+document.onclick = (e) => {
+  if(has(e.target, ".gallery-section__filters .filter")) {
+    filterFn(e.target);
+  } else if (has(e.target, "#burger")) {
+    const btn = g("#burger");
+    const menu = g(".burger-menu");
+    toggle([btn, menu]);
+  } else if(has(e.target, ".gallery-section__images .image")) {
+    const image = e.target.closest(".image");
+    const index = Number(image.getAttribute("data-index"));
+    gallerySwiper?.slideTo(index);
+    add(modal);
+  } else if(has(e.target, ".gallery-modal .cross")) {
+    remove(modal);
+    gallerySwiper?.slideTo(0);
+  }
+}
