@@ -1,19 +1,191 @@
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
+/***/ "./js/function.js":
+/*!************************!*\
+  !*** ./js/function.js ***!
+  \************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   add: () => (/* binding */ add),
+/* harmony export */   child: () => (/* binding */ child),
+/* harmony export */   duration: () => (/* binding */ duration),
+/* harmony export */   extractURL: () => (/* binding */ extractURL),
+/* harmony export */   formatNumber: () => (/* binding */ formatNumber),
+/* harmony export */   g: () => (/* binding */ g),
+/* harmony export */   getUrl: () => (/* binding */ getUrl),
+/* harmony export */   has: () => (/* binding */ has),
+/* harmony export */   isSize: () => (/* binding */ isSize),
+/* harmony export */   max: () => (/* binding */ max),
+/* harmony export */   random: () => (/* binding */ random),
+/* harmony export */   remove: () => (/* binding */ remove),
+/* harmony export */   respond: () => (/* binding */ respond),
+/* harmony export */   round: () => (/* binding */ round),
+/* harmony export */   scroll: () => (/* binding */ scroll),
+/* harmony export */   splitArray: () => (/* binding */ splitArray),
+/* harmony export */   toggle: () => (/* binding */ toggle),
+/* harmony export */   upper: () => (/* binding */ upper)
+/* harmony export */ });
+const toggle = (el, cl = 'active') => {
+  if (!el) return;
+  if (Array.isArray(el)) {
+    el.forEach((item) => toggle(item, cl));
+  } else {
+    el.classList.toggle(cl);
+  }
+};
+
+const add = (el, cl = 'active') => {
+  if (!el) return;
+  if (Array.isArray(el)) {
+    el.forEach((item) => add(item, cl));
+  } else {
+    el.classList.add(cl);
+  }
+};
+
+const remove = (el, cl = 'active') => {
+  if (!el) return;
+  if (Array.isArray(el)) {
+    el.forEach((item) => remove(item, cl));
+  } else {
+    el.classList.remove(cl);
+  }
+};
+
+const has = (el, cl = '.active') => {
+  return Boolean(el.closest(cl) && el.closest(cl).matches(cl));
+};
+
+const random = (min, max) => {
+  return Math.round(Math.random() * (max - min + 1) + min);
+};
+
+function g(
+  element,
+  cont = document,
+  flag = false
+) {
+  const elements = Array.from(cont.querySelectorAll(element));
+  if (!elements.length || !cont) return;
+
+  if (elements.length === 1) {
+    return flag ? elements : elements[0];
+  } else {
+    return elements;
+  }
+}
+
+const max = (arr) =>
+  arr.reduce((acc, num) => (acc > num ? acc : num));
+
+const upper = (text) => text[0].toUpperCase() + text.slice(1);
+
+const child = (str) => {
+  if (!str) return;
+  if (typeof str === 'string') {
+    return Array.from(g(str)?.children);
+  } else {
+    return Array.from(str.children);
+  }
+};
+
+const scroll = () => {
+  const scrollHeight = document.body.scrollHeight - window.innerHeight;
+  const height = window.pageYOffset;
+  const progress = Math.round((height / scrollHeight) * 100);
+  return progress;
+};
+
+const isSize = (num) => window.innerWidth <= num;
+
+const round = (num, del) => Math.round(num / del) * del;
+
+const getUrl = (url) => {
+  const regExp =
+    /^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\v=)([^#\\?]*).*/;
+  const match = url.match(regExp);
+  if (match && match[2].length === 11) {
+    return match[2];
+  }
+};
+
+function duration(duration) {
+  const match = duration.match(/PT(\d+H)?(\d+M)?(\d+S)?/);
+  if (!match) return '';
+  let hours = '',
+    minutes = '',
+    seconds = '';
+  if (match[1]) {
+    hours = match[1].replace('H', '').padStart(2, '0');
+  }
+  if (match[2]) {
+    minutes = match[2].replace('M', '').padStart(2, '0');
+  }
+  if (match[3]) {
+    seconds = match[3].replace('S', '').padStart(2, '0');
+  }
+  return `${hours ? hours + ':' : ''}${minutes !== '' ? minutes : '00'}:${
+    seconds !== '' ? seconds : '00'
+  }`;
+}
+
+function splitArray(arr) {
+  const mid = Math.ceil(arr.length / 2);
+  const firstHalf = arr.slice(0, mid);
+  const secondHalf = arr.slice(mid);
+  return [firstHalf, secondHalf];
+}
+
+function extractURL(cssURL) {
+  const urlPattern = /url\(["']?([^"']+)["']?\)/;
+  const match = cssURL.match(urlPattern);
+  return match ? match[1] : '';
+}
+
+function respond(breakpoint) {
+  const breakpoints = {
+    xs: 480,
+    sm: 640,
+    md: 768,
+    lg: 1024,
+    xl: 1280,
+    '2xl': 1536,
+  };
+
+  const width = window.innerWidth;
+
+  if (breakpoint === '2xl') {
+    return width >= breakpoints['2xl'];
+  }
+
+  return width <= breakpoints[breakpoint];
+}
+
+
+function formatNumber(number) {
+  return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+}
+
+
+/***/ }),
+
 /***/ "./js/index.js":
 /*!*********************!*\
   !*** ./js/index.js ***!
   \*********************/
 /***/ (() => {
 
-window.onload = () => {
-  document.body.classList.add("loaded_hiding");
-  setTimeout(() => {
-    document.body.classList.add("loaded");
-    document.body.classList.remove("loaded_hiding");
-  }, 500);
-};
+// window.onload = () => {
+//   document.body.classList.add("loaded_hiding");
+//   setTimeout(() => {
+//     document.body.classList.add("loaded");
+//     document.body.classList.remove("loaded_hiding");
+//   }, 500);
+// };
 
 
 /***/ }),
@@ -11187,6 +11359,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var swiper__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! swiper */ "../node_modules/swiper/swiper.mjs");
 /* harmony import */ var _js_map_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./js/map.js */ "./js/map.js");
 /* harmony import */ var swiper_modules__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! swiper/modules */ "../node_modules/swiper/modules/index.mjs");
+/* harmony import */ var _js_function_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./js/function.js */ "./js/function.js");
 
 
 
@@ -11195,25 +11368,75 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-const heroSwiper = new swiper__WEBPACK_IMPORTED_MODULE_4__["default"](".hero-swiper", {
-  modules: [swiper_modules__WEBPACK_IMPORTED_MODULE_6__.Navigation, swiper_modules__WEBPACK_IMPORTED_MODULE_6__.Pagination],
-  pagination: {
-    el: ".swiper-pagination",
-    clickable: true,
-  },
-  navigation: {
-    nextEl: ".swiper-button-next",
-    prevEl: ".swiper-button-prev",
-  },
-});
 
-const btn = document.getElementById("burger");
 
-btn?.addEventListener("click", () => {
-  document.querySelector(".burger-menu")?.classList.toggle("active");
-  btn.classList.toggle("active");
-});
+if((0,_js_function_js__WEBPACK_IMPORTED_MODULE_7__.g)(".hero-swiper")) {
+  const heroSwiper = new swiper__WEBPACK_IMPORTED_MODULE_4__["default"](".hero-swiper", {
+    modules: [swiper_modules__WEBPACK_IMPORTED_MODULE_6__.Navigation, swiper_modules__WEBPACK_IMPORTED_MODULE_6__.Pagination],
+    slidesPerView: 1,
+    pagination: {
+      el: ".hero-swiper .swiper-pagination",
+      clickable: true,
+    },
+    navigation: {
+      nextEl: ".hero-swiper .swiper-button-next",
+      prevEl: ".hero-swiper .swiper-button-prev",
+    },
+  });
+} 
 
+let gallerySwiper;
+
+if((0,_js_function_js__WEBPACK_IMPORTED_MODULE_7__.g)(".gallery-swiper")) {
+  gallerySwiper = new swiper__WEBPACK_IMPORTED_MODULE_4__["default"](".gallery-swiper", {
+    modules: [swiper_modules__WEBPACK_IMPORTED_MODULE_6__.Navigation],
+    slidesPerView: 1,
+    navigation: {
+      nextEl: ".gallery-swiper .swiper-button-next",
+      prevEl: ".gallery-swiper .swiper-button-prev",
+    },
+  });
+}
+
+const filters = (0,_js_function_js__WEBPACK_IMPORTED_MODULE_7__.g)(".gallery-section__filters .filter", document, true);
+const images = (0,_js_function_js__WEBPACK_IMPORTED_MODULE_7__.g)(".gallery-section__images .image", document, true);
+const filterSection = (0,_js_function_js__WEBPACK_IMPORTED_MODULE_7__.g)(".gallery-section");
+const isFull = (0,_js_function_js__WEBPACK_IMPORTED_MODULE_7__.has)(filterSection, ".full");
+const modal = (0,_js_function_js__WEBPACK_IMPORTED_MODULE_7__.g)(".gallery-modal");
+
+const filterFn = (filter) => {
+  if(!filters) return;
+  const slug = filter.getAttribute("data-slug");
+  (0,_js_function_js__WEBPACK_IMPORTED_MODULE_7__.remove)(filters);
+  (0,_js_function_js__WEBPACK_IMPORTED_MODULE_7__.add)(filter);
+
+  const filteredImages = images.filter((image) => {
+    return slug === "all" || image.getAttribute("data-slug") === slug;
+  });
+
+  (0,_js_function_js__WEBPACK_IMPORTED_MODULE_7__.remove)(images);
+  (0,_js_function_js__WEBPACK_IMPORTED_MODULE_7__.add)(isFull ? filteredImages : filteredImages.slice(0, (0,_js_function_js__WEBPACK_IMPORTED_MODULE_7__.respond)("md") ? 6 : 5));
+};
+
+filterFn(filters[0]);
+
+document.onclick = (e) => {
+  if((0,_js_function_js__WEBPACK_IMPORTED_MODULE_7__.has)(e.target, ".gallery-section__filters .filter")) {
+    filterFn(e.target);
+  } else if ((0,_js_function_js__WEBPACK_IMPORTED_MODULE_7__.has)(e.target, "#burger")) {
+    const btn = (0,_js_function_js__WEBPACK_IMPORTED_MODULE_7__.g)("#burger");
+    const menu = (0,_js_function_js__WEBPACK_IMPORTED_MODULE_7__.g)(".burger-menu");
+    (0,_js_function_js__WEBPACK_IMPORTED_MODULE_7__.toggle)([btn, menu]);
+  } else if((0,_js_function_js__WEBPACK_IMPORTED_MODULE_7__.has)(e.target, ".gallery-section__images .image")) {
+    const image = e.target.closest(".image");
+    const index = Number(image.getAttribute("data-index"));
+    gallerySwiper?.slideTo(index);
+    (0,_js_function_js__WEBPACK_IMPORTED_MODULE_7__.add)(modal);
+  } else if((0,_js_function_js__WEBPACK_IMPORTED_MODULE_7__.has)(e.target, ".gallery-modal .cross")) {
+    (0,_js_function_js__WEBPACK_IMPORTED_MODULE_7__.remove)(modal);
+    gallerySwiper?.slideTo(0);
+  }
+}
 })();
 
 /******/ })()

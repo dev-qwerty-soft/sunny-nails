@@ -9,4 +9,4 @@ get_header();
     get_template_part("template-parts/sections/contact");
   ?>
 </main>
-<?php get_footer(); ?>  
+<?php get_footer(); ?>

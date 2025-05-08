@@ -42,9 +42,7 @@
     top: 50%;
     transform: translateY(-50%);
     background: url("../svg/arrows.svg") center / cover no-repeat;
-    right: 0;
     z-index: 1;
-    cursor: pointer;
     @include respond(lg) {
       width: get-lg(40px);
       height: get-lg(40px);
@@ -235,6 +233,447 @@
         left: 20px;
         bottom: 24px;
       }
+    }
+  }
+}
+
+@mixin codeBig () {
+  grid-row: span 2;
+  grid-column: span 2;
+  & .image__back {
+    padding-top: get-d(170px);
+    & .image__title {
+      font-size: get-d(36px);
+    }
+  }
+  @include respond(lg) {
+    & .image__back {
+      padding-top: get-lg(170px);
+      & .image__title {
+        font-size: get-lg(36px);
+      }
+    }
+  }
+  @include respond(md) {
+    & .image__back {
+      padding-top: 170px;
+      & .image__title {
+        font-size: 24px;
+      }
+    }
+  }
+}
+
+.stars {
+  display: flex;
+  align-items: center;
+
+  font-weight: 500;
+  font-size: get-d(14px);
+  line-height: 120%;
+
+  @include respond(lg) {
+    font-size: get-lg(14px);
+  }
+  @include respond(md) {
+    font-size: 12px;
+  }
+
+  & span {
+    margin: 0 0 0 get-d(4px);
+    @include respond(lg) {
+      margin: 0 0 0 get-lg(4px);
+    }
+    @include respond(md) {
+      margin: 0 0 0 4px;
+    }
+  }
+
+
+  & .star {
+    width: get-d(24px);
+    height: get-d(24px);
+    background: url("../svg/material-symbols-light_star-shine.svg") center / cover no-repeat;
+
+    @include respond(lg) {
+      width: get-lg(24px);
+      height: get-lg(24px);
+    }
+    @include respond(md) {
+      width: 24px;
+      height: 24px;
+    }
+  }
+}
+
+.gallery-section {
+  padding: get-d(75px) get-d(60px);
+
+  @include respond(lg) {
+    padding: get-lg(75px) get-lg(60px);
+  }
+  @include respond(md) {
+    padding: 75px 25px;
+  }
+
+  &:not(.full) {
+    & .image {
+      &:nth-of-type(5n + 3) {
+        @include codeBig();
+      }
+    }
+  }
+
+  &.full {
+    & .image {
+      &:nth-of-type(10n + 3),
+      &:nth-of-type(10n + 6) {
+        @include codeBig();
+      }
+      &.active {
+        display: block !important;
+      }
+    }
+  }
+
+  & .container {
+    display: flex;
+    flex-direction: column;
+    gap: get-d(20px);
+    align-items: center;
+    @include respond(lg) {
+      gap: get-lg(20px);
+    }
+    @include respond(md) {
+      gap: 14px;
+    }
+  }
+
+  &__top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+
+    @include respond(md) {
+      flex-direction: column;
+      gap: 10px;
+      align-items: flex-start;
+    }
+
+    & .paragraph {
+      max-width: get-d(490px);
+      @include respond(lg) {
+        max-width: get-lg(490px);
+      }
+      @include respond(md) {
+        max-width: none;
+      }
+    }
+  }
+
+  &__filters {
+    display: flex;
+    align-items: center;
+    gap: get-d(4px);
+    flex-wrap: wrap;
+    width: 100%;
+
+    @include respond(lg) {
+      gap: get-lg(4px);
+    }
+
+    @include respond(md) {
+      gap: 4px;
+    }
+
+    & .filter {
+      font-weight: 500;
+      font-size: get-d(14px);
+      line-height: 120%;
+      text-align: center;
+      padding: get-d(9.5px) get-d(20px);
+      border-radius: 100px;
+      border: get-d(1px) solid $bg-grey;
+      transition: background 0.5s, border-color 0.5s;
+      background: none;
+      text-transform: capitalize;
+
+      @include respond(lg) {
+        padding: get-lg(9.5px) get-lg(20px);
+        font-size: get-lg(14px);
+        border-width: get-lg(1px);
+      }
+
+      @include respond(md) {
+        padding: 9.5px 20px;
+        font-size: 12px;
+        border-width: 1px;
+      }
+
+      &.active {
+        background: $bg-yellow;
+        border-color: $bg-yellow;
+      }
+    }
+  }
+
+  &__images {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-auto-rows: 1fr;
+    grid-gap: get-d(20px);
+
+    @include respond(lg) {
+      grid-gap: get-lg(20px);
+    }
+    @include respond(md) {
+      grid-gap: 10px;
+      grid-template-columns: repeat(2, 1fr);
+    }
+    @include respond(sm) {
+      grid-template-columns: repeat(1, 1fr);
+    }
+
+    & .image {
+      width: 100%;
+      height: 100%;
+      aspect-ratio: 1 / 1;
+      
+      position: relative;
+      display: none;
+      perspective: 1000px;
+      cursor: pointer;
+
+      @include respond(md) {
+        grid-column: span 1 !important;
+        grid-row: span 1 !important;
+        
+      }
+
+
+      & .wrapper {
+        position: absolute;
+        left: get-d(16px);
+        right: get-d(16px);
+        bottom: get-d(16px);
+        z-index: 1;
+        display: grid;
+        grid-template-columns: max-content max-content;
+        justify-content: space-between;
+
+        @include respond(lg) {
+          left: get-lg(16px);
+          right: get-lg(16px);
+          bottom: get-lg(16px);
+        }
+        @include respond(md) {
+          left: 10px;
+          right: 10px;
+          bottom: 10px;
+        }
+
+        & .btn {
+          padding: get-d(10px) get-d(40px) get-d(10px) get-d(15px);
+          @include respond(lg) {
+            padding: get-lg(10px) get-lg(40px) get-lg(10px) get-lg(15px);
+          }
+          @include respond(md) {
+            padding: 10px 40px 10px 15px;
+          }
+        }
+
+        & .view {
+          aspect-ratio: 1 / 1;
+          height: 100%;
+          background: url("../svg/view.svg") center / cover no-repeat;
+          display: none;
+          @include respond(md) {
+            display: block;
+          }
+        }
+      }
+      
+
+      &.active {
+        display: block;
+      }
+    
+      &__front,
+      &__back {
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        backface-visibility: hidden;
+        transition: transform 0.8s ease;
+        top: 0;
+        left: 0;
+        border-radius: inherit;
+        border-radius: get-d(10px);
+        overflow: hidden;
+        @include respond(lg) {
+          border-radius: get-lg(10px);
+        }
+        @include respond(md) {
+          border-radius: 8px;
+        }
+      }
+    
+      &__front {
+        z-index: 2;
+        transform: rotateY(0deg);
+      }
+    
+      &__back {
+        background: $bg-yellow;
+        transform: rotateY(180deg);
+        z-index: 1;
+        padding: get-d(24px) get-d(16px) get-d(82px) get-d(16px);
+        display: grid;
+        grid-template-columns: 1fr;
+        grid-template-rows: 1fr repeat(3, max-content);
+        grid-gap: get-d(10px);
+
+        @include respond(lg) {
+          padding: get-lg(24px) get-lg(16px) get-lg(82px) get-lg(16px);
+          grid-gap: get-lg(10px);
+        }
+        @include respond(md) {
+          padding: 24px 16px 82px 16px;
+          grid-gap: 10px;
+          display: none;
+        }
+      }
+
+      &__title {
+        font-weight: 500;
+        font-size: get-d(20px);
+        line-height: 150%;
+
+        @include respond(lg) {
+          font-size: get-lg(20px);
+        }
+        @include respond(md) {
+          font-size: 24px;
+        }
+      }
+
+      &__master, &__price {
+        font-weight: 500;
+        font-size: get-d(16px);
+        line-height: 150%;
+
+        @include respond(lg) {
+          font-size: get-lg(16px);
+        }
+        @include respond(md) {
+          font-size: 16px;
+        }
+      }
+    
+      &:hover {
+        .image__front {
+          transform: rotateY(-180deg);
+          @include respond(md) {
+            transform: rotateY(0deg);
+          }
+        }
+    
+        .image__back {
+          transform: rotateY(0deg);
+          @include respond(md) {
+            transform: rotateY(0deg);
+          }
+        }
+      }
+    
+      & img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
+    }
+    
+  }
+}
+
+.gallery-modal {
+  position: fixed;
+  width: 100%;
+  height: 100vh;
+  background: $bg-yellow;
+  top: 0;
+  left: 0;
+  z-index: 105;
+  padding: 72px 0;
+  opacity: 0;
+  pointer-events: none;
+  transition: all .5s;
+  display: none;
+  @include respond(md) {
+    display: block;
+  }
+  & .cross {
+    position: absolute;
+    top: 24px;
+    right: 24px;
+    width: 20px;
+    height: 20px;
+    background: url("../svg/cross.svg") center / cover no-repeat;
+  }
+  &.active {
+    opacity: 1;
+    pointer-events: all;
+  }
+}
+
+.gallery-swiper {
+  width: 100%;
+  & .swiper-slide {
+    padding: 0 24px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    & img {
+      width: 100%;
+      height: auto;
+      aspect-ratio: 1/1;
+      object-fit: cover;
+      max-width: 325px;
+      margin: 0 auto;
+      border-radius: 10px;
+    }
+    & .btn {
+      text-align: center;
+    }
+    & .image__title {
+      font-weight: 600;
+      font-size: 24px;
+      line-height: 120%;
+    }
+    & .image__master, & .image__price {
+      font-weight: 500;
+      font-size: 16px;
+      line-height: 150%;
+    }
+  }
+  & .button {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    top: clamp(32%, 10vw, 50%);
+    transform: translateY(-50%);
+    background: url("../svg/arrow-black.svg") center / contain no-repeat;
+    z-index: 1;
+    &.swiper-button-next {
+      right: 2.5px;
+      transform: translateY(-50%) rotate(180deg);
+    }
+    &.swiper-button-prev {
+      left: 2.5px;
     }
   }
 }
