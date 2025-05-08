@@ -5,6 +5,15 @@
  */
 get_header();
 
+$services = [
+    "Women’s Manicure",
+    "Women’s Pedicure",
+    "Men’s Manicure",
+    "Men’s Pedicure",
+    "Children’s Manicure",
+    "Children’s Pedicure"
+]
+
 ?>
 <main>
     <section class="hero-section">
@@ -65,6 +74,30 @@ get_header();
         get_template_part("template-parts/gallery/gallery-grid", null, [
             "full" => false
         ]);
+    ?>
+    <section class="services-preview-section">
+        <div class="container">
+            <div class="services-preview-section__top">
+                <h2 class="title">Services</h2>
+                <a href="#" class="btn yellow">View all services</a>
+            </div>
+            <div class="services-preview-section__items">
+                <?php
+                    $index = 1;
+                    foreach ($services as $service) {
+                        $indexPretty = $index < 9 ? "0$index" : $index;
+                        echo "<div class='item'>
+                            <span class='item__number'>/$indexPretty</span>
+                            <span class='item__title'>$service</span>
+                            <span class='item__arrow'></span>
+                        </div>";
+                        $index++;
+                    };
+                ?>
+            </div>
+        </div>
+    </section>
+    <?php
         get_template_part("template-parts/sections/contact");
     ?>
 </main>

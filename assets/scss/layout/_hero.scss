@@ -677,3 +677,100 @@
     }
   }
 }
+
+.services-preview-section {
+  padding: get-d(75px) get-d(60px);
+  @include respond(lg) {
+    padding: get-lg(75px) get-lg(60px);
+  }
+  @include respond(md) {
+    padding: 75px 25px;
+  }
+  & .container {
+    @include respond(md) {
+      display: grid;
+      grid-template-columns: 1fr;
+      grid-gap: 24px;
+      & .btn {
+        grid-row: 3 / 4;
+        justify-self: center;
+      }
+    }
+  }
+  &__top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 0 0 get-d(30px) 0;
+    @include respond(lg) {
+      margin: 0 0 get-lg(30px) 0;
+    }
+    @include respond(md) {
+      margin: 0 0 22px 0;
+      display: contents;
+    }
+  }
+  &__items {
+    display: flex;
+    flex-direction: column;
+    gap: get-d(24px);
+    @include respond(lg) {
+      gap: get-lg(24px);
+    }
+    @include respond(md) {
+      gap: 24px;
+    }
+    & .item {
+      display: grid;
+      grid-template-columns: max-content 1fr max-content;
+      grid-gap: get-d(72px);
+      align-items: center;
+      padding-bottom: get-d(24px);
+      border-bottom: 1px solid $bg-grey;
+      @include respond(lg) {
+        grid-gap: get-lg(72px);
+        padding-bottom: get-lg(24px);
+      }
+      @include respond(md) {
+        grid-gap: 18px;
+        padding-bottom: 12px;
+      }
+      &__title {
+        font-weight: 400;
+        font-size: get-d(45px);
+        line-height: 100%;
+        @include respond(lg) {
+          font-size: get-lg(45px);
+        }
+        @include respond(md) {
+          font-size: 20px;
+        }
+      }
+      &__number {
+        font-weight: 400;
+        font-size: get-d(20px);
+        line-height: 100%;
+        text-transform: uppercase;
+        @include respond(lg) {
+          font-size: get-lg(20px);
+        }
+        @include respond(md) {
+          font-size: 14px;
+        }
+      }
+      &__arrow {
+        width: get-d(48px);
+        height: get-d(48px);
+        background: url("../svg/arrow-down-outline.svg") center / contain no-repeat;
+        @include respond(lg) {
+          width: get-lg(48px);
+          height: get-lg(48px);
+        }
+        @include respond(md) {
+          width: 26px;
+          height: 26px;
+        }
+      }
+    }
+  }
+}
