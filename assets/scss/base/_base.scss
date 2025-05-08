@@ -82,3 +82,15 @@ button {
     font-size: 32px;
   }
 }
+
+.paragraph {
+  font-weight: 500;
+  font-size: get-d(16px);
+  line-height: 120%;
+  @include respond(lg) {
+    font-size: get-lg(16px);
+  }
+  @include respond(md) {
+    font-size: 14px;
+  }
+}

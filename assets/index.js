@@ -24,3 +24,32 @@ btn?.addEventListener("click", () => {
   document.querySelector(".burger-menu")?.classList.toggle("active");
   btn.classList.toggle("active");
 });
+
+const filters = document.querySelectorAll(".gallery-section__filters .filter");
+const filterSection = document.querySelector(".gallery-section");
+const isFull = filterSection.classList.contains("full");
+
+const filterFn = (filter) => {
+  const slug = filter.getAttribute("data-slug");
+  filters.forEach((f) => f.classList.remove("active"));
+  filter.classList.add("active");
+  
+  const images = [...document.querySelectorAll(".gallery-section__images .image")];
+
+  const filteredImages = images.filter((image) => {
+    return slug === "all" || image.getAttribute("data-slug") === slug;
+  });
+  
+  const array = isFull ? filteredImages : filteredImages.slice(0, 5);
+
+  images.forEach((image) => image.classList.remove("active"));
+  array.forEach((image) => image.classList.add("active"));
+}
+
+filterFn(filters[0]);
+
+filters.forEach((filter) => {
+  filter.addEventListener("click", () => {
+    filterFn(filter);
+  });
+});

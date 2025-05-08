@@ -62,6 +62,11 @@ get_header();
         </div>
     </div>
     <?php
+        get_template_part("template-parts/gallery/gallery-grid", null, [
+            "full" => false
+        ]);
+    ?>
+    <?php
         get_template_part("template-parts/sections/contact");
     ?>
 </main>
