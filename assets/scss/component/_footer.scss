@@ -113,6 +113,13 @@
   @include respond(md) {
     gap: 4px;
   }
+  & a {
+    display: inline-block;
+    transition: transform .5s;
+    &:hover {
+      transform: scale(1.2);
+    }
+  }
   & img {
     width: get-d(36px);
     height: get-d(36px);

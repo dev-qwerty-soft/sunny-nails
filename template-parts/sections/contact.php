@@ -1,9 +1,3 @@
-<?php
-  $cords = json_encode([
-    'lat' => +get_field('map_lat', 'option'),
-    'lng' => +get_field('map_lng', 'option'),
-  ]);
-?>
 <div class="contact-section">
   <div class="container">
     <div class="contact-section__content">
@@ -46,7 +40,18 @@
       ?>
     </div>
     <div class="contact-section__map">
-      <a href="<?php the_field('map_btn_url', 'option'); ?>" class="btn yellow">Get Directions</a>
+      <?php
+        $cords = json_encode([
+          'lat' => +get_field('map_lat', 'option'),
+          'lng' => +get_field('map_lng', 'option'),
+        ]);
+        
+        $link = get_field('map_btn_url', 'option');
+        $text = get_field('map_btn_text', 'option');
+        if ($link && $text) {
+          echo "<a href='$link' target='_blank' class='btn yellow'>$text</a>";
+        }
+      ?>
       <div data-token="<?php the_field('map_token', 'option'); ?>" data-center='<?= $cords; ?>' id="map"></div>
     </div>
   </div>

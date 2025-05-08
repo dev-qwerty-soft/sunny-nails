@@ -9,7 +9,7 @@ import { Navigation, Pagination } from "swiper/modules";
 import {has, g, add, remove, toggle, respond} from "./js/function.js"
 
 if(g(".hero-swiper")) {
-  const heroSwiper = new Swiper(".hero-swiper", {
+  new Swiper(".hero-swiper", {
     modules: [Navigation, Pagination],
     slidesPerView: 1,
     pagination: {
@@ -35,6 +35,27 @@ if(g(".gallery-swiper")) {
     },
   });
 }
+
+if (g(".reviews-swiper")) {
+  new Swiper(".reviews-swiper", {
+    modules: [Navigation],
+    slidesPerView: 1,
+    spaceBetween: 20,
+    navigation: {
+      nextEl: ".reviews-section .swiper-button-next",
+      prevEl: ".reviews-section .swiper-button-prev",
+    },
+    breakpoints: {
+      768: {
+        slidesPerView: 2,
+      },
+      1024: {
+        slidesPerView: 3,
+      },
+    },
+  });
+}
+
 
 const filters = g(".gallery-section__filters .filter", document, true);
 const images = g(".gallery-section__images .image", document, true);
