@@ -8,6 +8,7 @@
   border-radius: 100px;
   transition: background 0.3s, border-color 0.3s, color 0.3s;
   cursor: pointer;
+  white-space: nowrap;
   @include respond(lg) {
     padding: get-lg(20px) get-lg(25px);
     font-size: get-lg(14px);

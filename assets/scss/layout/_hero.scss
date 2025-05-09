@@ -969,7 +969,6 @@
   }
 }
 
-
 .promo-form-section {
   padding: get-d(45px) get-d(60px);
   // background: $bg-yellow;
@@ -1006,6 +1005,9 @@
       grid-template-columns: 1fr;
       text-align: left;
     }
+    & > div:has(form) {
+      grid-column: 1 / -1;
+    }
     & img {
       position: absolute;
       width: 100%;
@@ -1015,6 +1017,7 @@
       z-index: -1;
     }
   }
+  
   & form {
     background: $bg-white;
     grid-column: 1 / -1;
