@@ -1,26 +1,22 @@
 <footer class="footer">
   <div class="container">
     <div class="footer__top">
-      <div class="logo">
+      <a href="<?php echo esc_url(home_url('/')); ?>" class="logo">
         <?php
-          $footer_logo = get_field('footer_logo', 'option');
-          if ($footer_logo): ?>
-            <img src="<?php echo esc_url($footer_logo['url']); ?>"
-              alt="<?php echo esc_attr($footer_logo['alt']); ?>"
-              draggable="false">
-          <?php else:
-            if (has_custom_logo()):
-              the_custom_logo();
-            endif;
-          endif;
+          $logo = get_field('footer_logo', 'option');
+          if ($logo) {
+            $url = $logo['url'];
+            $alt = $logo['alt'];
+            echo "<img src='$url' alt='$alt'>";
+          };
         ?>
-      </div>
+      </a>
       <div class="icons">
         <?php displayIcon(); ?>
       </div>
     </div>
     <div class="footer__bottom">
-      <p class="copyright"><?= get_theme_mod('footer_copyright'); ?></p>
+      <p class="copyright"><?= get_field('footer_copyright', 'option'); ?></p>
       <?php if (has_nav_menu('footer-menu')) { ?>
         <?php wp_nav_menu(array('theme_location' => 'footer-menu', 'depth' => 1, 'menu_class' => 'footer__menu')); ?>
       <?php } ?>

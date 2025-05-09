@@ -12,6 +12,7 @@ if(g(".hero-swiper")) {
   new Swiper(".hero-swiper", {
     modules: [Navigation, Pagination],
     slidesPerView: 1,
+    loop: true,
     pagination: {
       el: ".hero-swiper .swiper-pagination",
       clickable: true,
@@ -85,6 +86,7 @@ document.onclick = (e) => {
   } else if (has(e.target, "#burger")) {
     const btn = g("#burger");
     const menu = g(".burger-menu");
+    window.scrollTo(0, 0);
     toggle([btn, menu]);
   } else if(has(e.target, ".gallery-section__images .image")) {
     const image = e.target.closest(".image");

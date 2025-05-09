@@ -11374,6 +11374,7 @@ if((0,_js_function_js__WEBPACK_IMPORTED_MODULE_7__.g)(".hero-swiper")) {
   new swiper__WEBPACK_IMPORTED_MODULE_4__["default"](".hero-swiper", {
     modules: [swiper_modules__WEBPACK_IMPORTED_MODULE_6__.Navigation, swiper_modules__WEBPACK_IMPORTED_MODULE_6__.Pagination],
     slidesPerView: 1,
+    loop: true,
     pagination: {
       el: ".hero-swiper .swiper-pagination",
       clickable: true,
@@ -11447,6 +11448,7 @@ document.onclick = (e) => {
   } else if ((0,_js_function_js__WEBPACK_IMPORTED_MODULE_7__.has)(e.target, "#burger")) {
     const btn = (0,_js_function_js__WEBPACK_IMPORTED_MODULE_7__.g)("#burger");
     const menu = (0,_js_function_js__WEBPACK_IMPORTED_MODULE_7__.g)(".burger-menu");
+    window.scrollTo(0, 0);
     (0,_js_function_js__WEBPACK_IMPORTED_MODULE_7__.toggle)([btn, menu]);
   } else if((0,_js_function_js__WEBPACK_IMPORTED_MODULE_7__.has)(e.target, ".gallery-section__images .image")) {
     const image = e.target.closest(".image");

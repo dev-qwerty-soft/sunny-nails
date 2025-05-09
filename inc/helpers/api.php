@@ -49,3 +49,17 @@ function dump($var, $label = null, $echo = true) {
       return $output;
   }
 }
+
+function displayIcon() {
+  foreach(get_field('footer_icons', 'option') as $icon) {
+    $img = $icon['footer_icon']["url"];
+    $title = $icon['footer_icon']["title"];
+    $url = $icon['footer_link'];
+
+    if($img && $url) {
+      echo "<a target='_blank' rel='noopener noreferrer' href='$url'>
+        <img src='$img' alt='$title'>
+      </a>";
+    }
+  };
+}

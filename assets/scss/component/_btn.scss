@@ -6,7 +6,7 @@
   line-height: 100%;
   border: get-d(1px) solid $bg-grey;
   border-radius: 100px;
-  transition: background 0.5s, border-color 0.5s, color 0.5s;
+  transition: background 0.3, border-color 0.3, color 0.3;
   @include respond(lg) {
     padding: get-lg(20px) get-lg(25px);
     font-size: get-lg(14px);
@@ -162,6 +162,52 @@
     @include respond(md) {
       gap: 12px;
       padding-top: 8px;
+    }
+  }
+}
+
+
+.chat {
+  position: fixed;
+  bottom: get-d(90px);
+  right: get-d(60px);
+  background: $bg-white;
+  z-index: 100;
+  font-weight: 600;
+  font-size: get-d(16px);
+  line-height: 100%;
+  border-radius: 100px;
+  display: flex;
+  align-items: center;
+  gap: get-d(4px);
+  padding: get-d(14px) get-d(20px);
+  @include respond(lg) {
+    bottom: get-lg(90px);
+    right: get-lg(60px);
+    font-size: get-lg(16px);
+    gap: get-lg(4px);
+    padding: get-lg(14px) get-lg(20px);
+  }
+  @include respond(md) {
+    bottom: 60px;
+    right: 30px;
+    font-size: 14px;
+    gap: 4px;
+    padding: 14px 20px;
+  }
+  &::before {
+    background: url("../svg/fluent_chat-12-filled.svg") center / contain no-repeat;
+    content: "";
+    width: get-d(22px);
+    height: get-d(22px);
+    display: inline-block;
+    @include respond(lg) {
+      width: get-lg(22px);
+      height: get-lg(22px);
+    }
+    @include respond(md) {
+      width: 16px;
+      height: 16px;
     }
   }
 }

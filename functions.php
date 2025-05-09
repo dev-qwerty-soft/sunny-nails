@@ -42,4 +42,3 @@ require_once get_template_directory() . '/inc/sync/sync-runner.php';
 require_once get_template_directory() . '/inc/admin/altegio-sync-page.php';
 require_once get_template_directory() . '/inc/api/altegio-client.php';
 require_once get_template_directory() . '/inc/helpers/api.php';
-require_once get_template_directory() . '/inc/setup/custom.php';

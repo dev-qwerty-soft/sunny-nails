@@ -9,11 +9,16 @@
 <body <?php body_class(); ?>>
 <header id="masthead" class="site-header header-three">
     <div class="container">
-        <div class="logo">
-            <?php if (has_custom_logo()): ?>
-                <?php the_custom_logo(); ?>
-            <?php endif; ?>
-        </div>
+        <a href="<?php echo esc_url(home_url('/')); ?>" class="logo">
+            <?php
+                $logo = get_field('header_logo', 'option');
+                if ($logo) {
+                    $url = $logo['url'];
+                    $alt = $logo['alt'];
+                    echo "<img src='$url' alt='$alt'>";
+                };
+            ?>
+        </a>
         <div class="location">
             <span>Singapore</span>
         </div>
@@ -52,3 +57,11 @@
     </div>
     <a href="#" class="btn white">Book an Appointment</a>
 </div>
+<?php
+    $chat_link_url = get_field('chat_link_url', 'option');
+    if($chat_link_url) {
+        echo "<a target='_blank' rel='noopener noreferrer' href='$chat_link_url' class='chat'>
+            <span>Chat</span>
+        </a>";
+    }
+?>

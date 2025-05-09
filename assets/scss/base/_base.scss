@@ -10,6 +10,10 @@ body {
   overflow-x: hidden;
   background: $bg-color;
   color: $bg-grey;
+  &:has(.burger-menu.active) {
+    height: 100vh;
+    overflow: hidden;
+  }
 }
 .hidden {
   overflow: hidden;

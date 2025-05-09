@@ -114,15 +114,17 @@ $reviews = [
             "full" => false
         ]);
     ?>
+    <?php
+        $services_link_url = get_field('services_link_url', 'option');
+    ?>
     <section class="services-preview-section">
         <div class="container">
             <div class="services-preview-section__top">
                 <h2 class="title"><?php the_field('services_title', 'option'); ?></h2>
                 <?php
-                    $url = get_field('services_link_url', 'option');
                     $text = get_field('services_link_text', 'option');
-                    if($url && $text) {
-                        echo "<a href='$url' class='btn yellow'>$text</a>";
+                    if($services_link_url && $text) {
+                        echo "<a href='$services_link_url' class='btn yellow'>$text</a>";
                     }
                 ?>
             </div>
@@ -131,11 +133,11 @@ $reviews = [
                     $index = 1;
                     foreach ($services as $service) {
                         $indexPretty = $index < 9 ? "0$index" : $index;
-                        echo "<div class='item'>
+                        echo "<a href='$services_link_url' class='item'>
                             <span class='item__number'>/$indexPretty</span>
                             <span class='item__title'>$service</span>
                             <span class='item__arrow'></span>
-                        </div>";
+                        </a>";
                         $index++;
                     };
                 ?>
