@@ -6,7 +6,8 @@
   line-height: 100%;
   border: get-d(1px) solid $bg-grey;
   border-radius: 100px;
-  transition: background 0.3, border-color 0.3, color 0.3;
+  transition: background 0.3s, border-color 0.3s, color 0.3s;
+  cursor: pointer;
   @include respond(lg) {
     padding: get-lg(20px) get-lg(25px);
     font-size: get-lg(14px);
@@ -99,6 +100,61 @@
     }
   }
 }
+
+// input[type="submit"] {
+//   padding: get-d(20px) get-d(25px);
+//   font-family: $font-family-inter;
+//   font-weight: 400;
+//   font-size: get-d(14px);
+//   line-height: 100%;
+//   border: get-d(1px) solid $bg-grey;
+//   border-radius: 100px;
+//   transition: background 0.3s, border-color 0.3s, color 0.3s;
+//   background: $bg-yellow;
+//   border-color: $bg-yellow;
+//   padding-right: get-d(24px + 32px);
+//   position: relative;
+//   overflow: hidden;
+//   cursor: pointer;
+//   @include respond(lg) {
+//     padding: get-lg(20px) get-lg(25px);
+//     font-size: get-lg(14px);
+//     border-width: get-lg(1px);
+//     padding-right: get-lg(25px + 47px);
+//   }
+//   @include respond(md) {
+//     padding: 14px 24px;
+//     font-size: 12px;
+//     border-width: 1px;
+//     padding-right: 25px + 47px;
+//   }
+//     &::before {
+//       position: absolute;
+//       height: calc(100% - get-d(8px));
+//       background: url("../svg/circle.svg") center / cover no-repeat;
+//       content: "";
+//       aspect-ratio: 1 / 1;
+//       right: get-d(4px);
+//       top: 50%;
+//       transform: translateY(-50%);
+//       transition: transform 0.5s;
+//       @include respond(lg) {
+//         right: get-lg(4px);
+//         height: calc(100% - get-lg(8px));
+//       }
+//       @include respond(md) {
+//         right: 2px;
+//         height: calc(100% - 4px);
+//       }
+//     }
+//     &:hover {
+//       background: #EEB614;
+//       border-color: #EEB614;
+//       &::before {
+//         transform: translateY(-50%) rotate(45deg);
+//       }
+//     }
+// }
 
 .info-item {
   display: flex;

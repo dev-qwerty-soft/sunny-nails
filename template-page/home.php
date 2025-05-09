@@ -5,15 +5,6 @@
  */
 get_header();
 
-$services = [
-    "Women’s Manicure",
-    "Women’s Pedicure",
-    "Men’s Manicure",
-    "Men’s Pedicure",
-    "Children’s Manicure",
-    "Children’s Pedicure"
-];
-
 $reviews = [
     [
         "text" => "I had an amazing experience at Sunny Nails! The staff is super friendly, and the manicure was flawless. The salon is clean and cozy. Definitely coming back!",
@@ -52,6 +43,28 @@ $reviews = [
         "image" => getUrl("images/image.png"),
     ],
 ];
+
+$ordered_category_ids = [];
+
+if (function_exists('get_field')) {
+    $ordered_category_ids = get_field('category_selection');
+}
+
+if (empty($ordered_category_ids)) {
+    $service_categories = get_terms([
+        'taxonomy' => 'service_category',
+        'hide_empty' => true,
+        'order' => 'DESC'
+    ]);
+} else {
+    $service_categories = [];
+    foreach ($ordered_category_ids as $cat_id) {
+        $term = get_term($cat_id, 'service_category');
+        if (!is_wp_error($term) && !empty($term)) {
+            $service_categories[] = $term;
+        }
+    }
+};
 
 ?>
 <main>
@@ -131,11 +144,12 @@ $reviews = [
             <div class="services-preview-section__items">
                 <?php
                     $index = 1;
-                    foreach ($services as $service) {
+                    foreach ($service_categories as $service) {
+                        $name = $service->name;
                         $indexPretty = $index < 9 ? "0$index" : $index;
                         echo "<a href='$services_link_url' class='item'>
                             <span class='item__number'>/$indexPretty</span>
-                            <span class='item__title'>$service</span>
+                            <span class='item__title'>$name</span>
                             <span class='item__arrow'></span>
                         </a>";
                         $index++;
@@ -144,6 +158,9 @@ $reviews = [
             </div>
         </div>
     </section>
+    <?php
+        get_template_part("template-parts/sections/form");
+    ?>
     <section class="reviews-section">
         <div class="container">
             <div class="reviews-section__top">
