@@ -1,0 +1,50 @@
+/* Validation alert styles */
+.validation-alert-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.validation-alert {
+  background-color: #242436;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 400px;
+  padding: 20px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+  color: #ffffff;
+}
+
+.validation-alert-title {
+  font-size: 14px;
+  color: #ffffff;
+  margin-bottom: 12px;
+}
+
+.validation-alert-message {
+  font-size: 16px;
+  margin-bottom: 20px;
+}
+
+.validation-alert-button {
+  background-color: #d9d4ff;
+  color: #302f34;
+  border: none;
+  border-radius: 25px;
+  padding: 8px 24px;
+  font-size: 14px;
+  cursor: pointer;
+  float: right;
+  transition: background-color 0.2s;
+}
+
+.validation-alert-button:hover {
+  background-color: #c5beff;
+}

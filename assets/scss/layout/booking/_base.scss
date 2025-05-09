@@ -1,0 +1,183 @@
+.booking-popup-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 9999;
+  overflow-y: auto;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+
+  &.active {
+    display: flex;
+  }
+}
+
+.booking-popup {
+  position: relative;
+  max-width: 929px;
+  width: 100%;
+  max-height: 90vh;
+  border-radius: 10px;
+  background: #f7f1e0;
+  overflow: hidden;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+.booking-popup-close {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 30px;
+  height: 30px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  z-index: 10;
+  transition: transform 0.2s ease;
+
+  &:hover {
+    transform: rotate(90deg);
+  }
+}
+.step-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 30px;
+}
+.booking-back-btn {
+  display: flex;
+  height: 32px;
+  padding: 4px 16px;
+  align-items: center;
+  gap: 6px;
+  border-radius: 50px;
+  border: 1px solid var(--black, #302f34);
+  background-color: transparent;
+  color: var(--black, #302f34);
+  font-size: 14px;
+  font-weight: 500;
+  position: relative;
+  cursor: pointer;
+  &::before {
+    content: "";
+    display: inline-block;
+    width: 20px;
+    height: 21px;
+    background-color: #292d32;
+    mask: url('data:image/svg+xml;utf8,<svg width="20" height="21" viewBox="0 0 20 21" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7.97422 16.1833C7.81589 16.1833 7.65755 16.125 7.53255 16L2.47422 10.9417C2.23255 10.7 2.23255 10.3 2.47422 10.0583L7.53255 5C7.77422 4.75833 8.17422 4.75833 8.41589 5C8.65755 5.24167 8.65755 5.64167 8.41589 5.88333L3.79922 10.5L8.41589 15.1167C8.65755 15.3583 8.65755 15.7583 8.41589 16C8.29922 16.125 8.13255 16.1833 7.97422 16.1833Z" fill="%23292D32"/><path d="M17.0836 11.125H3.05859C2.71693 11.125 2.43359 10.8417 2.43359 10.5C2.43359 10.1583 2.71693 9.875 3.05859 9.875H17.0836C17.4253 9.875 17.7086 10.1583 17.7086 10.5C17.7086 10.8417 17.4253 11.125 17.0836 11.125Z" fill="%23292D32"/></svg>') no-repeat center;
+    mask-size: contain;
+  }
+}
+
+.booking-popup-content {
+  padding: 50px;
+
+  @media (max-width: 768px) {
+    padding: 30px 20px;
+  }
+}
+
+.booking-title {
+  margin: 0 auto;
+
+  color: #302f34;
+  text-align: center;
+  font-size: 36px;
+  font-weight: 500;
+  line-height: 1.2;
+
+  @media (max-width: 768px) {
+    font-size: 28px;
+  }
+}
+
+.booking-steps-container {
+  position: relative;
+}
+
+.booking-step {
+  display: none;
+
+  &.active {
+    display: block;
+  }
+}
+.next-btn {
+  height: 55px;
+  padding: 4px 70px 4px 24px !important;
+  color: var(--black, #302f34);
+  font-size: 16px;
+  font-weight: 400;
+  line-height: normal;
+  &::before {
+    margin-left: 22px;
+  }
+}
+// Step 1: Initial Options
+.booking-option-item {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+  padding: 24px 30px;
+  margin-bottom: 10px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.7);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: rgba(48, 47, 52, 0.85);
+  font-size: 20px;
+  font-weight: 500;
+  line-height: 1.2;
+
+  &:hover {
+    background: rgba(253, 196, 31, 0.3);
+  }
+
+  &.active {
+    background: #fdc41f;
+    color: #302f34;
+
+    .option-icon {
+      background: #fff;
+    }
+  }
+}
+
+.option-icon {
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(253, 196, 31, 0.7);
+  border-radius: 50%;
+  transition: all 0.3s ease;
+}
+
+.option-text {
+  flex: 1;
+}
+
+.option-status {
+  width: 27px;
+  height: 27px;
+  margin-left: auto;
+}
+
+.status-indicator {
+  display: block;
+  width: 27px;
+  height: 27px;
+  border: 1px solid rgba(133, 117, 79, 0.3);
+  border-radius: 50%;
+  background: #fff;
+
+  &.active {
+    border-color: #302f34;
+  }
+}
