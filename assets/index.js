@@ -1,6 +1,7 @@
 import "./scss/main.min.scss";
 import "./js/index.js";
 import "./js/booking.js";
+import "./js/services-validation.js";
 import "swiper/css";
 import "swiper/css/pagination";
 import Swiper from "swiper";

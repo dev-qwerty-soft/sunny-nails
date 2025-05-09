@@ -23,61 +23,9 @@ class BookingController
 
         add_action('wp_ajax_get_i18n', [self::class, 'ajaxGetI18n']);
         add_action('wp_ajax_nopriv_get_i18n', [self::class, 'ajaxGetI18n']);
-
-        add_action('wp_enqueue_scripts', [self::class, 'enqueueAssets']);
-
-        add_action('wp_footer', [self::class, 'addBookingPopupToFooter']);
     }
 
-    public static function enqueueAssets()
-    {
-        $css_path = get_template_directory() . '/assets/css/booking.css';
-        $css_url = get_template_directory_uri() . '/assets/css/booking.css';
 
-        if (file_exists($css_path)) {
-            wp_register_style(
-                'booking-styles',
-                $css_url,
-                [],
-                filemtime($css_path)
-            );
-        } else {
-            wp_register_style(
-                'booking-styles',
-                $css_url
-            );
-        }
-
-        $js_path = get_template_directory() . '/assets/js/booking.js';
-        $js_url = get_template_directory_uri() . '/assets/js/booking.js';
-
-        if (file_exists($js_path)) {
-            wp_register_script(
-                'booking-script',
-                $js_url,
-                ['jquery'],
-                filemtime($js_path),
-                true
-            );
-        } else {
-            wp_register_script(
-                'booking-script',
-                $js_url,
-                ['jquery'],
-                null,
-                true
-            );
-        }
-
-        wp_localize_script('booking-script', 'booking_params', [
-            'ajax_url' => admin_url('admin-ajax.php'),
-            'nonce' => wp_create_nonce('booking_nonce'),
-            'translations' => self::getTranslations()
-        ]);
-
-        wp_enqueue_style('booking-styles');
-        wp_enqueue_script('booking-script');
-    }
 
     private static function getTranslations()
     {
