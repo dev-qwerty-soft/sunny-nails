@@ -6,7 +6,7 @@
     <link rel="profile" href="http://gmpg.org/xfn/11">
     <?php wp_head(); 
         $data = getPlaceReviews("ChIJN1t_tDeuEmsRUsoyG83frY4", "AIzaSyDM4NT14KUDqLh66ExmnsXBzHWLh-wavPA");
-        dump($data["reviews"][0]);
+        // dump($data["reviews"][0]);
     ?>
 </head>
 <body <?php body_class(); ?>>
