@@ -75,13 +75,13 @@ if (empty($ordered_category_ids)) {
                     <?php the_field('hero_title'); ?>
                 </h1>
                 <div class="hero-section__buttons">
-                    <button type="button open-popup" class="btn yellow">Free Manicure</button>
+                <button type="button" class="btn yellow open-popup">Free Manicure</button>
                     <?php
-                        $link = get_field('hero_link');
-                        $text = get_field('hero_link_text');
-                        if($link && $text) {
-                            echo "<a href='$link' class='btn'>$text</a>";
-                        }
+                    $link = get_field('hero_link');
+                    $text = get_field('hero_link_text');
+                    if ($link && $text) {
+                        echo "<a href='$link' class='btn'>$text</a>";
+                    }
                     ?>
                 </div>
             </div>
@@ -123,37 +123,37 @@ if (empty($ordered_category_ids)) {
         </div>
     </section>
     <?php
-        get_template_part("template-parts/gallery/gallery-grid", null, [
-            "full" => false
-        ]);
+    get_template_part("template-parts/gallery/gallery-grid", null, [
+        "full" => false
+    ]);
     ?>
     <?php
-        $services_link_url = get_field('services_link_url', 'option');
+    $services_link_url = get_field('services_link_url', 'option');
     ?>
     <section class="services-preview-section">
         <div class="container">
             <div class="services-preview-section__top">
                 <h2 class="title"><?php the_field('services_title', 'option'); ?></h2>
                 <?php
-                    $text = get_field('services_link_text', 'option');
-                    if($services_link_url && $text) {
-                        echo "<a href='$services_link_url' class='btn yellow'>$text</a>";
-                    }
+                $text = get_field('services_link_text', 'option');
+                if ($services_link_url && $text) {
+                    echo "<a href='$services_link_url' class='btn yellow'>$text</a>";
+                }
                 ?>
             </div>
             <div class="services-preview-section__items">
                 <?php
-                    $index = 1;
-                    foreach ($service_categories as $service) {
-                        $name = $service->name;
-                        $indexPretty = $index < 9 ? "0$index" : $index;
-                        echo "<a href='$services_link_url' class='item'>
+                $index = 1;
+                foreach ($service_categories as $service) {
+                    $name = $service->name;
+                    $indexPretty = $index < 9 ? "0$index" : $index;
+                    echo "<a href='$services_link_url' class='item'>
                             <span class='item__number'>/$indexPretty</span>
                             <span class='item__title'>$name</span>
                             <span class='item__arrow'></span>
                         </a>";
-                        $index++;
-                    };
+                    $index++;
+                };
                 ?>
             </div>
         </div>
@@ -172,12 +172,12 @@ if (empty($ordered_category_ids)) {
                 <div class="swiper reviews-swiper">
                     <div class="swiper-wrapper">
                         <?php
-                            foreach ($reviews as $slide) {
-                                $image = $slide["image"];
-                                $date = $slide["date"];
-                                $name = $slide["name"];
-                                $text = $slide["text"];
-                                echo "<div class='swiper-slide'>
+                        foreach ($reviews as $slide) {
+                            $image = $slide["image"];
+                            $date = $slide["date"];
+                            $name = $slide["name"];
+                            $text = $slide["text"];
+                            echo "<div class='swiper-slide'>
                                     <div class='review'>
                                         <div class='review__message'>
                                             <div class='review__rate'>
@@ -196,7 +196,7 @@ if (empty($ordered_category_ids)) {
                                         </div>
                                     </div>
                                 </div>";
-                            };
+                        };
                         ?>
                     </div>
                 </div>
@@ -206,7 +206,7 @@ if (empty($ordered_category_ids)) {
         </div>
     </section>
     <?php
-        get_template_part("template-parts/sections/contact");
+    get_template_part("template-parts/sections/contact");
     ?>
 </main>
 <?php get_footer(); ?>

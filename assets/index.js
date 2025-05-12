@@ -1,5 +1,7 @@
 import "./scss/main.min.scss";
 import "./js/index.js";
+import "./js/booking.js";
+import "./js/services-validation.js";
 import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/scrollbar";
@@ -13,7 +15,7 @@ let filterFn;
 const modal = g(".gallery-modal")
 const filterSection = g(".gallery-section");
 
-if(g(".hero-swiper")) {
+if (g(".hero-swiper")) {
   new Swiper(".hero-swiper", {
     modules: [Navigation, Pagination],
     slidesPerView: 1,
@@ -29,7 +31,7 @@ if(g(".hero-swiper")) {
   });
 } 
 
-if(g(".gallery-swiper")) {
+if (g(".gallery-swiper")) {
   gallerySwiper = new Swiper(".gallery-swiper", {
     modules: [Navigation],
     slidesPerView: 1,
@@ -132,13 +134,13 @@ document.onclick = (e) => {
     const menu = g(".burger-menu");
     window.scrollTo(0, 0);
     toggle([btn, menu]);
-  } else if(has(e.target, ".gallery-section__images .image")) {
+  } else if (has(e.target, ".gallery-section__images .image")) {
     const image = e.target.closest(".image");
     const index = Number(image.getAttribute("data-index"));
     gallerySwiper?.slideTo(index);
     add(modal);
-  } else if(has(e.target, ".gallery-modal .cross")) {
+  } else if (has(e.target, ".gallery-modal .cross")) {
     remove(modal);
     gallerySwiper?.slideTo(0);
   }
-}
+};

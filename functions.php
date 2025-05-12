@@ -42,3 +42,10 @@ require_once get_template_directory() . '/inc/sync/sync-runner.php';
 require_once get_template_directory() . '/inc/admin/altegio-sync-page.php';
 require_once get_template_directory() . '/inc/api/altegio-client.php';
 require_once get_template_directory() . '/inc/helpers/api.php';
+require_once get_template_directory() . '/inc/setup/custom.php';
+require_once get_template_directory() . '/inc/controllers/booking-controller.php';
+require_once get_template_directory() . '/inc/controllers/booking-popup-controller.php';
+
+// Initialize controllers
+add_action('after_setup_theme', ['BookingController', 'init']);
+add_action('after_setup_theme', ['BookingPopupController', 'init']);
