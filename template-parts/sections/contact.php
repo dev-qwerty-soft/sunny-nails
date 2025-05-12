@@ -1,4 +1,4 @@
-<div class="contact-section">
+<section class="contact-section">
   <div class="container">
     <div class="contact-section__content">
       <div class="contact-section__text">
@@ -55,4 +55,4 @@
       <div data-token="<?php the_field('map_token', 'option'); ?>" data-center='<?= $cords; ?>' id="map"></div>
     </div>
   </div>
-</div>
+</section>

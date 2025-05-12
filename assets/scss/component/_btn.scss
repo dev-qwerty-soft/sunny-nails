@@ -102,61 +102,6 @@
   }
 }
 
-// input[type="submit"] {
-//   padding: get-d(20px) get-d(25px);
-//   font-family: $font-family-inter;
-//   font-weight: 400;
-//   font-size: get-d(14px);
-//   line-height: 100%;
-//   border: get-d(1px) solid $bg-grey;
-//   border-radius: 100px;
-//   transition: background 0.3s, border-color 0.3s, color 0.3s;
-//   background: $bg-yellow;
-//   border-color: $bg-yellow;
-//   padding-right: get-d(24px + 32px);
-//   position: relative;
-//   overflow: hidden;
-//   cursor: pointer;
-//   @include respond(lg) {
-//     padding: get-lg(20px) get-lg(25px);
-//     font-size: get-lg(14px);
-//     border-width: get-lg(1px);
-//     padding-right: get-lg(25px + 47px);
-//   }
-//   @include respond(md) {
-//     padding: 14px 24px;
-//     font-size: 12px;
-//     border-width: 1px;
-//     padding-right: 25px + 47px;
-//   }
-//     &::before {
-//       position: absolute;
-//       height: calc(100% - get-d(8px));
-//       background: url("../svg/circle.svg") center / cover no-repeat;
-//       content: "";
-//       aspect-ratio: 1 / 1;
-//       right: get-d(4px);
-//       top: 50%;
-//       transform: translateY(-50%);
-//       transition: transform 0.5s;
-//       @include respond(lg) {
-//         right: get-lg(4px);
-//         height: calc(100% - get-lg(8px));
-//       }
-//       @include respond(md) {
-//         right: 2px;
-//         height: calc(100% - 4px);
-//       }
-//     }
-//     &:hover {
-//       background: #EEB614;
-//       border-color: #EEB614;
-//       &::before {
-//         transform: translateY(-50%) rotate(45deg);
-//       }
-//     }
-// }
-
 .info-item {
   display: flex;
   align-items: flex-start;
@@ -223,7 +168,6 @@
   }
 }
 
-
 .chat {
   position: fixed;
   bottom: get-d(90px);
@@ -265,6 +209,108 @@
     @include respond(md) {
       width: 16px;
       height: 16px;
+    }
+  }
+}
+
+.team-card {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: get-d(16px);
+  @include respond(lg) {
+    gap: get-lg(16px);
+  }
+  @include respond(md) {
+    gap: 10px;
+  }
+  &__image {
+    height: get-d(315px);
+    width: 100%;
+    object-fit: cover;
+    border-radius: get-d(10px);
+    @include respond(lg) {
+      height: get-lg(315px);
+      border-radius: get-lg(10px);
+    }
+    @include respond(md) {
+      height: 250px;
+      border-radius: 10px;
+    }
+  }
+  & .mini-swiper {
+    & .swiper-wrapper {
+      padding-bottom: get-d(16px);
+      @include respond(lg) {
+        padding-bottom: get-lg(16px);
+      }
+      @include respond(md) {
+        padding-bottom: 10px;
+      }
+    }
+    & .swiper-scrollbar {
+      height: get-d(6px);
+      width: 100%;
+      margin: 0;
+      background: #E0E0E0;
+      left: 0;
+      right: 0;
+      @include respond(lg) {
+        height: get-lg(6px);
+      }
+      @include respond(md) {
+        height: 4px;
+      }
+      & .swiper-scrollbar-drag {
+        background: $bg-yellow;
+      }
+    }
+  }
+  &__instagram {
+    width: get-d(30px);
+    height: get-d(30px);
+    background: url("../svg/inst.svg") center / contain no-repeat;
+    @include respond(lg) {
+      width: get-lg(30px);
+      height: get-lg(30px);
+    }
+    @include respond(md) {
+      width: 30px;
+      height: 30px;
+    }
+  }
+  &__text {
+    display: grid;
+    grid-template-columns: 1fr max-content;
+    grid-auto-rows: repeat(2, max-content);
+  }
+  &__rate {
+    grid-column: 1 / -1;
+  }
+  &__name {
+    font-weight: 500;
+    font-size: get-d(24px);
+    line-height: 120%;
+    @include respond(lg) {
+      font-size: get-lg(24px);
+    }
+    @include respond(md) {
+      font-size: 20px;
+    }
+  }
+  &__buttons {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 3fr 2fr;
+    @include respond(md) {
+      grid-template-columns: max-content;
+      justify-content: center;
+      & .btn {
+        display: none;
+        &.yellow {
+          display: block;
+        }
+      }
     }
   }
 }

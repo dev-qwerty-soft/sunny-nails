@@ -160,6 +160,7 @@ if (empty($ordered_category_ids)) {
     </section>
     <?php
         get_template_part("template-parts/sections/form");
+        get_template_part("template-parts/sections/team");
     ?>
     <section class="reviews-section">
         <div class="container">

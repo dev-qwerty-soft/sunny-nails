@@ -62,4 +62,22 @@ function displayIcon() {
       </a>";
     }
   };
-}
+};
+
+function getPlaceReviews($placeId, $apiKey) {
+  $url = "https://maps.googleapis.com/maps/api/place/details/json?place_id={$placeId}&fields=name,rating,reviews&language=en&key={$apiKey}";
+  $response = file_get_contents($url);
+  if ($response === false) {
+    return null;
+  }
+  $data = json_decode($response, true);
+  if (!isset($data['result'])) {
+    return null;
+  }
+  $result = $data['result'];
+  return [
+    'name' => $result['name'] ?? '',
+    'rating' => $result['rating'] ?? null,
+    'reviews' => $result['reviews'] ?? [],
+  ];
+};
