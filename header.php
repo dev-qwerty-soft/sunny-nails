@@ -4,10 +4,7 @@
     <meta charset="<?php bloginfo('charset'); ?>">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="profile" href="http://gmpg.org/xfn/11">
-    <?php wp_head(); 
-        $data = getPlaceReviews("ChIJN1t_tDeuEmsRUsoyG83frY4", "AIzaSyDM4NT14KUDqLh66ExmnsXBzHWLh-wavPA");
-        // dump($data["reviews"][0]);
-    ?>
+    <?php wp_head(); ?>
 </head>
 <body <?php body_class(); ?>>
 <header id="masthead" class="site-header header-three">

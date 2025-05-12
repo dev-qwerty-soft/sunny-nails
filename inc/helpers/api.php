@@ -81,3 +81,5 @@ function getPlaceReviews($placeId, $apiKey) {
     'reviews' => $result['reviews'] ?? [],
   ];
 };
+
+$data = getPlaceReviews("ChIJN1t_tDeuEmsRUsoyG83frY4", "AIzaSyDM4NT14KUDqLh66ExmnsXBzHWLh-wavPA");
