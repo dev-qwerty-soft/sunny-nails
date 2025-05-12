@@ -23,12 +23,14 @@ function render_reviews_sidebar_metabox() {
   }
  
   if (isset($_POST['submit_reviews']) && check_admin_referer('save_selected_reviews')) { 
-    $selected = isset($_POST['review']) ? (array) $_POST['review'] : []; 
+    $selected = isset($_POST['review']) ? (array) $_POST['review'] : [];
     update_option('selected_google_reviews', $selected); 
     echo '<div class="updated notice"><p>Selected reviews saved.</p></div>'; 
     $checked_reviews = [];
-    foreach ($reviews as $index => $review) {
-      $review_id = "review_$index";
+    foreach ($reviews as $review) {
+      $unique_key = md5($review['author_name'] . $review['text'] . $review['relative_time_description']);
+      $review_id = "review_$unique_key";
+
       if (in_array($review_id, $selected)) {
         $review['review_id'] = $review_id;
         $checked_reviews[] = $review;
@@ -43,8 +45,9 @@ function render_reviews_sidebar_metabox() {
   wp_nonce_field('save_selected_reviews'); 
   echo '<div class="reviews-list">'; 
  
-  foreach ($reviews as $index => $review) { 
-    $review_id = esc_attr("review_$index"); 
+  foreach ($reviews as $index => $review) {
+    $unique_key = md5($review['author_name'] . $review['text'] . $review['relative_time_description']);
+    $review_id = esc_attr("review_$unique_key");
     $name = esc_html($review['author_name']); 
     $profile_photo_url = esc_url($review['profile_photo_url']); 
     $rating = intval($review['rating']); 
@@ -52,7 +55,7 @@ function render_reviews_sidebar_metabox() {
     $author_url = esc_url($review['author_url']); 
     $relative_time_description = esc_html($review['relative_time_description']); 
     $stars = str_repeat('★', $rating); 
-    $checked = in_array($review_id, $saved_reviews) ? 'checked' : ''; 
+    $checked = in_array($review_id, $saved_reviews) ? 'checked' : '';
  
     echo "<label class='custom-review-card' for='$review_id'> 
       <input class='custom-review-card__input' type='checkbox' name='review[]' id='$review_id' value='$review_id' $checked> 
