@@ -3,71 +3,209 @@
 /**
  * Template Name: Home
  */
-
 get_header();
 
-$services = AltegioClient::getServices();
-$staff = AltegioClient::getStaff();
-?>
+$reviews = [
+    [
+        "text" => "I had an amazing experience at Sunny Nails! The staff is super friendly, and the manicure was flawless. The salon is clean and cozy. Definitely coming back!",
+        "name" => "Sunny Inferno",
+        "date" => "3 days ago",
+        "image" => getUrl("images/image.png"),
+    ],
+    [
+        "text" => "I had an amazing experience at Sunny Nails! The staff is super friendly, and the manicure was flawless. The salon is clean and cozy. Definitely coming back!",
+        "name" => "Sunny Inferno",
+        "date" => "3 days ago",
+        "image" => getUrl("images/image.png"),
+    ],
+    [
+        "text" => "I had an amazing experience at Sunny Nails! The staff is super friendly, and the manicure was flawless. The salon is clean and cozy. Definitely coming back!",
+        "name" => "Sunny Inferno",
+        "date" => "3 days ago",
+        "image" => getUrl("images/image.png"),
+    ],
+    [
+        "text" => "I had an amazing experience at Sunny Nails! The staff is super friendly, and the manicure was flawless. The salon is clean and cozy. Definitely coming back!",
+        "name" => "Sunny Inferno",
+        "date" => "3 days ago",
+        "image" => getUrl("images/image.png"),
+    ],
+    [
+        "text" => "I had an amazing experience at Sunny Nails! The staff is super friendly, and the manicure was flawless. The salon is clean and cozy. Definitely coming back!",
+        "name" => "Sunny Inferno",
+        "date" => "3 days ago",
+        "image" => getUrl("images/image.png"),
+    ],
+    [
+        "text" => "I had an amazing experience at Sunny Nails! The staff is super friendly, and the manicure was flawless. The salon is clean and cozy. Definitely coming back!",
+        "name" => "Sunny Inferno",
+        "date" => "3 days ago",
+        "image" => getUrl("images/image.png"),
+    ],
+];
 
-<main class="container" style="padding: 40px 0;">
-    <h1>Available Services</h1>
+$ordered_category_ids = [];
 
-    <?php if (!empty($services['data'])): ?>
-        <table style="width: 100%; border-collapse: collapse; margin-bottom: 60px;">
-            <thead>
-                <tr style="text-align: left; border-bottom: 2px solid #ccc;">
-                    <th style="padding: 8px;">#</th>
-                    <th style="padding: 8px;">Title</th>
-                    <th style="padding: 8px;">Min Price</th>
-                    <th style="padding: 8px;">Max Price</th>
-                    <th style="padding: 8px;">Duration (min)</th>
-                    <th style="padding: 8px;">Comment</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php foreach ($services['data'] as $i => $service): ?>
-                    <tr style="border-bottom: 1px solid #eee;">
-                        <td style="padding: 8px;"><?php echo $i + 1; ?></td>
-                        <td style="padding: 8px;"><?php echo esc_html($service['title'] ?? '—'); ?></td>
-                        <td style="padding: 8px;"><?php echo esc_html($service['price_min'] ?? '-'); ?> ₴</td>
-                        <td style="padding: 8px;"><?php echo esc_html($service['price_max'] ?? '-'); ?> ₴</td>
-                        <td style="padding: 8px;"><?php echo isset($service['duration']) ? round($service['duration'] / 60) : '-'; ?></td>
-                        <td style="padding: 8px;"><?php echo esc_html($service['comment'] ?? ''); ?></td>
-                    </tr>
-                <?php endforeach; ?>
-            </tbody>
-        </table>
-    <?php else: ?>
-        <p style="color: red;">Failed to fetch services: <?php echo esc_html($services['error'] ?? 'Unknown issue'); ?></p>
-    <?php endif; ?>
-
-    <h1>Our Team</h1>
-    <pre style="background: #f6f6f6; padding: 20px; border-radius: 10px; overflow-x: auto;">
-<?php
-function render_pretty_array($array, $depth = 0)
-{
-    $indent = str_repeat('    ', $depth);
-    foreach ($array as $key => $value) {
-        if (is_array($value)) {
-            echo "{$indent}<strong>$key:</strong><br>";
-            render_pretty_array($value, $depth + 1);
-        } else {
-            $safeVal = is_bool($value) ? ($value ? 'true' : 'false') : htmlspecialchars((string)$value);
-            echo "{$indent}<strong>$key:</strong> $safeVal<br>";
-        }
-    }
+if (function_exists('get_field')) {
+    $ordered_category_ids = get_field('category_selection');
 }
 
-$firstStaff = $staff['data'][0] ?? [];
-render_pretty_array($firstStaff);
+if (empty($ordered_category_ids)) {
+    $service_categories = get_terms([
+        'taxonomy' => 'service_category',
+        'hide_empty' => true,
+        'order' => 'DESC'
+    ]);
+} else {
+    $service_categories = [];
+    foreach ($ordered_category_ids as $cat_id) {
+        $term = get_term($cat_id, 'service_category');
+        if (!is_wp_error($term) && !empty($term)) {
+            $service_categories[] = $term;
+        }
+    }
+};
+
 ?>
-</pre>
-
-
-
-
-
+<main>
+    <section class="hero-section">
+        <div class="container">
+            <div class="hero-section__top">
+                <h1 class="title">
+                    <?php the_field('hero_title'); ?>
+                </h1>
+                <div class="hero-section__buttons">
+                <button type="button" class="btn yellow open-popup">Free Manicure</button>
+                    <?php
+                    $link = get_field('hero_link');
+                    $text = get_field('hero_link_text');
+                    if ($link && $text) {
+                        echo "<a href='$link' class='btn'>$text</a>";
+                    }
+                    ?>
+                </div>
+            </div>
+            <div class="swiper hero-swiper button-container">
+                <div class="swiper-wrapper">
+                    <?php
+                    foreach (get_field('hero_slides') as $slide) {
+                        $img = $slide["url"];
+                        $title = $slide["title"];
+                        echo "<div class='swiper-slide'>
+                            <img src='$img' alt='$title'>
+                        </div>";
+                    }
+                    ?>
+                </div>
+                <div class="swiper-pagination"></div>
+                <button type="button" aria-label="Next slide" class="button swiper-button-next"></button>
+                <button type="button" aria-label="Previous slide" class="button swiper-button-prev"></button>
+            </div>
+        </div>
+    </section>
+    <section class="reasons-section">
+        <div class="container">
+            <h2 class="title"><?php the_field('choose_title'); ?></h2>
+            <div class="reasons-section__items">
+                <?php
+                foreach (get_field('choose_cards') as $card) {
+                    $text = $card["card_text"];
+                    $image = $card["card_image"];
+                    $url = $image["url"];
+                    $title = $image["title"];
+                    echo "<div class='item'>
+              <img src='$url' alt='$title'>
+              <span>$text</span>
+            </div>";
+                };
+                ?>
+            </div>
+        </div>
+    </section>
+    <?php
+    get_template_part("template-parts/gallery/gallery-grid", null, [
+        "full" => false
+    ]);
+    ?>
+    <?php
+    $services_link_url = get_field('services_link_url', 'option');
+    ?>
+    <section class="services-preview-section">
+        <div class="container">
+            <div class="services-preview-section__top">
+                <h2 class="title"><?php the_field('services_title', 'option'); ?></h2>
+                <?php
+                $text = get_field('services_link_text', 'option');
+                if ($services_link_url && $text) {
+                    echo "<a href='$services_link_url' class='btn yellow'>$text</a>";
+                }
+                ?>
+            </div>
+            <div class="services-preview-section__items">
+                <?php
+                $index = 1;
+                foreach ($service_categories as $service) {
+                    $name = $service->name;
+                    $indexPretty = $index < 9 ? "0$index" : $index;
+                    echo "<a href='$services_link_url' class='item'>
+                            <span class='item__number'>/$indexPretty</span>
+                            <span class='item__title'>$name</span>
+                            <span class='item__arrow'></span>
+                        </a>";
+                    $index++;
+                };
+                ?>
+            </div>
+        </div>
+    </section>
+    <?php
+    get_template_part("template-parts/sections/form");
+    ?>
+    <section class="reviews-section">
+        <div class="container">
+            <div class="reviews-section__top">
+                <h2 class="title">What Our Clients Say</h2>
+                <a href="#" class="btn white">Leave a Review</a>
+            </div>
+            <div class="reviews-section__wrapper button-container">
+                <div class="swiper reviews-swiper">
+                    <div class="swiper-wrapper">
+                        <?php
+                        foreach ($reviews as $slide) {
+                            $image = $slide["image"];
+                            $date = $slide["date"];
+                            $name = $slide["name"];
+                            $text = $slide["text"];
+                            echo "<div class='swiper-slide'>
+                                    <div class='review'>
+                                        <div class='review__message'>
+                                            <div class='review__rate'>
+                                                <div class='star'></div>
+                                                <div class='star'></div>
+                                                <div class='star'></div>
+                                                <div class='star'></div>
+                                                <div class='star'></div>
+                                            </div>
+                                            <p>$text</p>
+                                        </div>
+                                        <div class='review__info'>
+                                            <img src='$image' alt='$name'>
+                                            <span class='review__name'>$name</span>
+                                            <span class='review__date'>$date</span>
+                                        </div>
+                                    </div>
+                                </div>";
+                        };
+                        ?>
+                    </div>
+                </div>
+                <button type="button" aria-label="Next slide" class="button swiper-button-next"></button>
+                <button type="button" aria-label="Previous slide" class="button swiper-button-prev"></button>
+            </div>
+        </div>
+    </section>
+    <?php
+    get_template_part("template-parts/sections/contact");
+    ?>
 </main>
-
 <?php get_footer(); ?>

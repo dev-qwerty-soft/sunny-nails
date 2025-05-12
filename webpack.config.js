@@ -1,6 +1,5 @@
 const path = require("path");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
 const TerserPlugin = require("terser-webpack-plugin");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 
@@ -19,41 +18,63 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.(scss|css)$/,
+        test: /\.s[ac]ss$/i,
+        exclude: /node_modules/,
         use: [
           MiniCssExtractPlugin.loader,
           "css-loader",
-          {
-            loader: "postcss-loader",
-            options: {
-              postcssOptions: {
-                plugins: [require("autoprefixer")],
-              },
-            },
-          },
-          {
-            loader: "sass-loader",
-            options: {
-              implementation: require("sass"),
-              sassOptions: {
-                silenceDeprecations: ["legacy-js-api"],
-              },
-            },
-          },
+          "postcss-loader",
+          "sass-loader",
         ],
+      },
+      {
+        test: /\.css$/i,
+        use: [
+          MiniCssExtractPlugin.loader,
+          "css-loader",
+          "postcss-loader",
+        ]
+      },
+      {
+        test: /\.(woff(2)?|eot|ttf|otf|)$/,
+        type: "asset/resource",
+        generator: {
+          filename: "fonts/[name]-[hash][ext]",
+        },
       },
       {
         test: /\.(png|jpe?g|gif|svg|webp)$/i,
         type: "asset/resource",
         generator: {
-          filename: "images/[name][ext]",
+          filename: "images/[hash][ext]",
         },
       },
     ],
   },
   optimization: {
     minimize: isProd,
-    minimizer: [new CssMinimizerPlugin(), new TerserPlugin()],
+    minimizer: [
+        new TerserPlugin({
+            test: /\.[jt]sx?(\?.*)?$/i,
+            terserOptions: {
+            compress: {
+                drop_console: isProd,
+                unused: true,
+                dead_code: true,
+                arguments: true,
+                conditionals: true,
+                evaluate: true,
+            },
+            mangle: {
+                reserved: ['$', 'exports', 'require', 'module'],
+            },
+            format: {
+                comments: false,
+                beautify: false,
+            },
+            },
+        }),
+    ],
   },
   plugins: [
     new MiniCssExtractPlugin({

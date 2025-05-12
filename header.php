@@ -1,44 +1,67 @@
 <!DOCTYPE html>
 <html <?php language_attributes(); ?>>
-
 <head>
     <meta charset="<?php bloginfo('charset'); ?>">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="profile" href="http://gmpg.org/xfn/11">
-    <link rel="preload" href="<?php echo esc_url(get_template_directory_uri()) ?>/assets/src/fonts/font.css" as="style" type="text/css" crossorigin>
     <?php wp_head(); ?>
 </head>
-
 <body <?php body_class(); ?>>
-
-    <header id="masthead" class="site-header header-three">
-        <div class="container">
-            <div class="logo">
-                <?php if (has_custom_logo()): ?>
-                    <?php the_custom_logo(); ?>
-                <?php endif; ?>
-            </div>
-
-            <div class="menu-container">
-                <div id="nav__burger-menu" class="nav__burger-menu">
-                    <div class="burger-menu_button">
-                        <span class="burger-menu_lines"></span>
-                    </div>
-                </div>
-
-                <nav id="burger-menu_nav" class="burger-menu_nav">
-                    <?php
+<header id="masthead" class="site-header header-three">
+    <div class="container">
+        <a href="<?php echo esc_url(home_url('/')); ?>" class="logo">
+            <?php
+                $logo = get_field('header_logo', 'option');
+                if ($logo) {
+                    $url = $logo['url'];
+                    $alt = $logo['alt'];
+                    echo "<img src='$url' alt='$alt'>";
+                };
+            ?>
+        </a>
+        <div class="location">
+            <span>Singapore</span>
+        </div>
+        <div class="menu-container">
+            <button id="burger" class="burger">
+                <span class="bar bar--top"></span>
+                <span class="bar bar--middle"></span>
+                <span class="bar bar--bottom"></span>
+            </button>
+            <nav>
+                <?php
                     wp_nav_menu(
                         array(
                             'theme_location' => 'main-menu',
                             'container' => 'ul',
                         )
                     );
-                    ?>
-                </nav>
-            </div>
-
+                ?>
+            </nav>
         </div>
-    </header>
-
-    <main>
+    </div>
+</header>
+<div class="burger-menu">
+    <nav>
+        <?php
+            wp_nav_menu(
+                array(
+                    'theme_location' => 'main-menu',
+                    'container' => 'ul',
+                )
+            );
+        ?>
+    </nav>
+    <div class="icons">
+        <?php displayIcon(); ?>
+    </div>
+    <a href="#" class="btn white">Book an Appointment</a>
+</div>
+<?php
+    $chat_link_url = get_field('chat_link_url', 'option');
+    if($chat_link_url) {
+        echo "<a target='_blank' rel='noopener noreferrer' href='$chat_link_url' class='chat'>
+            <span>Chat</span>
+        </a>";
+    }
+?>

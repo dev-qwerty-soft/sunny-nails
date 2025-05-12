@@ -1,0 +1,221 @@
+.services-section {
+  background-color: #f7f1e0;
+  padding: 40px 0 75px;
+  .container {
+    box-sizing: border-box;
+    padding: 0 15px;
+    max-width: 1320px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  @media screen and (min-width: 1350px) {
+    .container {
+      padding: 0;
+    }
+  }
+}
+
+/* Page header styling */
+.services-header {
+  display: flex;
+  flex-direction: column;
+}
+
+.section-title {
+  color: #302f34;
+  font-size: 65px;
+  font-weight: 500;
+  line-height: 120%; /* 78px */
+}
+
+.section-description {
+  max-width: 534px;
+  color: #302f34;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 130%; /* 20.8px */
+}
+.services-content {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 50px;
+  column-gap: 17px;
+}
+.category-block {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: fit-content;
+  padding: 20px;
+  align-items: center;
+  flex: 1 0 0;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.75);
+}
+.services-list {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.service-card {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  padding: 20px 0;
+  border-bottom: 1px solid rgba(133, 117, 79, 0.3);
+  &:last-child {
+    padding: 20px 0 0 0;
+    border-bottom: none;
+  }
+}
+.category-overview-item {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.categories-overview {
+  width: 100%;
+}
+.category-image {
+  width: 100%;
+  height: auto;
+  img {
+    width: 100%;
+    height: auto;
+    border-radius: 10px;
+    max-height: 291px;
+    object-fit: cover;
+  }
+}
+.category-name {
+  font-size: 24px;
+  font-weight: 600;
+  line-height: normal;
+}
+
+.service-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  color: #302f34;
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 140%; /* 25.2px */
+}
+.service-price {
+  text-wrap: nowrap;
+}
+/* Service meta information styling */
+.service-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.service-duration,
+.service-wear-time {
+  color: var(--black, #302f34);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 140%;
+}
+
+/* Custom styling for the mockup description text */
+.service-description {
+  color: #302f34;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 140%; /* 19.6px */
+}
+
+.book-btn {
+  display: flex;
+  height: 40px;
+  padding: 4px 4px 4px 14px;
+  align-items: center;
+  gap: 17px;
+  border-radius: 58px;
+  background: #fdc41f;
+  width: fit-content;
+  color: #302f34;
+  font-family: "Inter" sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: normal;
+  transition: all 0.3s ease-in-out;
+  .book-bt__icon {
+    display: flex;
+    width: 34px;
+    height: 34px;
+    padding: 6px 5px;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    border-radius: 50%;
+    border: 0.838px solid #414141;
+    background: rgba(255, 255, 255, 0);
+    transform: rotate(0deg);
+    transition: all 0.3s ease-in-out;
+    svg {
+      width: 10.245px;
+      height: 11.953px;
+    }
+  }
+  &:hover {
+    transition: all 0.3s ease-in-out;
+    background: #eeb614;
+    cursor: pointer;
+    .book-bt__icon {
+      transition: all 0.3s ease-in-out;
+      transform: rotate(45deg);
+    }
+  }
+}
+
+/* Responsive styles */
+@media (max-width: 1023px) {
+  .services-content {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 767px) {
+  .services-section {
+    padding: 15px 0 50px;
+    .container {
+      gap: 16px;
+    }
+  }
+  .services-header {
+    gap: 11px;
+  }
+  .section-title {
+    font-size: 32px;
+    line-height: 100%; /* 32px */
+    letter-spacing: -0.96px;
+  }
+  .section-description {
+    font-size: 14px;
+    line-height: 130%; /* 18.2px */
+  }
+  .services-content {
+    grid-template-columns: 1fr;
+    gap: 16px !important;
+  }
+  .category-overview-item {
+    gap: 10px;
+  }
+  .service-card {
+    &:first-child {
+      padding: 10px 0 20px 0;
+    }
+  }
+  .book-btn {
+    margin: 0 auto;
+  }
+}

@@ -1,0 +1,1204 @@
+.hero-section {
+  &__top {
+    display: grid;
+    grid-template-columns: 1fr max-content;
+    align-items: flex-end;
+    padding: get-d(40px) get-d(60px);
+    @include respond(lg) {
+      padding: get-lg(40px) get-lg(60px);
+    }
+    @include respond(md) {
+      padding: 0 25px 16px 25px;
+      grid-template-columns: 1fr;
+    }
+  }
+  &__buttons {
+    display: flex;
+    @include respond(md) {
+      margin-top: 12px;
+    }
+  }
+}
+
+.hero-swiper {
+  width: 100%;
+  height: get-d(610px);
+  position: relative;
+  @include respond(lg) {
+    height: get-lg(610px);
+  }
+  @include respond(md) {
+    height: 520px;
+  }
+  & img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  & .swiper-pagination {
+    & .swiper-pagination-bullet {
+      background: #f7f1e0;
+      width: get-d(10px);
+      height: get-d(10px);
+      opacity: 1;
+      transition: background 0.5s;
+      @include respond(lg) {
+        width: get-lg(10px);
+        height: get-lg(10px);
+      }
+      @include respond(md) {
+        width: 8px;
+        height: 8px;
+      }
+      &.swiper-pagination-bullet-active {
+        background: $bg-yellow;
+      }
+    }
+  }
+}
+
+.button-container {
+  position: relative;
+  & .button {
+    position: absolute;
+    width: get-d(40px);
+    height: get-d(40px);
+    top: 50%;
+    transform: translateY(-50%);
+    background: url("../svg/arrows.svg") center / cover no-repeat;
+    z-index: 1;
+    @include respond(lg) {
+      width: get-lg(40px);
+      height: get-lg(40px);
+    }
+    @include respond(md) {
+      width: 32px;
+      height: 32px;
+    }
+    &.swiper-button-next {
+      right: get-d(20px);
+      transform: translateY(-50%) rotate(180deg);
+      @include respond(lg) {
+        right: get-lg(20px);
+      }
+      @include respond(md) {
+        right: 10px;
+      }
+    }
+    &.swiper-button-prev {
+      left: get-d(20px);
+      @include respond(lg) {
+        left: get-lg(20px);
+      }
+      @include respond(md) {
+        left: 10px;
+      }
+    }
+  }
+}
+
+.reasons-section {
+  padding: get-d(150px) get-d(60px) get-d(75px) get-d(60px);
+  @include respond(lg) {
+    padding: get-lg(150px) get-lg(60px) get-lg(75px) get-lg(60px);
+  }
+  @include respond(md) {
+    padding: 75px 25px;
+  }
+  &__items {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-gap: get-d(20px);
+    grid-auto-rows: 1fr;
+    margin-top: get-d(30px);
+    @include respond(lg) {
+      grid-gap: get-lg(20px);
+      margin-top: get-lg(30px);
+    }
+    @include respond(md) {
+      grid-template-columns: repeat(2, 1fr);
+      grid-gap: 10px;
+      margin-top: 28px;
+    }
+    & .item {
+      background: #ffffffbf;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: get-d(16px);
+      border-radius: get-d(10px);
+      padding-bottom: get-d(30px);
+      @include respond(lg) {
+        gap: get-lg(16px);
+        padding-bottom: get-lg(30px);
+        border-radius: get-lg(10px);
+      }
+      @include respond(md) {
+        gap: 0;
+        padding-bottom: 20px;
+        border-radius: 6px;
+        height: 145px;
+        justify-content: center;
+      }
+      & img {
+        aspect-ratio: 1 / 1;
+        width: get-d(126px);
+        @include respond(lg) {
+          width: get-lg(126px);
+        }
+        @include respond(md) {
+          width: 80px;
+        }
+      }
+      & span {
+        font-weight: 500;
+        font-size: get-d(24px);
+        line-height: 120%;
+        text-align: center;
+        max-width: get-d(250px);
+        @include respond(lg) {
+          font-size: get-lg(24px);
+          max-width: get-lg(250px);
+        }
+        @include respond(md) {
+          font-size: 12px;
+          max-width: 200px;
+        }
+      }
+    }
+  }
+}
+
+.contact-section {
+  padding: get-d(150px) get-d(60px);
+  @include respond(lg) {
+    padding: get-lg(150px) get-lg(60px);
+  }
+  @include respond(md) {
+    padding: 75px 25px;
+  }
+  & .container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    @include respond(lg) {
+      grid-template-columns: 1fr;
+      grid-gap: get-lg(32px);
+    }
+    @include respond(md) {
+      grid-template-columns: 1fr;
+      grid-gap: 20px;
+    }
+  }
+  &__text {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-direction: column;
+    gap: get-d(16px);
+    @include respond(lg) {
+      gap: get-lg(16px);
+    }
+    @include respond(md) {
+      gap: 10px;
+    }
+  }
+  &__content {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-gap: get-d(36px) get-d(10px);
+    @include respond(lg) {
+      grid-gap: get-lg(36px) get-lg(10px);
+    }
+    @include respond(md) {
+      grid-template-columns: 1fr;
+      grid-gap: 20px;
+    }
+  }
+  &__map {
+    position: relative;
+    overflow: hidden;
+    border-radius: get-d(10px);
+    @include respond(lg) {
+      border-radius: get-lg(10px);
+      aspect-ratio: 1/1;
+    }
+    @include respond(md) {
+      border-radius: 6px;
+    }
+    & .btn {
+      position: absolute;
+      left: get-d(20px);
+      bottom: get-d(24px);
+      z-index: 1;
+      @include respond(lg) {
+        left: get-lg(20px);
+        bottom: get-lg(24px);
+      }
+      @include respond(md) {
+        left: 20px;
+        bottom: 24px;
+      }
+    }
+  }
+}
+
+@mixin codeBig () {
+  grid-row: span 2;
+  grid-column: span 2;
+  & .image__back {
+    padding-top: get-d(170px);
+    & .image__title {
+      font-size: get-d(36px);
+    }
+  }
+  @include respond(lg) {
+    & .image__back {
+      padding-top: get-lg(170px);
+      & .image__title {
+        font-size: get-lg(36px);
+      }
+    }
+  }
+  @include respond(md) {
+    & .image__back {
+      padding-top: 170px;
+      & .image__title {
+        font-size: 24px;
+      }
+    }
+  }
+}
+
+.stars {
+  display: flex;
+  align-items: center;
+
+  font-weight: 500;
+  font-size: get-d(14px);
+  line-height: 120%;
+
+  @include respond(lg) {
+    font-size: get-lg(14px);
+  }
+  @include respond(md) {
+    font-size: 12px;
+  }
+
+  & span {
+    margin: 0 0 0 get-d(4px);
+    @include respond(lg) {
+      margin: 0 0 0 get-lg(4px);
+    }
+    @include respond(md) {
+      margin: 0 0 0 4px;
+    }
+  }
+
+
+  & .star {
+    width: get-d(24px);
+    height: get-d(24px);
+    background: url("../svg/material-symbols-light_star-shine.svg") center / cover no-repeat;
+
+    @include respond(lg) {
+      width: get-lg(24px);
+      height: get-lg(24px);
+    }
+    @include respond(md) {
+      width: 24px;
+      height: 24px;
+    }
+  }
+}
+
+.gallery-section {
+  padding: get-d(75px) get-d(60px);
+
+  @include respond(lg) {
+    padding: get-lg(75px) get-lg(60px);
+  }
+  @include respond(md) {
+    padding: 75px 25px;
+  }
+
+  &:not(.full) {
+    & .image {
+      &:nth-of-type(5n + 3) {
+        @include codeBig();
+      }
+    }
+  }
+
+  &.full {
+    & .image {
+      &:nth-of-type(10n + 3),
+      &:nth-of-type(10n + 6) {
+        @include codeBig();
+      }
+      &.active {
+        display: block !important;
+      }
+    }
+  }
+
+  & .container {
+    display: flex;
+    flex-direction: column;
+    gap: get-d(20px);
+    align-items: center;
+    @include respond(lg) {
+      gap: get-lg(20px);
+    }
+    @include respond(md) {
+      gap: 14px;
+    }
+  }
+
+  &__top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+
+    @include respond(md) {
+      flex-direction: column;
+      gap: 10px;
+      align-items: flex-start;
+    }
+
+    & .paragraph {
+      max-width: get-d(490px);
+      @include respond(lg) {
+        max-width: get-lg(490px);
+      }
+      @include respond(md) {
+        max-width: none;
+      }
+    }
+  }
+
+  &__filters {
+    display: flex;
+    align-items: center;
+    gap: get-d(4px);
+    flex-wrap: wrap;
+    width: 100%;
+
+    @include respond(lg) {
+      gap: get-lg(4px);
+    }
+
+    @include respond(md) {
+      gap: 4px;
+    }
+
+    & .filter {
+      font-weight: 500;
+      font-size: get-d(14px);
+      line-height: 120%;
+      text-align: center;
+      padding: get-d(9.5px) get-d(20px);
+      border-radius: 100px;
+      border: get-d(1px) solid $bg-grey;
+      transition: background 0.5s, border-color 0.5s;
+      background: none;
+      text-transform: capitalize;
+
+      @include respond(lg) {
+        padding: get-lg(9.5px) get-lg(20px);
+        font-size: get-lg(14px);
+        border-width: get-lg(1px);
+      }
+
+      @include respond(md) {
+        padding: 9.5px 20px;
+        font-size: 12px;
+        border-width: 1px;
+      }
+
+      &.active {
+        background: $bg-yellow;
+        border-color: $bg-yellow;
+      }
+    }
+  }
+
+  &__images {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-auto-rows: 1fr;
+    grid-gap: get-d(20px);
+
+    @include respond(lg) {
+      grid-gap: get-lg(20px);
+    }
+    @include respond(md) {
+      grid-gap: 10px;
+      grid-template-columns: repeat(2, 1fr);
+    }
+    @include respond(sm) {
+      grid-template-columns: repeat(1, 1fr);
+    }
+
+    & .image {
+      width: 100%;
+      height: 100%;
+      aspect-ratio: 1 / 1;
+      
+      position: relative;
+      display: none;
+      perspective: 1000px;
+      cursor: pointer;
+
+      @include respond(md) {
+        grid-column: span 1 !important;
+        grid-row: span 1 !important;
+        
+      }
+
+
+      & .wrapper {
+        position: absolute;
+        left: get-d(16px);
+        right: get-d(16px);
+        bottom: get-d(16px);
+        z-index: 1;
+        display: grid;
+        grid-template-columns: max-content max-content;
+        justify-content: space-between;
+
+        @include respond(lg) {
+          left: get-lg(16px);
+          right: get-lg(16px);
+          bottom: get-lg(16px);
+        }
+        @include respond(md) {
+          left: 10px;
+          right: 10px;
+          bottom: 10px;
+        }
+
+        & .btn {
+          padding: get-d(10px) get-d(40px) get-d(10px) get-d(15px);
+          @include respond(lg) {
+            padding: get-lg(10px) get-lg(40px) get-lg(10px) get-lg(15px);
+          }
+          @include respond(md) {
+            padding: 10px 40px 10px 15px;
+          }
+        }
+
+        & .view {
+          aspect-ratio: 1 / 1;
+          height: 100%;
+          background: url("../svg/view.svg") center / cover no-repeat;
+          display: none;
+          @include respond(md) {
+            display: block;
+          }
+        }
+      }
+      
+
+      &.active {
+        display: block;
+      }
+    
+      &__front,
+      &__back {
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        backface-visibility: hidden;
+        transition: transform 0.8s ease;
+        top: 0;
+        left: 0;
+        border-radius: inherit;
+        border-radius: get-d(10px);
+        overflow: hidden;
+        @include respond(lg) {
+          border-radius: get-lg(10px);
+        }
+        @include respond(md) {
+          border-radius: 8px;
+        }
+      }
+    
+      &__front {
+        z-index: 2;
+        transform: rotateY(0deg);
+      }
+    
+      &__back {
+        background: $bg-yellow;
+        transform: rotateY(180deg);
+        z-index: 1;
+        padding: get-d(24px) get-d(16px) get-d(82px) get-d(16px);
+        display: grid;
+        grid-template-columns: 1fr;
+        grid-template-rows: 1fr repeat(3, max-content);
+        grid-gap: get-d(10px);
+
+        @include respond(lg) {
+          padding: get-lg(24px) get-lg(16px) get-lg(82px) get-lg(16px);
+          grid-gap: get-lg(10px);
+        }
+        @include respond(md) {
+          padding: 24px 16px 82px 16px;
+          grid-gap: 10px;
+          display: none;
+        }
+      }
+
+      &__title {
+        font-weight: 500;
+        font-size: get-d(20px);
+        line-height: 150%;
+
+        @include respond(lg) {
+          font-size: get-lg(20px);
+        }
+        @include respond(md) {
+          font-size: 24px;
+        }
+      }
+
+      &__master, &__price {
+        font-weight: 500;
+        font-size: get-d(16px);
+        line-height: 150%;
+
+        @include respond(lg) {
+          font-size: get-lg(16px);
+        }
+        @include respond(md) {
+          font-size: 16px;
+        }
+      }
+    
+      &:hover {
+        .image__front {
+          transform: rotateY(-180deg);
+          @include respond(md) {
+            transform: rotateY(0deg);
+          }
+        }
+    
+        .image__back {
+          transform: rotateY(0deg);
+          @include respond(md) {
+            transform: rotateY(0deg);
+          }
+        }
+      }
+    
+      & img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
+    }
+    
+  }
+}
+
+.gallery-modal {
+  position: fixed;
+  width: 100%;
+  height: 100vh;
+  background: $bg-yellow;
+  top: 0;
+  left: 0;
+  z-index: 105;
+  padding: 72px 0;
+  opacity: 0;
+  pointer-events: none;
+  transition: all .5s;
+  display: none;
+  @include respond(md) {
+    display: block;
+  }
+  & .cross {
+    position: absolute;
+    top: 24px;
+    right: 24px;
+    width: 20px;
+    height: 20px;
+    background: url("../svg/cross.svg") center / cover no-repeat;
+  }
+  &.active {
+    opacity: 1;
+    pointer-events: all;
+  }
+}
+
+.gallery-swiper {
+  width: 100%;
+  & .swiper-slide {
+    padding: 0 24px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    & img {
+      width: 100%;
+      height: auto;
+      aspect-ratio: 1/1;
+      object-fit: cover;
+      max-width: 325px;
+      margin: 0 auto;
+      border-radius: 10px;
+    }
+    & .btn {
+      text-align: center;
+    }
+    & .image__title {
+      font-weight: 600;
+      font-size: 24px;
+      line-height: 120%;
+    }
+    & .image__master, & .image__price {
+      font-weight: 500;
+      font-size: 16px;
+      line-height: 150%;
+    }
+  }
+  & .button {
+    position: absolute;
+    width: 20px !important;
+    height: 20px !important;
+    top: clamp(32%, 10vw, 50%);
+    transform: translateY(-50%);
+    background: url("../svg/arrow-black.svg") center / contain no-repeat;
+    z-index: 1;
+    &.swiper-button-next {
+      right: 0 !important;
+      transform: translateY(-50%) rotate(180deg);
+    }
+    &.swiper-button-prev {
+      left: 0 !important;
+    }
+  }
+}
+
+.services-preview-section {
+  padding: get-d(75px) get-d(60px);
+  @include respond(lg) {
+    padding: get-lg(75px) get-lg(60px);
+  }
+  @include respond(md) {
+    padding: 75px 25px;
+  }
+  & .container {
+    @include respond(md) {
+      display: grid;
+      grid-template-columns: 1fr;
+      grid-gap: 24px;
+      & .btn {
+        grid-row: 3 / 4;
+        justify-self: center;
+      }
+    }
+  }
+  &__top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 0 0 get-d(30px) 0;
+    @include respond(lg) {
+      margin: 0 0 get-lg(30px) 0;
+    }
+    @include respond(md) {
+      margin: 0 0 22px 0;
+      display: contents;
+    }
+  }
+  &__items {
+    display: flex;
+    flex-direction: column;
+    gap: get-d(24px);
+    @include respond(lg) {
+      gap: get-lg(24px);
+    }
+    @include respond(md) {
+      gap: 24px;
+    }
+    & .item {
+      display: grid;
+      grid-template-columns: max-content 1fr max-content;
+      grid-gap: get-d(72px);
+      align-items: center;
+      padding-bottom: get-d(24px);
+      border-bottom: 1px solid $bg-grey;
+      &:hover {
+        & .item__title, & .item__number {
+          color: $bg-yellow;
+        }
+        & .item__arrow {
+          transform: rotate(90deg);
+        }
+      }
+      @include respond(lg) {
+        grid-gap: get-lg(72px);
+        padding-bottom: get-lg(24px);
+      }
+      @include respond(md) {
+        grid-gap: 18px;
+        padding-bottom: 12px;
+      }
+      &__title {
+        font-weight: 400;
+        font-size: get-d(45px);
+        line-height: 100%;
+        transition: color .5s;
+        @include respond(lg) {
+          font-size: get-lg(45px);
+        }
+        @include respond(md) {
+          font-size: 20px;
+        }
+      }
+      &__number {
+        font-weight: 400;
+        font-size: get-d(20px);
+        line-height: 100%;
+        text-transform: uppercase;
+        transition: color .5s;
+        @include respond(lg) {
+          font-size: get-lg(20px);
+        }
+        @include respond(md) {
+          font-size: 14px;
+        }
+      }
+      &__arrow {
+        width: get-d(48px);
+        height: get-d(48px);
+        background: url("../svg/arrow-down-outline.svg") center / contain no-repeat;
+        transition: transform .5s;
+        @include respond(lg) {
+          width: get-lg(48px);
+          height: get-lg(48px);
+        }
+        @include respond(md) {
+          width: 26px;
+          height: 26px;
+        }
+      }
+    }
+  }
+}
+
+.reviews-section {
+  padding: get-d(160px) 0;
+  background: $bg-yellow;
+  @include respond(lg) {
+    padding: get-lg(160px) 0;
+  }
+  @include respond(md) {
+    padding: 50px 0;
+    & .container {
+      display: grid;
+      grid-template-columns: 100%;
+      grid-gap: 18px;
+      & .btn {
+        grid-row: 3 / 4;
+        justify-self: center;
+      }
+      & .swiper-button-next {
+        right: 0;
+      }
+      & .swiper-button-prev {
+        left: 0;
+      }
+    }
+    
+  }
+  &__top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: get-d(30px);
+    padding: 0 get-d(60px);
+    @include respond(lg) {
+      margin-bottom: get-lg(30px);
+      padding: 0 get-lg(60px);
+    }
+    @include respond(md) {
+      display: contents;
+      & > * {
+        margin: 0 25px;
+      }
+    }
+  }
+  &__wrapper {
+    position: relative;
+    padding: 0 get-d(60px);
+    @include respond(lg) {
+      padding: 0 get-lg(60px);
+    }
+    @include respond(md) {
+      padding: 0 25px;
+    }
+  }
+  & .button {
+    top: 40%;
+  }
+}
+
+.review {
+  &__message {
+    background: $bg-white;
+    padding: get-d(72px) get-d(25px);
+    border-radius: get-d(20px);
+    position: relative;
+    margin-bottom: get-d(30px);
+    display: flex;
+    flex-direction: column;
+    gap: get-d(24px);
+    @include respond(lg) {
+      padding: get-lg(72px) get-lg(25px);
+      margin-bottom: get-lg(30px);
+      gap: get-lg(24px);
+      border-radius: get-lg(20px);
+    }
+    @include respond(md) {
+      padding: 40px 25px;
+      margin-bottom: 30px;
+      gap: 24px;
+      border-radius: 20px;
+    }
+    &::before {
+      content: "";
+      position: absolute;
+      width: get-d(13px);
+      height: get-d(15px);
+      top: 100%;
+      left: get-d(25px);
+      background: url("../svg/Vector\ 2.svg") center / contain no-repeat;
+      @include respond(lg) {
+        left: get-lg(25px);
+        width: get-lg(13px);
+        height: get-lg(15px);
+      }
+      @include respond(md) {
+        left: 25px;
+        width: 13px;
+        height: 15px;
+      }
+    }
+    & p {
+      font-weight: 500;
+      font-size: get-d(16px);
+      line-height: 120%;
+      @include respond(lg) {
+        font-size: get-lg(16px);
+      }
+      @include respond(md) {
+        font-size: 12px;
+      }
+    }
+  }
+  &__info {
+    display: grid;
+    grid-template-columns: repeat(2, max-content);
+    grid-template-rows: repeat(2, max-content);
+    grid-gap: 0 get-d(10px);
+    @include respond(lg) {
+      grid-gap: 0 get-lg(10px);
+    }
+    @include respond(md) {
+      grid-gap: 0 10px;
+    }
+  }
+  & img {
+    width: get-d(50px);
+    height: get-d(50px);
+    border-radius: 50%;
+    object-fit: cover;
+    grid-row: 1 / 3;
+    grid-column: 1 / 2;
+    @include respond(lg) {
+      width: get-lg(50px);
+      height: get-lg(50px);
+    }
+    @include respond(md) {
+      width: 50px;
+      height: 50px;
+    }
+  }
+  &__name {
+    font-weight: 600;
+    font-size: get-d(20px);
+    line-height: 130%;
+    @include respond(lg) {
+      font-size: get-lg(20px);
+    }
+    @include respond(md) {
+      font-size: 14px;
+    }
+  }
+  &__date {
+    font-weight: 400;
+    font-size: get-d(16px);
+    line-height: 130%;
+    @include respond(lg) {
+      font-size: get-lg(16px);
+    }
+    @include respond(md) {
+      font-size: 12px;
+    }
+  }
+  &__rate {
+    display: flex;
+    align-items: center;
+    & .star {
+      width: get-d(26px);
+      height: get-d(26px);
+      background: url("../svg/gold-star.svg") center / contain no-repeat;
+      @include respond(lg) {
+        width: get-lg(26px);
+        height: get-lg(26px);
+      }
+      @include respond(md) {
+        width: 26px;
+        height: 26px;
+      }
+    }
+  }
+}
+
+.promo-form-section {
+  padding: get-d(45px) get-d(60px);
+  // background: $bg-yellow;
+  position: relative;
+
+  @include respond(lg) {
+    padding: get-lg(45px) get-lg(60px);
+  }
+  @include respond(md) {
+    padding: 50px 25px;
+  }
+  &::before {
+    content: "";
+    background: url("../svg/bigArrow.svg") center / contain no-repeat;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: get-d(90px);
+    height: get-d(100px);
+    @include respond(lg) {
+      width: get-lg(90px);
+      height: get-lg(100px);
+    }
+    @include respond(md) {
+      width: 62px;
+      height: 72px;
+    }
+  }
+  & .container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    text-align: center;
+    @include respond(md) {
+      grid-template-columns: 1fr;
+      text-align: left;
+    }
+    & > div:has(form) {
+      grid-column: 1 / -1;
+    }
+    & img {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      inset: 0;
+      object-fit: cover;
+      z-index: -1;
+    }
+  }
+  
+  & form {
+    background: $bg-white;
+    grid-column: 1 / -1;
+    padding: get-d(12px) get-d(24px);
+    border-radius: get-d(20px);
+    @include respond(lg) {
+      padding: get-lg(12px) get-lg(24px);
+      border-radius: get-lg(20px);
+    }
+    @include respond(md) {
+      padding: 24px;
+      border-radius: 20px;
+      
+    }
+    & br {
+      display: none;
+    }
+    & .promo-form {
+      display: grid;
+      grid-template-columns: 3fr 2fr;
+      @include respond(md) {
+        grid-template-columns: 1fr;
+        grid-gap: 16px;
+      }
+    }
+    & .form-fields p {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      align-items: center;
+      grid-gap: get-d(16px);
+      height: 100%;
+      @include respond(lg) {
+        grid-gap: get-lg(16px);
+      }
+      @include respond(md) {
+        grid-gap: 16px;
+        grid-template-columns: 1fr;
+      }
+      & span, input {
+        width: 100%;
+        max-width: 100%;
+      }
+      & input {
+        padding: get-d(11px) get-d(4px);
+        border: none;
+        background: none;
+        border-bottom: get-d(2px) solid $bg-grey;
+        @include respond(lg) {
+          padding: get-lg(11px) get-lg(4px);
+          border-bottom: get-lg(2px) solid $bg-grey;
+        }
+        @include respond(md) {
+          padding: 11px 4px;
+          border-bottom: 2px solid $bg-grey;
+        }
+        &, &::placeholder {
+          font-weight: 500;
+          font-size: get-d(14px);
+          line-height: 120%;
+          color: $bg-grey;
+          @include respond(lg) {
+            font-size: get-lg(14px);
+          }
+          @include respond(md) {
+            font-size: 14px;
+          }
+        }
+        &:focus {
+          outline: none;
+          border-color: $bg-yellow;
+        }
+      }
+    }
+    & .form-checkbox-submit {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      grid-gap: get-d(16px);
+      margin: 0 0 0 get-d(16px);
+      @include respond(lg) {
+        grid-gap: get-lg(16px);
+        margin: 0 0 0 get-lg(16px);
+        grid-template-columns: 1fr;
+      }
+      @include respond(md) {
+        grid-gap: 16px;
+        margin: 0;
+        
+      }
+
+      & p {
+        display: flex;
+        align-items: center;
+        font-weight: 500;
+        font-size: get-d(14px);
+        line-height: 120%;
+        @include respond(lg) {
+          font-size: get-lg(14px);
+        }
+        @include respond(md) {
+          font-size: 14px;
+        }
+      }
+
+      & label:has(input) {
+        display: flex;
+        align-items: center;
+        @include respond(lg) {
+          gap: get-lg(8px);
+        }
+        @include respond(md) {
+          gap: 8px;
+        }
+
+        & input {
+          width: get-d(20px);
+          height: get-d(20px);
+          min-width: get-d(20px);
+          min-height: get-d(20px);
+          appearance: none;
+          border: get-d(2px) solid #14141480;
+          border-radius: get-d(5px);
+          @include respond(lg) {
+            width: get-lg(20px);
+            height: get-lg(20px);
+            min-width: get-lg(20px);
+            min-height: get-lg(20px);
+            border: get-lg(2px) solid #14141480;
+            border-radius: get-lg(5px);
+          }
+          @include respond(md) {
+            width: 20px;
+            height: 20px;
+            min-width: 20px;
+            min-height: 20px;
+            border: 2px solid #14141480;
+            border-radius: 5px;
+          }
+          &:checked {
+            background: url("../svg/mark.svg") center / contain no-repeat;
+          }
+        }
+      }
+
+   
+      
+      & input[type="submit"] {
+        position: absolute;
+        inset: 0;
+        opacity: 0;
+        cursor: pointer;
+      }
+    }
+  }
+  & .title, .paragraph {
+    grid-column: 1 / 2;
+  }
+  & .paragraph {
+    margin: get-d(26px) auto get-d(45px) auto;
+    max-width: get-d(525px);
+    @include respond(lg) {
+      margin: get-lg(26px) auto get-lg(45px) auto;
+      max-width: get-lg(525px);
+    }
+    @include respond(md) {
+      max-width: none;
+      margin-bottom: 260px;
+    }
+  }
+  & .title {
+    line-height: 120%;
+    & strong, b {
+      font-weight: inherit;
+      background: $bg-white;
+      border-radius: 1000px;
+      padding: get-d(4px) get-d(10px);
+      @include respond(lg) {
+        padding: get-lg(4px) get-lg(10px);
+      }
+      @include respond(md) {
+        padding: 4px 10px;
+      }
+    }
+  }
+}
