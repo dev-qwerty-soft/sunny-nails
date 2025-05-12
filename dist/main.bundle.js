@@ -1,269 +1,6 @@
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
-/***/ "./js/function.js":
-/*!************************!*\
-  !*** ./js/function.js ***!
-  \************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   add: () => (/* binding */ add),
-/* harmony export */   child: () => (/* binding */ child),
-/* harmony export */   duration: () => (/* binding */ duration),
-/* harmony export */   extractURL: () => (/* binding */ extractURL),
-/* harmony export */   formatNumber: () => (/* binding */ formatNumber),
-/* harmony export */   g: () => (/* binding */ g),
-/* harmony export */   getUrl: () => (/* binding */ getUrl),
-/* harmony export */   has: () => (/* binding */ has),
-/* harmony export */   isSize: () => (/* binding */ isSize),
-/* harmony export */   max: () => (/* binding */ max),
-/* harmony export */   random: () => (/* binding */ random),
-/* harmony export */   remove: () => (/* binding */ remove),
-/* harmony export */   respond: () => (/* binding */ respond),
-/* harmony export */   round: () => (/* binding */ round),
-/* harmony export */   scroll: () => (/* binding */ scroll),
-/* harmony export */   splitArray: () => (/* binding */ splitArray),
-/* harmony export */   toggle: () => (/* binding */ toggle),
-/* harmony export */   upper: () => (/* binding */ upper)
-/* harmony export */ });
-const toggle = (el, cl = 'active') => {
-  if (!el) return;
-  if (Array.isArray(el)) {
-    el.forEach((item) => toggle(item, cl));
-  } else {
-    el.classList.toggle(cl);
-  }
-};
-
-const add = (el, cl = 'active') => {
-  if (!el) return;
-  if (Array.isArray(el)) {
-    el.forEach((item) => add(item, cl));
-  } else {
-    el.classList.add(cl);
-  }
-};
-
-const remove = (el, cl = 'active') => {
-  if (!el) return;
-  if (Array.isArray(el)) {
-    el.forEach((item) => remove(item, cl));
-  } else {
-    el.classList.remove(cl);
-  }
-};
-
-const has = (el, cl = '.active') => {
-  return Boolean(el.closest(cl) && el.closest(cl).matches(cl));
-};
-
-const random = (min, max) => {
-  return Math.round(Math.random() * (max - min + 1) + min);
-};
-
-function g(
-  element,
-  cont = document,
-  flag = false
-) {
-  const elements = Array.from(cont.querySelectorAll(element));
-  if (!elements.length || !cont) return;
-
-  if (elements.length === 1) {
-    return flag ? elements : elements[0];
-  } else {
-    return elements;
-  }
-}
-
-const max = (arr) =>
-  arr.reduce((acc, num) => (acc > num ? acc : num));
-
-const upper = (text) => text[0].toUpperCase() + text.slice(1);
-
-const child = (str) => {
-  if (!str) return;
-  if (typeof str === 'string') {
-    return Array.from(g(str)?.children);
-  } else {
-    return Array.from(str.children);
-  }
-};
-
-const scroll = () => {
-  const scrollHeight = document.body.scrollHeight - window.innerHeight;
-  const height = window.pageYOffset;
-  const progress = Math.round((height / scrollHeight) * 100);
-  return progress;
-};
-
-const isSize = (num) => window.innerWidth <= num;
-
-const round = (num, del) => Math.round(num / del) * del;
-
-const getUrl = (url) => {
-  const regExp =
-    /^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\v=)([^#\\?]*).*/;
-  const match = url.match(regExp);
-  if (match && match[2].length === 11) {
-    return match[2];
-  }
-};
-
-function duration(duration) {
-  const match = duration.match(/PT(\d+H)?(\d+M)?(\d+S)?/);
-  if (!match) return '';
-  let hours = '',
-    minutes = '',
-    seconds = '';
-  if (match[1]) {
-    hours = match[1].replace('H', '').padStart(2, '0');
-  }
-  if (match[2]) {
-    minutes = match[2].replace('M', '').padStart(2, '0');
-  }
-  if (match[3]) {
-    seconds = match[3].replace('S', '').padStart(2, '0');
-  }
-  return `${hours ? hours + ':' : ''}${minutes !== '' ? minutes : '00'}:${
-    seconds !== '' ? seconds : '00'
-  }`;
-}
-
-function splitArray(arr) {
-  const mid = Math.ceil(arr.length / 2);
-  const firstHalf = arr.slice(0, mid);
-  const secondHalf = arr.slice(mid);
-  return [firstHalf, secondHalf];
-}
-
-function extractURL(cssURL) {
-  const urlPattern = /url\(["']?([^"']+)["']?\)/;
-  const match = cssURL.match(urlPattern);
-  return match ? match[1] : '';
-}
-
-function respond(breakpoint) {
-  const breakpoints = {
-    xs: 480,
-    sm: 640,
-    md: 768,
-    lg: 1024,
-    xl: 1280,
-    '2xl': 1536,
-  };
-
-  const width = window.innerWidth;
-
-  if (breakpoint === '2xl') {
-    return width >= breakpoints['2xl'];
-  }
-
-  return width <= breakpoints[breakpoint];
-}
-
-
-function formatNumber(number) {
-  return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-}
-
-
-/***/ }),
-
-/***/ "./js/index.js":
-/*!*********************!*\
-  !*** ./js/index.js ***!
-  \*********************/
-/***/ (() => {
-
-// window.onload = () => {
-//   document.body.classList.add("loaded_hiding");
-//   setTimeout(() => {
-//     document.body.classList.add("loaded");
-//     document.body.classList.remove("loaded_hiding");
-//   }, 500);
-// };
-
-
-/***/ }),
-
-/***/ "./js/map.js":
-/*!*******************!*\
-  !*** ./js/map.js ***!
-  \*******************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _googlemaps_js_api_loader__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @googlemaps/js-api-loader */ "../node_modules/@googlemaps/js-api-loader/dist/index.mjs");
-
-
-(async function () {
-  const cont = document.querySelector('#map');
-  if (!cont) return;
-  const attr = cont.dataset?.center;
-  const token = cont.dataset?.token;
-  const cords = attr ? JSON.parse(attr) : { lat: 0, lng: 0 };
-  const loader = new _googlemaps_js_api_loader__WEBPACK_IMPORTED_MODULE_0__.Loader({
-    apiKey: token,
-    version: 'weekly',
-    libraries: ['maps'],
-  });
-  const { Map } = await loader.importLibrary('maps');
-  new Map(cont, {
-    center: cords,
-    zoomControl: false,
-    streetViewControl: false,
-    mapTypeControl: false,
-    fullscreenControl: false,
-    zoom: 7,
-  });
-})();
-
-/***/ }),
-
-/***/ "./scss/main.min.scss":
-/*!****************************!*\
-  !*** ./scss/main.min.scss ***!
-  \****************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-// extracted by mini-css-extract-plugin
-
-
-/***/ }),
-
-/***/ "../node_modules/swiper/modules/pagination.css":
-/*!*****************************************************!*\
-  !*** ../node_modules/swiper/modules/pagination.css ***!
-  \*****************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-// extracted by mini-css-extract-plugin
-
-
-/***/ }),
-
-/***/ "../node_modules/swiper/swiper.css":
-/*!*****************************************!*\
-  !*** ../node_modules/swiper/swiper.css ***!
-  \*****************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-// extracted by mini-css-extract-plugin
-
-
-/***/ }),
-
 /***/ "../node_modules/@googlemaps/js-api-loader/dist/index.mjs":
 /*!****************************************************************!*\
   !*** ../node_modules/@googlemaps/js-api-loader/dist/index.mjs ***!
@@ -4196,6 +3933,19 @@ function Navigation(_ref) {
 }
 
 
+
+
+/***/ }),
+
+/***/ "../node_modules/swiper/modules/pagination.css":
+/*!*****************************************************!*\
+  !*** ../node_modules/swiper/modules/pagination.css ***!
+  \*****************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+// extracted by mini-css-extract-plugin
 
 
 /***/ }),
@@ -11245,6 +10995,19 @@ function getRotateFix(swiper) {
 
 /***/ }),
 
+/***/ "../node_modules/swiper/swiper.css":
+/*!*****************************************!*\
+  !*** ../node_modules/swiper/swiper.css ***!
+  \*****************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+// extracted by mini-css-extract-plugin
+
+
+/***/ }),
+
 /***/ "../node_modules/swiper/swiper.mjs":
 /*!*****************************************!*\
   !*** ../node_modules/swiper/swiper.mjs ***!
@@ -11271,6 +11034,243 @@ __webpack_require__.r(__webpack_exports__);
  */
 
 
+
+
+/***/ }),
+
+/***/ "./js/function.js":
+/*!************************!*\
+  !*** ./js/function.js ***!
+  \************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   add: () => (/* binding */ add),
+/* harmony export */   child: () => (/* binding */ child),
+/* harmony export */   duration: () => (/* binding */ duration),
+/* harmony export */   extractURL: () => (/* binding */ extractURL),
+/* harmony export */   formatNumber: () => (/* binding */ formatNumber),
+/* harmony export */   g: () => (/* binding */ g),
+/* harmony export */   getUrl: () => (/* binding */ getUrl),
+/* harmony export */   has: () => (/* binding */ has),
+/* harmony export */   isSize: () => (/* binding */ isSize),
+/* harmony export */   max: () => (/* binding */ max),
+/* harmony export */   random: () => (/* binding */ random),
+/* harmony export */   remove: () => (/* binding */ remove),
+/* harmony export */   respond: () => (/* binding */ respond),
+/* harmony export */   round: () => (/* binding */ round),
+/* harmony export */   scroll: () => (/* binding */ scroll),
+/* harmony export */   splitArray: () => (/* binding */ splitArray),
+/* harmony export */   toggle: () => (/* binding */ toggle),
+/* harmony export */   upper: () => (/* binding */ upper)
+/* harmony export */ });
+const toggle = (el, cl = 'active') => {
+  if (!el) return;
+  if (Array.isArray(el)) {
+    el.forEach((item) => toggle(item, cl));
+  } else {
+    el.classList.toggle(cl);
+  }
+};
+
+const add = (el, cl = 'active') => {
+  if (!el) return;
+  if (Array.isArray(el)) {
+    el.forEach((item) => add(item, cl));
+  } else {
+    el.classList.add(cl);
+  }
+};
+
+const remove = (el, cl = 'active') => {
+  if (!el) return;
+  if (Array.isArray(el)) {
+    el.forEach((item) => remove(item, cl));
+  } else {
+    el.classList.remove(cl);
+  }
+};
+
+const has = (el, cl = '.active') => {
+  return Boolean(el.closest(cl) && el.closest(cl).matches(cl));
+};
+
+const random = (min, max) => {
+  return Math.round(Math.random() * (max - min + 1) + min);
+};
+
+function g(
+  element,
+  cont = document,
+  flag = false
+) {
+  const elements = Array.from(cont.querySelectorAll(element));
+  if (!elements.length || !cont) return;
+
+  if (elements.length === 1) {
+    return flag ? elements : elements[0];
+  } else {
+    return elements;
+  }
+}
+
+const max = (arr) =>
+  arr.reduce((acc, num) => (acc > num ? acc : num));
+
+const upper = (text) => text[0].toUpperCase() + text.slice(1);
+
+const child = (str) => {
+  if (!str) return;
+  if (typeof str === 'string') {
+    return Array.from(g(str)?.children);
+  } else {
+    return Array.from(str.children);
+  }
+};
+
+const scroll = () => {
+  const scrollHeight = document.body.scrollHeight - window.innerHeight;
+  const height = window.pageYOffset;
+  const progress = Math.round((height / scrollHeight) * 100);
+  return progress;
+};
+
+const isSize = (num) => window.innerWidth <= num;
+
+const round = (num, del) => Math.round(num / del) * del;
+
+const getUrl = (url) => {
+  const regExp =
+    /^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\v=)([^#\\?]*).*/;
+  const match = url.match(regExp);
+  if (match && match[2].length === 11) {
+    return match[2];
+  }
+};
+
+function duration(duration) {
+  const match = duration.match(/PT(\d+H)?(\d+M)?(\d+S)?/);
+  if (!match) return '';
+  let hours = '',
+    minutes = '',
+    seconds = '';
+  if (match[1]) {
+    hours = match[1].replace('H', '').padStart(2, '0');
+  }
+  if (match[2]) {
+    minutes = match[2].replace('M', '').padStart(2, '0');
+  }
+  if (match[3]) {
+    seconds = match[3].replace('S', '').padStart(2, '0');
+  }
+  return `${hours ? hours + ':' : ''}${minutes !== '' ? minutes : '00'}:${
+    seconds !== '' ? seconds : '00'
+  }`;
+}
+
+function splitArray(arr) {
+  const mid = Math.ceil(arr.length / 2);
+  const firstHalf = arr.slice(0, mid);
+  const secondHalf = arr.slice(mid);
+  return [firstHalf, secondHalf];
+}
+
+function extractURL(cssURL) {
+  const urlPattern = /url\(["']?([^"']+)["']?\)/;
+  const match = cssURL.match(urlPattern);
+  return match ? match[1] : '';
+}
+
+function respond(breakpoint) {
+  const breakpoints = {
+    xs: 480,
+    sm: 640,
+    md: 768,
+    lg: 1024,
+    xl: 1280,
+    '2xl': 1536,
+  };
+
+  const width = window.innerWidth;
+
+  if (breakpoint === '2xl') {
+    return width >= breakpoints['2xl'];
+  }
+
+  return width <= breakpoints[breakpoint];
+}
+
+
+function formatNumber(number) {
+  return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+}
+
+
+/***/ }),
+
+/***/ "./js/index.js":
+/*!*********************!*\
+  !*** ./js/index.js ***!
+  \*********************/
+/***/ (() => {
+
+// window.onload = () => {
+//   document.body.classList.add("loaded_hiding");
+//   setTimeout(() => {
+//     document.body.classList.add("loaded");
+//     document.body.classList.remove("loaded_hiding");
+//   }, 500);
+// };
+
+
+/***/ }),
+
+/***/ "./js/map.js":
+/*!*******************!*\
+  !*** ./js/map.js ***!
+  \*******************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _googlemaps_js_api_loader__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @googlemaps/js-api-loader */ "../node_modules/@googlemaps/js-api-loader/dist/index.mjs");
+
+
+(async function () {
+  const cont = document.querySelector('#map');
+  if (!cont) return;
+  const attr = cont.dataset?.center;
+  const token = cont.dataset?.token;
+  const cords = attr ? JSON.parse(attr) : { lat: 0, lng: 0 };
+  const loader = new _googlemaps_js_api_loader__WEBPACK_IMPORTED_MODULE_0__.Loader({
+    apiKey: token,
+    version: 'weekly',
+    libraries: ['maps'],
+  });
+  const { Map } = await loader.importLibrary('maps');
+  new Map(cont, {
+    center: cords,
+    zoomControl: false,
+    streetViewControl: false,
+    mapTypeControl: false,
+    fullscreenControl: false,
+    zoom: 7,
+  });
+})();
+
+/***/ }),
+
+/***/ "./scss/main.min.scss":
+/*!****************************!*\
+  !*** ./scss/main.min.scss ***!
+  \****************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+// extracted by mini-css-extract-plugin
 
 
 /***/ })
@@ -11344,7 +11344,7 @@ __webpack_require__.r(__webpack_exports__);
 /******/ 	
 /************************************************************************/
 var __webpack_exports__ = {};
-// This entry need to be wrapped in an IIFE because it need to be in strict mode.
+// This entry needs to be wrapped in an IIFE because it needs to be in strict mode.
 (() => {
 "use strict";
 /*!******************!*\

@@ -10,7 +10,7 @@
         grid-column: 1 / 2;
         grid-row: 1 / 2;
       }
-      & .menu-aside-container {
+      & .menu-footer-aside-container {
         grid-column: 2 / 3;
         grid-row: 1 / 2;
         justify-self: flex-end;
@@ -61,10 +61,10 @@
       position: relative;
       &::before {
         width: calc(100vw - 65px);
-        height: 1px;
+        height: 2px;
         background: #302f3466;
         position: absolute;
-        top: -10px;
+        top: -12px;
         content: "";
         right: 0;
       }
