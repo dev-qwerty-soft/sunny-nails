@@ -60,13 +60,13 @@
       font-size: 12px;
       position: relative;
       &::before {
-        width: calc(100vw - 65px);
+        width: calc(100vw - 50px);
         height: 1px;
         background: #302f3466;
         position: absolute;
         top: -10px;
         content: "";
-        right: 0;
+        left: 0;
       }
     }
   }
@@ -115,7 +115,7 @@
   }
   & a {
     display: inline-block;
-    transition: transform .5s;
+    transition: transform 0.5s;
     &:hover {
       transform: scale(1.2);
     }
