@@ -79,7 +79,7 @@ function getPlaceReviews() {
   }
   $result = $data['result'];
   return [
-    'name' => $result['name'] ?? '',
+    'name' => $result['name'] ?? null,
     'rating' => $result['rating'] ?? null,
     'reviews' => $result['reviews'] ?? [],
   ];

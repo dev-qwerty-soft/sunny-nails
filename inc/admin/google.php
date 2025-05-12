@@ -15,6 +15,7 @@ add_action('admin_menu', function () {
 function render_reviews_sidebar_metabox() { 
   $data = getPlaceReviews(); 
   $reviews = $data["reviews"];
+  dump($reviews);
  
   if (empty($reviews)) { 
     echo '<p>No reviews found.</p>'; 
