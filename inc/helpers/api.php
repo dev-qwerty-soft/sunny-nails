@@ -67,7 +67,6 @@ function displayIcon() {
 function getPlaceReviews() {
   $apiKey = get_field('reviews_api_token', 'option');
   $placeId = get_field('reviews_api_place_id', 'option');
-
   $url = "https://maps.googleapis.com/maps/api/place/details/json?place_id={$placeId}&fields=name,rating,reviews&language=en&key={$apiKey}";
   $response = file_get_contents($url);
   if ($response === false) {
@@ -78,6 +77,7 @@ function getPlaceReviews() {
     return null;
   }
   $result = $data['result'];
+  dump($data);
   return [
     'name' => $result['name'] ?? null,
     'rating' => $result['rating'] ?? null,
