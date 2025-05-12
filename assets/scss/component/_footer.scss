@@ -61,7 +61,7 @@
       position: relative;
       &::before {
         width: calc(100vw - 65px);
-        height: 2px;
+        height: 1px;
         background: #302f3466;
         position: absolute;
         top: -12px;
@@ -69,6 +69,9 @@
         right: 0;
       }
     }
+  }
+  & .menu-footer-aside-container {
+    justify-self: flex-end;
   }
   & .menu-footer-container {
     @include respond(md) {
