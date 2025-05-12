@@ -7,7 +7,7 @@
           $url = isset($logo['url']) ? $logo['url'] : null;
           $alt = isset($logo['alt']) ? $logo['alt'] : null;
           if ($url && $alt) {
-              echo "<img src='$url' alt='$alt'>";
+            echo "<img src='$url' alt='$alt'>";
           };
         ?>
       </a>
