@@ -68,19 +68,38 @@ function getPlaceReviews() {
   $apiKey = get_field('reviews_api_token', 'option');
   $placeId = get_field('reviews_api_place_id', 'option');
   $url = "https://maps.googleapis.com/maps/api/place/details/json?place_id={$placeId}&fields=name,rating,reviews&language=en&key={$apiKey}";
-  $response = file_get_contents($url);
-  if ($response === false) {
+
+  // Инициализация cURL
+  $ch = curl_init();
+
+  curl_setopt_array($ch, [
+    CURLOPT_URL => $url,
+    CURLOPT_RETURNTRANSFER => true,
+    CURLOPT_FOLLOWLOCATION => true,
+    CURLOPT_TIMEOUT => 10,
+    CURLOPT_SSL_VERIFYPEER => true,
+  ]);
+
+  $response = curl_exec($ch);
+  $error = curl_error($ch);
+  curl_close($ch);
+
+  if ($response === false || !empty($error)) {
     return null;
   }
+
   $data = json_decode($response, true);
   if (!isset($data['result'])) {
     return null;
   }
+
   $result = $data['result'];
   dump($data);
+
   return [
     'name' => $result['name'] ?? null,
     'rating' => $result['rating'] ?? null,
     'reviews' => $result['reviews'] ?? [],
   ];
-};
+}
+
