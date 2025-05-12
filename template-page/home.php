@@ -5,45 +5,6 @@
  */
 get_header();
 
-$reviews = [
-    [
-        "text" => "I had an amazing experience at Sunny Nails! The staff is super friendly, and the manicure was flawless. The salon is clean and cozy. Definitely coming back!",
-        "name" => "Sunny Inferno",
-        "date" => "3 days ago",
-        "image" => getUrl("images/image.png"),
-    ],
-    [
-        "text" => "I had an amazing experience at Sunny Nails! The staff is super friendly, and the manicure was flawless. The salon is clean and cozy. Definitely coming back!",
-        "name" => "Sunny Inferno",
-        "date" => "3 days ago",
-        "image" => getUrl("images/image.png"),
-    ],
-    [
-        "text" => "I had an amazing experience at Sunny Nails! The staff is super friendly, and the manicure was flawless. The salon is clean and cozy. Definitely coming back!",
-        "name" => "Sunny Inferno",
-        "date" => "3 days ago",
-        "image" => getUrl("images/image.png"),
-    ],
-    [
-        "text" => "I had an amazing experience at Sunny Nails! The staff is super friendly, and the manicure was flawless. The salon is clean and cozy. Definitely coming back!",
-        "name" => "Sunny Inferno",
-        "date" => "3 days ago",
-        "image" => getUrl("images/image.png"),
-    ],
-    [
-        "text" => "I had an amazing experience at Sunny Nails! The staff is super friendly, and the manicure was flawless. The salon is clean and cozy. Definitely coming back!",
-        "name" => "Sunny Inferno",
-        "date" => "3 days ago",
-        "image" => getUrl("images/image.png"),
-    ],
-    [
-        "text" => "I had an amazing experience at Sunny Nails! The staff is super friendly, and the manicure was flawless. The salon is clean and cozy. Definitely coming back!",
-        "name" => "Sunny Inferno",
-        "date" => "3 days ago",
-        "image" => getUrl("images/image.png"),
-    ],
-];
-
 $ordered_category_ids = [];
 
 if (function_exists('get_field')) {
@@ -172,31 +133,30 @@ if (empty($ordered_category_ids)) {
                 <div class="swiper reviews-swiper">
                     <div class="swiper-wrapper">
                         <?php
-                        foreach ($reviews as $slide) {
-                            $image = $slide["image"];
-                            $date = $slide["date"];
-                            $name = $slide["name"];
-                            $text = $slide["text"];
-                            echo "<div class='swiper-slide'>
-                                    <div class='review'>
-                                        <div class='review__message'>
-                                            <div class='review__rate'>
-                                                <div class='star'></div>
-                                                <div class='star'></div>
-                                                <div class='star'></div>
-                                                <div class='star'></div>
-                                                <div class='star'></div>
+                            $reviews = get_option('selected_google_reviews_data', []);
+                            foreach ($reviews as $slide) {
+                                $image = $slide["profile_photo_url"];
+                                $date = $slide["relative_time_description"];
+                                $name = $slide["author_name"];
+                                $text = $slide["text"];
+                                $rating = $slide["rating"];
+                                $stars = str_repeat("<div class='star'></div>", $rating);
+                                echo "<div class='swiper-slide'>
+                                        <div class='review'>
+                                            <div class='review__message'>
+                                                <div class='review__rate'>
+                                                    $stars
+                                                </div>
+                                                <p>$text</p>
                                             </div>
-                                            <p>$text</p>
+                                            <div class='review__info'>
+                                                <img src='$image' alt='$name'>
+                                                <span class='review__name'>$name</span>
+                                                <span class='review__date'>$date</span>
+                                            </div>
                                         </div>
-                                        <div class='review__info'>
-                                            <img src='$image' alt='$name'>
-                                            <span class='review__name'>$name</span>
-                                            <span class='review__date'>$date</span>
-                                        </div>
-                                    </div>
-                                </div>";
-                        };
+                                    </div>";
+                            };
                         ?>
                     </div>
                 </div>

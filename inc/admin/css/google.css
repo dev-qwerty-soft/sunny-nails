@@ -1,0 +1,91 @@
+.custom-review-card {
+  background: #fff;
+  border: 1px solid #ccd0d4;
+  border-radius: 4px;
+  padding: 16px;
+  box-shadow: 0 0 1px rgba(0,0,0,0.04);
+  cursor: pointer;
+  position: relative;
+  transition: box-shadow 0.25s ease-in-out;
+}
+
+.my-custom-button-wrapper {
+  padding: 20px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.my-custom-button {
+  margin-top: 100px !important;
+}
+
+.custom-review-card:hover {
+  box-shadow: 0 0 5px rgba(0,0,0,0.2);
+}
+
+.custom-review-card:has(.custom-review-card__input:checked) {
+  background: #2271b1;
+}
+
+.custom-review-card:has(.custom-review-card__input:checked) .custom-review-card__text, .custom-review-card:has(.custom-review-card__input:checked) .custom-review-card__name, .custom-review-card:has(.custom-review-card__input:checked) .custom-review-card__time {
+  color: #fff;
+}
+
+.custom-review-card__input {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  margin: 0 !important;
+}
+
+.custom-review-card__bubble {
+  margin-bottom: 12px;
+}
+
+.custom-review-card__stars {
+  color: #ffb900;
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+.custom-review-card__text {
+  font-size: 13px;
+  color: #1d2327;
+  line-height: 1.5;
+  margin-bottom: 8px;
+}
+
+.custom-review-card__footer {
+  display: flex;
+  align-items: center;
+  margin-top: 8px;
+}
+
+.custom-review-card__avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-right: 10px;
+  object-fit: cover;
+}
+
+.custom-review-card__name {
+  font-weight: 600;
+  font-size: 13px;
+  color: #1d2327;
+  margin-bottom: 2px;
+}
+
+.custom-review-card__time {
+  font-size: 12px;
+  color: #646970;
+}
+
+.reviews-list {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 20px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-gap: 16px;
+}
