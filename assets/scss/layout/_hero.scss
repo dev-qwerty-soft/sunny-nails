@@ -979,11 +979,11 @@
   }
 }
 
+$red: #DC3232;
+
 .promo-form-section {
   padding: get-d(45px) get-d(60px);
-  // background: $bg-yellow;
   position: relative;
-
   @include respond(lg) {
     padding: get-lg(45px) get-lg(60px);
   }
@@ -1032,7 +1032,6 @@
       grid-column: 1 / -1;
     }
   }
-  
   & form {
     background: $bg-white;
     grid-column: 1 / -1;
@@ -1045,10 +1044,93 @@
     @include respond(md) {
       padding: 24px;
       border-radius: 20px;
-      
     }
     & br {
       display: none;
+    }
+    &.wpcf7-form.sent {
+      & .wpcf7-response-output {
+        background: rgba(#06B569, 10%);
+        color: #06B569;
+        &::before {
+          background-image: url("../svg/check icon.svg");
+        }
+      }
+    } 
+    & .wpcf7-not-valid-tip {
+      font-weight: 500;
+      font-size: get-d(14px);
+      line-height: get-d(16px);
+      text-align: left;
+      padding-top: get-d(6px);
+      color: $red;
+      @include respond(lg) {
+        font-size: get-lg(14px);
+        line-height: get-lg(16px);
+        padding-top: get-lg(6px);
+      }
+      @include respond(md) {
+        font-size: 12px;
+        line-height: 14px;
+        padding-top: 6px;
+      }
+    }
+    & .wpcf7-response-output {
+      padding: get-d(8px);
+      width: 100%;
+      border: none;
+      border-radius: get-d(10px);
+      font-weight: 500;
+      font-size: get-d(14px);
+      line-height: get-d(16px);
+      color: $red;
+      text-align: left;
+      background: rgba($red, 10%);
+      display: flex;
+      align-items: center;
+      gap: get-d(8px);
+      position: relative;
+      @include respond(lg) {
+        padding: get-lg(8px);
+        border-radius: get-lg(10px);
+        font-size: get-lg(14px);
+        line-height: get-lg(16px);
+        gap: get-lg(8px);
+      }
+      @include respond(md) {
+        padding: 8px;
+        border-radius: 10px;
+        font-size: 12px;
+        line-height: 14px;
+        gap: 8px;
+      }
+      &::before {
+        width: get-d(24px);
+        height: get-d(24px);
+        background: $bg-white url("../svg/error icon.svg") center / 75% no-repeat;
+        display: block;
+        content: "";
+        border-radius: get-d(6px);
+        min-width: get-d(24px);
+        min-height: get-d(24px);
+        @include respond(lg) {
+          width: get-lg(24px);
+          height: get-lg(24px);
+          border-radius: get-lg(6px);
+          min-width: get-lg(24px);
+          min-height: get-lg(24px);
+        }
+        @include respond(md) {
+          width: 24px;
+          height: 24px;
+          border-radius: 6px;
+          min-width: 24px;
+          min-height: 24px;
+        }
+      }
+    }
+    & .form-fields .wpcf7-form-control-wrap:has(.wpcf7-not-valid-tip) input {
+      border-color: $red;
     }
     & .promo-form {
       display: grid;
@@ -1119,7 +1201,6 @@
       @include respond(md) {
         grid-gap: 16px;
         margin: 0;
-        
       }
 
       & p {
@@ -1234,6 +1315,12 @@
   }
   @include respond(md) {
     padding: 75px 0;
+    & .swiper-button-next {
+      right: 3px !important;
+    }
+    & .swiper-button-prev {
+      left: 3px !important;
+    }
   }
   &__top, &__wrapper {
     padding: 0 get-d(60px);

@@ -1,6 +1,5 @@
 <?php
   $isPage = $args["page"] ?? false;
-  // dump($isPage);
   $img = getUrl('images/image-1.png');
 ?>
 
