@@ -67,6 +67,9 @@
     @include respond(lg) {
       font-size: get-lg(14px);
     }
+    @include respond(md) {
+      font-size: 12px;
+    }
   }
   & .menu-footer-aside-container {
     justify-self: flex-end;
