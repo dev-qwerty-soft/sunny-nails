@@ -44,6 +44,8 @@ require_once get_template_directory() . '/inc/api/altegio-client.php';
 require_once get_template_directory() . '/inc/helpers/api.php';
 require_once get_template_directory() . '/inc/controllers/booking-controller.php';
 require_once get_template_directory() . '/inc/controllers/booking-popup-controller.php';
+// require_once get_template_directory() . '/inc/ajax/ajax-handlers-php.php';
+
 
 // Initialize controllers
 add_action('after_setup_theme', ['BookingController', 'init']);
