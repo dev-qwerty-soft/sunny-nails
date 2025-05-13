@@ -22,6 +22,32 @@
   }
 }
 
+.booking-step .services-list {
+  max-height: 450px;
+  overflow-y: auto;
+  max-width: 825px;
+  padding: 30px;
+
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.75);
+
+  @media screen and (max-width: 768px) {
+    padding: 15px;
+  }
+  &::-webkit-scrollbar {
+    width: 5px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: 10px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: rgba(253, 196, 31, 0.7);
+    border-radius: 10px;
+  }
+}
 .category-tab {
   display: flex;
   align-content: JCC;
@@ -48,28 +74,6 @@
   }
 }
 
-.services-list {
-  max-height: 400px;
-  overflow-y: auto;
-  max-width: 825px;
-  padding: 30px;
-
-  border-radius: 10px;
-  background: rgba(255, 255, 255, 0.75);
-  &::-webkit-scrollbar {
-    width: 5px;
-  }
-
-  &::-webkit-scrollbar-track {
-    background: rgba(255, 255, 255, 0.5);
-    border-radius: 10px;
-  }
-
-  &::-webkit-scrollbar-thumb {
-    background: rgba(253, 196, 31, 0.7);
-    border-radius: 10px;
-  }
-}
 .category-services {
   display: flex;
   flex-direction: column;
@@ -90,6 +94,9 @@
   font-size: 18px;
   font-weight: 700;
   line-height: 110%; /* 19.8px */
+  @media screen and (max-width: 768px) {
+    flex-direction: column;
+  }
 }
 
 .service-description,

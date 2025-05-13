@@ -121,7 +121,12 @@ function get_services_by_category($category_id)
                                     $duration = get_post_meta($post_id, 'duration_minutes', true);
                                     $wear_time = get_post_meta($post_id, 'wear_time', true);
                                     $desc = get_post_meta($post_id, 'description', true);
-
+                                    if (empty($wear_time) && !empty($service->post_content)) {
+                                        preg_match('/wear\s+time:?\s+([^\.]+)/i', $service->post_content, $matches);
+                                        if (!empty($matches[1])) {
+                                            $wear_time = trim($matches[1]);
+                                        }
+                                    }
                                     // Check if it's an add-on
                                     $is_addon = get_post_meta($post_id, 'is_addon', true) === 'yes';
                                     if ($is_addon) continue; // Skip add-ons for now
@@ -146,10 +151,10 @@ function get_services_by_category($category_id)
                                                 </div>
                                             </div>
                                             <?php if ($duration): ?>
-                                                <div class="service-duration">Duration: <?php echo esc_html($duration); ?> min</div>
+                                                <div class="service-duration"><strong>Duration:</strong> <?php echo esc_html($duration); ?> min</div>
                                             <?php endif; ?>
                                             <?php if ($wear_time): ?>
-                                                <div class="service-wear-time">Wear time: <?php echo esc_html($wear_time); ?></div>
+                                                <div class="service-wear-time"><strong>Wear time:</strong> <?php echo esc_html($wear_time); ?></div>
                                             <?php endif; ?>
                                             <?php if ($desc): ?>
                                                 <div class="service-description"><?php echo esc_html($desc); ?></div>
@@ -248,12 +253,16 @@ function get_services_by_category($category_id)
                             <?php foreach ($staffList as $staff) :
                                 $level = isset($staff['level']) ? intval($staff['level']) : 1;
                                 $stars = str_repeat('<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M20.8965 18.008L18.6085 15.7L19.2965 15.012L21.6045 17.3L20.8965 18.008ZM17.7005 6.373L17.0125 5.685L19.3005 3.396L20.0085 4.085L17.7005 6.373ZM6.30048 6.393L4.01148 4.084L4.70048 3.395L7.00848 5.684L6.30048 6.393ZM3.08548 18.007L2.39648 17.299L4.68548 15.01L5.39248 15.699L3.08548 18.007ZM6.44048 20L7.91048 13.725L3.00048 9.481L9.47048 8.933L12.0005 3L14.5505 8.933L21.0205 9.481L16.1085 13.725L17.5785 20L12.0005 16.66L6.44048 20Z" fill="#FDC41F"/>
-                                    </svg>
+                                        <path d="M20.8965 18.008L18.6085 15.7L19.2965 15.012L21.6045 17.3L20.8965 18.008ZM17.7005 6.373L17.0125 5.685L19.3005 3.396L20.0085 4.085L17.7005 6.373ZM6.30048 6.393L4.01148 4.084L4.70048 3.395L7.00848 5.684L6.30048 6.393ZM3.08548 18.007L2.39648 17.299L4.68548 15.01L5.39248 15.699L3.08548 18.007ZM6.44048 20L7.91048 13.725L3.00048 9.481L9.47048 8.933L12.0005 3L14.5505 8.933L21.0205 9.481L16.1085 13.725L17.5785 20L12.0005 16.66L6.44048 20Z" fill="#FDC41F"/>
+                                        </svg>
                                     ', $level);
                                 $markup = $level === 2 ? '+10% to price' : ($level >= 3 ? '+20% to price' : '');
                             ?>
-                                <label class="staff-item" data-staff-id="<?php echo esc_attr($staff['id']); ?>" data-staff-level="<?php echo esc_attr($level); ?>">
+                                <label class="staff-item"
+                                    data-staff-id="<?php echo esc_attr($staff['id']); ?>"
+                                    data-staff-level="<?php echo esc_attr($level); ?>"
+                                    data-staff-specialization="<?php echo esc_attr($staff['specialization']); ?>">
+
                                     <input type="radio" name="staff">
                                     <div class="staff-radio-content">
                                         <div class="staff-avatar">
@@ -263,7 +272,7 @@ function get_services_by_category($category_id)
                                         </div>
                                         <div class="staff-info">
                                             <h4 class="staff-name"><?php echo esc_html($staff['name']); ?></h4>
-                                            <p class="staff-specialization"><?php echo $stars; ?> <span class="studio-name">(<?php echo esc_html($staff['specialization']); ?>)</span></p>
+                                            <div class="staff-specialization"><?php echo $stars; ?> <span class="studio-name">(<?php echo esc_html($staff['specialization']); ?>)</span></div>
                                         </div>
                                         <?php if ($markup): ?>
                                             <div class="staff-price-modifier"><?php echo $markup; ?></div>
@@ -283,17 +292,17 @@ function get_services_by_category($category_id)
                 </div>
 
 
+
                 <!-- Step 4: Select Date and Time -->
                 <div class="booking-step" data-step="datetime">
                     <div class="step-header">
-                        <button type="button" class="booking-back-btn"> back</button>
+                        <button type="button" class="booking-back-btn">back</button>
                         <h2 class="booking-title">Select date and time</h2>
                     </div>
                     <div class="datetime-container">
                         <div class="date-selector">
                             <div class="month-header">
-
-                                <span сlass="current-month">May 2025</span>
+                                <span class="current-month">May 2025</span>
                                 <div class="month-controls">
                                     <button type="button" class="prev-month">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 14 14" fill="none">
@@ -319,92 +328,223 @@ function get_services_by_category($category_id)
                             <div class="calendar-grid"></div>
                         </div>
                         <div class="time-selector">
-                            <div class="time-header">
-                                <span>Available times</span>
+                            <div class="time-sections">
+                                <div class="time-slots"></div>
                             </div>
-                            <div class="time-slots"></div>
                         </div>
                     </div>
                     <div class="step-actions">
-
-                        <button type="button" class="btn yellow next-btn">Book an appointment </button>
+                        <button type="button" class="btn yellow next-btn">Book an appointment</button>
                     </div>
                 </div>
+
 
                 <!-- Step 5: Booking Details -->
-                <div class="booking-step" data-step="contact">
+                <div class="booking-step contact" data-step="contact">
                     <div class="step-header">
-                        <button type="button" class="booking-back-btn"> back</button>
+                        <button type="button" class="booking-back-btn">back</button>
                         <h2 class="booking-title">Booking details</h2>
                     </div>
-                    <div class="booking-details-container">
-                        <div class="contact-form">
-                            <div class="form-group">
-                                <label for="client-name">Name</label>
-                                <input type="text" id="client-name" name="client_name" required>
+
+                    <div class="booking-details-content">
+
+                        <div class="booking-summary-box">
+                            <div class="summary-master-date">
+                                <div class="summary-master">
+                                    <div class="master-info">
+                                        <img class="avatar" src="" alt="Master photo" />
+                                        <div class="master-meta">
+                                            <div class="name-stars">
+                                                <span class="name"></span>
+                                                <div class="stars-container">
+                                                    <span class="stars"> </span>
+                                                    <span class="stars-name"></span>
+                                                </div>
+
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                    <button class="edit-master-btn" aria-label="Edit master" data-edit-step="master">
+                                        <svg width="24" height="25" viewBox="0 0 24 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M15 6.5L18 9.5M13 20.5H21M5 16.5L4 20.5L8 19.5L19.586 7.914C19.9609 7.53895 20.1716 7.03033 20.1716 6.5C20.1716 5.96967 19.9609 5.46106 19.586 5.086L19.414 4.914C19.0389 4.53906 18.5303 4.32843 18 4.32843C17.4697 4.32843 16.9611 4.53906 16.586 4.914L5 16.5Z" stroke="#302F34" stroke-opacity="0.5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                                        </svg>
+
+                                    </button>
+                                </div>
+
+                                <div class="date-time-wrapper">
+                                    <div class="master-info">
+                                        <div class="date-time-icon">
+                                            <svg width="22" height="23" viewBox="0 0 22 23" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M20.2812 4.625H16.5V2.21875H15.125V4.625H6.875V2.21875H5.5V4.625H1.71875C1.44535 4.62534 1.18325 4.7341 0.989923 4.92742C0.7966 5.12075 0.687841 5.38285 0.6875 5.65625V20.0938C0.687841 20.3671 0.7966 20.6293 0.989923 20.8226C1.18325 21.0159 1.44535 21.1247 1.71875 21.125H20.2812C20.5546 21.1247 20.8168 21.0159 21.0101 20.8226C21.2034 20.6293 21.3122 20.3671 21.3125 20.0938V5.65625C21.3122 5.38285 21.2034 5.12075 21.0101 4.92742C20.8168 4.7341 20.5546 4.62534 20.2812 4.625ZM19.9375 19.75H2.0625V6H5.5V7.71875H6.875V6H15.125V7.71875H16.5V6H19.9375V19.75Z" fill="#302F34" />
+                                                <path d="M4.8125 10.125H6.1875V11.5H4.8125V10.125ZM8.59375 10.125H9.96875V11.5H8.59375V10.125ZM12.0312 10.125H13.4062V11.5H12.0312V10.125ZM15.8125 10.125H17.1875V11.5H15.8125V10.125ZM4.8125 13.2188H6.1875V14.5938H4.8125V13.2188ZM8.59375 13.2188H9.96875V14.5938H8.59375V13.2188ZM12.0312 13.2188H13.4062V14.5938H12.0312V13.2188ZM15.8125 13.2188H17.1875V14.5938H15.8125V13.2188ZM4.8125 16.3125H6.1875V17.6875H4.8125V16.3125ZM8.59375 16.3125H9.96875V17.6875H8.59375V16.3125ZM12.0312 16.3125H13.4062V17.6875H12.0312V16.3125ZM15.8125 16.3125H17.1875V17.6875H15.8125V16.3125Z" fill="#302F34" />
+                                            </svg>
+
+                                        </div>
+                                        <div class="booking-date-time">
+                                            <div class="calendar-date"></div>
+                                            <div class="calendar-time"></div>
+                                        </div>
+                                    </div>
+                                    <button class="edit-datetime-btn" aria-label="Edit date and time" data-edit-step="datetime">
+                                        <svg width="24" height="25" viewBox="0 0 24 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M15 6.5L18 9.5M13 20.5H21M5 16.5L4 20.5L8 19.5L19.586 7.914C19.9609 7.53895 20.1716 7.03033 20.1716 6.5C20.1716 5.96967 19.9609 5.46106 19.586 5.086L19.414 4.914C19.0389 4.53906 18.5303 4.32843 18 4.32843C17.4697 4.32843 16.9611 4.53906 16.586 4.914L5 16.5Z" stroke="#302F34" stroke-opacity="0.5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                                        </svg>
+
+                                    </button>
+                                </div>
                             </div>
-                            <div class="form-group">
-                                <label for="client-phone">Phone</label>
-                                <input type="tel" id="client-phone" name="client_phone" required>
+
+                            <div class="summary-services-list">
+
+
+
+                                <!-- Core services will be populated dynamically via JavaScript -->
+                                <div class="summary-addons">
+                                    <!-- Add-ons will be populated dynamically via JavaScript -->
+                                </div>
                             </div>
-                            <div class="form-group">
-                                <label for="client-email">Email</label>
-                                <input type="email" id="client-email" name="client_email">
+
+
+
+                            <div class="summary-total-group">
+                                <div class="summary-item"><span>Master category (+<span class="percent">0</span>%)</span> <span class="master-bonus">0 SGD</span></div>
+                                <div class="summary-item total"><span>Total</span> <span class="summary-total-amount">0.00 SGD</span></div>
                             </div>
-                            <div class="form-group">
-                                <label for="client-comment">Comment</label>
-                                <textarea id="client-comment" name="client_comment"></textarea>
-                            </div>
+                            <form id="booking-form" class="contact-form" novalidate>
+                                <h3>Personal Information</h3>
+
+                                <div class="form-group">
+                                    <input type="text" id="client-name" name="client_name" placeholder="Name*" required />
+                                </div>
+
+                                <div class="form-group">
+                                    <input type="email" id="client-email" name="client_email" placeholder="Email*" required />
+                                </div>
+
+                                <div class="form-group">
+                                    <input type="tel" id="client-phone" name="client_phone" placeholder="Phone*" required />
+                                </div>
+
+                                <div class="form-group">
+                                    <textarea id="client-comment" name="client_comment" placeholder="Comment"></textarea>
+                                </div>
+
+                                <div class="form-group checkbox">
+                                    <label for="privacy-policy">
+                                        <input type="checkbox" id="privacy-policy" required />
+                                        <span>I confirm that I have read and accepted the Privacy Policy and User Agreement</span>
+                                    </label>
+                                    <div class="input-error" data-for="privacy-policy"></div>
+                                </div>
+                                <div class="form-errors global-form-error" style="display:none;">
+
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <rect width="24" height="24" rx="6" fill="white" />
+                                        <path d="M12.0002 5.33325C15.6822 5.33325 18.6668 8.31859 18.6668 11.9999C18.6668 15.6813 15.6822 18.6666 12.0002 18.6666C8.31816 18.6666 5.3335 15.6813 5.3335 11.9999C5.3335 8.31859 8.31816 5.33325 12.0002 5.33325ZM12.0002 6.44459C8.93683 6.44459 6.44483 8.93659 6.44483 11.9999C6.44483 15.0633 8.93683 17.5553 12.0002 17.5553C15.0635 17.5553 17.5555 15.0633 17.5555 11.9999C17.5555 8.93659 15.0635 6.44459 12.0002 6.44459ZM11.9995 13.6679C12.1761 13.6679 12.3455 13.7381 12.4704 13.863C12.5953 13.9879 12.6655 14.1573 12.6655 14.3339C12.6655 14.5106 12.5953 14.68 12.4704 14.8049C12.3455 14.9298 12.1761 14.9999 11.9995 14.9999C11.8229 14.9999 11.6535 14.9298 11.5286 14.8049C11.4037 14.68 11.3335 14.5106 11.3335 14.3339C11.3335 14.1573 11.4037 13.9879 11.5286 13.863C11.6535 13.7381 11.8229 13.6679 11.9995 13.6679ZM11.9962 8.66659C12.1171 8.66643 12.234 8.71011 12.3252 8.78954C12.4164 8.86898 12.4757 8.97877 12.4922 9.09859L12.4968 9.16592L12.4995 12.1673C12.4996 12.294 12.4516 12.4161 12.3652 12.5087C12.2788 12.6014 12.1603 12.6579 12.0339 12.6666C11.9075 12.6753 11.7824 12.6357 11.6841 12.5557C11.5857 12.4758 11.5214 12.3615 11.5042 12.2359L11.4995 12.1679L11.4968 9.16725C11.4967 9.10154 11.5096 9.03645 11.5347 8.97571C11.5598 8.91497 11.5966 8.85977 11.643 8.81327C11.6895 8.76677 11.7446 8.72988 11.8053 8.70471C11.866 8.67954 11.9304 8.66659 11.9962 8.66659Z" fill="#DC3232" />
+                                    </svg>
+
+                                    <span>One or more fields have an error. Please check and try again.</span>
+
+                                </div>
+                            </form>
+
+
                         </div>
-                        <div class="booking-summary">
-                            <h3>Selected master</h3>
-                            <div class="selected-master-info"></div>
 
-                            <h3>Selected services</h3>
-                            <div class="summary-services-list"></div>
 
-                            <div class="total-price">
-                                <span>Total:</span>
-                                <span class="summary-total-amount">0.00</span>
-                            </div>
+
+                        <div class="step-actions">
+                            <button type="button" class="btn yellow next-btn  confirm-booking-btn">Book an appointment </button>
                         </div>
                     </div>
-                    <div class="step-actions">
-                        <button type="button" class="book-btn confirm-booking-btn">Confirm booking
-                            <span class="book-bt__icon">
-                                <svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M9.22581 0.773971L9.22581 8.01857M9.22581 0.773971L1.98122 0.773971M9.22581 0.773971L0.773784 9.226" stroke="#302F34" stroke-width="0.838404" stroke-linecap="round" stroke-linejoin="round" />
-                                </svg>
-                            </span>
-                        </button>
-                    </div>
+
                 </div>
+
 
                 <!-- Step 6: Confirmation -->
-                <div class="booking-step" data-step="confirm">
-                    <div class="step-header">
-                        <h2 class="booking-title">Booking confirmed</h2>
-                    </div>
-                    <div class="confirmation-container">
-                        <div class="confirmation-icon">✓</div>
-                        <p class="confirmation-message">Your booking has been successfully confirmed!</p>
-                        <div class="confirmation-details">
-                            <p>Booking reference: <span class="booking-reference"></span></p>
-                            <p>Date: <span class="booking-date"></span></p>
-                            <p>Time: <span class="booking-time"></span></p>
-                        </div>
-                        <div class="booked-services-summary"></div>
-                    </div>
-                    <div class="step-actions">
-                        <button type="button" class="book-btn close-popup-btn">Done
-                            <span class="book-bt__icon">
-                                <svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M9.22581 0.773971L9.22581 8.01857M9.22581 0.773971L1.98122 0.773971M9.22581 0.773971L0.773784 9.226" stroke="#302F34" stroke-width="0.838404" stroke-linecap="round" stroke-linejoin="round" />
+                <div class="booking-step confirm" data-step="confirm">
+
+                    <div class="confirmation-body">
+                        <div class="confirmation-success">
+                            <div class="confirmation-success-icon">
+                                <svg width="31" height="31" viewBox="0 0 31 31" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M26.4771 1.81641L12.2729 20.5436L3.875 12.1518L0 16.0268L12.9146 28.9414L31 5.69141L26.4771 1.81641Z" fill="#302F34" />
                                 </svg>
-                            </span>
-                        </button>
+                            </div>
+                            <p class="confirmation-message">You have booked an appointment to Sunny Nails Studio!</p>
+                        </div>
+
+
+
+                        <div class="booking-summary-box">
+                            <h3 class="summary-title">Booking details</h3>
+                            <div class="summary-master-date">
+                                <div class="summary-master">
+                                    <div class="master-info">
+                                        <img class="avatar" src="" alt="Master photo" />
+                                        <div class="master-meta">
+                                            <div class="name-stars">
+                                                <span class="name"></span>
+                                                <div class="stars-container">
+                                                    <span class="stars"> </span>
+                                                    <span class="stars-name"></span>
+                                                </div>
+
+                                            </div>
+
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div class="date-time-wrapper">
+                                    <div class="master-info">
+                                        <div class="date-time-icon">
+                                            <svg width="22" height="23" viewBox="0 0 22 23" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M20.2812 4.625H16.5V2.21875H15.125V4.625H6.875V2.21875H5.5V4.625H1.71875C1.44535 4.62534 1.18325 4.7341 0.989923 4.92742C0.7966 5.12075 0.687841 5.38285 0.6875 5.65625V20.0938C0.687841 20.3671 0.7966 20.6293 0.989923 20.8226C1.18325 21.0159 1.44535 21.1247 1.71875 21.125H20.2812C20.5546 21.1247 20.8168 21.0159 21.0101 20.8226C21.2034 20.6293 21.3122 20.3671 21.3125 20.0938V5.65625C21.3122 5.38285 21.2034 5.12075 21.0101 4.92742C20.8168 4.7341 20.5546 4.62534 20.2812 4.625ZM19.9375 19.75H2.0625V6H5.5V7.71875H6.875V6H15.125V7.71875H16.5V6H19.9375V19.75Z" fill="#302F34" />
+                                                <path d="M4.8125 10.125H6.1875V11.5H4.8125V10.125ZM8.59375 10.125H9.96875V11.5H8.59375V10.125ZM12.0312 10.125H13.4062V11.5H12.0312V10.125ZM15.8125 10.125H17.1875V11.5H15.8125V10.125ZM4.8125 13.2188H6.1875V14.5938H4.8125V13.2188ZM8.59375 13.2188H9.96875V14.5938H8.59375V13.2188ZM12.0312 13.2188H13.4062V14.5938H12.0312V13.2188ZM15.8125 13.2188H17.1875V14.5938H15.8125V13.2188ZM4.8125 16.3125H6.1875V17.6875H4.8125V16.3125ZM8.59375 16.3125H9.96875V17.6875H8.59375V16.3125ZM12.0312 16.3125H13.4062V17.6875H12.0312V16.3125ZM15.8125 16.3125H17.1875V17.6875H15.8125V16.3125Z" fill="#302F34" />
+                                            </svg>
+
+                                        </div>
+                                        <div class="booking-date-time">
+                                            <div class="calendar-date"></div>
+                                            <div class="calendar-time"></div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <div class="summary-services-list">
+
+
+
+                                <!-- Core services will be populated dynamically via JavaScript -->
+                                <div class="summary-addons">
+                                    <!-- Add-ons will be populated dynamically via JavaScript -->
+                                </div>
+                            </div>
+
+
+
+                            <div class="summary-total-group">
+                                <div class="summary-item"><span>Master category (+<span class="percent">0</span>%)</span> <span class="master-bonus">0 SGD</span></div>
+                                <div class="summary-item total"><span>Total</span> <span class="summary-total-amount">0.00 SGD</span></div>
+                            </div>
+
+
+                        </div>
+                        <div class="step-actions">
+                            <button type="button" class="btn yellow new-booking-btn">Make another booking</button>
+                            <button type="button" class="btn  outline edit-booking-btn">Edit Booking</button>
+                            <button type="button" class="btn  outline cancel-booking-btn">Cancel Booking</button>
+                        </div>
                     </div>
                 </div>
+
+
             </div>
         </div>
     </div>
