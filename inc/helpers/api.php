@@ -1,6 +1,5 @@
 <?php
 
-
 function getUrl($str) {
   return get_template_directory_uri() . "/$str";
 }
@@ -38,30 +37,32 @@ function dump($var, $label = null, $echo = true) {
   $output = $style;
   $output .= '<div class="pretty-dump">';
   if ($label) {
-      $output .= '<span class="label">' . htmlspecialchars($label) . '</span>';
+    $output .= '<span class="label">' . htmlspecialchars($label) . '</span>';
   }
   $output .= '<pre>' . htmlspecialchars(print_r($var, true)) . '</pre>';
   $output .= '</div>';
-
   if ($echo) {
-      echo $output;
+    echo $output;
   } else {
-      return $output;
-  }
+    return $output;
+  };
 }
 
 function displayIcon() {
-  foreach(get_field('footer_icons', 'option') as $icon) {
-    $img = $icon['footer_icon']["url"];
-    $title = $icon['footer_icon']["title"];
-    $url = $icon['footer_link'];
+  $arr = get_field('footer_icons', 'option');
+  if(is_array($arr)) {
+    foreach($arr as $icon) {
+      $img = $icon['footer_icon']["url"];
+      $title = $icon['footer_icon']["title"];
+      $url = $icon['footer_link'];
 
-    if($img && $url) {
-      echo "<a target='_blank' rel='noopener noreferrer' href='$url'>
-        <img src='$img' alt='$title'>
-      </a>";
-    }
-  };
+      if($img && $url) {
+        echo "<a target='_blank' rel='noopener noreferrer' href='$url'>
+          <img src='$img' alt='$title'>
+        </a>";
+      }
+    };
+  }
 };
 
 function getPlaceReviews() {
