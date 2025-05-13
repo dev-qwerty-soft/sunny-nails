@@ -13,7 +13,7 @@
             <?php
                 $logo = get_field('header_logo', 'option');
                 $url = isset($logo['url']) ? $logo['url'] : null;
-                $alt = isset($logo['alt']) ? $logo['alt'] : null;
+                $alt = isset($logo['title']) ? $logo['title'] : null;
                 if ($url && $alt) {
                     echo "<img src='$url' alt='$alt'>";
                 };
