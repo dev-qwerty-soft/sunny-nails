@@ -811,32 +811,6 @@
             "append": ""
         },
         {
-            "key": "field_682336d2252ed",
-            "label": "Form image mobile",
-            "name": "form_image_mobile",
-            "aria-label": "",
-            "type": "image",
-            "instructions": "",
-            "required": 0,
-            "conditional_logic": 0,
-            "wrapper": {
-                "width": "",
-                "class": "",
-                "id": ""
-            },
-            "return_format": "array",
-            "library": "all",
-            "min_width": "",
-            "min_height": "",
-            "min_size": "",
-            "max_width": "",
-            "max_height": "",
-            "max_size": "",
-            "mime_types": "",
-            "allow_in_bindings": 0,
-            "preview_size": "medium"
-        },
-        {
             "key": "field_682347db517de",
             "label": "Team settings",
             "name": "",
@@ -1017,5 +991,5 @@
     "active": true,
     "description": "",
     "show_in_rest": 0,
-    "modified": 1747143808
+    "modified": 1747149781
 }

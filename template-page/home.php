@@ -84,9 +84,9 @@ if (empty($ordered_category_ids)) {
         </div>
     </section>
     <?php
-    get_template_part("template-parts/gallery/gallery-grid", null, [
-        "full" => false
-    ]);
+        get_template_part("template-parts/gallery/gallery-grid", null, [
+            "full" => false
+        ]);
     ?>
     <?php
     $services_link_url = get_field('services_link_url', 'option');

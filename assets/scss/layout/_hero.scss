@@ -1001,6 +1001,7 @@ $red: #DC3232;
 .promo-form-section {
   padding: get-d(45px) get-d(60px);
   position: relative;
+  background: $bg-yellow;
   @include respond(lg) {
     padding: get-lg(45px) get-lg(60px);
   }
@@ -1008,18 +1009,23 @@ $red: #DC3232;
     padding: 50px 25px;
   }
   &__image {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      inset: 0;
-      object-fit: cover;
-      z-index: -1;
-      & img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-      }
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    inset: 0;
+    object-fit: contain;
+    z-index: 1;
+    transform: translateX(10%);
+    @include respond(md) {
+      transform: translateX(0);
+      height: auto;
+      bottom: 38%;
+      top: auto;
     }
+    @include respond(sm) {
+      bottom: 35%;
+    }
+  }
   &::before {
     content: "";
     background: url("../svg/bigArrow.svg") center / contain no-repeat;
@@ -1028,6 +1034,7 @@ $red: #DC3232;
     transform: translateY(-50%);
     width: get-d(90px);
     height: get-d(100px);
+    z-index: 2;
     @include respond(lg) {
       width: get-lg(90px);
       height: get-lg(100px);
@@ -1041,6 +1048,8 @@ $red: #DC3232;
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     text-align: center;
+    position: relative;
+    z-index: 5;
     @include respond(md) {
       grid-template-columns: 1fr;
       text-align: left;
