@@ -12455,14 +12455,18 @@ __webpack_require__.r(__webpack_exports__);
     version: 'weekly',
     libraries: ['maps'],
   });
-  const { Map } = await loader.importLibrary('maps');
-  new Map(cont, {
+  const { Map, Marker } = await loader.importLibrary('maps');
+  const map = new Map(cont, {
     center: cords,
     zoomControl: false,
     streetViewControl: false,
     mapTypeControl: false,
     fullscreenControl: false,
     zoom: 14,
+  });
+  const marker = new Marker({
+    position: cords,
+    map: map,
   });
 })();
 
