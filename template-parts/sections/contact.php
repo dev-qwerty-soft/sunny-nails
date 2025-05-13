@@ -1,4 +1,8 @@
-<section class="contact-section">
+<?php
+  $isPage = $args["page"] ?? false;
+?>
+
+<section class="contact-section<?= $isPage ? ' page' : '' ?>">
   <div class="container">
     <div class="contact-section__content">
       <div class="contact-section__text">

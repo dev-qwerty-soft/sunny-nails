@@ -175,6 +175,15 @@
 }
 
 .contact-section {
+  &.page {
+    padding-top: get-d(75px);
+    @include respond(lg) {
+      padding-top: get-lg(75px);
+    }
+    @include respond(md) {
+      padding-top: 0px;
+    }
+  }
   padding: get-d(150px) get-d(60px);
   @include respond(lg) {
     padding: get-lg(150px) get-lg(60px);
@@ -340,6 +349,13 @@
   }
 
   &.full {
+    padding-top: get-d(40px);
+    @include respond(lg) {
+      padding-top: get-lg(40px);
+    }
+    @include respond(md) {
+      padding-top: 0px;
+    }
     & .image {
       &:nth-of-type(10n + 3),
       &:nth-of-type(10n + 6) {
@@ -413,6 +429,7 @@
       transition: background 0.5s, border-color 0.5s;
       background: none;
       text-transform: capitalize;
+      color: $bg-grey;
 
       @include respond(lg) {
         padding: get-lg(9.5px) get-lg(20px);
@@ -979,16 +996,35 @@
   }
 }
 
+$red: #DC3232;
+
 .promo-form-section {
   padding: get-d(45px) get-d(60px);
-  // background: $bg-yellow;
   position: relative;
-
+  background: $bg-yellow;
   @include respond(lg) {
     padding: get-lg(45px) get-lg(60px);
   }
   @include respond(md) {
     padding: 50px 25px;
+  }
+  &__image {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    inset: 0;
+    object-fit: contain;
+    z-index: 1;
+    transform: translateX(10%);
+    @include respond(md) {
+      transform: translateX(0);
+      height: auto;
+      bottom: 38%;
+      top: auto;
+    }
+    @include respond(sm) {
+      bottom: 35%;
+    }
   }
   &::before {
     content: "";
@@ -998,6 +1034,7 @@
     transform: translateY(-50%);
     width: get-d(90px);
     height: get-d(100px);
+    z-index: 2;
     @include respond(lg) {
       width: get-lg(90px);
       height: get-lg(100px);
@@ -1011,6 +1048,8 @@
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     text-align: center;
+    position: relative;
+    z-index: 5;
     @include respond(md) {
       grid-template-columns: 1fr;
       text-align: left;
@@ -1018,16 +1057,7 @@
     & > div:has(form) {
       grid-column: 1 / -1;
     }
-    & img {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      inset: 0;
-      object-fit: cover;
-      z-index: -1;
-    }
   }
-  
   & form {
     background: $bg-white;
     grid-column: 1 / -1;
@@ -1040,10 +1070,93 @@
     @include respond(md) {
       padding: 24px;
       border-radius: 20px;
-      
     }
     & br {
       display: none;
+    }
+    &.wpcf7-form.sent {
+      & .wpcf7-response-output {
+        background: rgba(#06B569, 10%);
+        color: #06B569;
+        &::before {
+          background-image: url("../svg/check icon.svg");
+        }
+      }
+    } 
+    & .wpcf7-not-valid-tip {
+      font-weight: 500;
+      font-size: get-d(14px);
+      line-height: get-d(16px);
+      text-align: left;
+      padding-top: get-d(6px);
+      color: $red;
+      @include respond(lg) {
+        font-size: get-lg(14px);
+        line-height: get-lg(16px);
+        padding-top: get-lg(6px);
+      }
+      @include respond(md) {
+        font-size: 12px;
+        line-height: 14px;
+        padding-top: 6px;
+      }
+    }
+    & .wpcf7-response-output {
+      padding: get-d(8px);
+      width: 100%;
+      border: none;
+      border-radius: get-d(10px);
+      font-weight: 500;
+      font-size: get-d(14px);
+      line-height: get-d(16px);
+      color: $red;
+      text-align: left;
+      background: rgba($red, 10%);
+      display: flex;
+      align-items: center;
+      gap: get-d(8px);
+      position: relative;
+      @include respond(lg) {
+        padding: get-lg(8px);
+        border-radius: get-lg(10px);
+        font-size: get-lg(14px);
+        line-height: get-lg(16px);
+        gap: get-lg(8px);
+      }
+      @include respond(md) {
+        padding: 8px;
+        border-radius: 10px;
+        font-size: 12px;
+        line-height: 14px;
+        gap: 8px;
+      }
+      &::before {
+        width: get-d(24px);
+        height: get-d(24px);
+        background: $bg-white url("../svg/error icon.svg") center / 75% no-repeat;
+        display: block;
+        content: "";
+        border-radius: get-d(6px);
+        min-width: get-d(24px);
+        min-height: get-d(24px);
+        @include respond(lg) {
+          width: get-lg(24px);
+          height: get-lg(24px);
+          border-radius: get-lg(6px);
+          min-width: get-lg(24px);
+          min-height: get-lg(24px);
+        }
+        @include respond(md) {
+          width: 24px;
+          height: 24px;
+          border-radius: 6px;
+          min-width: 24px;
+          min-height: 24px;
+        }
+      }
+    }
+    & .form-fields .wpcf7-form-control-wrap:has(.wpcf7-not-valid-tip) input {
+      border-color: $red;
     }
     & .promo-form {
       display: grid;
@@ -1075,6 +1188,7 @@
         border: none;
         background: none;
         border-bottom: get-d(2px) solid $bg-grey;
+        border-radius: 0;
         @include respond(lg) {
           padding: get-lg(11px) get-lg(4px);
           border-bottom: get-lg(2px) solid $bg-grey;
@@ -1114,7 +1228,6 @@
       @include respond(md) {
         grid-gap: 16px;
         margin: 0;
-        
       }
 
       & p {
@@ -1221,7 +1334,7 @@
       padding-top: get-lg(40px);
     }
     @include respond(md) {
-      padding-top: 40px;
+      padding-top: 0px;
     }
   }
   @include respond(lg) {
@@ -1229,6 +1342,12 @@
   }
   @include respond(md) {
     padding: 75px 0;
+    & .swiper-button-next {
+      right: 3px !important;
+    }
+    & .swiper-button-prev {
+      left: 3px !important;
+    }
   }
   &__top, &__wrapper {
     padding: 0 get-d(60px);

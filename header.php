@@ -4,6 +4,7 @@
     <meta charset="<?php bloginfo('charset'); ?>">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="profile" href="http://gmpg.org/xfn/11">
+    <title><?= wp_get_document_title(); ?></title>
     <?php wp_head(); ?>
 </head>
 <body <?php body_class(); ?>>
@@ -13,7 +14,7 @@
             <?php
                 $logo = get_field('header_logo', 'option');
                 $url = isset($logo['url']) ? $logo['url'] : null;
-                $alt = isset($logo['alt']) ? $logo['alt'] : null;
+                $alt = isset($logo['title']) ? $logo['title'] : null;
                 if ($url && $alt) {
                     echo "<img src='$url' alt='$alt'>";
                 };

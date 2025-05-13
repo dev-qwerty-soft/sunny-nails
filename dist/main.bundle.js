@@ -12456,13 +12456,19 @@ __webpack_require__.r(__webpack_exports__);
     libraries: ['maps'],
   });
   const { Map } = await loader.importLibrary('maps');
-  new Map(cont, {
+  const { AdvancedMarkerElement } = await loader.importLibrary('marker');
+  const map = new Map(cont, {
     center: cords,
     zoomControl: false,
     streetViewControl: false,
     mapTypeControl: false,
     fullscreenControl: false,
-    zoom: 7,
+    mapId: 'ba5b19aef975eacea766912a',
+    zoom: 16,
+  });
+  new AdvancedMarkerElement({
+    position: cords,
+    map: map,
   });
 })();
 

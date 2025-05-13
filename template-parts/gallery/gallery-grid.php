@@ -44,7 +44,7 @@
   <div class="container">
     <div class="gallery-section__top">
       <h2 class="title"><?php the_field('gallery_title', 'option'); ?></h2>
-      <p class="paragraph"><?php the_field('gallery_description', 'option'); ?></p>
+      <p class="paragraph"><?php the_field('gallery_text', 'option'); ?></p>
     </div>
     <div class="gallery-section__filters">
       <?php
