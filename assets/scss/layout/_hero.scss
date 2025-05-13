@@ -340,6 +340,13 @@
   }
 
   &.full {
+    padding-top: get-d(40px);
+    @include respond(lg) {
+      padding-top: get-lg(40px);
+    }
+    @include respond(md) {
+      padding-top: 0px;
+    }
     & .image {
       &:nth-of-type(10n + 3),
       &:nth-of-type(10n + 6) {
@@ -1309,7 +1316,7 @@ $red: #DC3232;
       padding-top: get-lg(40px);
     }
     @include respond(md) {
-      padding-top: 40px;
+      padding-top: 0px;
     }
   }
   @include respond(lg) {
