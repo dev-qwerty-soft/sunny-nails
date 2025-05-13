@@ -175,6 +175,15 @@
 }
 
 .contact-section {
+  &.page {
+    padding-top: get-d(75px);
+    @include respond(lg) {
+      padding-top: get-lg(75px);
+    }
+    @include respond(md) {
+      padding-top: 0px;
+    }
+  }
   padding: get-d(150px) get-d(60px);
   @include respond(lg) {
     padding: get-lg(150px) get-lg(60px);
