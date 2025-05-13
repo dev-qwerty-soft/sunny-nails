@@ -413,6 +413,7 @@
       transition: background 0.5s, border-color 0.5s;
       background: none;
       text-transform: capitalize;
+      color: $bg-grey;
 
       @include respond(lg) {
         padding: get-lg(9.5px) get-lg(20px);
@@ -1162,6 +1163,7 @@ $red: #DC3232;
         border: none;
         background: none;
         border-bottom: get-d(2px) solid $bg-grey;
+        border-radius: 0;
         @include respond(lg) {
           padding: get-lg(11px) get-lg(4px);
           border-bottom: get-lg(2px) solid $bg-grey;
