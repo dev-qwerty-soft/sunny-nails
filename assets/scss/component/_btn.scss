@@ -183,6 +183,11 @@
   align-items: center;
   gap: get-d(4px);
   padding: get-d(14px) get-d(20px);
+  transition: background .5s, transform .5s;
+  &:hover {
+    background: #f1e3be;
+    transform: scale(1.1);
+  }
   @include respond(lg) {
     bottom: get-lg(90px);
     right: get-lg(60px);
