@@ -11,7 +11,8 @@ import { Loader } from '@googlemaps/js-api-loader';
     version: 'weekly',
     libraries: ['maps'],
   });
-  const { Map, Marker } = await loader.importLibrary('maps');
+  const { Map } = await loader.importLibrary('maps');
+  const { AdvancedMarkerElement } = await loader.importLibrary('marker');
   const map = new Map(cont, {
     center: cords,
     zoomControl: false,
@@ -20,7 +21,7 @@ import { Loader } from '@googlemaps/js-api-loader';
     fullscreenControl: false,
     zoom: 14,
   });
-  const marker = new Marker({
+  new AdvancedMarkerElement({
     position: cords,
     map: map,
   });
