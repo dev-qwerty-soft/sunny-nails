@@ -21,8 +21,8 @@ import { Loader } from '@googlemaps/js-api-loader';
     fullscreenControl: false,
     zoom: 14,
   });
-  new AdvancedMarkerElement({
-    position: cords,
-    map: map,
-  });
+  // new AdvancedMarkerElement({
+  //   position: cords,
+  //   map: map,
+  // });
 })();

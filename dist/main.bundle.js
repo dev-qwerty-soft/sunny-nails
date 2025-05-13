@@ -12465,10 +12465,10 @@ __webpack_require__.r(__webpack_exports__);
     fullscreenControl: false,
     zoom: 14,
   });
-  new AdvancedMarkerElement({
-    position: cords,
-    map: map,
-  });
+  // new AdvancedMarkerElement({
+  //   position: cords,
+  //   map: map,
+  // });
 })();
 
 /***/ }),
