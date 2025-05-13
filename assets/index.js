@@ -4,11 +4,16 @@ import "./js/booking.js";
 import "./js/services-validation.js";
 import "swiper/css";
 import "swiper/css/pagination";
+import "swiper/css/scrollbar";
 import Swiper from "swiper";
 import "./js/map.js";
-import { Navigation, Pagination } from "swiper/modules";
-
+import { Navigation, Pagination, Scrollbar, FreeMode } from "swiper/modules";
 import { has, g, add, remove, toggle, respond } from "./js/function.js";
+
+let gallerySwiper;
+let filterFn;
+const modal = g(".gallery-modal")
+const filterSection = g(".gallery-section");
 
 if (g(".hero-swiper")) {
   new Swiper(".hero-swiper", {
@@ -24,9 +29,7 @@ if (g(".hero-swiper")) {
       prevEl: ".hero-swiper .swiper-button-prev",
     },
   });
-}
-
-let gallerySwiper;
+} 
 
 if (g(".gallery-swiper")) {
   gallerySwiper = new Swiper(".gallery-swiper", {
@@ -59,31 +62,73 @@ if (g(".reviews-swiper")) {
   });
 }
 
-const filters = g(".gallery-section__filters .filter", document, true);
-const images = g(".gallery-section__images .image", document, true);
-const filterSection = g(".gallery-section");
-const isFull = has(filterSection, ".full");
-const modal = g(".gallery-modal");
-
-const filterFn = (filter) => {
-  if (!filters) return;
-  const slug = filter.getAttribute("data-slug");
-  remove(filters);
-  add(filter);
-
-  const filteredImages = images.filter((image) => {
-    return slug === "all" || image.getAttribute("data-slug") === slug;
+if (g(".team-swiper")) {
+  new Swiper(".team-swiper", {
+    modules: [Navigation],
+    slidesPerView: 1,
+    spaceBetween: 20,
+    navigation: {
+      nextEl: ".team-section__wrapper .swiper-button-next",
+      prevEl: ".team-section__wrapper .swiper-button-prev",
+    },
+    breakpoints: {
+      768: {
+        slidesPerView: 2,
+      },
+      1024: {
+        slidesPerView: 3,
+      },
+    },
   });
+}
 
-  remove(images);
-  add(isFull ? filteredImages : filteredImages.slice(0, respond("md") ? 6 : 5));
-};
+if (g(".mini-swiper")) {
+  g(".mini-swiper", document, true).forEach((swiper) => {
+    new Swiper(swiper, {
+      modules: [FreeMode, Scrollbar],
+      slidesPerView: 4,
+      spaceBetween: 6,
+      freeMode: true,
+      scrollbar: {
+        el: swiper.querySelector(".swiper-scrollbar"),
+        draggable: true,
+        dragSize: 32
+      },
+      breakpoints: {
+        1024: {
+          slidesPerView: 6,
+        },
+      },
+    });
+  });
+}
 
-filterFn(filters[0]);
+if(filterSection) {
+  const filters = g(".gallery-section__filters .filter", document, true);
+  const images = g(".gallery-section__images .image", document, true);
+  const isFull = has(filterSection, ".full");
+  
+
+  filterFn = (filter) => {
+    if(!filters) return;
+    const slug = filter.getAttribute("data-slug");
+    remove(filters);
+    add(filter);
+
+    const filteredImages = images.filter((image) => {
+      return slug === "all" || image.getAttribute("data-slug") === slug;
+    });
+
+    remove(images);
+    add(isFull ? filteredImages : filteredImages.slice(0, respond("md") ? 6 : 5));
+  };
+
+  filterFn(filters[0]);
+}
 
 document.onclick = (e) => {
-  if (has(e.target, ".gallery-section__filters .filter")) {
-    filterFn(e.target);
+  if(has(e.target, ".gallery-section__filters .filter")) {
+    filterFn?.(e.target);
   } else if (has(e.target, "#burger")) {
     const btn = g("#burger");
     const menu = g(".burger-menu");

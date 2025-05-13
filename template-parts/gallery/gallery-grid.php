@@ -4,7 +4,7 @@
 ?>
 <div class="gallery-modal">
   <button type="button" aria-label="Close" class="cross"></button>
-  <div class="swiper gallery-swiper button-container">
+  <div class="swiper gallery-swiper button-container black">
     <div class="swiper-wrapper">
       <?php
         $index = 0;

@@ -2,9 +2,9 @@
   <div class="container">
     <?php
       $image = get_field('form_image', 'option');
-      $url = $image["url"];
-      $title = $image["title"];
-      if($image) {
+      $url = isset($image["url"]) ? $image["url"] : null;
+      $title = isset($image["title"]) ? $image["title"] : null;
+      if($url && $title) {
         echo "<img src='$url' alt='$title'>";
       }
 

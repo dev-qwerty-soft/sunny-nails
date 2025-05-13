@@ -10,7 +10,7 @@
         grid-column: 1 / 2;
         grid-row: 1 / 2;
       }
-      & .menu-aside-container {
+      & .menu-footer-aside-container {
         grid-column: 2 / 3;
         grid-row: 1 / 2;
         justify-self: flex-end;
@@ -64,11 +64,14 @@
         height: 1px;
         background: #302f3466;
         position: absolute;
-        top: -10px;
+        top: -12px;
         content: "";
         left: 0;
       }
     }
+  }
+  & .menu-footer-aside-container {
+    justify-self: flex-end;
   }
   & .menu-footer-container {
     @include respond(md) {

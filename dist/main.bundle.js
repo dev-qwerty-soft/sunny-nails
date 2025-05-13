@@ -4568,6 +4568,19 @@ function Parallax(_ref) {
 
 /***/ }),
 
+/***/ "../node_modules/swiper/modules/scrollbar.css":
+/*!****************************************************!*\
+  !*** ../node_modules/swiper/modules/scrollbar.css ***!
+  \****************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+// extracted by mini-css-extract-plugin
+
+
+/***/ }),
+
 /***/ "../node_modules/swiper/modules/scrollbar.mjs":
 /*!****************************************************!*\
   !*** ../node_modules/swiper/modules/scrollbar.mjs ***!
@@ -12664,10 +12677,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _js_services_validation_js__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_js_services_validation_js__WEBPACK_IMPORTED_MODULE_3__);
 /* harmony import */ var swiper_css__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! swiper/css */ "../node_modules/swiper/swiper.css");
 /* harmony import */ var swiper_css_pagination__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! swiper/css/pagination */ "../node_modules/swiper/modules/pagination.css");
-/* harmony import */ var swiper__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! swiper */ "../node_modules/swiper/swiper.mjs");
-/* harmony import */ var _js_map_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./js/map.js */ "./js/map.js");
-/* harmony import */ var swiper_modules__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! swiper/modules */ "../node_modules/swiper/modules/index.mjs");
-/* harmony import */ var _js_function_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./js/function.js */ "./js/function.js");
+/* harmony import */ var swiper_css_scrollbar__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! swiper/css/scrollbar */ "../node_modules/swiper/modules/scrollbar.css");
+/* harmony import */ var swiper__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! swiper */ "../node_modules/swiper/swiper.mjs");
+/* harmony import */ var _js_map_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./js/map.js */ "./js/map.js");
+/* harmony import */ var swiper_modules__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! swiper/modules */ "../node_modules/swiper/modules/index.mjs");
+/* harmony import */ var _js_function_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./js/function.js */ "./js/function.js");
 
 
 
@@ -12680,9 +12694,14 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-if ((0,_js_function_js__WEBPACK_IMPORTED_MODULE_9__.g)(".hero-swiper")) {
-  new swiper__WEBPACK_IMPORTED_MODULE_6__["default"](".hero-swiper", {
-    modules: [swiper_modules__WEBPACK_IMPORTED_MODULE_8__.Navigation, swiper_modules__WEBPACK_IMPORTED_MODULE_8__.Pagination],
+let gallerySwiper;
+let filterFn;
+const modal = (0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.g)(".gallery-modal")
+const filterSection = (0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.g)(".gallery-section");
+
+if ((0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.g)(".hero-swiper")) {
+  new swiper__WEBPACK_IMPORTED_MODULE_7__["default"](".hero-swiper", {
+    modules: [swiper_modules__WEBPACK_IMPORTED_MODULE_9__.Navigation, swiper_modules__WEBPACK_IMPORTED_MODULE_9__.Pagination],
     slidesPerView: 1,
     loop: true,
     pagination: {
@@ -12694,13 +12713,11 @@ if ((0,_js_function_js__WEBPACK_IMPORTED_MODULE_9__.g)(".hero-swiper")) {
       prevEl: ".hero-swiper .swiper-button-prev",
     },
   });
-}
+} 
 
-let gallerySwiper;
-
-if ((0,_js_function_js__WEBPACK_IMPORTED_MODULE_9__.g)(".gallery-swiper")) {
-  gallerySwiper = new swiper__WEBPACK_IMPORTED_MODULE_6__["default"](".gallery-swiper", {
-    modules: [swiper_modules__WEBPACK_IMPORTED_MODULE_8__.Navigation],
+if ((0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.g)(".gallery-swiper")) {
+  gallerySwiper = new swiper__WEBPACK_IMPORTED_MODULE_7__["default"](".gallery-swiper", {
+    modules: [swiper_modules__WEBPACK_IMPORTED_MODULE_9__.Navigation],
     slidesPerView: 1,
     navigation: {
       nextEl: ".gallery-swiper .swiper-button-next",
@@ -12709,9 +12726,9 @@ if ((0,_js_function_js__WEBPACK_IMPORTED_MODULE_9__.g)(".gallery-swiper")) {
   });
 }
 
-if ((0,_js_function_js__WEBPACK_IMPORTED_MODULE_9__.g)(".reviews-swiper")) {
-  new swiper__WEBPACK_IMPORTED_MODULE_6__["default"](".reviews-swiper", {
-    modules: [swiper_modules__WEBPACK_IMPORTED_MODULE_8__.Navigation],
+if ((0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.g)(".reviews-swiper")) {
+  new swiper__WEBPACK_IMPORTED_MODULE_7__["default"](".reviews-swiper", {
+    modules: [swiper_modules__WEBPACK_IMPORTED_MODULE_9__.Navigation],
     slidesPerView: 1,
     spaceBetween: 20,
     navigation: {
@@ -12729,43 +12746,85 @@ if ((0,_js_function_js__WEBPACK_IMPORTED_MODULE_9__.g)(".reviews-swiper")) {
   });
 }
 
-const filters = (0,_js_function_js__WEBPACK_IMPORTED_MODULE_9__.g)(".gallery-section__filters .filter", document, true);
-const images = (0,_js_function_js__WEBPACK_IMPORTED_MODULE_9__.g)(".gallery-section__images .image", document, true);
-const filterSection = (0,_js_function_js__WEBPACK_IMPORTED_MODULE_9__.g)(".gallery-section");
-const isFull = (0,_js_function_js__WEBPACK_IMPORTED_MODULE_9__.has)(filterSection, ".full");
-const modal = (0,_js_function_js__WEBPACK_IMPORTED_MODULE_9__.g)(".gallery-modal");
-
-const filterFn = (filter) => {
-  if (!filters) return;
-  const slug = filter.getAttribute("data-slug");
-  (0,_js_function_js__WEBPACK_IMPORTED_MODULE_9__.remove)(filters);
-  (0,_js_function_js__WEBPACK_IMPORTED_MODULE_9__.add)(filter);
-
-  const filteredImages = images.filter((image) => {
-    return slug === "all" || image.getAttribute("data-slug") === slug;
+if ((0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.g)(".team-swiper")) {
+  new swiper__WEBPACK_IMPORTED_MODULE_7__["default"](".team-swiper", {
+    modules: [swiper_modules__WEBPACK_IMPORTED_MODULE_9__.Navigation],
+    slidesPerView: 1,
+    spaceBetween: 20,
+    navigation: {
+      nextEl: ".team-section__wrapper .swiper-button-next",
+      prevEl: ".team-section__wrapper .swiper-button-prev",
+    },
+    breakpoints: {
+      768: {
+        slidesPerView: 2,
+      },
+      1024: {
+        slidesPerView: 3,
+      },
+    },
   });
+}
 
-  (0,_js_function_js__WEBPACK_IMPORTED_MODULE_9__.remove)(images);
-  (0,_js_function_js__WEBPACK_IMPORTED_MODULE_9__.add)(isFull ? filteredImages : filteredImages.slice(0, (0,_js_function_js__WEBPACK_IMPORTED_MODULE_9__.respond)("md") ? 6 : 5));
-};
+if ((0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.g)(".mini-swiper")) {
+  (0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.g)(".mini-swiper", document, true).forEach((swiper) => {
+    new swiper__WEBPACK_IMPORTED_MODULE_7__["default"](swiper, {
+      modules: [swiper_modules__WEBPACK_IMPORTED_MODULE_9__.FreeMode, swiper_modules__WEBPACK_IMPORTED_MODULE_9__.Scrollbar],
+      slidesPerView: 4,
+      spaceBetween: 6,
+      freeMode: true,
+      scrollbar: {
+        el: swiper.querySelector(".swiper-scrollbar"),
+        draggable: true,
+        dragSize: 32
+      },
+      breakpoints: {
+        1024: {
+          slidesPerView: 6,
+        },
+      },
+    });
+  });
+}
 
-filterFn(filters[0]);
+if(filterSection) {
+  const filters = (0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.g)(".gallery-section__filters .filter", document, true);
+  const images = (0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.g)(".gallery-section__images .image", document, true);
+  const isFull = (0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.has)(filterSection, ".full");
+  
+
+  filterFn = (filter) => {
+    if(!filters) return;
+    const slug = filter.getAttribute("data-slug");
+    (0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.remove)(filters);
+    (0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.add)(filter);
+
+    const filteredImages = images.filter((image) => {
+      return slug === "all" || image.getAttribute("data-slug") === slug;
+    });
+
+    (0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.remove)(images);
+    (0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.add)(isFull ? filteredImages : filteredImages.slice(0, (0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.respond)("md") ? 6 : 5));
+  };
+
+  filterFn(filters[0]);
+}
 
 document.onclick = (e) => {
-  if ((0,_js_function_js__WEBPACK_IMPORTED_MODULE_9__.has)(e.target, ".gallery-section__filters .filter")) {
-    filterFn(e.target);
-  } else if ((0,_js_function_js__WEBPACK_IMPORTED_MODULE_9__.has)(e.target, "#burger")) {
-    const btn = (0,_js_function_js__WEBPACK_IMPORTED_MODULE_9__.g)("#burger");
-    const menu = (0,_js_function_js__WEBPACK_IMPORTED_MODULE_9__.g)(".burger-menu");
+  if((0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.has)(e.target, ".gallery-section__filters .filter")) {
+    filterFn?.(e.target);
+  } else if ((0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.has)(e.target, "#burger")) {
+    const btn = (0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.g)("#burger");
+    const menu = (0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.g)(".burger-menu");
     window.scrollTo(0, 0);
-    (0,_js_function_js__WEBPACK_IMPORTED_MODULE_9__.toggle)([btn, menu]);
-  } else if ((0,_js_function_js__WEBPACK_IMPORTED_MODULE_9__.has)(e.target, ".gallery-section__images .image")) {
+    (0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.toggle)([btn, menu]);
+  } else if ((0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.has)(e.target, ".gallery-section__images .image")) {
     const image = e.target.closest(".image");
     const index = Number(image.getAttribute("data-index"));
     gallerySwiper?.slideTo(index);
-    (0,_js_function_js__WEBPACK_IMPORTED_MODULE_9__.add)(modal);
-  } else if ((0,_js_function_js__WEBPACK_IMPORTED_MODULE_9__.has)(e.target, ".gallery-modal .cross")) {
-    (0,_js_function_js__WEBPACK_IMPORTED_MODULE_9__.remove)(modal);
+    (0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.add)(modal);
+  } else if ((0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.has)(e.target, ".gallery-modal .cross")) {
+    (0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.remove)(modal);
     gallerySwiper?.slideTo(0);
   }
 };
