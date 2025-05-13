@@ -12,17 +12,17 @@ import { Loader } from '@googlemaps/js-api-loader';
     libraries: ['maps'],
   });
   const { Map } = await loader.importLibrary('maps');
-  // const { AdvancedMarkerElement } = await loader.importLibrary('marker');
+  const { AdvancedMarkerElement } = await loader.importLibrary('marker');
   const map = new Map(cont, {
     center: cords,
     zoomControl: false,
     streetViewControl: false,
     mapTypeControl: false,
     fullscreenControl: false,
-    zoom: 14,
+    zoom: 16,
   });
-  // new AdvancedMarkerElement({
-  //   position: cords,
-  //   map: map,
-  // });
+  new AdvancedMarkerElement({
+    position: cords,
+    map: map,
+  });
 })();
