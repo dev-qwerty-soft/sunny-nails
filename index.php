@@ -9,10 +9,8 @@
  */
 
 get_header(); ?>
-
 <div id="primary" class="content-area">
     <div class="container">
-
         <?php if (have_posts()): ?>
             <?php
             while (have_posts()): the_post();
@@ -26,7 +24,6 @@ get_header(); ?>
         <?php else: ?>
             <p><?php esc_html_e('Sorry, nothing found.', 'your-theme'); ?></p>
         <?php endif; ?>
-
     </div>
 </div>
 
