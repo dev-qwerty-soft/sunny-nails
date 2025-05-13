@@ -12462,7 +12462,7 @@ __webpack_require__.r(__webpack_exports__);
     streetViewControl: false,
     mapTypeControl: false,
     fullscreenControl: false,
-    zoom: 7,
+    zoom: 14,
   });
 })();
 
