@@ -19,6 +19,7 @@ import { Loader } from '@googlemaps/js-api-loader';
     streetViewControl: false,
     mapTypeControl: false,
     fullscreenControl: false,
+    mapId: 'ba5b19aef975eacea766912a',
     zoom: 16,
   });
   new AdvancedMarkerElement({

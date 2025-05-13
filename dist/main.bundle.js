@@ -12463,6 +12463,7 @@ __webpack_require__.r(__webpack_exports__);
     streetViewControl: false,
     mapTypeControl: false,
     fullscreenControl: false,
+    mapId: 'ba5b19aef975eacea766912a',
     zoom: 16,
   });
   new AdvancedMarkerElement({
