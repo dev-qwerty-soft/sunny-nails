@@ -15,6 +15,40 @@ let filterFn;
 const modal = g(".gallery-modal")
 const filterSection = g(".gallery-section");
 
+if (g(".counter-section")) {
+  const timeContainer = g(".counter-section .time");
+  let timeLeftMs = parseInt(timeContainer.dataset.timeMs);
+
+  function formatUnit(unit) {
+    return unit < 10 ? "0" + unit : String(unit);
+  }
+
+  function updateDisplay(msLeft) {
+    const totalSeconds = Math.floor(msLeft / 1000);
+    const days = Math.floor(totalSeconds / (24 * 3600));
+    const hours = Math.floor((totalSeconds % (24 * 3600)) / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+
+    g("#days").textContent = formatUnit(days);
+    g("#hours").textContent = formatUnit(hours);
+    g("#minutes").textContent = formatUnit(minutes);
+    g("#seconds").textContent = formatUnit(seconds);
+  }
+
+  function tick() {
+    timeLeftMs -= 1000;
+    if (timeLeftMs < 0) {
+      timeLeftMs = 0;
+      clearInterval(timer);
+    }
+    updateDisplay(timeLeftMs);
+  }
+
+  updateDisplay(timeLeftMs);
+  const timer = setInterval(tick, 1000);
+}
+
 if (g(".hero-swiper")) {
   new Swiper(".hero-swiper", {
     modules: [Navigation, Pagination],
@@ -165,38 +199,4 @@ document.onclick = (e) => {
   }
 };
 
-if (g(".counter-section")) {
-  const timeContainer = g(".counter-section .time");
-  const time = JSON.parse(timeContainer.dataset.time);
 
-  let totalSeconds =
-    parseInt(time.days) * 24 * 3600 +
-    parseInt(time.hours) * 3600 +
-    parseInt(time.minutes) * 60 +
-    parseInt(time.seconds);
-
-  function formatUnit(unit) {
-    return unit < 10 ? "0" + unit : String(unit);
-  }
-
-  function updateDisplay(secondsLeft) {
-    const days = Math.floor(secondsLeft / (24 * 3600));
-    const hours = Math.floor((secondsLeft % (24 * 3600)) / 3600);
-    const minutes = Math.floor((secondsLeft % 3600) / 60);
-    const seconds = secondsLeft % 60;
-
-    g("#days").textContent = formatUnit(days);
-    g("#hours").textContent = formatUnit(hours);
-    g("#minutes").textContent = formatUnit(minutes);
-    g("#seconds").textContent = formatUnit(seconds);
-  }
-
-  function tick() {
-    if (totalSeconds <= 0) return;
-    totalSeconds--;
-    updateDisplay(totalSeconds);
-  }
-
-  updateDisplay(totalSeconds);
-  setInterval(tick, 1000);
-};

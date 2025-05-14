@@ -13585,6 +13585,40 @@ let filterFn;
 const modal = (0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.g)(".gallery-modal")
 const filterSection = (0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.g)(".gallery-section");
 
+if ((0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.g)(".counter-section")) {
+  const timeContainer = (0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.g)(".counter-section .time");
+  let timeLeftMs = parseInt(timeContainer.dataset.timeMs);
+
+  function formatUnit(unit) {
+    return unit < 10 ? "0" + unit : String(unit);
+  }
+
+  function updateDisplay(msLeft) {
+    const totalSeconds = Math.floor(msLeft / 1000);
+    const days = Math.floor(totalSeconds / (24 * 3600));
+    const hours = Math.floor((totalSeconds % (24 * 3600)) / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+
+    (0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.g)("#days").textContent = formatUnit(days);
+    (0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.g)("#hours").textContent = formatUnit(hours);
+    (0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.g)("#minutes").textContent = formatUnit(minutes);
+    (0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.g)("#seconds").textContent = formatUnit(seconds);
+  }
+
+  function tick() {
+    timeLeftMs -= 1000;
+    if (timeLeftMs < 0) {
+      timeLeftMs = 0;
+      clearInterval(timer);
+    }
+    updateDisplay(timeLeftMs);
+  }
+
+  updateDisplay(timeLeftMs);
+  const timer = setInterval(tick, 1000);
+}
+
 if ((0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.g)(".hero-swiper")) {
   new swiper__WEBPACK_IMPORTED_MODULE_7__["default"](".hero-swiper", {
     modules: [swiper_modules__WEBPACK_IMPORTED_MODULE_9__.Navigation, swiper_modules__WEBPACK_IMPORTED_MODULE_9__.Pagination],
@@ -13735,41 +13769,8 @@ document.onclick = (e) => {
   }
 };
 
-if ((0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.g)(".counter-section")) {
-  const timeContainer = (0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.g)(".counter-section .time");
-  const time = JSON.parse(timeContainer.dataset.time);
 
-  let totalSeconds =
-    parseInt(time.days) * 24 * 3600 +
-    parseInt(time.hours) * 3600 +
-    parseInt(time.minutes) * 60 +
-    parseInt(time.seconds);
 
-  function formatUnit(unit) {
-    return unit < 10 ? "0" + unit : String(unit);
-  }
-
-  function updateDisplay(secondsLeft) {
-    const days = Math.floor(secondsLeft / (24 * 3600));
-    const hours = Math.floor((secondsLeft % (24 * 3600)) / 3600);
-    const minutes = Math.floor((secondsLeft % 3600) / 60);
-    const seconds = secondsLeft % 60;
-
-    (0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.g)("#days").textContent = formatUnit(days);
-    (0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.g)("#hours").textContent = formatUnit(hours);
-    (0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.g)("#minutes").textContent = formatUnit(minutes);
-    (0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.g)("#seconds").textContent = formatUnit(seconds);
-  }
-
-  function tick() {
-    if (totalSeconds <= 0) return;
-    totalSeconds--;
-    updateDisplay(totalSeconds);
-  }
-
-  updateDisplay(totalSeconds);
-  setInterval(tick, 1000);
-};
 })();
 
 /******/ })()

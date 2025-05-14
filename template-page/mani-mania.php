@@ -8,6 +8,7 @@
   $target = new DateTime($time);
   $interval = $now->diff($target);
   $totalDays = $interval->d + $interval->m * 30 + $interval->y * 365;
+  $diffMs = max(0, ($target->getTimestamp() - $now->getTimestamp()) * 1000);
   $result = [
     'days' => str_pad($totalDays, 2, '0', STR_PAD_LEFT),
     'hours' => str_pad($interval->h, 2, '0', STR_PAD_LEFT),
@@ -22,7 +23,7 @@
   <section class="counter-section">
     <div class="container">
       <h2 class="title"><?= get_field('winner_counter_title'); ?></h2>
-      <div class="time" data-time='<?= json_encode($result); ?>'>
+      <div class="time" data-time-ms="<?= $diffMs ?>">
         <div class="time__days">
           <span id="days" class="time__number"><?= $result['days']; ?></span>
           <span class="time__text">Days</span>
