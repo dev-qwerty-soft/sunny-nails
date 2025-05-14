@@ -125,4 +125,54 @@ class AltegioClient
 
         return $data;
     }
+    public static function ajaxGetTimeSlots()
+    {
+        // Verify the nonce for security
+        check_ajax_referer('booking_nonce', 'nonce');
+
+        // Get parameters from POST request
+        $staff_id = isset($_POST['staff_id']) ? sanitize_text_field($_POST['staff_id']) : '';
+        $date = isset($_POST['date']) ? sanitize_text_field($_POST['date']) : '';
+
+        // Validate required parameters
+        if (empty($staff_id) || empty($date)) {
+            wp_send_json_error([
+                'message' => 'Staff ID and date are required'
+            ]);
+            return;
+        }
+
+        // Get time slots from Altegio API
+        $timeSlots = AltegioClient::getTimeSlots($staff_id, $date);
+
+        // Check if the API call was successful
+        if (isset($timeSlots['error'])) {
+            error_log('Altegio API Error: ' . print_r($timeSlots['error'], true));
+
+            // For better UX, return empty slots instead of an error
+            wp_send_json_success([
+                'slots' => [],
+                'message' => 'No available time slots for this date.'
+            ]);
+            return;
+        }
+
+        // Process the response to extract time slots in a consistent format
+        $slots = [];
+
+        // Handle different possible response structures from Altegio API
+        if (isset($timeSlots['data']['slots'])) {
+            $slots = $timeSlots['data']['slots'];
+        } elseif (isset($timeSlots['slots'])) {
+            $slots = $timeSlots['slots'];
+        } elseif (isset($timeSlots['data']) && is_array($timeSlots['data'])) {
+            $slots = $timeSlots['data'];
+        }
+
+        // Return the slots to the frontend
+        wp_send_json_success([
+            'slots' => $slots,
+            'message' => empty($slots) ? 'No available time slots for this date.' : null
+        ]);
+    }
 }

@@ -14,7 +14,9 @@
   border: 1px solid transparent;
   transition: border-color 0.2s;
   cursor: pointer;
-
+  @media screen and (max-width: 768px) {
+    padding: 15px;
+  }
   // &.selected,
   // input[type="radio"]:checked + .staff-radio-content {
   //   border-color: #fdc41f;
@@ -67,6 +69,7 @@
   color: #302f34;
   margin-bottom: 4px;
   line-height: 1.2;
+  text-wrap: nowrap;
 }
 
 .staff-specialization {
@@ -77,6 +80,10 @@
   font-weight: 500;
   color: #302f34;
   line-height: 1.2;
+  @media screen and (max-width: 768px) {
+    flex-direction: column;
+    align-items: start;
+  }
 }
 
 .staff-price-modifier {
