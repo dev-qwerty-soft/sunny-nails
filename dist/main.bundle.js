@@ -12772,6 +12772,26 @@ if ((0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.g)(".team-swiper")) {
   });
 }
 
+if ((0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.g)(".winners-swiper")) {
+  new swiper__WEBPACK_IMPORTED_MODULE_7__["default"](".winners-swiper", {
+    modules: [swiper_modules__WEBPACK_IMPORTED_MODULE_9__.Navigation],
+    slidesPerView: 1,
+    spaceBetween: 20,
+    navigation: {
+      nextEl: ".winners-section__wrapper .swiper-button-next",
+      prevEl: ".winners-section__wrapper .swiper-button-prev",
+    },
+    breakpoints: {
+      768: {
+        slidesPerView: 2,
+      },
+      1024: {
+        slidesPerView: 3,
+      },
+    },
+  });
+}
+
 if ((0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.g)(".mini-swiper")) {
   (0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.g)(".mini-swiper", document, true).forEach((swiper) => {
     new swiper__WEBPACK_IMPORTED_MODULE_7__["default"](swiper, {
@@ -12835,6 +12855,41 @@ document.onclick = (e) => {
   }
 };
 
+if ((0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.g)(".counter-section")) {
+  const timeContainer = (0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.g)(".counter-section .time");
+  const time = JSON.parse(timeContainer.dataset.time);
+
+  let totalSeconds =
+    parseInt(time.days) * 24 * 3600 +
+    parseInt(time.hours) * 3600 +
+    parseInt(time.minutes) * 60 +
+    parseInt(time.seconds);
+
+  function formatUnit(unit) {
+    return unit < 10 ? "0" + unit : String(unit);
+  }
+
+  function updateDisplay(secondsLeft) {
+    const days = Math.floor(secondsLeft / (24 * 3600));
+    const hours = Math.floor((secondsLeft % (24 * 3600)) / 3600);
+    const minutes = Math.floor((secondsLeft % 3600) / 60);
+    const seconds = secondsLeft % 60;
+
+    (0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.g)("#days").textContent = formatUnit(days);
+    (0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.g)("#hours").textContent = formatUnit(hours);
+    (0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.g)("#minutes").textContent = formatUnit(minutes);
+    (0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.g)("#seconds").textContent = formatUnit(seconds);
+  }
+
+  function tick() {
+    if (totalSeconds <= 0) return;
+    totalSeconds--;
+    updateDisplay(totalSeconds);
+  }
+
+  updateDisplay(totalSeconds);
+  setInterval(tick, 1000);
+};
 })();
 
 /******/ })()

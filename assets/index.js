@@ -82,6 +82,26 @@ if (g(".team-swiper")) {
   });
 }
 
+if (g(".winners-swiper")) {
+  new Swiper(".winners-swiper", {
+    modules: [Navigation],
+    slidesPerView: 1,
+    spaceBetween: 20,
+    navigation: {
+      nextEl: ".winners-section__wrapper .swiper-button-next",
+      prevEl: ".winners-section__wrapper .swiper-button-prev",
+    },
+    breakpoints: {
+      768: {
+        slidesPerView: 2,
+      },
+      1024: {
+        slidesPerView: 3,
+      },
+    },
+  });
+}
+
 if (g(".mini-swiper")) {
   g(".mini-swiper", document, true).forEach((swiper) => {
     new Swiper(swiper, {
@@ -143,4 +163,40 @@ document.onclick = (e) => {
     remove(modal);
     gallerySwiper?.slideTo(0);
   }
+};
+
+if (g(".counter-section")) {
+  const timeContainer = g(".counter-section .time");
+  const time = JSON.parse(timeContainer.dataset.time);
+
+  let totalSeconds =
+    parseInt(time.days) * 24 * 3600 +
+    parseInt(time.hours) * 3600 +
+    parseInt(time.minutes) * 60 +
+    parseInt(time.seconds);
+
+  function formatUnit(unit) {
+    return unit < 10 ? "0" + unit : String(unit);
+  }
+
+  function updateDisplay(secondsLeft) {
+    const days = Math.floor(secondsLeft / (24 * 3600));
+    const hours = Math.floor((secondsLeft % (24 * 3600)) / 3600);
+    const minutes = Math.floor((secondsLeft % 3600) / 60);
+    const seconds = secondsLeft % 60;
+
+    g("#days").textContent = formatUnit(days);
+    g("#hours").textContent = formatUnit(hours);
+    g("#minutes").textContent = formatUnit(minutes);
+    g("#seconds").textContent = formatUnit(seconds);
+  }
+
+  function tick() {
+    if (totalSeconds <= 0) return;
+    totalSeconds--;
+    updateDisplay(totalSeconds);
+  }
+
+  updateDisplay(totalSeconds);
+  setInterval(tick, 1000);
 };
