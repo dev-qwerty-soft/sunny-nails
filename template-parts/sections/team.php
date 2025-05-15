@@ -1,6 +1,6 @@
 <?php
   $isPage = $args["page"] ?? false;
-  $img = getUrl('images/image-1.png');
+  $img = getUrl('images/image.png');
 ?>
 
 <section class='team-section<?= $isPage ? ' page' : '' ?>'>
