@@ -1,16 +1,7 @@
 <footer class="footer">
   <div class="container">
     <div class="footer__top">
-      <a href="<?php echo esc_url(home_url('/')); ?>" class="logo">
-        <?php
-          $logo = get_field('footer_logo', 'option');
-          $url = isset($logo['url']) ? $logo['url'] : null;
-          $alt = isset($logo['title']) ? $logo['title'] : null;
-          if ($url && $alt) {
-            echo "<img src='$url' alt='$alt'>";
-          };
-        ?>
-      </a>
+      <?= logo('footer_logo'); ?>
       <div class="icons">
         <?php displayIcon(); ?>
       </div>

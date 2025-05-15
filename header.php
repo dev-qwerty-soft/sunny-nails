@@ -10,16 +10,7 @@
 <body <?php body_class(); ?>>
 <header id="masthead" class="site-header header-three">
     <div class="container">
-        <a href="<?php echo esc_url(home_url('/')); ?>" class="logo">
-            <?php
-                $logo = get_field('header_logo', 'option');
-                $url = isset($logo['url']) ? $logo['url'] : null;
-                $alt = isset($logo['title']) ? $logo['title'] : null;
-                if ($url && $alt) {
-                    echo "<img src='$url' alt='$alt'>";
-                };
-            ?>
-        </a>
+        <?= logo('header_logo'); ?>
         <div class="location">
             <span>Singapore</span>
         </div>

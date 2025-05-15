@@ -102,3 +102,17 @@ function getPlaceReviews() {
   ];
 }
 
+
+function logo($str) {
+  $logo = "<a href='$url' class='logo'></a>";
+  $url = esc_url(home_url('/'));
+  $logo = get_field($str, 'option');
+  $url = isset($logo['url']) ? $logo['url'] : null;
+  $alt = isset($logo['title']) ? $logo['title'] : null;
+  if ($url && $alt) {
+    $logo = "<a href='$url' class='logo'>
+      <img src='$url' alt='$alt'>
+    </a>";
+  };
+  return $logo;
+}
