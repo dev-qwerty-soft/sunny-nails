@@ -9,7 +9,12 @@
   $interval = $now->diff($target);
   $totalDays = $interval->d + $interval->m * 30 + $interval->y * 365;
   $diffMs = max(0, ($target->getTimestamp() - $now->getTimestamp()) * 1000);
-  $result = [
+  $result = !$diffMs ? [
+    'days' => '00',
+    'hours' => '00',
+    'minutes' => '00',
+    'seconds' => '00',
+  ] : [
     'days' => str_pad($totalDays, 2, '0', STR_PAD_LEFT),
     'hours' => str_pad($interval->h, 2, '0', STR_PAD_LEFT),
     'minutes' => str_pad($interval->i, 2, '0', STR_PAD_LEFT),
@@ -47,11 +52,11 @@
     </div>
   </section>
   <?php
-    $items = get_field('winners_list');
-    $title = get_field('winners_list_title');
-    if($title && $items && count($items) > 0 && is_array($items)) {
+    $items = get_field('winner_list');
+    $title = get_field('winner_list_title');
+    if($title && $items && count($items) && is_array($items)) {
       get_template_part('template-parts/sections/winners', null, ['items' => $items, 'title' => $title]);
-    }
+    };
   ?>
 </main>
 <?php get_footer(); ?>

@@ -13138,6 +13138,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   duration: () => (/* binding */ duration),
 /* harmony export */   extractURL: () => (/* binding */ extractURL),
 /* harmony export */   formatNumber: () => (/* binding */ formatNumber),
+/* harmony export */   formatUnit: () => (/* binding */ formatUnit),
 /* harmony export */   g: () => (/* binding */ g),
 /* harmony export */   getUrl: () => (/* binding */ getUrl),
 /* harmony export */   has: () => (/* binding */ has),
@@ -13150,6 +13151,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   scroll: () => (/* binding */ scroll),
 /* harmony export */   splitArray: () => (/* binding */ splitArray),
 /* harmony export */   toggle: () => (/* binding */ toggle),
+/* harmony export */   updateDisplay: () => (/* binding */ updateDisplay),
 /* harmony export */   upper: () => (/* binding */ upper)
 /* harmony export */ });
 const toggle = (el, cl = 'active') => {
@@ -13293,6 +13295,21 @@ function formatNumber(number) {
   return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
 }
 
+function formatUnit(unit) {
+  return unit < 10 ? "0" + unit : String(unit);
+}
+
+function updateDisplay(msLeft) {
+  const totalSeconds = Math.floor(msLeft / 1000);
+  const days = Math.floor(totalSeconds / (24 * 3600));
+  const hours = Math.floor((totalSeconds % (24 * 3600)) / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+  g("#days").textContent = formatUnit(days);
+  g("#hours").textContent = formatUnit(hours);
+  g("#minutes").textContent = formatUnit(minutes);
+  g("#seconds").textContent = formatUnit(seconds);
+};
 
 /***/ }),
 
@@ -13588,36 +13605,20 @@ const filterSection = (0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.g)(".gall
 if ((0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.g)(".counter-section")) {
   const timeContainer = (0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.g)(".counter-section .time");
   let timeLeftMs = parseInt(timeContainer.dataset.timeMs);
-
-  function formatUnit(unit) {
-    return unit < 10 ? "0" + unit : String(unit);
-  }
-
-  function updateDisplay(msLeft) {
-    const totalSeconds = Math.floor(msLeft / 1000);
-    const days = Math.floor(totalSeconds / (24 * 3600));
-    const hours = Math.floor((totalSeconds % (24 * 3600)) / 3600);
-    const minutes = Math.floor((totalSeconds % 3600) / 60);
-    const seconds = totalSeconds % 60;
-
-    (0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.g)("#days").textContent = formatUnit(days);
-    (0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.g)("#hours").textContent = formatUnit(hours);
-    (0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.g)("#minutes").textContent = formatUnit(minutes);
-    (0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.g)("#seconds").textContent = formatUnit(seconds);
-  }
-
-  function tick() {
-    timeLeftMs -= 1000;
-    if (timeLeftMs < 0) {
-      timeLeftMs = 0;
-      clearInterval(timer);
+  if(timeLeftMs) {
+    function tick() {
+      timeLeftMs -= 1000;
+      if (timeLeftMs < 0) {
+        timeLeftMs = 0;
+        clearInterval(timer);
+      }
+      (0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.updateDisplay)(timeLeftMs);
     }
-    updateDisplay(timeLeftMs);
-  }
 
-  updateDisplay(timeLeftMs);
-  const timer = setInterval(tick, 1000);
-}
+    (0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.updateDisplay)(timeLeftMs);
+    const timer = setInterval(tick, 1000);
+  };
+};
 
 if ((0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.g)(".hero-swiper")) {
   new swiper__WEBPACK_IMPORTED_MODULE_7__["default"](".hero-swiper", {
@@ -13633,7 +13634,7 @@ if ((0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.g)(".hero-swiper")) {
       prevEl: ".hero-swiper .swiper-button-prev",
     },
   });
-} 
+};
 
 if ((0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.g)(".gallery-swiper")) {
   gallerySwiper = new swiper__WEBPACK_IMPORTED_MODULE_7__["default"](".gallery-swiper", {

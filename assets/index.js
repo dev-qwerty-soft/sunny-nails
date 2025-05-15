@@ -8,7 +8,7 @@ import "swiper/css/scrollbar";
 import Swiper from "swiper";
 import "./js/map.js";
 import { Navigation, Pagination, Scrollbar, FreeMode } from "swiper/modules";
-import { has, g, add, remove, toggle, respond } from "./js/function.js";
+import { has, g, add, remove, toggle, respond, updateDisplay } from "./js/function.js";
 
 let gallerySwiper;
 let filterFn;
@@ -18,36 +18,20 @@ const filterSection = g(".gallery-section");
 if (g(".counter-section")) {
   const timeContainer = g(".counter-section .time");
   let timeLeftMs = parseInt(timeContainer.dataset.timeMs);
-
-  function formatUnit(unit) {
-    return unit < 10 ? "0" + unit : String(unit);
-  }
-
-  function updateDisplay(msLeft) {
-    const totalSeconds = Math.floor(msLeft / 1000);
-    const days = Math.floor(totalSeconds / (24 * 3600));
-    const hours = Math.floor((totalSeconds % (24 * 3600)) / 3600);
-    const minutes = Math.floor((totalSeconds % 3600) / 60);
-    const seconds = totalSeconds % 60;
-
-    g("#days").textContent = formatUnit(days);
-    g("#hours").textContent = formatUnit(hours);
-    g("#minutes").textContent = formatUnit(minutes);
-    g("#seconds").textContent = formatUnit(seconds);
-  }
-
-  function tick() {
-    timeLeftMs -= 1000;
-    if (timeLeftMs < 0) {
-      timeLeftMs = 0;
-      clearInterval(timer);
+  if(timeLeftMs) {
+    function tick() {
+      timeLeftMs -= 1000;
+      if (timeLeftMs < 0) {
+        timeLeftMs = 0;
+        clearInterval(timer);
+      }
+      updateDisplay(timeLeftMs);
     }
-    updateDisplay(timeLeftMs);
-  }
 
-  updateDisplay(timeLeftMs);
-  const timer = setInterval(tick, 1000);
-}
+    updateDisplay(timeLeftMs);
+    const timer = setInterval(tick, 1000);
+  };
+};
 
 if (g(".hero-swiper")) {
   new Swiper(".hero-swiper", {
@@ -63,7 +47,7 @@ if (g(".hero-swiper")) {
       prevEl: ".hero-swiper .swiper-button-prev",
     },
   });
-} 
+};
 
 if (g(".gallery-swiper")) {
   gallerySwiper = new Swiper(".gallery-swiper", {

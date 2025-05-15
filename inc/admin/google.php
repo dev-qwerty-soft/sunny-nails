@@ -77,8 +77,6 @@ function render_reviews_sidebar_metabox() {
   echo '</form>'; 
 }
 
-
-
 add_action('admin_enqueue_scripts', function () {
   wp_enqueue_style(
     'google-admin-styles',

@@ -1,5 +1,8 @@
 .site-header {
   padding: get-d(15px) get-d(60px) 0 get-d(60px);
+  @include respond(lg) {
+    padding: get-lg(15px) get-lg(40px) 0 get-lg(40px);
+  }
   @include respond(md) {
     padding: 45px 25px 22px 25px;
   }
@@ -11,6 +14,11 @@
     align-items: center;
     border-bottom: get-d(2px) solid rgba($bg-grey, 50%);
     padding-bottom: get-d(15px);
+    @include respond(lg) {
+      grid-gap: get-lg(40px);
+      padding-bottom: get-lg(15px);
+      border-bottom: get-lg(2px) solid rgba($bg-grey, 50%);
+    }
     @include respond(md) {
       grid-gap: 16px;
       padding-bottom: 0;
@@ -39,6 +47,10 @@
         text-transform: uppercase;
         padding: get-d(10px) get-d(14px);
         color: rgba($bg-grey, 90%);
+        @include respond(lg) {
+          font-size: get-lg(12px);
+          padding: get-lg(10px) get-lg(14px);
+        }
         @include respond(md) {
           font-size: 20px;
           padding: 0;
@@ -55,6 +67,10 @@
       display: flex;
       align-items: center;
       gap: get-d(4px);
+      @include respond(lg) {
+        font-size: get-lg(14px);
+        gap: get-lg(4px);
+      }
       @include respond(md) {
         font-size: 12px;
         gap: 4px;
@@ -65,6 +81,11 @@
         width: get-d(26px);
         height: get-d(26px);
         background: url("../svg/location.svg") center / cover no-repeat;
+        
+        @include respond(lg) {
+          width: get-lg(26px);
+          height: get-lg(26px);
+        }
         @include respond(md) {
           width: 26px;
           height: 26px;
@@ -82,6 +103,9 @@ body.page-template-mani-mania .site-header .container {
   & img {
     height: auto;
     width: get-d(190px);
+    @include respond(lg) {
+      width: get-lg(190px);
+    }
     @include respond(md) {
       width: 112px;
     }

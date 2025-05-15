@@ -138,3 +138,19 @@ export function respond(breakpoint) {
 export function formatNumber(number) {
   return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
 }
+
+export function formatUnit(unit) {
+  return unit < 10 ? "0" + unit : String(unit);
+}
+
+export function updateDisplay(msLeft) {
+  const totalSeconds = Math.floor(msLeft / 1000);
+  const days = Math.floor(totalSeconds / (24 * 3600));
+  const hours = Math.floor((totalSeconds % (24 * 3600)) / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+  g("#days").textContent = formatUnit(days);
+  g("#hours").textContent = formatUnit(hours);
+  g("#minutes").textContent = formatUnit(minutes);
+  g("#seconds").textContent = formatUnit(seconds);
+};
