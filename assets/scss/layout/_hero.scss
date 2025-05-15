@@ -1663,3 +1663,207 @@ $red: #DC3232;
     }
   }
 }
+
+.sunny-friends-section {
+  height: get-d(610px);
+  padding: 0 get-d(60px);
+  background: $bg-yellow;
+  @include respond(lg) {
+    height: get-lg(500px);
+    padding: 0 get-lg(40px);
+  }
+  @include respond(md) {
+    height: auto;
+    padding: 24px 24px 0 24px;
+  }
+  &__text {
+    display: flex;
+    flex-direction: column;
+    gap: get-d(30px);
+    align-items: flex-start;
+    justify-content: center;
+    & .paragraph {
+      width: get-d(400px);
+      @include respond(lg) {
+        width: get-lg(400px);
+      }
+      @include respond(md) {
+        width: 100%;
+      }
+    }
+  }
+  & .container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    height: 100%;
+    @include respond(md) {
+      grid-template-columns: 1fr;
+      grid-template-rows: repeat(2, max-content);
+      grid-gap: 24px;
+    }
+  }
+  &__image {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    & img {
+      height: 100%;
+      width: auto;
+      object-fit: contain;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      @include respond(md) {
+        position: static;
+        transform: none;
+        height: auto;
+        width: 100%;
+      }
+    }
+  }
+}
+
+.sunny-friends-table-section {
+  padding: get-d(150px) get-d(60px);
+  @include respond(lg) {
+    padding: get-lg(150px) get-lg(40px);
+  }
+  @include respond(md) {
+    padding: 75px 25px 50px 25px;
+  }
+  & .container {
+    display: flex;
+    flex-direction: column;
+    gap: get-d(150px);
+    @include respond(lg) {
+      gap: get-lg(150px);
+    }
+    @include respond(md) {
+      gap: 75px;
+    }
+  }
+  &__top {
+    display: flex;
+    flex-direction: column;
+    gap: get-d(80px);
+    align-items: center;
+    @include respond(lg) {
+      gap: get-lg(80px);
+    }
+    @include respond(md) {
+      gap: 30px;
+    }
+  }
+  &__buttons {
+    display: flex;
+    width: 75%;
+    --offset-left: 0px;
+    --offset-width: 100%;
+    position: relative;
+    border-bottom: get-d(1px) solid $bg-grey;
+    @include respond(lg) {
+      border-bottom: get-lg(1px) solid $bg-grey;
+    }
+    @include respond(md) {
+      width: 95%;
+      border-bottom: 1px solid $bg-grey;
+    }
+    &::before {
+      content: '';
+      position: absolute;
+      left: var(--offset-left);
+      top: 100%;
+      transform: translateY(-50%);
+      height: get-d(3px);
+      width: var(--offset-width);
+      background: $bg-yellow;
+      transition: left .25s, width .25s;
+      @include respond(lg) {
+        height: get-lg(3px);
+      }
+      @include respond(md) {
+        height: 2px;
+      }
+    }
+  }
+  &__button {
+    font-weight: 400;
+    font-size: get-d(20px);
+    line-height: 100%;
+    flex: 1;
+    padding: get-d(10px) 0;
+    color: $bg-grey;
+    transition: font-weight .25s;
+    @include respond(lg) {
+      font-size: get-lg(20px);
+      padding: get-lg(10px) 0;
+    }
+    @include respond(md) {
+      font-size: 14px;
+      padding: 10px 0;
+    }
+    &.active {
+      font-weight: 600;
+    }
+  }
+  &__tabs {
+    position: relative;
+    width: 100%;
+  }
+  &__tab {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    transition: opacity .5s, transform .5s;
+    transform: translateY(100%);
+    @include respond(md) {
+      grid-gap: 16px;
+    }
+    & .item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: get-d(10px);
+      @include respond(lg) {
+        gap: get-lg(10px);
+      }
+      @include respond(md) {
+        gap: 6px;
+      }
+      & img {
+        width: get-d(60px);
+        height: get-d(60px);
+        border-radius: 50%;
+        object-fit: cover;
+        @include respond(lg) {
+          width: get-lg(60px);
+          height: get-lg(60px);
+        }
+        @include respond(md) {
+          width: 36px;
+          height: 36px;
+        }
+      }
+      & span {
+        font-weight: 500;
+        font-size: get-d(18px);
+        line-height: 130%;
+        @include respond(lg) {
+          font-size: get-lg(18px);
+        }
+        @include respond(md) {
+          font-size: 12px;
+        }
+      }
+    }
+    &.active {
+      opacity: 1;
+      transform: translateY(0);
+      position: static;
+    }
+  }
+}

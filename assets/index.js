@@ -12,8 +12,10 @@ import { has, g, add, remove, toggle, respond, updateDisplay } from "./js/functi
 
 let gallerySwiper;
 let filterFn;
+let tabFn;
 const modal = g(".gallery-modal")
 const filterSection = g(".gallery-section");
+const buttonsTabsWrapper = g(".sunny-friends-table-section__buttons");
 
 if (g(".counter-section")) {
   const timeContainer = g(".counter-section .time");
@@ -164,6 +166,24 @@ if(filterSection) {
   filterFn(filters[0]);
 }
 
+if(buttonsTabsWrapper) {
+  const buttonsTabs = g(".sunny-friends-table-section__button", document, true);
+  const tabsWrapper = g(".sunny-friends-table-section__tabs");
+  const tabs = g(".sunny-friends-table-section__tab", document, true);
+  tabsWrapper.style.height = `${tabsWrapper.offsetHeight}px`;
+
+  tabFn = (target) => {
+    const btn = target.closest(".sunny-friends-table-section__button");
+    const index = Number(btn.getAttribute("data-index"));
+    remove([...buttonsTabs, ...tabs]);
+    add([btn, tabs[index]]);
+    const offsetLeft = btn.offsetLeft;
+    buttonsTabsWrapper.style.setProperty("--offset-left", `${offsetLeft}px`);
+  };
+
+  tabFn(buttonsTabs[0]);
+}
+
 document.onclick = (e) => {
   if(has(e.target, ".gallery-section__filters .filter")) {
     filterFn?.(e.target);
@@ -180,7 +200,7 @@ document.onclick = (e) => {
   } else if (has(e.target, ".gallery-modal .cross")) {
     remove(modal);
     gallerySwiper?.slideTo(0);
-  }
+  } else if (has(e.target, ".sunny-friends-table-section__button")) {
+    tabFn?.(e.target);
+  };
 };
-
-

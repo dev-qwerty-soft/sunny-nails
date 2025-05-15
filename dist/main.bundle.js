@@ -13599,8 +13599,10 @@ __webpack_require__.r(__webpack_exports__);
 
 let gallerySwiper;
 let filterFn;
+let tabFn;
 const modal = (0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.g)(".gallery-modal")
 const filterSection = (0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.g)(".gallery-section");
+const buttonsTabsWrapper = (0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.g)(".sunny-friends-table-section__buttons");
 
 if ((0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.g)(".counter-section")) {
   const timeContainer = (0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.g)(".counter-section .time");
@@ -13751,6 +13753,24 @@ if(filterSection) {
   filterFn(filters[0]);
 }
 
+if(buttonsTabsWrapper) {
+  const buttonsTabs = (0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.g)(".sunny-friends-table-section__button", document, true);
+  const tabsWrapper = (0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.g)(".sunny-friends-table-section__tabs");
+  const tabs = (0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.g)(".sunny-friends-table-section__tab", document, true);
+  tabsWrapper.style.height = `${tabsWrapper.offsetHeight}px`;
+
+  tabFn = (target) => {
+    const btn = target.closest(".sunny-friends-table-section__button");
+    const index = Number(btn.getAttribute("data-index"));
+    (0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.remove)([...buttonsTabs, ...tabs]);
+    (0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.add)([btn, tabs[index]]);
+    const offsetLeft = btn.offsetLeft;
+    buttonsTabsWrapper.style.setProperty("--offset-left", `${offsetLeft}px`);
+  };
+
+  tabFn(buttonsTabs[0]);
+}
+
 document.onclick = (e) => {
   if((0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.has)(e.target, ".gallery-section__filters .filter")) {
     filterFn?.(e.target);
@@ -13767,11 +13787,10 @@ document.onclick = (e) => {
   } else if ((0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.has)(e.target, ".gallery-modal .cross")) {
     (0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.remove)(modal);
     gallerySwiper?.slideTo(0);
-  }
+  } else if ((0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.has)(e.target, ".sunny-friends-table-section__button")) {
+    tabFn?.(e.target);
+  };
 };
-
-
-
 })();
 
 /******/ })()
