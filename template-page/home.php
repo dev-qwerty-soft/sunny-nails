@@ -45,8 +45,6 @@ if (empty($ordered_category_ids)) {
 // }
 ?>
 
-
-
 <main>
     <section class="hero-section">
         <div class="container">

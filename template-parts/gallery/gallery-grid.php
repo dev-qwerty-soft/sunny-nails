@@ -1,12 +1,25 @@
 <?php
   $isFull = $args["full"] ?? false;
   $masters = getPosts("master");
-  $terms = get_terms([
-    'taxonomy'   => "service_category",
-    'hide_empty' => false
-  ]);
+  // $ordered_category_ids = [];
+  // $service_categories = [];
+  // if (empty($ordered_category_ids)) {
+  //   $service_categories = get_terms([
+  //       'taxonomy' => 'service_category',
+  //       'hide_empty' => true,
+  //       'order' => 'DESC'
+  //   ]);
+  // } else {
+  //     $service_categories = [];
+  //     foreach ($ordered_category_ids as $cat_id) {
+  //         $term = get_term($cat_id, 'service_category');
+  //         if (!is_wp_error($term) && !empty($term)) {
+  //             $service_categories[] = $term;
+  //         }
+  //     }
+  // };
   $usedTermsArray = [];
-  if(!empty($masters) && !empty($terms)) {
+  if(!empty($masters)) {
     foreach ($masters as $master) {
       $images = get_field('master_images_work', $master->ID);
       if (!is_array($images)) continue;
