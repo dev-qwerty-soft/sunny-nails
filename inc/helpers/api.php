@@ -102,6 +102,14 @@ function getPlaceReviews() {
   ];
 }
 
+function getPosts($slug) {
+	$query = new WP_Query([
+		'post_type' => $slug,
+		'posts_per_page' => -1
+	]);
+	wp_reset_postdata();
+	return $query->posts;
+}
 
 function logo($str) {
   $logo = "<a href='$url' class='logo'></a>";
