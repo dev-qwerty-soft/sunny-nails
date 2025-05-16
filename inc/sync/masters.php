@@ -52,17 +52,31 @@ class AltegioSyncMasters extends AltegioSyncBase
      */
     protected function processItem($item_data)
     {
-        // Get field mapping for master
-        $prepared_data = AltegioFieldsMapper::prepareMasterData($item_data);
+        // Prepare post data
+        $post_data = [
+            'post_title'   => sanitize_text_field($item_data['name']),
+            'post_type'    => $this->post_type,
+            'post_status'  => 'publish',
+            'post_content' => isset($item_data['information']) ? wp_kses_post($item_data['information']) : ''
+        ];
 
-        if (empty($prepared_data)) {
-            $this->logger->log('Failed to prepare master data', AltegioLogger::WARNING, $item_data);
-            $this->stats['errors']++;
-            return false;
+        // Prepare ACF data with new fields
+        $acf_data = [
+            'altegio_id'       => sanitize_text_field($item_data['id']),
+            'description'      => isset($item_data['information']) ? wp_kses_post($item_data['information']) : '',
+            'master_level'     => sanitize_text_field($item_data['specialization'] ?? '1'),
+            'is_bookable'      => !empty($item_data['is_bookable']) ? true : false,
+            'schedule_until'   => !empty($item_data['schedule_till']) ? sanitize_text_field($item_data['schedule_till']) : '',
+            'instagram_url'    => ''
+        ];
+
+        // Extract Instagram URL from patronymic field if it exists
+        if (
+            isset($item_data['employee']) && !empty($item_data['employee']['patronymic']) &&
+            strpos($item_data['employee']['patronymic'], 'instagram') !== false
+        ) {
+            $acf_data['instagram_url'] = esc_url_raw($item_data['employee']['patronymic']);
         }
-
-        $post_data = $prepared_data['post_data'];
-        $acf_data = $prepared_data['acf_data'];
 
         $altegio_id = $acf_data['altegio_id'] ?? '';
 
@@ -167,6 +181,12 @@ class AltegioSyncMasters extends AltegioSyncBase
      * @param int $post_id Master post ID
      * @param array $item_data Master data
      */
+    /**
+     * Process service relationships
+     * 
+     * @param int $post_id Master post ID
+     * @param array $item_data Master data
+     */
     protected function processMasterServices($post_id, $item_data)
     {
         if (isset($item_data['services_links']) && is_array($item_data['services_links'])) {
@@ -176,11 +196,62 @@ class AltegioSyncMasters extends AltegioSyncBase
 
             $service_ids = array_filter($service_ids);
 
+            // Store the raw Altegio service IDs for reference
             update_post_meta($post_id, 'service_ids', $service_ids);
 
-            // If ACF exists, also update through ACF
+            // Save as related_services field for the relationship field
             if (function_exists('update_field')) {
-                update_field('service_ids', $service_ids, $post_id);
+                // First, we need to find the corresponding WordPress post IDs for these Altegio service IDs
+                $wp_service_ids = [];
+
+                foreach ($service_ids as $altegio_service_id) {
+                    // Try with both meta key possibilities for backward compatibility
+                    $services = [];
+
+                    // First try with 'altegio_id'
+                    $args = [
+                        'post_type' => 'service',
+                        'meta_query' => [
+                            [
+                                'key' => 'altegio_id',
+                                'value' => $altegio_service_id,
+                                'compare' => '='
+                            ]
+                        ],
+                        'posts_per_page' => 1,
+                        'fields' => 'ids'
+                    ];
+
+                    $services = get_posts($args);
+
+                    // If not found, try with '_altegio_id'
+                    if (empty($services)) {
+                        $args['meta_query'][0]['key'] = '_altegio_id';
+                        $services = get_posts($args);
+                    }
+
+                    if (!empty($services)) {
+                        $wp_service_ids[] = $services[0]; // Add the WP post ID to our array
+                        $this->logger->log('Found service post for Altegio ID', AltegioLogger::DEBUG, [
+                            'altegio_id' => $altegio_service_id,
+                            'wp_post_id' => $services[0]
+                        ]);
+                    } else {
+                        $this->logger->log('Could not find service post for Altegio ID', AltegioLogger::WARNING, [
+                            'altegio_id' => $altegio_service_id
+                        ]);
+                    }
+                }
+
+                // Log what we're updating
+                $this->logger->log('Updating related_services field', AltegioLogger::DEBUG, [
+                    'master_post_id' => $post_id,
+                    'service_wp_ids' => $wp_service_ids,
+                    'service_count' => count($wp_service_ids)
+                ]);
+
+                // Update the ACF relationship field with the WP post IDs
+                update_field('related_services', $wp_service_ids, $post_id);
             }
         }
     }

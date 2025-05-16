@@ -27,7 +27,26 @@ if (empty($ordered_category_ids)) {
     }
 };
 
+// require_once get_template_directory() . '/inc/api/altegio-client.php'; // шлях до твого API-класу
+
+// use AltegioClient;
+
+// // Отримати повні дані про майстрів
+// $response = AltegioClient::getStaff(); // або ->getStaff() якщо це об'єкт
+
+// if (isset($response['success']) && $response['success'] && !empty($response['data'])) {
+//     $staff_data = $response['data'];
+
+//     // Виводимо всі дані красиво
+//     dump($staff_data, 'FULL ALTEGIO STAFF API RESPONSE');
+// } else {
+//     echo '<p>Altegio API returned no data or failed.</p>';
+//     dump($response, 'ALTEGIO RAW RESPONSE');
+// }
 ?>
+
+
+
 <main>
     <section class="hero-section">
         <div class="container">
@@ -36,7 +55,7 @@ if (empty($ordered_category_ids)) {
                     <?php the_field('hero_title'); ?>
                 </h1>
                 <div class="hero-section__buttons">
-                <button type="button" class="btn yellow open-popup">Free Manicure</button>
+                    <button type="button" class="btn yellow open-popup">Free Manicure</button>
                     <?php
                     $link = get_field('hero_link');
                     $text = get_field('hero_link_text');
@@ -84,9 +103,9 @@ if (empty($ordered_category_ids)) {
         </div>
     </section>
     <?php
-        get_template_part("template-parts/gallery/gallery-grid", null, [
-            "full" => false
-        ]);
+    get_template_part("template-parts/gallery/gallery-grid", null, [
+        "full" => false
+    ]);
     ?>
     <?php
     $services_link_url = get_field('services_link_url', 'option');
@@ -120,8 +139,8 @@ if (empty($ordered_category_ids)) {
         </div>
     </section>
     <?php
-        get_template_part("template-parts/sections/form");
-        get_template_part("template-parts/sections/team");
+    get_template_part("template-parts/sections/form");
+    get_template_part("template-parts/sections/team");
     ?>
     <section class="reviews-section">
         <div class="container">
@@ -133,15 +152,15 @@ if (empty($ordered_category_ids)) {
                 <div class="swiper reviews-swiper">
                     <div class="swiper-wrapper">
                         <?php
-                            $reviews = get_option('selected_google_reviews_data', []);
-                            foreach ($reviews as $slide) {
-                                $image = $slide["profile_photo_url"];
-                                $date = $slide["relative_time_description"];
-                                $name = $slide["author_name"];
-                                $text = $slide["text"];
-                                $rating = $slide["rating"];
-                                $stars = str_repeat("<div class='star'></div>", $rating);
-                                echo "<div class='swiper-slide'>
+                        $reviews = get_option('selected_google_reviews_data', []);
+                        foreach ($reviews as $slide) {
+                            $image = $slide["profile_photo_url"];
+                            $date = $slide["relative_time_description"];
+                            $name = $slide["author_name"];
+                            $text = $slide["text"];
+                            $rating = $slide["rating"];
+                            $stars = str_repeat("<div class='star'></div>", $rating);
+                            echo "<div class='swiper-slide'>
                                         <div class='review'>
                                             <div class='review__message'>
                                                 <div class='review__rate'>
@@ -156,7 +175,7 @@ if (empty($ordered_category_ids)) {
                                             </div>
                                         </div>
                                     </div>";
-                            };
+                        };
                         ?>
                     </div>
                 </div>
