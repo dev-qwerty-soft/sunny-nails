@@ -14,7 +14,9 @@
         }
       }
     }
-    $usedTermsArray = array_values($usedTerms);
+    if(is_array($usedTerms)) {
+      $usedTermsArray = array_values($usedTerms);
+    };
   }
 ?>
 <div class="gallery-modal">
