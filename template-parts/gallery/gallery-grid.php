@@ -18,20 +18,20 @@
   //         }
   //     }
   // };
-  $usedTermsArray = [];
-  if(!empty($masters)) {
-    foreach ($masters as $master) {
-      $images = get_field('master_images_work', $master->ID);
-      if (!is_array($images)) continue;
-      foreach ($images as $image) {
-        $tag = $image["master_image_work_tag"] ?? null;
-        if ($tag instanceof WP_Term && !isset($usedTerms[$tag->term_id])) {
-          $usedTerms[$tag->term_id] = $tag;
-        }
-      }
-    }
-    $usedTermsArray = array_values($usedTerms);
-  }
+  // $usedTermsArray = [];
+  // if(!empty($masters)) {
+  //   foreach ($masters as $master) {
+  //     $images = get_field('master_images_work', $master->ID);
+  //     if (!is_array($images)) continue;
+  //     foreach ($images as $image) {
+  //       $tag = $image["master_image_work_tag"] ?? null;
+  //       if ($tag instanceof WP_Term && !isset($usedTerms[$tag->term_id])) {
+  //         $usedTerms[$tag->term_id] = $tag;
+  //       }
+  //     }
+  //   }
+  //   $usedTermsArray = array_values($usedTerms);
+  // }
 ?>
 <div class="gallery-modal">
   <button type="button" aria-label="Close" class="cross"></button>
