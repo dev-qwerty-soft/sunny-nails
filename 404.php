@@ -63,7 +63,6 @@ get_header();
     color: #ff7518;
   }
 </style>
-
 <main id="main" class="not__found">
   <div class="container">
     <section id="fof" class="clear">
