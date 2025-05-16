@@ -67,7 +67,7 @@
           $images = get_field('master_images_work', $master->ID);
           if($images && is_array($images) && !empty($images)) {
             foreach($images as $image) {
-              get_template_part("template-parts/gallery/gallery-slide", null, [
+              get_template_part("template-parts/gallery/gallery-item", null, [
                 "index" => $index,
                 "master" => $master,
                 "image" => $image
