@@ -27,15 +27,17 @@
         $index = 0;
         foreach($masters as $master) {
           $images = get_field('master_images_work', $master->ID);
-          foreach($images as $image) {
-            get_template_part("template-parts/gallery/gallery-slide", null, [
-              "index" => $index,
-              "master" => $master,
-              "image" => $image
-            ]);
-            $index++;
-          }
-        }
+          if($images && is_array($images) && !empty($images)) {
+            foreach($images as $image) {
+              get_template_part("template-parts/gallery/gallery-slide", null, [
+                "index" => $index,
+                "master" => $master,
+                "image" => $image
+              ]);
+              $index++;
+            };
+          };
+        };
       ?>
     </div>
     <button type="button" aria-label="Next slide" class="button swiper-button-next"></button>
@@ -63,15 +65,17 @@
         $index = 0;
         foreach($masters as $master) {
           $images = get_field('master_images_work', $master->ID);
-          foreach($images as $image) {
-            get_template_part("template-parts/gallery/gallery-item", null, [
-              "index" => $index,
-              "master" => $master,
-              "image" => $image
-            ]);
-            $index++;
-          }
-        }
+          if($images && is_array($images) && !empty($images)) {
+            foreach($images as $image) {
+              get_template_part("template-parts/gallery/gallery-slide", null, [
+                "index" => $index,
+                "master" => $master,
+                "image" => $image
+              ]);
+              $index++;
+            };
+          };
+        };
       ?>
     </div>
     <?php

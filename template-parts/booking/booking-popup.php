@@ -24,25 +24,7 @@ if (empty($ordered_category_ids)) {
             $service_categories[] = $term;
         }
     }
-}
-
-function get_services_by_category($category_id)
-{
-    return get_posts([
-        'post_type' => 'service',
-        'posts_per_page' => -1,
-        'tax_query' => [
-            [
-                'taxonomy' => 'service_category',
-                'field' => 'term_id',
-                'terms' => $category_id,
-            ],
-        ],
-        'meta_key' => 'price_min',
-        'orderby' => 'meta_value_num',
-        'order' => 'ASC',
-    ]);
-}
+};
 ?>
 
 <!-- Booking Popup Overlay -->
