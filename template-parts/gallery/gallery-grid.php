@@ -1,23 +1,23 @@
 <?php
   $isFull = $args["full"] ?? false;
   $masters = getPosts("master");
-  // $ordered_category_ids = [];
-  // $service_categories = [];
-  // if (empty($ordered_category_ids)) {
-  //   $service_categories = get_terms([
-  //       'taxonomy' => 'service_category',
-  //       'hide_empty' => true,
-  //       'order' => 'DESC'
-  //   ]);
-  // } else {
-  //     $service_categories = [];
-  //     foreach ($ordered_category_ids as $cat_id) {
-  //         $term = get_term($cat_id, 'service_category');
-  //         if (!is_wp_error($term) && !empty($term)) {
-  //             $service_categories[] = $term;
-  //         }
-  //     }
-  // };
+  $ordered_category_ids = [];
+  $service_categories = [];
+  if (empty($ordered_category_ids)) {
+    $service_categories = get_terms([
+      'taxonomy' => 'service_category',
+      'hide_empty' => true,
+      'order' => 'DESC'
+    ]);
+  } else {
+    $service_categories = [];
+    foreach ($ordered_category_ids as $cat_id) {
+      $term = get_term($cat_id, 'service_category');
+      if (!is_wp_error($term) && !empty($term)) {
+          $service_categories[] = $term;
+      }
+    }
+  };
   // $usedTermsArray = [];
   // if(!empty($masters)) {
   //   foreach ($masters as $master) {
@@ -65,7 +65,7 @@
     <div class="gallery-section__filters">
       <button type='button' data-slug='all' class='filter'>All</button>
       <?php
-        foreach ($usedTermsArray as $term) {
+        foreach ($service_categories as $term) {
           $slug = $term->slug;
           $name = $term->name;
           echo "<button type='button' data-slug='$slug' class='filter'>$name</button>";
