@@ -1,32 +1,16 @@
 <?php
   $isFull = $args["full"] ?? false;
   $masters = getPosts("master");
-  $ordered_category_ids = [];
-  $service_categories = [];
-  if (empty($ordered_category_ids)) {
-    $service_categories = get_terms([
-      'taxonomy' => 'service_category',
-      'hide_empty' => true,
-      'order' => 'DESC'
-    ]);
-  } else {
-    $service_categories = [];
-    foreach ($ordered_category_ids as $cat_id) {
-      $term = get_term($cat_id, 'service_category');
-      if (!is_wp_error($term) && !empty($term)) {
-          $service_categories[] = $term;
-      }
-    }
-  };
   $usedTermsArray = [];
   if(!empty($masters)) {
     foreach ($masters as $master) {
       $images = get_field('master_images_work', $master->ID);
-      if (!is_array($images)) continue;
-      foreach ($images as $image) {
-        $tag = $image["master_image_work_tag"] ?? null;
-        if (!isset($usedTerms[$tag->term_id])) {
-          $usedTerms[$tag->term_id] = $tag;
+      if (is_array($images) && !empty($images)) {
+        foreach ($images as $image) {
+          $tag = $image["master_image_work_tag"] ?? null;
+          if (!isset($usedTerms[$tag->term_id])) {
+            $usedTerms[$tag->term_id] = $tag;
+          }
         }
       }
     }
