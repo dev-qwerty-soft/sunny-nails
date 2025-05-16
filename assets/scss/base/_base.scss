@@ -10,6 +10,10 @@ body {
   overflow-x: hidden;
   background: $bg-color;
   color: $bg-grey;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: auto;
   &:has(.burger-menu.active) {
     height: 100vh;
     overflow: hidden;
