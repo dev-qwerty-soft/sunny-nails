@@ -1,5 +1,6 @@
 <?php
   $index = $args["index"] ?? 0;
+  $addClass = $args["addClass"] ?? "";
   $image = $args["image"] ?? [];
   $tag = $image["master_image_work_tag"];
   $tagName = isset($tag->name) ? $tag->name : "";
@@ -16,7 +17,7 @@
     $currency = get_post_meta($post_id, 'currency', true) ?: 'SGD';
   };
 ?>
-<div data-index='<?= $index; ?>' data-slug='<?= $slug; ?>' class='image active'>
+<div data-index='<?= $index; ?>' data-slug='<?= $slug; ?>' class='image active<?= $addClass; ?>'>
   <div class='image__front'>
     <img src='<?= $url; ?>' alt='<?= $tagName; ?>'>
     <div class='wrapper'>

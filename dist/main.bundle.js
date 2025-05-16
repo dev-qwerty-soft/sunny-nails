@@ -13734,7 +13734,7 @@ if(filterSection) {
   const filters = (0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.g)(".gallery-section__filters .filter", document, true);
   const images = (0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.g)(".gallery-section__images .image", document, true);
   const isFull = (0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.has)(filterSection, ".full");
-  
+  const isMobile = (0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.respond)("md");
 
   filterFn = (filter) => {
     if(!filters) return;
@@ -13747,7 +13747,18 @@ if(filterSection) {
     });
 
     (0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.remove)(images);
-    (0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.add)(isFull ? filteredImages : filteredImages.slice(0, (0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.respond)("md") ? 6 : 5));
+    (0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.remove)(images, "big");
+
+    const final = isFull ? filteredImages : filteredImages.slice(0, isMobile ? 6 : 5);
+
+    final.forEach((image, i) => {
+      const nth = i + 1;
+      if (nth % 10 === 3 || nth % 10 === 6) {
+        (0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.add)(image, "big");
+      }
+    });
+
+    (0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.add)(final);
   };
 
   filterFn(filters[0]);

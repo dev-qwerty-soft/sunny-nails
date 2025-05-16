@@ -18,6 +18,13 @@
       $usedTermsArray = array_values($usedTerms);
     };
   }
+  function get_image_class($index) {
+    $nth = $index + 1;
+    if ($nth % 10 === 3 || $nth % 10 === 6) {
+      return ' big';
+    }
+    return '';
+  }
 ?>
 <div class="gallery-modal">
   <button type="button" aria-label="Close" class="cross"></button>
@@ -32,7 +39,8 @@
               get_template_part("template-parts/gallery/gallery-slide", null, [
                 "index" => $index,
                 "master" => $master,
-                "image" => $image
+                "image" => $image,
+                
               ]);
               $index++;
             };
@@ -51,7 +59,7 @@
       <p class="paragraph"><?php the_field('gallery_text', 'option'); ?></p>
     </div>
     <div class="gallery-section__filters">
-      <button type='button' data-slug='all' class='filter'>All</button>
+      <button type='button' data-slug='all' class='filter active'>All</button>
       <?php
         foreach ($usedTermsArray as $term) {
           $slug = $term->slug;
@@ -70,7 +78,8 @@
               get_template_part("template-parts/gallery/gallery-item", null, [
                 "index" => $index,
                 "master" => $master,
-                "image" => $image
+                "image" => $image,
+                "addClass" => get_image_class($index)
               ]);
               $index++;
             };

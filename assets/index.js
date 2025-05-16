@@ -147,7 +147,7 @@ if(filterSection) {
   const filters = g(".gallery-section__filters .filter", document, true);
   const images = g(".gallery-section__images .image", document, true);
   const isFull = has(filterSection, ".full");
-  
+  const isMobile = respond("md");
 
   filterFn = (filter) => {
     if(!filters) return;
@@ -160,7 +160,18 @@ if(filterSection) {
     });
 
     remove(images);
-    add(isFull ? filteredImages : filteredImages.slice(0, respond("md") ? 6 : 5));
+    remove(images, "big");
+
+    const final = isFull ? filteredImages : filteredImages.slice(0, isMobile ? 6 : 5);
+
+    final.forEach((image, i) => {
+      const nth = i + 1;
+      if (nth % 10 === 3 || nth % 10 === 6) {
+        add(image, "big");
+      }
+    });
+
+    add(final);
   };
 
   filterFn(filters[0]);
