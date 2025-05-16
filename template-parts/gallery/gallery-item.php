@@ -9,8 +9,10 @@
   $master = $args["master"] ?? "";
   $level = (int) get_field('master_level', $master->ID);
   $name = isset($master->post_title) ? $master->post_title : '';
-  $price = 100;
-  $currency = "SGD";
+  $services = get_services_by_category($tag->term_id);
+  $post_id = $services[0]->ID;
+  $price = get_post_meta($post_id, 'price_min', true);
+  $currency = get_post_meta($post_id, 'currency', true) ?: 'SGD';
 ?>
 <div data-index='<?= $index; ?>' data-slug='<?= $slug; ?>' class='image active'>
   <div class='image__front'>

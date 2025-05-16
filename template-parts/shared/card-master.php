@@ -9,6 +9,7 @@
   $name = isset($post->post_title) ? $post->post_title : '';
   $instagram = get_field('instagram_url', $post->ID);
   $level = (int) get_field('master_level', $post->ID);
+  
 ?>
 <div data-altegio-id='<?= $id; ?>' class='team-card'>
   <img class='team-card__image' src='<?= $image; ?>' alt='images'>
