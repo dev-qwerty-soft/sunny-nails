@@ -1,6 +1,5 @@
 <?php
   $post = $args["post"] ?? null;
-  
   if (!$post) {
     return;
   }
@@ -37,10 +36,11 @@
         if(!empty($images)) {
           foreach ($images as $item) {
             $image = $item['master_image_work'];
-            $url = isset($image['url']) ? $image['url'] : null;
-            $title = isset($image['title']) ? $image['title'] : null;
+            $tag = $item['master_image_work_tag'];
+            $tagName = isset($tag->name) ? $tag->name : "";
+            $url = isset($image['url']) ? $image['url'] : "";
             echo "<div class='swiper-slide'>
-              <img src='$url' alt='$title'>
+              <img src='$url' alt='$tagName'>
             </div>";
           };
         };
