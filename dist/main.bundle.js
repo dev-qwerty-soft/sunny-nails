@@ -13751,12 +13751,16 @@ if(filterSection) {
 
     const final = isFull ? filteredImages : filteredImages.slice(0, isMobile ? 6 : 5);
 
-    final.forEach((image, i) => {
-      const nth = i + 1;
-      if (nth % 10 === 3 || nth % 10 === 6) {
-        (0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.add)(image, "big");
-      }
-    });
+
+    if(!isMobile) {
+      final.forEach((image, i) => {
+        const nth = i + 1;
+        if (nth % 10 === 3 || nth % 10 === 6) {
+          (0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.add)(image, "big");
+        }
+      })
+    }
+    
 
     (0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.add)(final);
   };
