@@ -1,10 +1,12 @@
 <?php
 
-function getUrl($str) {
+function getUrl($str)
+{
   return get_template_directory_uri() . "/$str";
 }
 
-function dump($var, $label = null, $echo = true) {
+function dump($var, $label = null, $echo = true)
+{
   $style = '<style>
   .pretty-dump {
     font-family: monospace;
@@ -48,15 +50,16 @@ function dump($var, $label = null, $echo = true) {
   };
 }
 
-function displayIcon() {
+function displayIcon()
+{
   $arr = get_field('footer_icons', 'option');
-  if(is_array($arr)) {
-    foreach($arr as $icon) {
+  if (is_array($arr)) {
+    foreach ($arr as $icon) {
       $img = $icon['footer_icon']["url"];
       $title = $icon['footer_icon']["title"];
       $url = $icon['footer_link'];
 
-      if($img && $url) {
+      if ($img && $url) {
         echo "<a target='_blank' rel='noopener noreferrer' href='$url'>
           <img src='$img' alt='$title'>
         </a>";
@@ -65,7 +68,8 @@ function displayIcon() {
   }
 };
 
-function getPlaceReviews() {
+function getPlaceReviews()
+{
   $apiKey = get_field('reviews_api_token', 'option');
   $placeId = get_field('reviews_api_place_id', 'option');
   $url = "https://maps.googleapis.com/maps/api/place/details/json?place_id={$placeId}&fields=name,rating,reviews&language=en&key={$apiKey}";
@@ -103,16 +107,17 @@ function getPlaceReviews() {
 }
 
 
-function logo($str) {
-  $logo = "<a href='$url' class='logo'></a>";
-  $url = esc_url(home_url('/'));
-  $logo = get_field($str, 'option');
-  $url = isset($logo['url']) ? $logo['url'] : null;
-  $alt = isset($logo['title']) ? $logo['title'] : null;
+function logo($str)
+{
+  $logo_data = get_field($str, 'option');
+  $url = isset($logo_data['url']) ? $logo_data['url'] : null;
+  $alt = isset($logo_data['title']) ? $logo_data['title'] : null;
+
   if ($url && $alt) {
-    $logo = "<a href='$url' class='logo'>
-      <img src='$url' alt='$alt'>
+    return "<a href='" . esc_url(home_url('/')) . "' class='logo'>
+      <img src='" . esc_url($url) . "' alt='" . esc_attr($alt) . "'>
     </a>";
-  };
-  return $logo;
+  }
+
+  return '';
 }
