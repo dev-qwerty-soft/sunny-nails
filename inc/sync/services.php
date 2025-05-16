@@ -286,4 +286,49 @@ class AltegioSyncServices extends AltegioSyncBase
 
         return $this->stats;
     }
+    // Add this right after the end of the processMasterServices function
+    public function debug_services_relationship()
+    {
+        $masters = get_posts([
+            'post_type' => 'master',
+            'posts_per_page' => 5,
+        ]);
+
+        foreach ($masters as $master) {
+            $altegio_ids = get_post_meta($master->ID, 'service_ids', true);
+            $related_services = get_field('related_services', $master->ID);
+
+            echo "<h3>Master: {$master->post_title} (ID: {$master->ID})</h3>";
+            echo "<p>Altegio Service IDs: " . print_r($altegio_ids, true) . "</p>";
+            echo "<p>Related Services: " . print_r($related_services, true) . "</p>";
+
+            if (!empty($altegio_ids)) {
+                echo "<h4>Looking up service posts:</h4>";
+                foreach ($altegio_ids as $altegio_id) {
+                    $found_with_normal = get_posts([
+                        'post_type' => 'service',
+                        'meta_key' => 'altegio_id',
+                        'meta_value' => $altegio_id,
+                        'posts_per_page' => 1,
+                    ]);
+
+                    $found_with_underscore = get_posts([
+                        'post_type' => 'service',
+                        'meta_key' => '_altegio_id',
+                        'meta_value' => $altegio_id,
+                        'posts_per_page' => 1,
+                    ]);
+
+                    echo "<p>Altegio ID {$altegio_id}: ";
+                    echo "Found with 'altegio_id': " . (empty($found_with_normal) ? "No" : "Yes, ID: {$found_with_normal[0]->ID}");
+                    echo " | Found with '_altegio_id': " . (empty($found_with_underscore) ? "No" : "Yes, ID: {$found_with_underscore[0]->ID}");
+                    echo "</p>";
+                }
+            }
+
+            echo "<hr>";
+        }
+
+        die();
+    }
 }
