@@ -155,7 +155,7 @@ if(filterSection) {
     remove(filters);
     add(filter);
 
-    const filteredImages = images.filter((image) => {
+    const filteredImages = images?.filter((image) => {
       return slug === "all" || image.getAttribute("data-slug") === slug;
     });
 
