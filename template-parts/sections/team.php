@@ -44,9 +44,10 @@ $img = getUrl('images/image-1.png');
               <div class='swiper-scrollbar'></div>
             </div>
             <div class='team-card__buttons'>
-              <button class='btn yellow'>Book an Appointment</button>
+              <button data-staff-id="<?php echo esc_attr($staff_id); ?>" class='btn yellow book-tem'>Book an Appointment</button>
               <button class='btn'>Learn More</button>
             </div>
+
           </div>
         <?php endfor; ?>
       </div>

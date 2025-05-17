@@ -8,7 +8,7 @@
 
 // Get necessary data
 $staffList = isset($staff_list) && !empty($staff_list['data']) ? $staff_list['data'] : [];
-$ordered_category_ids = function_exists('get_field') ? get_field('category_selection') : [];
+$ordered_category_ids = function_exists('get_field') ? get_field('category_selection', 'option') : [];
 
 if (empty($ordered_category_ids)) {
     $service_categories_popup = get_terms([
@@ -28,7 +28,7 @@ if (empty($ordered_category_ids)) {
 
 function get_services_by_category($category_popup_id)
 {
-    return get_posts([
+    $services = get_posts([
         'post_type' => 'service',
         'posts_per_page' => -1,
         'tax_query' => [
@@ -40,8 +40,12 @@ function get_services_by_category($category_popup_id)
         ],
         'meta_key' => 'price_min',
         'orderby' => 'meta_value_num',
-        'order' => 'DESC',
+        'order' => 'ASC',
     ]);
+
+    error_log(print_r($services, true)); // Log the result
+
+    return $services;
 }
 ?>
 
