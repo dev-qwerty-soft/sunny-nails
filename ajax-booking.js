@@ -80,14 +80,13 @@
    * Initialize the booking system when document is ready
    */
   $(document).ready(function () {
-    initBookingPopup();
     initServiceHandling();
     initMasterHandling();
     initDateTimeHandling();
     initContactHandling();
     initLocalStorageSupport();
     setupEditButtons();
-
+    initBookingPopup();
     // Check for restored session
     if (config.useLocalStorage) {
       restoreBookingSession();
@@ -314,7 +313,78 @@
       }
     });
   }
+  function initServiceStep() {
+    $(document).on("click", '.booking-step[data-step="services"] .next-btn', function () {
+      if (bookingData.coreServices.length === 0) return;
 
+      const serviceIds = bookingData.coreServices.map((s) => s.id);
+
+      $.ajax({
+        url: config.apiEndpoint,
+        type: "POST",
+        data: {
+          action: "get_staff_for_service",
+          service_ids: serviceIds,
+          nonce: config.nonce,
+        },
+        success: function (response) {
+          if (response.success && response.data && response.data.data) {
+            renderStaff(response.data.data);
+          } else {
+            $(".staff-list").html('<p class="no-items-message">No specialists available for the selected services.</p>');
+            debug("Failed to load staff from API", response);
+          }
+        },
+        error: function (xhr) {
+          console.error("Error loading staff for selected services", xhr);
+        },
+      });
+
+      const nextStep = bookingData.initialOption === "services" ? "master" : "datetime";
+      bookingData.flowHistory.push(nextStep);
+      if (nextStep === "master") loadStaffForServices();
+      if (nextStep === "datetime") generateCalendar();
+      goToStep(nextStep);
+    });
+  }
+
+  function initMasterStep() {
+    $(document).on("click", ".staff-item", function () {
+      const staffId = $(this).data("staff-id");
+      bookingData.staffId = staffId;
+
+      // AJAX call to filter available services for selected master
+      $.ajax({
+        url: config.apiEndpoint,
+        type: "POST",
+        data: {
+          action: "get_services_for_master",
+          staff_id: staffId,
+          nonce: config.nonce,
+        },
+        success: function (response) {
+          if (response.success && Array.isArray(response.data)) {
+            console.log("Filtered services:", response.data);
+            // handle rendering filtered services if necessary
+          } else {
+            console.warn("Service filtering failed or empty response", response);
+          }
+        },
+        error: function (xhr) {
+          console.error("Error loading services for selected master", xhr);
+        },
+      });
+    });
+
+    $(document).on("click", '.booking-step[data-step="master"] .next-btn', function () {
+      if (!bookingData.staffId) return;
+      let nextStep = "datetime";
+      if (bookingData.initialOption === "master" && !bookingData.coreServices.length) nextStep = "services";
+      bookingData.flowHistory.push(nextStep);
+      if (nextStep === "datetime") generateCalendar();
+      goToStep(nextStep);
+    });
+  }
   /**
    * Initialize service selection handling
    */
@@ -554,19 +624,11 @@
     // Date selection
     $(document).on("click", ".calendar-day:not(.disabled, .empty)", function () {
       const date = $(this).data("date");
-
-      // Don't reload if same date selected
-      if (bookingData.date === date) {
-        return;
-      }
-
       selectDate(date);
-
-      // Update UI
       $(".calendar-day").removeClass("selected");
       $(this).addClass("selected");
 
-      // Load time slots
+      // This must be triggered:
       loadTimeSlots(date);
     });
 
@@ -1025,43 +1087,117 @@
    * This calls the Altegio API to get available staff for the selected services
    */
   function loadStaffForServices() {
-    // If no services selected, return early
-    if (bookingData.services.length === 0) {
-      return;
-    }
+    if (bookingData.services.length === 0) return;
 
-    // Get service IDs to send to the API
     const serviceIds = bookingData.services.map((service) => service.altegioId || service.id).join(",");
 
     debug("Loading staff for services", serviceIds);
 
-    // Show loading indicator
     $(".staff-list").html('<p class="loading-message">Loading specialists...</p>');
 
-    // Call AJAX to get staff for selected services
     $.ajax({
       url: config.apiEndpoint,
       type: "POST",
       data: {
-        action: "get_staff",
+        action: "get_filtered_staff",
         service_id: serviceIds,
         nonce: config.nonce,
       },
       success: function (response) {
-        if (response.success && response.data && response.data.data) {
-          // If we received valid data, render the staff list
+        if (response.success && response.data && Array.isArray(response.data.data)) {
           renderStaff(response.data.data);
         } else {
-          // If API call failed, use a fallback or show error
-          renderFallbackStaff();
+          $(".staff-list").html('<p class="no-items-message">No specialists available for the selected services.</p>');
           debug("Failed to load staff from API", response);
         }
       },
       error: function (xhr, status, error) {
-        renderFallbackStaff();
         debug("AJAX error loading staff", { status, error });
+        $(".staff-list").html('<p class="no-items-message">Error loading specialists.</p>');
       },
     });
+  }
+  function loadServicesForMaster(masterId) {
+    debug("Loading services for master", masterId);
+    $(".booking-popup .services-list").html('<p class="loading-message">Loading services...</p>');
+
+    $.ajax({
+      url: booking_params.ajax_url,
+      type: "POST",
+      data: {
+        action: "get_filtered_services",
+        staff_id: masterId,
+        nonce: booking_params.nonce,
+      },
+
+      success: function (response) {
+        if (response.success && response.data && response.data.html) {
+          $(".booking-popup .services-list").html(response.data.html);
+          debug("Filtered services HTML loaded");
+          updateAddonAvailability();
+          updateNextButtonState();
+        } else {
+          $(".booking-popup .services-list").html('<p class="no-items-message">No services available for this master.</p>');
+        }
+      },
+      error: function () {
+        $(".booking-popup .services-list").html('<p class="no-items-message">Error loading services.</p>');
+      },
+    });
+  }
+
+  // Додай цю частину одразу після оголошення функції
+  $(document).on("click", ".staff-item", function () {
+    const masterId = $(this).data("staff-id");
+    if (masterId && masterId !== "any") {
+      loadServicesForMaster(masterId);
+    } else {
+      $(".service-item").show();
+    }
+  });
+  function filterServicesByAllowedIds(allowedIds) {
+    // Пройтись по кожній категорії
+    $(".category-services").each(function () {
+      let hasVisible = false;
+
+      $(this)
+        .find(".service-item")
+        .each(function () {
+          const $item = $(this);
+          const serviceId = String($item.data("service-id"));
+
+          if (allowedIds.includes(serviceId)) {
+            $item.show();
+            hasVisible = true;
+          } else {
+            $item.hide();
+            $item.removeClass("selected");
+            $item.find(".service-checkbox").prop("checked", false);
+          }
+        });
+
+      // Показуємо/ховаємо категорію цілком, якщо в ній нічого не лишилось
+      if (hasVisible) {
+        $(this).show();
+      } else {
+        $(this).hide();
+      }
+    });
+
+    // Активуємо першу доступну вкладку
+    $(".category-tab").each(function () {
+      const categoryId = $(this).data("category-id");
+      const $categoryBlock = $(`.category-services[data-category-id="${categoryId}"]`);
+      if ($categoryBlock.is(":visible")) {
+        $(".category-tab").removeClass("active");
+        $(this).addClass("active");
+        return false; // break .each
+      }
+    });
+
+    updateAddonAvailability();
+    updateNextButtonState();
+    debug("Filtered visible services by master:", allowedIds);
   }
 
   /**
@@ -1106,41 +1242,6 @@
    * Render staff list with fallback if API fails
    * Use a blend of existing staff items and default values
    */
-  function renderFallbackStaff() {
-    // Try to find existing staff in the DOM
-    if ($(".staff-item:not(.any-master)").length > 0) {
-      debug("Using existing staff items in DOM");
-      return;
-    }
-
-    // Otherwise, show a predefined staff list as fallback
-    const fallbackStaff = [
-      {
-        id: "2805903",
-        name: "Тест 3",
-        specialization: "Тест",
-        avatar: "https://be.cdn.alteg.io/images/no-master-sm.png",
-        level: 1,
-      },
-      {
-        id: "2805902",
-        name: "Тест 2",
-        specialization: "Тест",
-        avatar: "https://be.cdn.alteg.io/images/no-master-sm.png",
-        level: 2,
-      },
-      {
-        id: "2805894",
-        name: "Тест",
-        specialization: "тест",
-        avatar: "https://be.cdn.alteg.io/images/no-master-sm.png",
-        level: 3,
-      },
-    ];
-
-    renderStaff(fallbackStaff);
-    debug("Using fallback staff list", fallbackStaff);
-  }
 
   /**
    * Render staff list
@@ -1381,152 +1482,267 @@
    * Load time slots for selected date and staff
    * @param {string} date - Date in YYYY-MM-DD format
    */
-  function loadTimeSlots(date) {
-    if (!bookingData.staffId) {
-      $(".time-slots").html('<p class="error-message">Please select a specialist first.</p>');
-      return;
-    }
-
-    // Show loading indicator
-    $(".time-slots").html('<p class="loading-message">Loading available times...</p>');
-
-    debug("Loading time slots for", { date, staffId: bookingData.staffId });
-
-    // Call AJAX to get time slots
+  function loadServicesForMaster(masterId) {
     $.ajax({
       url: config.apiEndpoint,
       type: "POST",
       data: {
-        action: "get_time_slots",
-        staff_id: bookingData.staffId,
-        date: date,
+        action: "get_services_for_master",
+        staff_id: masterId,
         nonce: config.nonce,
       },
       success: function (response) {
-        if (response.success && response.data && response.data.slots) {
-          const slots = response.data.slots;
-          debug("Time slots loaded", slots.length);
-          renderTimeSlots(slots);
+        if (response.success && Array.isArray(response.data)) {
+          renderServices(response.data);
         } else {
-          // If API call failed, use simulated slots
-          debug("Failed to load time slots from API, using fallback", response);
-          if (config.simulateTimeSlots) {
-            const simulatedSlots = generateSimulatedTimeSlots(date);
-            renderTimeSlots(simulatedSlots);
-          } else {
-            $(".time-slots").html('<p class="error-message">Failed to load time slots. Please try again later.</p>');
-          }
-        }
-      },
-      error: function (xhr, status, error) {
-        debug("AJAX error loading time slots", { status, error });
-
-        // Use simulated slots as fallback
-        if (config.simulateTimeSlots) {
-          const simulatedSlots = generateSimulatedTimeSlots(date);
-          renderTimeSlots(simulatedSlots);
-        } else {
-          $(".time-slots").html('<p class="error-message">Failed to load time slots. Please try again later.</p>');
+          console.warn("No services available for the selected master");
         }
       },
     });
   }
-
-  /**
-   * Generate simulated time slots as a fallback
-   * @param {string} date - Date in YYYY-MM-DD format
-   * @returns {Array} - List of time slots
-   */
-  function generateSimulatedTimeSlots(date) {
-    const slots = [];
-    const startHour = 9; // 9 AM
-    const endHour = 19; // 7 PM
-    const interval = 30; // 30 minutes
-
-    // Random unavailable slots to simulate real availability
-    const unavailableSlots = [];
-    const unavailableCount = Math.floor(Math.random() * 5) + 3; // 3-7 unavailable slots
-
-    for (let i = 0; i < unavailableCount; i++) {
-      const hour = Math.floor(Math.random() * (endHour - startHour)) + startHour;
-      const minute = Math.random() < 0.5 ? 0 : 30;
-      unavailableSlots.push(`${hour}:${minute === 0 ? "00" : "30"}`);
+  function loadTimeSlots(date) {
+    if (!bookingData.staffId || bookingData.services.length === 0) {
+      console.warn("Staff or service not selected");
+      $(".time-slots").html('<p class="error-message">Please select a staff and service first.</p>');
+      return;
     }
 
-    debug("Generated unavailable slots", unavailableSlots);
-
-    // Generate available slots
-    for (let hour = startHour; hour < endHour; hour++) {
-      for (let minute = 0; minute < 60; minute += interval) {
-        const timeStr = `${hour}:${minute === 0 ? "00" : minute}`;
-
-        // Skip unavailable slots
-        if (unavailableSlots.includes(timeStr)) continue;
-
-        // Add available slot in format expected by the template
-        slots.push(`${date} ${timeStr}:00`);
-      }
+    if (!date) {
+      $(".time-slots").html('<p class="error-message">Please select a date.</p>');
+      return;
     }
 
-    return slots;
+    const serviceIds = bookingData.coreServices.map((s) => s.altegioId || s.id).join(",");
+    if (!serviceIds) {
+      $(".time-slots").html('<p class="error-message">Please select at least one core service.</p>');
+      return;
+    }
+
+    $(".time-slots").html('<p class="loading-message">Loading available time slots...</p>');
+    console.log("Sending service IDs:", serviceIds);
+
+    $.ajax({
+      url: booking_params.ajax_url,
+      method: "POST",
+      data: {
+        action: "get_time_slots",
+        nonce: booking_params.nonce,
+        staff_id: bookingData.staffId,
+        date: date,
+        service_ids: serviceIds,
+      },
+      success: function (response) {
+        if (response.success) {
+          const slots = response.data?.slots ?? [];
+          if (slots.length > 0) {
+            renderTimeSlots(slots);
+          } else {
+            $(".time-slots").html('<p class="error-message">No available time slots for this day.</p>');
+          }
+        } else {
+          $(".time-slots").html('<p class="error-message">Error loading time slots. Please try again later.</p>');
+        }
+      },
+      error: function (xhr, status, error) {
+        console.error("Error loading time slots:", error);
+        $(".time-slots").html('<p class="error-message">Error loading time slots. Please try again later.</p>');
+      },
+    });
   }
 
-  /**
-   * Render time slots
-   * @param {Array} slots - List of time slots
-   */
   function renderTimeSlots(slots) {
     if (!slots || slots.length === 0) {
       $(".time-sections").html('<div class="no-slots-message">No available time slots for this date.</div>');
       return;
     }
 
-    // Format times: 09:00, 14:30, etc.
-    const timeValues = slots
-      .map((slot) => {
-        if (typeof slot === "string") {
-          if (slot.includes(" ")) return slot.split(" ")[1].substring(0, 5);
-          if (slot.includes("T")) return slot.split("T")[1].substring(0, 5);
-          return slot.substring(0, 5);
-        } else if (typeof slot === "object") {
-          return slot.time?.substring(0, 5);
-        }
-        return "";
-      })
-      .filter(Boolean);
-
-    // Group times by part of day
-    const morning = timeValues.filter((time) => parseInt(time.split(":")[0]) < 12);
-    const day = timeValues.filter((time) => {
-      const h = parseInt(time.split(":")[0]);
-      return h >= 12 && h < 17;
-    });
-    const evening = timeValues.filter((time) => parseInt(time.split(":")[0]) >= 17);
-
-    // Build time group HTML
-    const buildGroup = (label, times) => {
-      if (!times.length) return "";
-      const slotsHTML = times.map((t) => `<div class="time-slot" data-time="${t}">${t}</div>`).join("");
-      return `<div class="time-group">
-        <div class="time-group-title">${label}</div>
-        <div class="time-slots">${slotsHTML}</div>
-      </div>`;
+    const getTime = (slot) => {
+      if (typeof slot === "object" && slot.time) return slot.time.slice(0, 5);
+      if (typeof slot === "string") return slot.split(" ")[1]?.slice(0, 5) || slot.slice(0, 5);
+      return "";
     };
 
-    // Combine all time groups
-    const finalHTML = `
-      ${buildGroup("Morning", morning)}
-      ${buildGroup("Day", day)}
-      ${buildGroup("Evening", evening)}
-    `;
+    const times = slots.map(getTime).filter(Boolean);
 
-    $(".time-sections").html(finalHTML);
+    const grouped = {
+      Morning: times.filter((t) => parseInt(t.split(":")[0]) < 12),
+      Day: times.filter((t) => {
+        const h = parseInt(t.split(":")[0]);
+        return h >= 12 && h < 17;
+      }),
+      Evening: times.filter((t) => parseInt(t.split(":")[0]) >= 17),
+    };
 
-    // Mark active slot if previously selected
+    let html = "";
+    for (const [label, group] of Object.entries(grouped)) {
+      if (!group.length) continue;
+      html += `<div class="time-group">
+      <div class="time-group-title">${label}</div>
+      <div class="time-slots">${group.map((t) => `<div class="time-slot" data-time="${t}">${t}</div>`).join("")}</div>
+    </div>`;
+    }
+
+    $(".time-sections").html(html);
+
     if (bookingData.time) {
       $(`.time-slot[data-time="${bookingData.time}"]`).addClass("selected");
     }
   }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const calendarGrid = document.querySelector(".calendar-grid");
+    const timeSlotsContainer = document.querySelector(".time-slots");
+    const currentMonthElem = document.querySelector(".current-month");
+    const prevMonthBtn = document.querySelector(".prev-month");
+    const nextMonthBtn = document.querySelector(".next-month");
+    const nextBtn = document.querySelector(".next-btn");
+
+    let staffId = window.bookingData?.staffId || null;
+    let serviceIds = window.bookingData?.services || [];
+    let selectedDate = null;
+    let currentYear = new Date().getFullYear();
+    let currentMonth = new Date().getMonth();
+
+    function renderCalendar(year, month, availableDates = []) {
+      currentMonthElem.textContent = new Date(year, month).toLocaleString("en-US", { month: "long", year: "numeric" });
+      calendarGrid.innerHTML = "";
+
+      const firstDayOfMonth = new Date(year, month, 1);
+      const startDay = firstDayOfMonth.getDay() || 7;
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+      for (let i = 1; i < startDay; i++) {
+        const emptyCell = document.createElement("div");
+        emptyCell.classList.add("empty-day");
+        calendarGrid.appendChild(emptyCell);
+      }
+
+      for (let day = 1; day <= daysInMonth; day++) {
+        const dayCell = document.createElement("div");
+        dayCell.textContent = day;
+        dayCell.classList.add("calendar-day");
+
+        const dateStr = `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+        if (availableDates.includes(dateStr)) {
+          dayCell.classList.add("available");
+          dayCell.addEventListener("click", () => {
+            selectedDate = dateStr;
+            highlightSelectedDate(dayCell);
+            loadTimeSlots();
+          });
+        } else {
+          dayCell.classList.add("unavailable");
+        }
+        calendarGrid.appendChild(dayCell);
+      }
+    }
+
+    function highlightSelectedDate(selectedElem) {
+      document.querySelectorAll(".calendar-day.available").forEach((el) => el.classList.remove("selected"));
+      selectedElem.classList.add("selected");
+    }
+
+    async function loadAvailableDates() {
+      if (!staffId || serviceIds.length === 0) {
+        console.warn("Staff or service not selected");
+        return;
+      }
+
+      try {
+        const response = await fetch(ajaxurl, {
+          method: "POST",
+          headers: { "Content-Type": "application/x-www-form-urlencoded" },
+          body: new URLSearchParams({
+            action: "get_booking_dates",
+            nonce: booking_nonce,
+            staff_id: staffId,
+            service_ids: serviceIds.join(","),
+            year: currentYear,
+            month: currentMonth + 1,
+          }),
+        });
+        const data = await response.json();
+
+        if (data.success) {
+          renderCalendar(currentYear, currentMonth, data.data.available_dates);
+        } else {
+          renderCalendar(currentYear, currentMonth, []);
+          console.error("Error fetching dates:", data.data?.message);
+        }
+      } catch (error) {
+        console.error("Ajax error:", error);
+      }
+    }
+
+    async function loadTimeSlots() {
+      if (!staffId || !selectedDate || serviceIds.length === 0) {
+        timeSlotsContainer.innerHTML = "<p>Please select a date to see available time slots</p>";
+        return;
+      }
+
+      timeSlotsContainer.innerHTML = "<p>Loading...</p>";
+
+      try {
+        const response = await fetch(ajaxurl, {
+          method: "POST",
+          headers: { "Content-Type": "application/x-www-form-urlencoded" },
+          body: new URLSearchParams({
+            action: "get_time_slots",
+            nonce: booking_nonce,
+            staff_id: staffId,
+            date: selectedDate,
+            service_id: serviceIds.join(","),
+          }),
+        });
+        const data = await response.json();
+
+        if (data.success && data.slots.length) {
+          timeSlotsContainer.innerHTML = "";
+          data.slots.forEach((slot) => {
+            const slotBtn = document.createElement("button");
+            slotBtn.type = "button";
+            slotBtn.classList.add("time-slot");
+            slotBtn.textContent = `${slot.time} (${Math.floor(slot.seance_length / 60)} min)`;
+            slotBtn.addEventListener("click", () => {
+              window.bookingData.time = slot.time;
+              updateSelectedTimeUI(slotBtn);
+            });
+            timeSlotsContainer.appendChild(slotBtn);
+          });
+        } else {
+          timeSlotsContainer.innerHTML = "<p>No available time slots for this day.</p>";
+        }
+      } catch (error) {
+        timeSlotsContainer.innerHTML = "<p>Error loading time slots.</p>";
+        console.error("Ajax error:", error);
+      }
+    }
+
+    function updateSelectedTimeUI(selectedBtn) {
+      document.querySelectorAll(".time-slot").forEach((btn) => btn.classList.remove("selected"));
+      selectedBtn.classList.add("selected");
+    }
+
+    prevMonthBtn.addEventListener("click", () => {
+      currentMonth--;
+      if (currentMonth < 0) {
+        currentMonth = 11;
+        currentYear--;
+      }
+      loadAvailableDates();
+    });
+
+    nextMonthBtn.addEventListener("click", () => {
+      currentMonth++;
+      if (currentMonth > 11) {
+        currentMonth = 0;
+        currentYear++;
+      }
+      loadAvailableDates();
+    });
+
+    loadAvailableDates();
+  });
 
   /**
    * Format time for display (24h to 12h)
@@ -2057,7 +2273,4 @@
   });
 
   // Initialize styles when document is ready
-  $(document).ready(function () {
-    addStyles();
-  });
 })(jQuery);
