@@ -2271,7 +2271,6 @@
     goToStep("contact");
     updateSummary();
   });
-  console.log("booking_params:", booking_params);
 
   // Initialize styles when document is ready
 })(jQuery);

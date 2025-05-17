@@ -1,21 +1,19 @@
 .confirmation-body {
-  @media screen and (max-width: 768px) {
-    max-height: 80vh;
-    overflow-y: auto;
+  max-height: 80vh;
+  overflow-y: auto;
 
-    &::-webkit-scrollbar {
-      width: 5px;
-    }
+  &::-webkit-scrollbar {
+    width: 5px;
+  }
 
-    &::-webkit-scrollbar-track {
-      background: rgba(255, 255, 255, 0.5);
-      border-radius: 10px;
-    }
+  &::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: 10px;
+  }
 
-    &::-webkit-scrollbar-thumb {
-      background: rgba(253, 196, 31, 0.7);
-      border-radius: 10px;
-    }
+  &::-webkit-scrollbar-thumb {
+    background: rgba(253, 196, 31, 0.7);
+    border-radius: 10px;
   }
 }
 

@@ -463,3 +463,30 @@ function ajax_get_time_slots()
         wp_send_json_error(['message' => $e->getMessage()]);
     }
 }
+function get_services_for_master()
+{
+    // Check nonce
+    if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'your_nonce_action')) {
+        wp_send_json_error(array('message' => 'Nonce verification failed.'));
+        return;
+    }
+
+    // Check staff_id
+    if (!isset($_POST['staff_id']) || empty($_POST['staff_id'])) {
+        wp_send_json_error(array('message' => 'Staff ID is missing.'));
+        return;
+    }
+
+    // Fetch services for the given staff ID
+    $staff_id = sanitize_text_field($_POST['staff_id']);
+    $services = get_services_by_staff($staff_id);
+
+    if ($services) {
+        wp_send_json_success(array('data' => $services));
+    } else {
+        wp_send_json_error(array('message' => 'No services found for this staff.'));
+    }
+}
+
+add_action('wp_ajax_get_services_for_master', 'get_services_for_master');
+add_action('wp_ajax_nopriv_get_services_for_master', 'get_services_for_master');
