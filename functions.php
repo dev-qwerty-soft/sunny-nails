@@ -44,11 +44,17 @@ require_once get_template_directory() . '/inc/api/altegio-client.php';
 require_once get_template_directory() . '/inc/helpers/api.php';
 require_once get_template_directory() . '/inc/controllers/booking-controller.php';
 require_once get_template_directory() . '/inc/controllers/booking-popup-controller.php';
+require_once get_template_directory() . '/inc/controllers/booking-filter-controller.php';
+
+
+require_once get_template_directory() . '/inc/ajax/booking-ajax-handlers.php';
+
 // require_once get_template_directory() . '/inc/ajax/ajax-handlers-php.php';
 
 
 // Initialize controllers
 add_action('after_setup_theme', ['BookingController', 'init']);
 add_action('after_setup_theme', ['BookingPopupController', 'init']);
+add_action('after_setup_theme', ['BookingFilterController', 'init']);
 
 require_once get_template_directory() . '/inc/admin/google.php';

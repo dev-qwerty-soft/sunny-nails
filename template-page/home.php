@@ -27,26 +27,8 @@ if (empty($ordered_category_ids)) {
     }
 };
 
-// require_once get_template_directory() . '/inc/api/altegio-client.php'; // шлях до твого API-класу
 
-// use AltegioClient;
-
-// // Отримати повні дані про майстрів
-// $response = AltegioClient::getStaff(); // або ->getStaff() якщо це об'єкт
-
-// if (isset($response['success']) && $response['success'] && !empty($response['data'])) {
-//     $staff_data = $response['data'];
-
-//     // Виводимо всі дані красиво
-//     dump($staff_data, 'FULL ALTEGIO STAFF API RESPONSE');
-// } else {
-//     echo '<p>Altegio API returned no data or failed.</p>';
-//     dump($response, 'ALTEGIO RAW RESPONSE');
-// }
 ?>
-
-
-
 <main>
     <section class="hero-section">
         <div class="container">

@@ -235,23 +235,45 @@ class AltegioSyncServices extends AltegioSyncBase
      * @param int $post_id Service post ID
      * @param array $item_data Service data
      */
+
+
     protected function processServiceMasters($post_id, $item_data)
     {
         if (isset($item_data['staff']) && is_array($item_data['staff'])) {
-            $master_ids = array_map(function ($staff) {
+            $altegio_master_ids = array_map(function ($staff) {
                 return isset($staff['id']) ? $staff['id'] : null;
             }, $item_data['staff']);
 
-            $master_ids = array_filter($master_ids);
+            $altegio_master_ids = array_filter($altegio_master_ids);
 
-            update_post_meta($post_id, 'master_ids', $master_ids);
+            $wp_master_ids = [];
 
-            // If ACF exists, also update through ACF
-            if (function_exists('update_field')) {
-                update_field('master_ids', $master_ids, $post_id);
+            foreach ($altegio_master_ids as $altegio_id) {
+                $masters = get_posts([
+                    'post_type' => 'master',
+                    'post_status' => 'publish',
+                    'posts_per_page' => 1,
+                    'meta_key' => 'altegio_id',
+                    'meta_value' => $altegio_id,
+                    'fields' => 'ids'
+                ]);
+
+                if (!empty($masters)) {
+                    $wp_master_ids[] = $masters[0];
+                }
             }
+
+            // Save as ACF relationship
+            if (function_exists('update_field')) {
+                update_field('related_master', $wp_master_ids, $post_id);
+            }
+
+            // Save raw Altegio IDs just in case
+            update_post_meta($post_id, 'master_ids', $altegio_master_ids);
         }
     }
+
+
 
     /**
      * Start service synchronization process
@@ -285,50 +307,5 @@ class AltegioSyncServices extends AltegioSyncBase
         $this->logger->log('Service synchronization completed', AltegioLogger::INFO, $this->stats);
 
         return $this->stats;
-    }
-    // Add this right after the end of the processMasterServices function
-    public function debug_services_relationship()
-    {
-        $masters = get_posts([
-            'post_type' => 'master',
-            'posts_per_page' => 5,
-        ]);
-
-        foreach ($masters as $master) {
-            $altegio_ids = get_post_meta($master->ID, 'service_ids', true);
-            $related_services = get_field('related_services', $master->ID);
-
-            echo "<h3>Master: {$master->post_title} (ID: {$master->ID})</h3>";
-            echo "<p>Altegio Service IDs: " . print_r($altegio_ids, true) . "</p>";
-            echo "<p>Related Services: " . print_r($related_services, true) . "</p>";
-
-            if (!empty($altegio_ids)) {
-                echo "<h4>Looking up service posts:</h4>";
-                foreach ($altegio_ids as $altegio_id) {
-                    $found_with_normal = get_posts([
-                        'post_type' => 'service',
-                        'meta_key' => 'altegio_id',
-                        'meta_value' => $altegio_id,
-                        'posts_per_page' => 1,
-                    ]);
-
-                    $found_with_underscore = get_posts([
-                        'post_type' => 'service',
-                        'meta_key' => '_altegio_id',
-                        'meta_value' => $altegio_id,
-                        'posts_per_page' => 1,
-                    ]);
-
-                    echo "<p>Altegio ID {$altegio_id}: ";
-                    echo "Found with 'altegio_id': " . (empty($found_with_normal) ? "No" : "Yes, ID: {$found_with_normal[0]->ID}");
-                    echo " | Found with '_altegio_id': " . (empty($found_with_underscore) ? "No" : "Yes, ID: {$found_with_underscore[0]->ID}");
-                    echo "</p>";
-                }
-            }
-
-            echo "<hr>";
-        }
-
-        die();
     }
 }

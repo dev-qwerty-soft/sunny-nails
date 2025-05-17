@@ -1,4 +1,5 @@
 <?php
+
 add_action('wp_enqueue_scripts', function () {
     wp_enqueue_style('style', get_template_directory_uri() . '/dist/main.css');
 
@@ -10,7 +11,14 @@ add_action('wp_enqueue_scripts', function () {
         true
     );
 
-    wp_localize_script('index', 'booking_params', [
+    wp_enqueue_script(
+        'booking-js',
+        get_template_directory_uri() . '/ajax-booking.js',
+        ['jquery'],
+        null,
+        true
+    );
+    wp_localize_script('booking-js', 'booking_params', [
         'ajax_url' => admin_url('admin-ajax.php'),
         'nonce'    => wp_create_nonce('booking_nonce'),
     ]);

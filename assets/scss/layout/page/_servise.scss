@@ -3,18 +3,20 @@
   padding: 40px 0 75px;
   .container {
     box-sizing: border-box;
-    padding: 0 15px;
-    max-width: 1320px;
+    padding: get-d(75px) get-d(60px);
+
+    @include respond(lg) {
+      padding: get-lg(75px) get-lg(60px);
+    }
+    @include respond(md) {
+      padding: 75px 25px;
+    }
+    padding-top: 0;
+
     margin: 0 auto;
     display: flex;
     flex-direction: column;
     gap: 24px;
-  }
-
-  @media screen and (min-width: 1350px) {
-    .container {
-      padding: 0;
-    }
   }
 }
 

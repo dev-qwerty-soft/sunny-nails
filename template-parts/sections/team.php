@@ -1,6 +1,6 @@
 <?php
-  $isPage = $args["page"] ?? false;
-  $img = getUrl('images/image-1.png');
+$isPage = $args["page"] ?? false;
+$img = getUrl('images/image-1.png');
 ?>
 
 <section class='team-section<?= $isPage ? ' page' : '' ?>'>
@@ -9,11 +9,11 @@
       <h2 class='title'><?php the_field('team_title', 'option'); ?></h2>
       <p class='paragraph'><?php the_field('team_description', 'option'); ?></p>
       <?php
-        $link = get_field('team_link_url', 'option');
-        $text = get_field('team_link_text', 'option');
-        if ($link && $text) {
-          echo "<a href='$link' class='btn yellow'>$text</a>";
-        }
+      $link = get_field('team_link_url', 'option');
+      $text = get_field('team_link_text', 'option');
+      if ($link && $text) {
+        echo "<a href='$link' class='btn yellow'>$text</a>";
+      }
       ?>
     </div>
     <?php if ($isPage): ?>

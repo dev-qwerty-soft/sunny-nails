@@ -138,15 +138,25 @@ class AltegioFieldsMapper
         $field_map = self::getServiceFieldsMap();
         $acf_data = self::mapApiDataToAcf($service_data, $field_map);
 
-        // Create post data
+        // Strip wear_time from comment
+        $cleaned_comment = $service_data['comment'] ?? '';
+        $wear_time = null;
+
+        if (!empty($cleaned_comment) && preg_match('/Wear time:?\s*(.+)/i', $cleaned_comment, $matches)) {
+            $wear_time = trim($matches[1]);
+            $acf_data['wear_time'] = $wear_time;
+
+            // Remove wear time line from comment
+            $cleaned_comment = preg_replace('/Wear time:?\s*.+/i', '', $cleaned_comment);
+        }
+
         $post_data = [
             'post_title'   => sanitize_text_field($service_data['title'] ?? ''),
-            'post_content' => wp_kses_post($service_data['comment'] ?? ''),
+            'post_content' => wp_kses_post(trim($cleaned_comment)),
             'post_status'  => 'publish',
             'post_type'    => 'service'
         ];
 
-        // Calculate duration in minutes
         if (isset($service_data['duration'])) {
             $acf_data['duration_minutes'] = round($service_data['duration'] / 60);
         }
