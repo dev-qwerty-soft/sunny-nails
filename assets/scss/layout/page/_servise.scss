@@ -87,16 +87,31 @@
   height: auto;
   img {
     width: 100%;
-    height: auto;
-    border-radius: 10px;
-    max-height: 291px;
+    height: get-d(315px);
+    width: 100%;
     object-fit: cover;
+    border-radius: get-d(10px);
+    @include respond(lg) {
+      height: get-lg(315px);
+      border-radius: get-lg(10px);
+    }
+    @include respond(md) {
+      height: 250px;
+      border-radius: 10px;
+    }
   }
 }
 .category-name {
-  font-size: 24px;
   font-weight: 600;
   line-height: normal;
+  font-size: get-d(24px);
+  line-height: 120%;
+  @include respond(lg) {
+    font-size: get-lg(24px);
+  }
+  @include respond(md) {
+    font-size: 20px;
+  }
 }
 
 .service-title {
@@ -120,64 +135,24 @@
 }
 
 .service-duration,
-.service-wear-time {
-  color: var(--black, #302f34);
-  font-size: 14px;
-  font-weight: 400;
-  line-height: 140%;
-}
-
-/* Custom styling for the mockup description text */
+.service-wear-time,
 .service-description {
   color: #302f34;
-  font-size: 14px;
+  font-size: get-d(14px);
   font-weight: 400;
   line-height: 140%; /* 19.6px */
   text-align: start;
+  @include respond(lg) {
+    font-size: get-lg(14px);
+  }
+  @include respond(md) {
+    font-size: 12px;
+  }
 }
 
 .book-btn {
-  display: flex;
-  height: 40px;
-  padding: 4px 4px 4px 14px;
-  align-items: center;
-  gap: 17px;
-  border-radius: 58px;
-  background: #fdc41f;
   width: fit-content;
-  color: #302f34;
-  font-family: "Inter" sans-serif;
-  font-size: 12px;
-  font-weight: 400;
-  line-height: normal;
-  transition: all 0.3s ease-in-out;
-  .book-bt__icon {
-    display: flex;
-    width: 34px;
-    height: 34px;
-    padding: 6px 5px;
-    justify-content: center;
-    align-items: center;
-    gap: 10px;
-    border-radius: 50%;
-    border: 0.838px solid #414141;
-    background: rgba(255, 255, 255, 0);
-    transform: rotate(0deg);
-    transition: all 0.3s ease-in-out;
-    svg {
-      width: 10.245px;
-      height: 11.953px;
-    }
-  }
-  &:hover {
-    transition: all 0.3s ease-in-out;
-    background: #eeb614;
-    cursor: pointer;
-    .book-bt__icon {
-      transition: all 0.3s ease-in-out;
-      transform: rotate(45deg);
-    }
-  }
+  min-width: 122px;
 }
 
 /* Responsive styles */

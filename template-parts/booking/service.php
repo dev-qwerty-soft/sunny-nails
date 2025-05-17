@@ -39,16 +39,11 @@
              </div>
 
              <button type="button"
-                 class="book-btn"
+                 class="btn yellow book-btn "
                  data-popup-open="true"
                  data-service-id="<?php echo esc_attr($post_id); ?>">
 
                  Book this
-                 <span class="book-bt__icon">
-                     <svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
-                         <path d="M9.22581 0.773971L9.22581 8.01857M9.22581 0.773971L1.98122 0.773971M9.22581 0.773971L0.773784 9.226" stroke="#302F34" stroke-width="0.838404" stroke-linecap="round" stroke-linejoin="round" />
-                     </svg>
-                 </span>
              </button>
          </div>
      <?php endforeach; ?>
