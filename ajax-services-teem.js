@@ -1,7 +1,3 @@
-/**
- * Simple Direct Booking Fix
- * Selects service in popup and activates "Choose a master" button
- */
 (function ($) {
   "use strict";
 
@@ -36,12 +32,24 @@
 
     sessionStorage.setItem("selected_service_id", serviceId);
 
+    $(".loading-overlay").show();
     $(".booking-popup-overlay").addClass("active");
+    $(".booking-popup-overlay .booking-popup").css("display", "none");
+
+    function showPopup() {
+      $(".booking-popup-overlay .booking-popup").css("display", "block");
+      $(".loading-overlay").hide();
+    }
+
+    if (window.bookingData && window.bookingData.staffId) {
+      showPopup();
+    } else {
+      setTimeout(function () {
+        showPopup();
+      }, 1500);
+    }
 
     setTimeout(function () {
-      $(".booking-step").removeClass("active");
-      $(".booking-step[data-step='services']").addClass("active");
-
       let $checkbox = $(`.service-checkbox[data-service-id="${serviceId}"]`);
       let serviceFound = false;
 
@@ -143,7 +151,13 @@
 
     setTimeout(function () {
       if (typeof window.goToStep === "function") {
-        window.goToStep("master");
+        window.goToStep("datetime");
+        setTimeout(function () {
+          if (typeof window.generateCalendar === "function") {
+            window.generateCalendar();
+            debug("🗓️ generateCalendar() called after goToStep");
+          }
+        }, 300);
       } else {
         $(".booking-step").removeClass("active");
         $(".booking-step[data-step='master']").addClass("active");
@@ -170,165 +184,235 @@
   });
 })(jQuery);
 
-/**
- * Team Page Master Booking Enhancement
- * Adds functionality to book a specific master when clicking "Book an Appointment" button on team page
- */
 (function ($) {
   "use strict";
 
-  function debug(message, ...args) {
-    console.log(`[TeamBookingFix] ${message}`, ...args);
+  function ensureBookingData() {
+    if (typeof window.bookingData === "undefined") {
+      window.bookingData = {
+        services: [],
+        coreServices: [],
+        addons: [],
+        staffId: null,
+        staffName: "",
+        staffAvatar: "",
+        staffLevel: 1,
+        date: null,
+        time: null,
+        contact: {},
+        flowHistory: ["initial"],
+        initialOption: "services",
+      };
+    }
+  }
+  function showLoaderPopup() {
+    $(".loading-overlay").show();
+    $(".booking-popup-overlay").addClass("active");
+    $(".booking-popup-overlay .booking-popup").css("display", "none");
   }
 
-  $(document).on("click", ".team-card__buttons .btn.yellow, .team-card .btn.yellow, button.book-tem", function (e) {
+  function showPopupWithDelay(delay = 1500) {
+    setTimeout(() => {
+      $(".booking-popup-overlay .booking-popup").css("display", "block");
+      $(".loading-overlay").hide();
+    }, delay);
+  }
+
+  $(document).on("click", ".service-card .book-btn, button.book-btn[data-popup-open='true']", function (e) {
     e.preventDefault();
     e.stopPropagation();
 
+    if (typeof window.bookingData !== "object") {
+      window.bookingData = {};
+    }
+
+    if (!window.bookingData.staffId && sessionStorage.getItem("selected_master_id")) {
+      window.bookingData.staffId = sessionStorage.getItem("selected_master_id");
+      window.bookingData.staffName = sessionStorage.getItem("selected_master_name") || "Selected Master";
+    }
+
     const $button = $(this);
-    const $teamCard = $button.closest(".team-card");
-    const staffId = $button.data("staff-id") || $teamCard.data("staff-id");
-    const staffName = $teamCard.find(".team-card__name").text().trim();
+    const $serviceCard = $button.closest(".service-card");
+    const serviceId = $serviceCard.data("service-id") || $button.data("service-id");
+    if (!serviceId) return;
 
-    const starCount = $teamCard.find(".star").length;
-    const staffLevel = starCount > 0 ? starCount : 1;
+    const serviceTitle = $serviceCard.find(".service-title").clone().children().remove().end().text().trim();
+    const servicePriceText = $serviceCard.find(".service-price").text().trim();
+    const serviceDuration = $serviceCard.find(".service-duration").text().replace("Duration:", "").trim();
+    const serviceWearTime = $serviceCard.find(".service-wear-time").text().replace("Wear time:", "").trim();
+    const priceMatch = servicePriceText.match(/(\d+(?:\.\d+)?)/);
+    const servicePrice = priceMatch ? priceMatch[0] : "0";
+    const currency = servicePriceText.replace(/[\d.,]/g, "").trim() || "SGD";
 
-    const staffAvatar = $teamCard.find(".team-card__image").attr("src") || "";
+    sessionStorage.setItem("selected_service_id", serviceId);
+    sessionStorage.removeItem("selected_master_id");
 
-    sessionStorage.setItem("selected_master_id", staffId || "any");
-    sessionStorage.setItem("selected_master_name", staffName);
-    sessionStorage.setItem("selected_master_level", staffLevel);
-    sessionStorage.setItem("selected_master_avatar", staffAvatar);
+    setTimeout(function () {
+      let $checkbox = $(`.service-checkbox[data-service-id="${serviceId}"]`);
+      let serviceFound = false;
 
-    debug("Master selected from team page:", {
-      id: staffId,
-      name: staffName,
-      level: staffLevel,
-      avatar: staffAvatar,
-    });
+      if ($checkbox.length) {
+        const $categoryServices = $checkbox.closest(".category-services");
+        const categoryId = $categoryServices.data("category-id");
+
+        $(".category-tab").removeClass("active");
+        $(`.category-tab[data-category-id="${categoryId}"]`).addClass("active");
+
+        $(".category-services").hide();
+        $categoryServices.show();
+
+        $checkbox.prop("checked", true);
+        $checkbox.closest(".service-item").addClass("selected");
+        $checkbox.trigger("change");
+        serviceFound = true;
+      } else {
+        $(".category-tab").each(function () {
+          const tabId = $(this).data("category-id");
+          $(".category-tab").removeClass("active");
+          $(this).addClass("active");
+          $(".category-services").hide();
+          $(`.category-services[data-category-id="${tabId}"]`).show();
+
+          $checkbox = $(`.category-services[data-category-id="${tabId}"] .service-checkbox[data-service-id="${serviceId}"]`);
+          if ($checkbox.length) {
+            $checkbox.prop("checked", true);
+            $checkbox.closest(".service-item").addClass("selected");
+            $checkbox.trigger("change");
+            serviceFound = true;
+            return false;
+          }
+        });
+      }
+
+      if (!serviceFound && typeof window.addService === "function") {
+        window.addService(serviceId, serviceTitle, servicePrice, currency, serviceDuration, serviceWearTime, false, serviceId, "");
+      }
+
+      $(".booking-step[data-step='services'] .next-btn, .choose-a-master-btn").prop("disabled", false);
+
+      setTimeout(function () {
+        const $chooseBtn = $("button:contains('Choose a master')");
+        if ($chooseBtn.length) {
+          $chooseBtn.click();
+        } else {
+          $(".booking-step[data-step='services'] .next-btn").click();
+        }
+      }, 800);
+    }, 500);
+  });
+
+  $(document).on("click", ".team-card .btn.yellow, .team-card__buttons .btn.yellow, .book-tem", function (e) {
+    e.preventDefault();
+    e.stopPropagation();
+
+    ensureBookingData();
+
+    const $button = $(this);
+    const $masterCard = $button.closest(".team-card");
+    const masterId = $button.data("staff-id") || $masterCard.data("staff-id") || $button.data("master-id") || $masterCard.data("master-id") || $button.attr("data-staff-id") || $masterCard.attr("data-staff-id");
+    if (!masterId) return;
+
+    const masterName = $masterCard.find(".team-card__name").text().trim();
+    sessionStorage.setItem("selected_master_id", masterId);
+    sessionStorage.setItem("selected_master_name", masterName);
 
     $(".booking-popup-overlay").addClass("active");
 
+    $(".booking-popup-overlay .booking-popup").css("display", "none");
+
     setTimeout(function () {
-      if (window.bookingData) {
-        window.bookingData.initialOption = "master";
-        window.bookingData.flowHistory = ["initial", "master"];
+      showLoaderPopup();
 
-        window.bookingData.staffId = staffId || "any";
-        window.bookingData.staffName = staffName;
-        window.bookingData.staffLevel = staffLevel;
-        window.bookingData.staffAvatar = staffAvatar;
-      }
+      let $staffItem = $(`.staff-item[data-staff-id="${masterId}"]`);
 
-      $(".booking-step").removeClass("active");
-      $('.booking-step[data-step="master"]').addClass("active");
+      if ($staffItem.length) {
+        $(".staff-item").removeClass("selected");
+        $staffItem.addClass("selected");
 
-      setTimeout(function () {
-        selectMasterInUI(staffId);
-
-        setTimeout(function () {
-          const $nextBtn = $('.booking-step[data-step="master"] .next-btn');
-          debug("Clicking next button to services step");
-          $nextBtn.prop("disabled", false).click();
-        }, 500);
-      }, 300);
-    }, 300);
-  });
-
-  function selectMasterInUI(staffId) {
-    if (!staffId) staffId = "any";
-
-    debug("Selecting master in UI:", staffId);
-
-    const $staffItem = $(`.staff-item[data-staff-id="${staffId}"]`);
-
-    if ($staffItem.length) {
-      debug("Found master item in popup");
-
-      $(".staff-item").removeClass("selected");
-
-      $staffItem.addClass("selected");
-
-      const $radio = $staffItem.find('input[type="radio"]');
-      if ($radio.length) {
-        $radio.prop("checked", true);
-      }
-    } else {
-      debug("Master not found in popup, trying with 'any'");
-
-      $(".staff-item").removeClass("selected");
-      $(".staff-item.any-master").addClass("selected");
-
-      const $anyRadio = $(".staff-item.any-master").find('input[type="radio"]');
-      if ($anyRadio.length) {
-        $anyRadio.prop("checked", true);
-      }
-
-      if (window.bookingData) {
-        window.bookingData.staffId = "any";
-        window.bookingData.staffName = "Any master";
-        window.bookingData.staffLevel = 1;
-      }
-    }
-
-    $('.booking-step[data-step="master"] .next-btn').prop("disabled", false);
-  }
-
-  function loadServicesForSelectedMaster(staffId) {
-    debug("Loading services for master:", staffId);
-
-    if (typeof window.loadServicesForMaster === "function") {
-      window.loadServicesForMaster(staffId);
-    } else {
-      debug("loadServicesForMaster function not found");
-
-      $.ajax({
-        url: window.booking_params ? window.booking_params.ajax_url : ajaxurl,
-        type: "POST",
-        data: {
-          action: "get_services_for_master",
-          staff_id: staffId,
-          nonce: window.booking_params ? window.booking_params.nonce : "",
-        },
-        success: function (response) {
-          debug("Services loaded for master", response);
-
-          if (response.success && Array.isArray(response.data)) {
-            debug("Successfully loaded", response.data.length, "services");
-          }
-        },
-        error: function (xhr, status, error) {
-          debug("Error loading services for master:", error);
-        },
-      });
-    }
-  }
-
-  $(document).on("click", ".booking-step[data-step='master'] .next-btn", function () {
-    debug("Master next button clicked");
-
-    if (window.bookingData && window.bookingData.staffId) {
-      debug("Master selected:", window.bookingData.staffId);
-
-      setTimeout(function () {
-        loadServicesForSelectedMaster(window.bookingData.staffId);
-      }, 300);
-    } else {
-      debug("No master selected when trying to proceed");
-
-      const staffId = sessionStorage.getItem("selected_master_id");
-      if (staffId) {
-        debug("Recovered master ID from sessionStorage:", staffId);
-
-        if (window.bookingData) {
-          window.bookingData.staffId = staffId;
-          window.bookingData.staffName = sessionStorage.getItem("selected_master_name") || "Selected master";
-          window.bookingData.staffLevel = parseInt(sessionStorage.getItem("selected_master_level") || "1");
-          window.bookingData.staffAvatar = sessionStorage.getItem("selected_master_avatar") || "";
+        const $radio = $staffItem.find('input[type="radio"]');
+        if ($radio.length) {
+          $radio.prop("checked", true);
+          $radio.trigger("change");
+          $radio.trigger("click");
         }
 
-        loadServicesForSelectedMaster(staffId);
+        try {
+          $staffItem.trigger("click");
+        } catch (e) {}
+      } else {
+        const $anyMaster = $(".staff-item.any-master");
+        if ($anyMaster.length) {
+          $(".staff-item").removeClass("selected");
+          $anyMaster.addClass("selected");
+
+          const $radio = $anyMaster.find('input[type="radio"]');
+          if ($radio.length) {
+            $radio.prop("checked", true);
+            $radio.trigger("change");
+            $radio.trigger("click");
+          }
+        }
       }
+
+      window.bookingData.initialOption = "master";
+      window.bookingData.staffId = masterId;
+      window.bookingData.staffName = masterName;
+      window.bookingData.flowHistory = ["initial", "master"];
+
+      if (typeof window.goToStep === "function") {
+        window.goToStep("services");
+      } else {
+        $(".booking-step").removeClass("active");
+        $(".booking-step[data-step='services']").addClass("active");
+      }
+
+      $('.booking-step[data-step="services"] .next-btn').text("Select date and time");
+
+      window.bookingData.flowHistory.push("services");
+
+      showPopupWithDelay(0);
+    }, 1000);
+  });
+
+  $(document).on("click", '.booking-step[data-step="services"] .next-btn', function (e) {
+    ensureBookingData();
+
+    if (!window.bookingData.staffId && sessionStorage.getItem("selected_master_id")) {
+      window.bookingData.staffId = sessionStorage.getItem("selected_master_id");
+      window.bookingData.staffName = sessionStorage.getItem("selected_master_name") || "Selected Master";
+      window.bookingData.initialOption = "master";
     }
+
+    if (typeof window.goToStep === "function") {
+      window.goToStep("datetime");
+    } else {
+      $(".booking-step").removeClass("active");
+      $(".booking-step[data-step='datetime']").addClass("active");
+    }
+
+    setTimeout(() => {
+      const staffId = window.bookingData?.staffId;
+      const services = window.bookingData?.services;
+      const isReady = staffId && Array.isArray(services) && services.length > 0 && $(".booking-step[data-step='datetime']").hasClass("active");
+
+      if (isReady && typeof window.generateCalendar === "function") {
+        window.generateCalendar();
+      }
+    }, 400);
+  });
+  $(document).on("bookingStepChanged", function (e, step) {
+    if (step === "master" && window.bookingData?.staffId) {
+      setTimeout(() => {
+        const $nextBtn = $('.booking-step[data-step="master"] .next-btn');
+        if ($nextBtn.length && !$nextBtn.prop("disabled")) {
+          $nextBtn.trigger("click");
+        }
+      }, 300);
+    }
+  });
+
+  $(document).on("click", ".booking-popup-close, .close-popup-btn", function () {
+    sessionStorage.removeItem("selected_master_id");
+    sessionStorage.removeItem("selected_service_id");
   });
 })(jQuery);

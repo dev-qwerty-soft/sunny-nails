@@ -214,7 +214,7 @@
    */
   function initBookingPopup() {
     // Open popup when book button is clicked
-    $(document).on("click", ".book-btn, .open-popup", function (e) {
+    $(document).on("click", " .open-popup", function (e) {
       e.preventDefault();
 
       // Reset booking data
@@ -236,7 +236,7 @@
 
       // Show popup
       $(".booking-popup-overlay").addClass("active");
-
+      $(".loading-overlay").hide();
       // Trigger custom event
       $(document).trigger("bookingPopupOpened");
     });
@@ -467,10 +467,6 @@
     $(document).on("click", '.booking-step[data-step="services"] .next-btn', function () {
       try {
         // Validate that at least one core service is selected
-        if (bookingData.coreServices.length === 0) {
-          showValidationAlert("Please select at least one service");
-          return false;
-        }
 
         // Determine next step based on initial option
         let nextStep;
@@ -877,30 +873,7 @@
    * Show validation alert when validation fails
    * @param {string} message - Alert message to show
    */
-  function showValidationAlert(message) {
-    // Remove any existing alerts
-    $(".validation-alert-overlay").remove();
-
-    // Create custom alert
-    const alertHtml = `
-      <div class="validation-alert-overlay">
-        <div class="validation-alert">
-          <div class="validation-alert-title">Message</div>
-          <div class="validation-alert-message">${message}</div>
-          <button class="validation-alert-button">OK</button>
-        </div>
-      </div>
-    `;
-
-    $("body").append(alertHtml);
-
-    // Bind click event to the button
-    $(document).on("click", ".validation-alert-button", function () {
-      $(".validation-alert-overlay").remove();
-    });
-
-    debug("Validation alert shown", message);
-  }
+  function showValidationAlert(message) {}
 
   /**
    * Reset the booking form to initial state
@@ -1119,7 +1092,30 @@
   }
   function loadServicesForMaster(masterId) {
     debug("Loading services for master", masterId);
+
     $(".booking-popup .services-list").html('<p class="loading-message">Loading services...</p>');
+
+    $.ajax({
+      url: config.apiEndpoint,
+      type: "POST",
+      data: {
+        action: "get_services_for_master",
+        staff_id: masterId,
+        nonce: config.nonce,
+      },
+      success: function (response) {
+        if (response.success && Array.isArray(response.data)) {
+          renderServices(response.data);
+        } else {
+          console.warn("No services available for the selected master");
+          $(".booking-popup .services-list").html('<p class="no-items-message">No services available for this master.</p>');
+        }
+      },
+      error: function (xhr, status, error) {
+        console.error("Error loading services for master:", error);
+        $(".booking-popup .services-list").html('<p class="no-items-message">Error loading services.</p>');
+      },
+    });
 
     $.ajax({
       url: booking_params.ajax_url,
@@ -1129,11 +1125,11 @@
         staff_id: masterId,
         nonce: booking_params.nonce,
       },
-
       success: function (response) {
         if (response.success && response.data && response.data.html) {
           $(".booking-popup .services-list").html(response.data.html);
           debug("Filtered services HTML loaded");
+
           updateAddonAvailability();
           updateNextButtonState();
         } else {
@@ -1482,24 +1478,7 @@
    * Load time slots for selected date and staff
    * @param {string} date - Date in YYYY-MM-DD format
    */
-  function loadServicesForMaster(masterId) {
-    $.ajax({
-      url: config.apiEndpoint,
-      type: "POST",
-      data: {
-        action: "get_services_for_master",
-        staff_id: masterId,
-        nonce: config.nonce,
-      },
-      success: function (response) {
-        if (response.success && Array.isArray(response.data)) {
-          renderServices(response.data);
-        } else {
-          console.warn("No services available for the selected master");
-        }
-      },
-    });
-  }
+
   function loadTimeSlots(date) {
     if (!bookingData.staffId || bookingData.services.length === 0) {
       console.warn("Staff or service not selected");

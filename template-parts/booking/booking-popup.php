@@ -26,31 +26,16 @@ if (empty($ordered_category_ids)) {
     }
 }
 
-// function get_services_by_category($category_popup_id)
-// {
-//     $services = get_posts([
-//         'post_type' => 'service',
-//         'posts_per_page' => -1,
-//         'tax_query' => [
-//             [
-//                 'taxonomy' => 'service_category',
-//                 'field' => 'term_id',
-//                 'terms' => $category_popup_id,
-//             ],
-//         ],
-//         'meta_key' => 'price_min',
-//         'orderby' => 'meta_value_num',
-//         'order' => 'ASC',
-//     ]);
 
-//     error_log(print_r($services, true)); // Log the result
-
-//     return $services;
-// }
 ?>
 
 <!-- Booking Popup Overlay -->
 <div class="booking-popup-overlay">
+
+    <div class="loading-overlay">
+        <div class="loader"></div>
+    </div>
+
     <div class="booking-popup">
         <button class="booking-popup-close">
             <svg width="29" height="29" viewBox="0 0 29 29" fill="none" xmlns="http://www.w3.org/2000/svg">
