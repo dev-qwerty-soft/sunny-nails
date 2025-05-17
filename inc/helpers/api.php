@@ -109,13 +109,14 @@ function getPlaceReviews()
 
 function logo($str)
 {
-  $logo_data = get_field($str, 'option');
-  $url = isset($logo_data['url']) ? $logo_data['url'] : null;
-  $alt = isset($logo_data['title']) ? $logo_data['title'] : null;
-
+  $logo = "<a href='$url' class='logo'></a>";
+  $home_url = esc_url(home_url('/'));
+  $logo = get_field($str, 'option');
+  $url = isset($logo['url']) ? $logo['url'] : null;
+  $alt = isset($logo['title']) ? $logo['title'] : null;
   if ($url && $alt) {
-    return "<a href='" . esc_url(home_url('/')) . "' class='logo'>
-      <img src='" . esc_url($url) . "' alt='" . esc_attr($alt) . "'>
+    $logo = "<a href='$home_url' class='logo'>
+      <img src='$url' alt='$alt'>
     </a>";
   }
 

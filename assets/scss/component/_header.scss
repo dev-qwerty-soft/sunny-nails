@@ -95,8 +95,12 @@
   }
 }
 
-body.page-template-mani-mania .site-header .container {
-  border-bottom: none;
+body {
+  &.page-template-sunny-friends, &.page-template-mani-mania {
+    & .site-header .container {
+      border-bottom: none;
+    }
+  }
 }
 
 .logo {
