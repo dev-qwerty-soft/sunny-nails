@@ -989,6 +989,7 @@ $red: #DC3232;
   padding: get-d(45px) get-d(60px);
   position: relative;
   background: $bg-yellow;
+  overflow: hidden;
   @include respond(lg) {
     padding: get-lg(45px) get-lg(60px);
   }
