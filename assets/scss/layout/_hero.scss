@@ -339,15 +339,7 @@
   @include respond(md) {
     padding: 75px 25px;
   }
-
-  &:not(.full) {
-    & .image {
-      &:nth-of-type(5n + 3) {
-        @include codeBig();
-      }
-    }
-  }
-
+  
   &.full {
     padding-top: get-d(40px);
     @include respond(lg) {
@@ -355,15 +347,6 @@
     }
     @include respond(md) {
       padding-top: 0px;
-    }
-    & .image {
-      &:nth-of-type(10n + 3),
-      &:nth-of-type(10n + 6) {
-        @include codeBig();
-      }
-      &.active {
-        display: block !important;
-      }
     }
   }
 
@@ -481,6 +464,10 @@
       @include respond(md) {
         grid-column: span 1 !important;
         grid-row: span 1 !important;
+      }
+
+      &.big {
+        @include codeBig();
       }
 
 
@@ -1002,6 +989,7 @@ $red: #DC3232;
   padding: get-d(45px) get-d(60px);
   position: relative;
   background: $bg-yellow;
+  overflow: hidden;
   @include respond(lg) {
     padding: get-lg(45px) get-lg(60px);
   }

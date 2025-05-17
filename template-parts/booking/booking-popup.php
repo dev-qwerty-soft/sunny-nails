@@ -26,27 +26,27 @@ if (empty($ordered_category_ids)) {
     }
 }
 
-function get_services_by_category($category_popup_id)
-{
-    $services = get_posts([
-        'post_type' => 'service',
-        'posts_per_page' => -1,
-        'tax_query' => [
-            [
-                'taxonomy' => 'service_category',
-                'field' => 'term_id',
-                'terms' => $category_popup_id,
-            ],
-        ],
-        'meta_key' => 'price_min',
-        'orderby' => 'meta_value_num',
-        'order' => 'ASC',
-    ]);
+// function get_services_by_category($category_popup_id)
+// {
+//     $services = get_posts([
+//         'post_type' => 'service',
+//         'posts_per_page' => -1,
+//         'tax_query' => [
+//             [
+//                 'taxonomy' => 'service_category',
+//                 'field' => 'term_id',
+//                 'terms' => $category_popup_id,
+//             ],
+//         ],
+//         'meta_key' => 'price_min',
+//         'orderby' => 'meta_value_num',
+//         'order' => 'ASC',
+//     ]);
 
-    error_log(print_r($services, true)); // Log the result
+//     error_log(print_r($services, true)); // Log the result
 
-    return $services;
-}
+//     return $services;
+// }
 ?>
 
 <!-- Booking Popup Overlay -->

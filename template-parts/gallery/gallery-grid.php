@@ -1,6 +1,30 @@
 <?php
-  $slugs = ["all", "nude", "french", "bright", "pedicure"];
   $isFull = $args["full"] ?? false;
+  $masters = getPosts("master");
+  $usedTermsArray = [];
+  if(!empty($masters)) {
+    foreach ($masters as $master) {
+      $images = get_field('master_images_work', $master->ID);
+      if (is_array($images) && !empty($images)) {
+        foreach ($images as $image) {
+          $tag = $image["master_image_work_tag"] ?? null;
+          if (!isset($usedTerms[$tag->term_id])) {
+            $usedTerms[$tag->term_id] = $tag;
+          }
+        }
+      }
+    }
+    if(is_array($usedTerms)) {
+      $usedTermsArray = array_values($usedTerms);
+    };
+  }
+  function get_image_class($index) {
+    $nth = $index + 1;
+    if ($nth % 10 === 3 || $nth % 10 === 6) {
+      return ' big';
+    }
+    return '';
+  }
 ?>
 <div class="gallery-modal">
   <button type="button" aria-label="Close" class="cross"></button>
@@ -8,32 +32,20 @@
     <div class="swiper-wrapper">
       <?php
         $index = 0;
-        foreach ($slugs as $slug) {
-          if($slug !== "all") {
-            for($i = 0; $i < 10; $i++) {
-              $title = "File Manicure + Wraps + Thin Gel Polish Layer";
-              $price = "Price: 75 SGD";
-              $master = "Master: Ann Ivanova";
-              $image = getUrl("images/image.png");
-              $wants = "I want this";
-              
-              echo "<div data-index='$index' data-slug='$slug' class='swiper-slide image'>
-                <img src='$image' alt='$title'>
-                <span class='image__title'>$title</span>
-                <span class='image__price'>$price</span>
-                <span class='image__master'>$master</span>
-                <div class='stars'>
-                  <div class='star'></div>
-                  <div class='star'></div>
-                  <div class='star'></div>
-                  <span>(Sunny Inferno)</span>
-                </div>
-                <a href='#' class='btn white'>$wants</a>
-              </div>";
+        foreach($masters as $master) {
+          $images = get_field('master_images_work', $master->ID);
+          if($images && is_array($images) && !empty($images)) {
+            foreach($images as $image) {
+              get_template_part("template-parts/gallery/gallery-slide", null, [
+                "index" => $index,
+                "master" => $master,
+                "image" => $image,
+                
+              ]);
               $index++;
-            }
-          }
-        }
+            };
+          };
+        };
       ?>
     </div>
     <button type="button" aria-label="Next slide" class="button swiper-button-next"></button>
@@ -47,52 +59,33 @@
       <p class="paragraph"><?php the_field('gallery_text', 'option'); ?></p>
     </div>
     <div class="gallery-section__filters">
+      <button type='button' data-slug='all' class='filter active'>All</button>
       <?php
-        foreach ($slugs as $slug) {
-          echo "<button type='button' data-slug='$slug' class='filter'>$slug</button>";
+        foreach ($usedTermsArray as $term) {
+          $slug = $term->slug;
+          $name = $term->name;
+          echo "<button type='button' data-slug='$slug' class='filter'>$name</button>";
         }
       ?>
     </div>
     <div class="gallery-section__images">
-        <?php
-          $index = 0;
-          foreach ($slugs as $slug) {
-            if($slug !== "all") {
-              for($i = 0; $i < 10; $i++) {
-                $title = "File Manicure + Wraps + Thin Gel Polish Layer";
-                $price = "Price: 75 SGD";
-                $master = "Master: Ann Ivanova";
-                $image = getUrl("images/image.png");
-                $wants = "I want this";
-                
-                echo "<div data-index='$index' data-slug='$slug' class='image active'>
-                  <div class='image__front'>
-                    <img src='$image' alt='$title'>
-                    <div class='wrapper'>
-                      <button type='button' aria-label='View' class='view'></button>
-                      <a href='#' class='btn white'>$wants</a>
-                    </div>
-                  </div>
-                  <div class='image__back'>
-                    <span class='image__title'>$title</span>
-                    <span class='image__price'>$price</span>
-                    <span class='image__master'>$master</span>
-                    <div class='stars'>
-                      <div class='star'></div>
-                      <div class='star'></div>
-                      <div class='star'></div>
-                      <span>(Sunny Inferno)</span>
-                    </div>
-                    <div class='wrapper'>
-                      <a href='#' class='btn white'>$wants</a>
-                    </div>
-                  </div>
-                </div>";
-                $index++;
-              }
-            }
-          }
-        ?>
+      <?php
+        $index = 0;
+        foreach($masters as $master) {
+          $images = get_field('master_images_work', $master->ID);
+          if($images && is_array($images) && !empty($images)) {
+            foreach($images as $image) {
+              get_template_part("template-parts/gallery/gallery-item", null, [
+                "index" => $index,
+                "master" => $master,
+                "image" => $image,
+                "addClass" => get_image_class($index)
+              ]);
+              $index++;
+            };
+          };
+        };
+      ?>
     </div>
     <?php
       $link = get_field('gallery_link_url', "option");

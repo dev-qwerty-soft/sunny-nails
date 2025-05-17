@@ -1,6 +1,6 @@
 <?php
-$isPage = $args["page"] ?? false;
-$img = getUrl('images/image.png');
+  $isPage = $args["page"] ?? false;
+  $array = getPosts("master");
 ?>
 
 <section class='team-section<?= $isPage ? ' page' : '' ?>'>
@@ -18,77 +18,23 @@ $img = getUrl('images/image.png');
     </div>
     <?php if ($isPage): ?>
       <div class='team-section__grid'>
-        <?php for ($i = 0; $i < 9; $i++): ?>
-          <div class='team-card'>
-            <img class='team-card__image' src='<?= $img ?>' alt='images'>
-            <div class='team-card__text'>
-              <span class='team-card__name'>Ann Ivanova</span>
-              <a href='#' aria-label='Instagram' target='_blank' class='team-card__instagram'></a>
-              <div class='team-card__rate'>
-                <div class='stars yellow'>
-                  <div class='star'></div>
-                  <div class='star'></div>
-                  <div class='star'></div>
-                  <span>(Sunny Inferno)</span>
-                </div>
-              </div>
-            </div>
-            <div class='swiper mini-swiper'>
-              <div class='swiper-wrapper'>
-                <?php for ($j = 0; $j < 12; $j++): ?>
-                  <div class='swiper-slide active'>
-                    <img src='<?= $img ?>' alt='images'>
-                  </div>
-                <?php endfor; ?>
-              </div>
-              <div class='swiper-scrollbar'></div>
-            </div>
-            <div class='team-card__buttons'>
-              <button data-staff-id="<?php echo esc_attr($staff_id); ?>" class='btn yellow book-tem'>Book an Appointment</button>
-              <button class='btn'>Learn More</button>
-            </div>
-
-          </div>
-        <?php endfor; ?>
+        <?php 
+          foreach ($array as $post) {
+            get_template_part('template-parts/shared/card-master', null, ['post' => $post]);
+          };
+        ?>
       </div>
-
     <?php else: ?>
       <div class='team-section__wrapper button-container black'>
         <div class='swiper team-swiper'>
           <div class='swiper-wrapper'>
-            <?php for ($i = 0; $i < 9; $i++): ?>
-              <div class='swiper-slide'>
-                <div class='team-card'>
-                  <img class='team-card__image' src='<?= $img ?>' alt='images'>
-                  <div class='team-card__text'>
-                    <span class='team-card__name'>Ann Ivanova</span>
-                    <a href='#' aria-label='Instagram' target='_blank' class='team-card__instagram'></a>
-                    <div class='team-card__rate'>
-                      <div class='stars yellow'>
-                        <div class='star'></div>
-                        <div class='star'></div>
-                        <div class='star'></div>
-                        <span>(Sunny Inferno)</span>
-                      </div>
-                    </div>
-                  </div>
-                  <div class='swiper mini-swiper'>
-                    <div class='swiper-wrapper'>
-                      <?php for ($j = 0; $j < 12; $j++): ?>
-                        <div class='swiper-slide active'>
-                          <img src='<?= $img ?>' alt='images'>
-                        </div>
-                      <?php endfor; ?>
-                    </div>
-                    <div class='swiper-scrollbar'></div>
-                  </div>
-                  <div class='team-card__buttons'>
-                    <button class='btn yellow'>Book an Appointment</button>
-                    <button class='btn'>Learn More</button>
-                  </div>
-                </div>
-              </div>
-            <?php endfor; ?>
+            <?php 
+              foreach ($array as $post) {
+                echo "<div class='swiper-slide'>";
+                get_template_part('template-parts/shared/card-master', null, ['post' => $post]);
+                echo "</div>";
+              }
+            ?>
           </div>
         </div>
         <button type='button' aria-label='Next slide' class='button swiper-button-next'></button>

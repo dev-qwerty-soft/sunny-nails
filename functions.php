@@ -50,7 +50,7 @@ require_once get_template_directory() . '/inc/controllers/booking-filter-control
 require_once get_template_directory() . '/inc/ajax/booking-ajax-handlers.php';
 
 // require_once get_template_directory() . '/inc/ajax/ajax-handlers-php.php';
-
+require_once get_template_directory() . '/inc/admin/google.php';
 
 // Initialize controllers
 add_action('after_setup_theme', ['BookingController', 'init']);

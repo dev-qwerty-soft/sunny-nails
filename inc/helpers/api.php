@@ -106,19 +106,49 @@ function getPlaceReviews()
   ];
 }
 
+function getPosts($slug) {
+	$query = new WP_Query([
+		'post_type' => $slug,
+		'posts_per_page' => -1
+	]);
+	wp_reset_postdata();
+	return $query->posts;
+}
 
 function logo($str)
 {
-  $logo = "<a href='$url' class='logo'></a>";
-  $home_url = esc_url(home_url('/'));
-  $logo = get_field($str, 'option');
-  $url = isset($logo['url']) ? $logo['url'] : null;
-  $alt = isset($logo['title']) ? $logo['title'] : null;
+  $logo_data = get_field($str, 'option');
+  $url = isset($logo_data['url']) ? $logo_data['url'] : null;
+  $alt = isset($logo_data['title']) ? $logo_data['title'] : null;
+
   if ($url && $alt) {
-    $logo = "<a href='$home_url' class='logo'>
-      <img src='$url' alt='$alt'>
+    return "<a href='" . esc_url(home_url('/')) . "' class='logo'>
+      <img src='" . esc_url($url) . "' alt='" . esc_attr($alt) . "'>
     </a>";
   }
 
   return '';
+}
+
+function console($data) {
+  echo '<script>console.log(' . json_encode($data) . ');</script>';
+}
+
+// Function to get services for a specific category
+function get_services_by_category($category_id)
+{
+    return get_posts([
+        'post_type' => 'service',
+        'posts_per_page' => -1,
+        'tax_query' => [
+            [
+                'taxonomy' => 'service_category',
+                'field' => 'term_id',
+                'terms' => $category_id
+            ]
+        ],
+        'meta_key' => 'price_min',
+        'orderby' => 'meta_value_num',
+        'order' => 'ASC'
+    ]);
 }
