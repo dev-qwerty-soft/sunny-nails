@@ -151,4 +151,8 @@ class AltegioClient
 
         return self::request($endpoint, $query);
     }
+    public static function getServiceCategories(): array
+    {
+        return self::request('company/' . self::COMPANY_ID . '/service_categories');
+    }
 }

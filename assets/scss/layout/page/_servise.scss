@@ -1,6 +1,15 @@
 .services-section {
   background-color: #f7f1e0;
-  padding: 40px 0 75px;
+
+  padding-top: get-d(40px);
+  @include respond(lg) {
+    padding-top: get-lg(40px);
+  }
+  @include respond(md) {
+    padding: 75px 0;
+    padding-top: 0px;
+  }
+
   .container {
     box-sizing: border-box;
     padding: get-d(15px) get-d(60px) 0 get-d(60px);
@@ -163,7 +172,6 @@
 
 @media (max-width: 767px) {
   .services-section {
-    padding: 15px 0 50px;
     .container {
       gap: 16px;
     }
