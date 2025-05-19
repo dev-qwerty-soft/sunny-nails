@@ -1343,9 +1343,11 @@ $red: #DC3232;
     padding: 75px 0;
     & .swiper-button-next {
       right: 3px !important;
+      top: 30%;
     }
     & .swiper-button-prev {
       left: 3px !important;
+      top: 30%;
     }
   }
   &__top, &__wrapper {
