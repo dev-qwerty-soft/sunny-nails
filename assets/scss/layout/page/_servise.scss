@@ -3,13 +3,12 @@
   padding: 40px 0 75px;
   .container {
     box-sizing: border-box;
-    padding: get-d(75px) get-d(60px);
-
+    padding: get-d(15px) get-d(60px) 0 get-d(60px);
     @include respond(lg) {
-      padding: get-lg(75px) get-lg(60px);
+      padding: get-lg(15px) get-lg(40px) 0 get-lg(40px);
     }
     @include respond(md) {
-      padding: 75px 25px;
+      padding: 0 25px 0 25px;
     }
     padding-top: 0;
 
