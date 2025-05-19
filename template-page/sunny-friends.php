@@ -8,7 +8,7 @@
   $notEmpty = count($tabs) !== 0;
   if($notEmpty) {
     $percent = 100 / count($tabs);
-  }
+  };
   $column = [ null, null, null, null, null ];
 ?>
 <main>
