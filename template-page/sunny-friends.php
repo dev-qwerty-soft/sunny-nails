@@ -95,7 +95,7 @@
                 $alpha = 0.1 + ($i / max($totalColumns - 1, 1)) * 0.9;
                 $alpha = round($alpha, 2) + 0.1;
                 $title = isset($column['sunny_friends_table_column_title']) ? $column['sunny_friends_table_column_title'] : '';
-                $fields = isset($column['sunny_friends_table_column_fields']) ? $column['sunny_friends_table_column_fields'] : [];
+                $fields = isset($column['sunny_friends_table_column_field']) ? $column['sunny_friends_table_column_field'] : [];
                 $content = "";
                 if($fields && count($fields) > 0 && is_array($fields)) {
                   foreach($fields as $field) {
