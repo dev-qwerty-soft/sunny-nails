@@ -1,16 +1,16 @@
 <?php
-  $post = $args["post"] ?? null;
-  $isPage = $args["isPage"] ?? false;
-  if (!$post) {
-    return;
-  }
-  $id = get_field('altegio_id', $post->ID);
-  $image = get_the_post_thumbnail_url($post->ID);
-  $images = get_field('master_images_work', $post->ID);
-  $name = isset($post->post_title) ? $post->post_title : '';
-  $instagram = get_field('instagram_url', $post->ID);
-  $level = (int) get_field('master_level', $post->ID);
-  $link_team = get_field('team_link_url', 'option');
+$post = $args["post"] ?? null;
+$isPage = $args["isPage"] ?? false;
+if (!$post) {
+  return;
+}
+$id = get_field('altegio_id', $post->ID);
+$image = get_the_post_thumbnail_url($post->ID);
+$images = get_field('master_images_work', $post->ID);
+$name = isset($post->post_title) ? $post->post_title : '';
+$instagram = get_field('instagram_url', $post->ID);
+$level = (int) get_field('master_level', $post->ID);
+$link_team = get_field('team_link_url', 'option');
 ?>
 <div data-altegio-id='<?= $id; ?>' class='team-card'>
   <img class='team-card__image' src='<?= $image; ?>' alt='images'>
@@ -51,11 +51,11 @@
     <div class='swiper-scrollbar'></div>
   </div>
   <div class='team-card__buttons<?= $isPage ? ' page' : ''; ?>'>
-    <button class='btn yellow'>Book an Appointment</button>
+    <button data-staff-id="<?php echo esc_attr($id); ?>" class='btn yellow book-tem'>Book an Appointment</button>
     <?php
-      if(!$isPage && $link_team) {
-        echo "<a href='$link_team' class='btn'>Learn More</a>";
-      };
+    if (!$isPage && $link_team) {
+      echo "<a href='$link_team' class='btn'>Learn More</a>";
+    };
     ?>
   </div>
 </div>
