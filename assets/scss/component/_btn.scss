@@ -113,9 +113,6 @@
   }
   @include respond(md) {
     gap: 10px;
-    &:nth-child(3) {
-      grid-row: 3 / 4;
-    }
   }
   & img {
     width: get-d(51px);

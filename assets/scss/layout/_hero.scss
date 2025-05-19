@@ -225,6 +225,9 @@
     @include respond(md) {
       grid-template-columns: 1fr;
       grid-gap: 20px;
+      & .info-item:nth-child(3) {
+        grid-row: 3 / 4;
+      }
     }
   }
   &__map {
