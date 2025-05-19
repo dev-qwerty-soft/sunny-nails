@@ -85,12 +85,12 @@ if (empty($ordered_category_ids)) {
         </div>
     </section>
     <?php
-    get_template_part("template-parts/gallery/gallery-grid", null, [
-        "full" => false
-    ]);
+        get_template_part("template-parts/gallery/gallery-grid", null, [
+            "full" => false
+        ]);
     ?>
     <?php
-    $services_link_url = get_field('services_link_url', 'option');
+        $services_link_url = get_field('services_link_url', 'option');
     ?>
     <section class="services-preview-section">
         <div class="container">
@@ -121,14 +121,20 @@ if (empty($ordered_category_ids)) {
         </div>
     </section>
     <?php
-    get_template_part("template-parts/sections/form");
-    get_template_part("template-parts/sections/team");
+        get_template_part("template-parts/sections/form");
+        get_template_part("template-parts/sections/team");
     ?>
     <section class="reviews-section">
         <div class="container">
             <div class="reviews-section__top">
                 <h2 class="title">What Our Clients Say</h2>
-                <a href="#" class="btn white">Leave a Review</a>
+                <?php
+                    $text = get_field('reviews_link_text', 'option');
+                    $link = get_field('reviews_link_url', 'option');
+                    if ($link && $text) {
+                        echo "<a target='_blank' rel='noopener noreferrer' href='$link' class='btn white'>$text</a>";
+                    }
+                ?>
             </div>
             <div class="reviews-section__wrapper button-container">
                 <div class="swiper reviews-swiper">

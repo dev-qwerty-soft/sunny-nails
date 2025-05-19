@@ -1414,6 +1414,15 @@ $red: #DC3232;
 
 .team-swiper {
   width: 100%;
+  & .swiper-wrapper {
+    align-items: stretch;
+    & .swiper-slide {
+      height: auto;
+      & .team-card {
+        height: 100%;
+      }
+    }
+  }
 }
 
 .mini-swiper {

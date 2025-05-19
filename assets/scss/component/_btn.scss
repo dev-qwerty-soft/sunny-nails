@@ -8,6 +8,7 @@
   border: get-d(1px) solid $bg-grey;
   border-radius: 100px;
   transition: background 0.3s, border-color 0.3s, color 0.3s;
+  text-align: center;
   cursor: pointer;
   white-space: nowrap;
   @include respond(lg) {
@@ -312,16 +313,6 @@
     &.page {
       grid-template-columns: max-content;
       justify-content: center;
-    }
-    @include respond(md) {
-      grid-template-columns: max-content;
-      justify-content: center;
-      & .btn {
-        display: none;
-        &.yellow {
-          display: block;
-        }
-      }
     }
   }
 }

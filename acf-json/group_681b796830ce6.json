@@ -973,11 +973,11 @@
             "append": ""
         },
         {
-            "key": "field_6828bc57435b8",
-            "label": "Booking Popup",
-            "name": "",
+            "key": "field_682b09b1ba442",
+            "label": "Reviews link text",
+            "name": "reviews_link_text",
             "aria-label": "",
-            "type": "tab",
+            "type": "text",
             "instructions": "",
             "required": 0,
             "conditional_logic": 0,
@@ -986,15 +986,18 @@
                 "class": "",
                 "id": ""
             },
-            "placement": "top",
-            "endpoint": 0
+            "default_value": "",
+            "maxlength": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": ""
         },
         {
-            "key": "field_6828bc3195178",
-            "label": "category selection",
-            "name": "category_selection",
+            "key": "field_682b09baba443",
+            "label": "Reviews link url",
+            "name": "reviews_link_url",
             "aria-label": "",
-            "type": "taxonomy",
+            "type": "text",
             "instructions": "",
             "required": 0,
             "conditional_logic": 0,
@@ -1003,16 +1006,11 @@
                 "class": "",
                 "id": ""
             },
-            "taxonomy": "service_category",
-            "add_term": 1,
-            "save_terms": 0,
-            "load_terms": 0,
-            "return_format": "id",
-            "field_type": "multi_select",
-            "allow_null": 0,
-            "bidirectional": 0,
-            "multiple": 0,
-            "bidirectional_target": []
+            "default_value": "",
+            "maxlength": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": ""
         }
     ],
     "location": [
@@ -1033,5 +1031,5 @@
     "active": true,
     "description": "",
     "show_in_rest": 0,
-    "modified": 1747500146
+    "modified": 1747651020
 }
