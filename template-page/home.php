@@ -37,7 +37,7 @@ if (empty($ordered_category_ids)) {
                     <?php the_field('hero_title'); ?>
                 </h1>
                 <div class="hero-section__buttons">
-                    <button type="button" class="btn yellow open-popup">Free Manicure</button>
+                    <button type="button" class="btn yellow open-popup">Book an Appointment</button>
                     <?php
                     $link = get_field('hero_link');
                     $text = get_field('hero_link_text');

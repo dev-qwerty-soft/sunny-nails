@@ -145,6 +145,7 @@
     font-weight: 500;
     font-size: get-d(14px);
     line-height: 120%;
+    opacity: 0.7;
     @include respond(lg) {
       font-size: get-lg(14px);
     }

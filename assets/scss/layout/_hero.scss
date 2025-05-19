@@ -225,8 +225,13 @@
     @include respond(md) {
       grid-template-columns: 1fr;
       grid-gap: 20px;
-      & .info-item:nth-child(3) {
+    }
+    & .info-item:nth-of-type(4) {
+      @include respond(md) {
         grid-row: 3 / 4;
+        & .info-item__content {
+          grid-gap: 45px;
+        }
       }
     }
   }
@@ -251,8 +256,9 @@
         bottom: get-lg(24px);
       }
       @include respond(md) {
-        left: 20px;
-        bottom: 24px;
+        left: 50%;
+        transform: translateX(-50%);
+        bottom: 16px;
       }
     }
   }
@@ -450,9 +456,6 @@
       grid-gap: 10px;
       grid-template-columns: repeat(2, 1fr);
     }
-    @include respond(sm) {
-      grid-template-columns: repeat(1, 1fr);
-    }
 
     & .image {
       width: 100%;
@@ -490,9 +493,9 @@
           bottom: get-lg(12px);
         }
         @include respond(md) {
-          left: 10px;
-          right: 10px;
-          bottom: 10px;
+          left: get-md(10px);
+          right: get-md(10px);
+          bottom: get-md(10px);
         }
 
         & .btn {
@@ -501,7 +504,12 @@
             padding: get-lg(10px) get-lg(40px) get-lg(10px) get-lg(15px);
           }
           @include respond(md) {
-            padding: 10px 40px 10px 15px;
+            padding: 
+              min(get-md(16px), 10px)
+              min(get-md(60px), 40px)
+              min(get-md(16px), 10px)
+              min(get-md(15px), 15px);
+            font-size: min(get-md(24px), 12px);
           }
         }
 
