@@ -5,6 +5,7 @@
   get_header();
   $tabs = get_field('sunny_friends_tabs');
   $percent = 100;
+  $baseColor = '253, 196, 31';
   $notEmpty = count($tabs) !== 0;
   if($notEmpty) {
     $percent = 100 / count($tabs);
@@ -77,36 +78,41 @@
               $title = get_field('sunny_friends_table_title');
               $items = get_field('sunny_friends_main_column_table');
               echo "<div class='cell name'>$title</div>";
-              foreach($items as $item) {
-                $text = $item['sunny_friends_main_column_table_text'];
-                echo "<div class='cell'>$text</div>";
-              };
+              if($items && count($items) > 0 && is_array($items)) {
+                foreach($items as $item) {
+                  $text = isset($item['sunny_friends_main_column_table_text']) ? $item['sunny_friends_main_column_table_text'] : '';
+                  echo "<div class='cell'>$text</div>";
+                };
+              }
             ?>
           </div>
           <?php
             $columns = get_field("sunny_friends_table_column");
-            $baseColor = '253, 196, 31';
             $totalColumns = count($columns);
-            $i = 0;
-            foreach ($columns as $column) {
-              $alpha = 0.1 + ($i / max($totalColumns - 1, 1)) * 0.9;
-              $alpha = round($alpha, 2) + 0.1;
-              $title = $column['sunny_friends_table_column_title'];
-              $fields = $column['sunny_friends_table_column_field'];
-              $content = "";
-              foreach($fields as $field) {
-                $text = $field['sunny_friends_table_column_text'];
-                $isCheckClass = $field['sunny_friends_table_column_check_mark'] ? " check" : "";
-                $content .= "<div class='cell$isCheckClass'>$text</div>";
-              }
-              echo "<div class='column'>
-                <div class='cell label'>
-                  <span style='background-color: rgba($baseColor, $alpha);'>$title</span>
-                </div>
-                $content
-              </div>";
-              $i++;
-            }
+            if($totalColumns !== 0 && is_array($columns) && $columns) {
+              $i = 0;
+              foreach ($columns as $column) {
+                $alpha = 0.1 + ($i / max($totalColumns - 1, 1)) * 0.9;
+                $alpha = round($alpha, 2) + 0.1;
+                $title = isset($column['sunny_friends_table_column_title']) ? $column['sunny_friends_table_column_title'] : '';
+                $fields = isset($column['sunny_friends_table_column_fields']) ? $column['sunny_friends_table_column_fields'] : [];
+                $content = "";
+                if($fields && count($fields) > 0 && is_array($fields)) {
+                  foreach($fields as $field) {
+                    $text = isset($field['sunny_friends_table_column_text']) ? $field['sunny_friends_table_column_text'] : '';
+                    $isCheckClass = $field['sunny_friends_table_column_check_mark'] ? " check" : "";
+                    $content .= "<div class='cell$isCheckClass'>$text</div>";
+                  };
+                };
+                echo "<div class='column'>
+                  <div class='cell label'>
+                    <span style='background-color: rgba($baseColor, $alpha);'>$title</span>
+                  </div>
+                  $content
+                </div>";
+                $i++;
+              };
+            };
           ?>
         </div>
       </div>
