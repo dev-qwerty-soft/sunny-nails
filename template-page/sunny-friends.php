@@ -116,7 +116,13 @@
           ?>
         </div>
       </div>
-      <a href="#" class="btn yellow">Join Sunny Friends</a>
+      <?php
+        $link = get_field('sunny_friends_join_link');
+        $text = get_field('sunny_friends_join_text');
+        if($link && $text) {
+          echo "<a href='$link' class='btn yellow'>$text</a>";
+        };
+      ?>
     </div>
   </section>
 </main>
