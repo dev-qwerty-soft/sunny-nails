@@ -9,6 +9,7 @@
   if($notEmpty) {
     $percent = 100 / count($tabs);
   }
+  $column = [ null, null, null, null, null ];
 ?>
 <main>
   <section class="sunny-friends-section">
@@ -80,27 +81,25 @@
             <div class="cell">Qualification Criteria</div>
             <div class="cell">Qualification Criteria</div>
           </div>
-          <div class="column">
-            <div style="--color: #FDC41F40;" class="cell label"><span>Start</span></div>
-            <div class="cell">1 visit</div>
-            <div class="cell">0%</div>
-            <div class="cell">1 visit</div>
-            <div class="cell check"></div>
-          </div>
-          <div class="column">
-            <div style="--color: #FDC41F40;" class="cell label"><span>Start</span></div>
-            <div class="cell">1 visit</div>
-            <div class="cell">0%</div>
-            <div class="cell">1 visit</div>
-            <div class="cell check"></div>
-          </div>
-          <div class="column">
-            <div style="--color: #FDC41F40;" class="cell label"><span>Start</span></div>
-            <div class="cell">1 visit</div>
-            <div class="cell">0%</div>
-            <div class="cell">1 visit</div>
-            <div class="cell check"></div>
-          </div>
+          <?php
+            $baseColor = '253, 196, 31';
+            $totalColumns = count($column);
+            $i = 0;
+            foreach ($column as $tab) {
+              $alpha = 0.1 + ($i / max($totalColumns - 1, 1)) * 0.9;
+              $alpha = round($alpha, 2) + 0.1;
+              echo "<div class='column'>
+                <div class='cell label'>
+                  <span style='background-color: rgba($baseColor, $alpha);'>Row</span>
+                </div>
+                <div class='cell'>1 visit</div>
+                <div class='cell'>0%</div>
+                <div class='cell'>1 visit</div>
+                <div class='cell check'></div>
+              </div>";
+              $i++;
+            }
+          ?>
         </div>
       </div>
     </div>
