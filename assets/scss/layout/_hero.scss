@@ -2036,3 +2036,49 @@ $red: #DC3232;
     }
   }
 }
+
+.section-not-found {
+  padding: 0 get-d(60px);
+  text-align: center;
+  @include respond(lg) {
+    padding: 0 get-lg(60px);
+  }
+  @include respond(md) {
+    padding: 0 25px;
+  }
+  & .container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: get-d(32px);
+    align-items: center;
+    @include respond(lg) {
+      gap: get-lg(32px);
+    }
+    @include respond(md) {
+      gap: 32px;
+    }
+  }
+  &__number {
+    font-size: get-d(32px);
+    color: $bg-yellow;
+    font-weight: 600;
+    @include respond(lg) {
+      font-size: get-lg(32px);
+    }
+    @include respond(md) {
+      font-size: 24px;
+    }
+  }
+  &__links {
+    display: flex;
+    align-items: center;
+    gap: get-d(16px);
+    @include respond(lg) {
+      gap: get-lg(16px);
+    }
+    @include respond(md) {
+      gap: 16px;
+    }
+  }
+}
