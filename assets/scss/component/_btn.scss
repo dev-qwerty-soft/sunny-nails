@@ -126,12 +126,14 @@
       height: 40px;
     }
   }
+  & a {
+    text-decoration: underline;
+  }
   & a,
   b {
     font-weight: 500;
     font-size: get-d(20px);
     line-height: 120%;
-    text-decoration: underline;
     @include respond(lg) {
       font-size: get-lg(20px);
     }
