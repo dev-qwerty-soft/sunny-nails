@@ -1,13 +1,12 @@
 <?php
 class AltegioClient
 {
-    // Changed from private to public to allow access from outside the class
     public const BASE_URL = 'https://api.alteg.io/api/v1/';
     public const PARTNER_TOKEN = 'becwbyhjwdf2s37fcmze';
     public const USER_TOKEN = '24b2f3cc652a7c7574290d8426823404';
     public const COMPANY_ID = '1275515';
 
-    private static function request(string $endpoint, array $params = []): array
+    private static function request(string $endpoint, array $params = [], string $method = 'GET', array $body = []): array
     {
         $url = self::BASE_URL . ltrim($endpoint, '/');
 
@@ -22,9 +21,16 @@ class AltegioClient
                 'Authorization' => 'Bearer ' . self::PARTNER_TOKEN . ', User ' . self::USER_TOKEN,
             ],
             'timeout' => 15,
+            'method'  => $method,
         ];
 
-        $response = wp_remote_get($url, $args);
+        if ($method === 'POST' && !empty($body)) {
+            $args['body'] = json_encode($body);
+        }
+
+        $response = ($method === 'GET')
+            ? wp_remote_get($url, $args)
+            : wp_remote_post($url, $args);
 
         if (is_wp_error($response)) {
             return ['error' => $response->get_error_message()];
@@ -46,9 +52,15 @@ class AltegioClient
         return self::request('company/' . self::COMPANY_ID . '/services');
     }
 
-    public static function getStaff(): array
+    public static function getStaff($serviceId = null): array
     {
-        return self::request('company/' . self::COMPANY_ID . '/staff');
+        $params = [];
+
+        if ($serviceId) {
+            $params['service_id'] = $serviceId;
+        }
+
+        return self::request('company/' . self::COMPANY_ID . '/staff', $params);
     }
 
     public static function getCategories(): array
@@ -69,110 +81,74 @@ class AltegioClient
         ];
     }
 
+    public static function getTimeSlots(string $staffId, string $date, array $serviceIds = []): array
+    {
+        $params = [
+            'company_id' => self::COMPANY_ID,
+            'staff_id' => $staffId,
+            'date' => $date
+        ];
+
+        if (!empty($serviceIds)) {
+            if (is_array($serviceIds)) {
+                $params['service_ids'] = implode(',', $serviceIds);
+            } else {
+                $params['service_ids'] = $serviceIds;
+            }
+        }
+
+        return self::request('book_times', $params);
+    }
+
+    public static function makeBooking(array $bookingData): array
+    {
+        if (!isset($bookingData['company_id'])) {
+            $bookingData['company_id'] = self::COMPANY_ID;
+        }
+
+        return self::request('book', [], 'POST', $bookingData);
+    }
+
     public static function getBookingForm(int $formId = null): array
     {
         if ($formId === null) {
             $formId = self::COMPANY_ID;
         }
+
         return self::request('bookform/' . $formId);
     }
-
-    // Adding the missing methods
 
     public static function getI18n(string $langCode = 'en-US'): array
     {
         return self::request('i18n', ['lang' => $langCode]);
     }
-
-    public static function getTimeSlots(string $staffId, string $date): array
+    public static function getBookingDates(int $companyId, array $params = []): array
     {
-        return self::request('book_times', [
-            'company_id' => self::COMPANY_ID,
-            'staff_id' => $staffId,
-            'date' => $date
-        ]);
+
+        $endpoint = 'book_dates/' . $companyId;
+
+
+        if (isset($params['service_ids']) && is_array($params['service_ids'])) {
+            $serviceIds = $params['service_ids'];
+            unset($params['service_ids']);
+            foreach ($serviceIds as $i => $id) {
+                $params['service_ids[' . $i . ']'] = $id;
+            }
+        }
+
+        return self::request($endpoint, $params);
     }
-
-    // Method to make a booking
-    public static function makeBooking(array $bookingData): array
+    public static function getBookTimes(string $staffId, string $date, array $serviceIds = []): array
     {
-        $url = self::BASE_URL . 'book';
+        $endpoint = 'book_times/' . self::COMPANY_ID . '/' . $staffId . '/' . $date;
+        $query = [];
 
-        $args = [
-            'method' => 'POST',
-            'headers' => [
-                'Accept'        => 'application/vnd.api.v2+json',
-                'Content-Type'  => 'application/json',
-                'Authorization' => 'Bearer ' . self::PARTNER_TOKEN . ', User ' . self::USER_TOKEN,
-            ],
-            'body' => json_encode($bookingData),
-            'timeout' => 15,
-        ];
-
-        $response = wp_remote_post($url, $args);
-
-        if (is_wp_error($response)) {
-            return ['error' => $response->get_error_message()];
+        if (!empty($serviceIds)) {
+            foreach ($serviceIds as $i => $serviceId) {
+                $query['service_ids[' . $i . ']'] = $serviceId;
+            }
         }
 
-        $code = wp_remote_retrieve_response_code($response);
-        $body = wp_remote_retrieve_body($response);
-        $data = json_decode($body, true);
-
-        if ($code !== 200) {
-            return ['error' => 'HTTP ' . $code, 'body' => $data];
-        }
-
-        return $data;
-    }
-    public static function ajaxGetTimeSlots()
-    {
-        // Verify the nonce for security
-        check_ajax_referer('booking_nonce', 'nonce');
-
-        // Get parameters from POST request
-        $staff_id = isset($_POST['staff_id']) ? sanitize_text_field($_POST['staff_id']) : '';
-        $date = isset($_POST['date']) ? sanitize_text_field($_POST['date']) : '';
-
-        // Validate required parameters
-        if (empty($staff_id) || empty($date)) {
-            wp_send_json_error([
-                'message' => 'Staff ID and date are required'
-            ]);
-            return;
-        }
-
-        // Get time slots from Altegio API
-        $timeSlots = AltegioClient::getTimeSlots($staff_id, $date);
-
-        // Check if the API call was successful
-        if (isset($timeSlots['error'])) {
-            error_log('Altegio API Error: ' . print_r($timeSlots['error'], true));
-
-            // For better UX, return empty slots instead of an error
-            wp_send_json_success([
-                'slots' => [],
-                'message' => 'No available time slots for this date.'
-            ]);
-            return;
-        }
-
-        // Process the response to extract time slots in a consistent format
-        $slots = [];
-
-        // Handle different possible response structures from Altegio API
-        if (isset($timeSlots['data']['slots'])) {
-            $slots = $timeSlots['data']['slots'];
-        } elseif (isset($timeSlots['slots'])) {
-            $slots = $timeSlots['slots'];
-        } elseif (isset($timeSlots['data']) && is_array($timeSlots['data'])) {
-            $slots = $timeSlots['data'];
-        }
-
-        // Return the slots to the frontend
-        wp_send_json_success([
-            'slots' => $slots,
-            'message' => empty($slots) ? 'No available time slots for this date.' : null
-        ]);
+        return self::request($endpoint, $query);
     }
 }

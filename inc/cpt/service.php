@@ -14,6 +14,8 @@ add_action('init', function () {
         'menu_position' => 21,
         'menu_icon' => 'dashicons-hammer',
         'show_in_rest' => false,
+        'publicly_queryable' => true, // ДОДАЙ ЦЕ
+        'exclude_from_search' => false, // ДОДАЙ ЦЕ
     ]);
 
     // Taxonomy "service_category"

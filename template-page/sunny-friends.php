@@ -70,6 +70,39 @@
           ?>
         </div>
       </div>
+      <div class="sunny-friends-table-section__wrapper">
+        <div class="sunny-friends-table-section__table">
+          <div class="column main">
+            <div class="cell name">Sunny Membership</div>
+            <div class="cell">Qualification Criteria</div>
+            <div class="cell">Qualification Criteria</div>
+            <div class="cell">Qualification Criteria</div>
+            <div class="cell">Qualification Criteria</div>
+            <div class="cell">Qualification Criteria</div>
+          </div>
+          <div class="column">
+            <div style="--color: #FDC41F40;" class="cell label"><span>Start</span></div>
+            <div class="cell">1 visit</div>
+            <div class="cell">0%</div>
+            <div class="cell">1 visit</div>
+            <div class="cell check"></div>
+          </div>
+          <div class="column">
+            <div style="--color: #FDC41F40;" class="cell label"><span>Start</span></div>
+            <div class="cell">1 visit</div>
+            <div class="cell">0%</div>
+            <div class="cell">1 visit</div>
+            <div class="cell check"></div>
+          </div>
+          <div class="column">
+            <div style="--color: #FDC41F40;" class="cell label"><span>Start</span></div>
+            <div class="cell">1 visit</div>
+            <div class="cell">0%</div>
+            <div class="cell">1 visit</div>
+            <div class="cell check"></div>
+          </div>
+        </div>
+      </div>
     </div>
   </section>
 </main>

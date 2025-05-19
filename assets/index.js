@@ -1,7 +1,7 @@
 import "./scss/main.min.scss";
 import "./js/index.js";
-import "./js/booking.js";
 import "./js/services-validation.js";
+import "./js/services.js";
 import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/scrollbar";
@@ -13,14 +13,14 @@ import { has, g, add, remove, toggle, respond, updateDisplay } from "./js/functi
 let gallerySwiper;
 let filterFn;
 let tabFn;
-const modal = g(".gallery-modal")
+const modal = g(".gallery-modal");
 const filterSection = g(".gallery-section");
 const buttonsTabsWrapper = g(".sunny-friends-table-section__buttons");
 
 if (g(".counter-section")) {
   const timeContainer = g(".counter-section .time");
   let timeLeftMs = parseInt(timeContainer.dataset.timeMs);
-  if(timeLeftMs) {
+  if (timeLeftMs) {
     function tick() {
       timeLeftMs -= 1000;
       if (timeLeftMs < 0) {
@@ -32,8 +32,8 @@ if (g(".counter-section")) {
 
     updateDisplay(timeLeftMs);
     const timer = setInterval(tick, 1000);
-  };
-};
+  }
+}
 
 if (g(".hero-swiper")) {
   new Swiper(".hero-swiper", {
@@ -49,7 +49,7 @@ if (g(".hero-swiper")) {
       prevEl: ".hero-swiper .swiper-button-prev",
     },
   });
-};
+}
 
 if (g(".gallery-swiper")) {
   gallerySwiper = new Swiper(".gallery-swiper", {
@@ -132,7 +132,7 @@ if (g(".mini-swiper")) {
       scrollbar: {
         el: swiper.querySelector(".swiper-scrollbar"),
         draggable: true,
-        dragSize: 32
+        dragSize: 32,
       },
       breakpoints: {
         1024: {
@@ -143,14 +143,14 @@ if (g(".mini-swiper")) {
   });
 }
 
-if(filterSection) {
+if (filterSection) {
   const filters = g(".gallery-section__filters .filter", document, true);
   const images = g(".gallery-section__images .image", document, true);
   const isFull = has(filterSection, ".full");
   const isMobile = respond("md");
 
   filterFn = (filter) => {
-    if(!filters) return;
+    if (!filters) return;
     const slug = filter.getAttribute("data-slug");
     remove(filters);
     add(filter);
@@ -164,16 +164,14 @@ if(filterSection) {
 
     const final = isFull ? filteredImages : filteredImages.slice(0, isMobile ? 6 : 5);
 
-
-    if(!isMobile) {
+    if (!isMobile) {
       final.forEach((image, i) => {
         const nth = i + 1;
         if (nth % 10 === 3 || nth % 10 === 6) {
           add(image, "big");
         }
-      })
+      });
     }
-    
 
     add(final);
   };
@@ -181,7 +179,7 @@ if(filterSection) {
   filterFn(filters[0]);
 }
 
-if(buttonsTabsWrapper) {
+if (buttonsTabsWrapper) {
   const buttonsTabs = g(".sunny-friends-table-section__button", document, true);
   const tabsWrapper = g(".sunny-friends-table-section__tabs");
   const tabs = g(".sunny-friends-table-section__tab", document, true);
@@ -200,7 +198,7 @@ if(buttonsTabsWrapper) {
 }
 
 document.onclick = (e) => {
-  if(has(e.target, ".gallery-section__filters .filter")) {
+  if (has(e.target, ".gallery-section__filters .filter")) {
     filterFn?.(e.target);
   } else if (has(e.target, "#burger")) {
     const btn = g("#burger");
@@ -217,5 +215,5 @@ document.onclick = (e) => {
     gallerySwiper?.slideTo(0);
   } else if (has(e.target, ".sunny-friends-table-section__button")) {
     tabFn?.(e.target);
-  };
+  }
 };

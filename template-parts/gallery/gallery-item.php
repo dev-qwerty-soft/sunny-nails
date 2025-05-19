@@ -12,6 +12,8 @@
   $name = isset($master->post_title) ? $master->post_title : '';
   $services = get_services_by_category($tag->term_id);
   $post_id = isset($services[0]->ID) ? $services[0]->ID : null;
+  $price = 0;
+  $currency = 'SGD';
   if($post_id) {
     $price = get_post_meta($post_id, 'price_min', true);
     $currency = get_post_meta($post_id, 'currency', true) ?: 'SGD';
