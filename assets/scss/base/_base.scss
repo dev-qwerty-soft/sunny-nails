@@ -23,12 +23,13 @@ body {
 .hidden {
   overflow: hidden;
 }
-// a {
-//   display: block;
-//   text-decoration: none !important;
-//   cursor: pointer;
-//   color: var(--Black);
-// }
+a {
+  // display: block;
+  // text-decoration: none !important;
+  // cursor: pointer;
+  // color: var(--Black);
+  color: $bg-grey;
+}
 
 img {
   display: block;
