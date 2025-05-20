@@ -1627,6 +1627,7 @@ $red: #DC3232;
     display: grid;
     grid-template-columns: repeat(2, calc(50% - get-d(20px)));
     grid-gap: get-d(40px);
+    min-height: 100dvh;
     @include respond(lg) {
       grid-gap: get-lg(40px);
     }
