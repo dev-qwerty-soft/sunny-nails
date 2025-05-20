@@ -226,6 +226,14 @@
       grid-template-columns: 1fr;
       grid-gap: 20px;
     }
+    & .info-item:nth-of-type(4) {
+      @include respond(md) {
+        grid-row: 3 / 4;
+        & .info-item__content {
+          grid-gap: 45px;
+        }
+      }
+    }
   }
   &__map {
     position: relative;
@@ -248,8 +256,9 @@
         bottom: get-lg(24px);
       }
       @include respond(md) {
-        left: 20px;
-        bottom: 24px;
+        left: 50%;
+        transform: translateX(-50%);
+        bottom: 16px;
       }
     }
   }
@@ -447,9 +456,6 @@
       grid-gap: 10px;
       grid-template-columns: repeat(2, 1fr);
     }
-    @include respond(sm) {
-      grid-template-columns: repeat(1, 1fr);
-    }
 
     & .image {
       width: 100%;
@@ -487,9 +493,9 @@
           bottom: get-lg(12px);
         }
         @include respond(md) {
-          left: 10px;
-          right: 10px;
-          bottom: 10px;
+          left: get-md(10px);
+          right: get-md(10px);
+          bottom: get-md(10px);
         }
 
         & .btn {
@@ -498,7 +504,12 @@
             padding: get-lg(10px) get-lg(40px) get-lg(10px) get-lg(15px);
           }
           @include respond(md) {
-            padding: 10px 40px 10px 15px;
+            padding: 
+              min(get-md(16px), 10px)
+              min(get-md(60px), 40px)
+              min(get-md(16px), 10px)
+              min(get-md(15px), 15px);
+            font-size: min(get-md(24px), 12px);
           }
         }
 
@@ -1332,9 +1343,11 @@ $red: #DC3232;
     padding: 75px 0;
     & .swiper-button-next {
       right: 3px !important;
+      top: 30%;
     }
     & .swiper-button-prev {
       left: 3px !important;
+      top: 30%;
     }
   }
   &__top, &__wrapper {
@@ -1414,6 +1427,15 @@ $red: #DC3232;
 
 .team-swiper {
   width: 100%;
+  & .swiper-wrapper {
+    align-items: stretch;
+    & .swiper-slide {
+      height: auto;
+      & .team-card {
+        height: 100%;
+      }
+    }
+  }
 }
 
 .mini-swiper {
@@ -1718,17 +1740,18 @@ $red: #DC3232;
     padding: get-lg(150px) get-lg(40px);
   }
   @include respond(md) {
-    padding: 75px 25px 50px 25px;
+    padding: 75px 0px 50px 0px;
   }
   & .container {
     display: flex;
     flex-direction: column;
-    gap: get-d(150px);
+    gap: get-d(30px);
+    align-items: center;
     @include respond(lg) {
-      gap: get-lg(150px);
+      gap: get-lg(30px);
     }
     @include respond(md) {
-      gap: 75px;
+      gap: 45px;
     }
   }
   &__top {
@@ -1736,11 +1759,13 @@ $red: #DC3232;
     flex-direction: column;
     gap: get-d(80px);
     align-items: center;
+    width: 100%;
     @include respond(lg) {
       gap: get-lg(80px);
     }
     @include respond(md) {
       gap: 30px;
+      padding: 0 25px;
     }
   }
   &__buttons {
@@ -1856,7 +1881,6 @@ $red: #DC3232;
   }
   &__table {
     width: 100%;
-    padding: get-d(20px) 0;
     max-width: 100%;
     display: flex;
     & .cell {
@@ -1870,13 +1894,53 @@ $red: #DC3232;
       align-items: center;
       justify-content: center;
       width: 100%;
+      @include respond(lg) {
+        padding: 0 get-lg(25px);
+        font-size: get-lg(14px);
+      }
+      @include respond(md) {
+        padding: 0 25px;
+        font-size: 10px;
+      }
       &.label {
         font-size: get-d(20px);
         line-height: 100%;
+        @include respond(lg) {
+          font-size: get-lg(20px);
+        }
+        @include respond(md) {
+          font-size: 14px;
+        }
         & span {
           padding: get-d(6px) get-d(20px);
           border-radius: 100px;
-          background: var(--color);
+          @include respond(lg) {
+            padding: get-lg(6px) get-lg(20px);
+          }
+          @include respond(md) {
+            padding: 6px 20px;
+          }
+        }
+      }
+      &.check {
+        position: relative;
+        &::after {
+          content: '';
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          width: get-d(24px);
+          height: get-d(24px);
+          background: url("../svg/check.svg") center / contain no-repeat;
+          @include respond(lg) {
+            width: get-lg(24px);
+            height: get-lg(24px);
+          }
+          @include respond(md) {
+            width: 24px;
+            height: 24px;
+          }
         }
       }
     }
@@ -1885,19 +1949,54 @@ $red: #DC3232;
       text-align: center;
       display: grid;
       grid-template-columns: 1fr;
-      grid-auto-rows: get-d(60px);
-      min-width: get-d(240px);
+      grid-auto-rows: get-d(58px);
+      min-width: get-d(200px);
+      padding: get-d(20px) 0;
       width: auto;
       align-items: center;
+      @include respond(lg) {
+        grid-auto-rows: get-lg(58px);
+        min-width: get-lg(200px);
+        padding: get-lg(20px) 0;
+      }
+      @include respond(md) {
+        grid-auto-rows: 50px;
+        min-width: 130px;
+        padding: 20px 0;
+      }
+      &:nth-of-type(even) {
+        background: #FFE3911A;
+      }
       &.main {
         text-align: left;
+        position: sticky;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        background: #FDFCF9;
+        z-index: 5;
+        @include respond(md) {
+          min-width: 200px;
+        }
         & .cell {
           font-weight: 600;
           font-size: get-d(16px);
           justify-content: flex-start;
+          @include respond(lg) {
+            font-size: get-lg(16px);
+          }
+          @include respond(md) {
+            font-size: 12px;
+          }
           &.name {
             font-weight: 700;
             font-size: get-d(20px);
+            @include respond(lg) {
+              font-size: get-lg(20px);
+            }
+            @include respond(md) {
+              font-size: 12px;
+            }
           }
         }
       }
@@ -1907,7 +2006,79 @@ $red: #DC3232;
     width: 100%;
     max-width: 100%;
     overflow: auto;
-    background: #FFFFFFCC;
+    background: #FDFCF9;
     border-radius: get-d(20px);
+    margin-top: get-d(120px);
+    @include respond(lg) {
+      border-radius: get-lg(20px);
+      margin-top: get-lg(120px);
+    }
+    @include respond(md) {
+      border-radius: 20px;
+      margin-top: 45px;
+    }
+    &::-webkit-scrollbar {
+      background: none;
+      height: get-d(10px);
+      @include respond(lg) {
+        height: get-lg(10px);
+      }
+      @include respond(md) {
+        height: 6px;
+      }
+    }
+    &::-webkit-scrollbar-track {
+      background: #FDFCF9;
+    }
+    &::-webkit-scrollbar-thumb {
+      background: $bg-yellow;
+      border-radius: 100px;
+    }
+  }
+}
+
+.section-not-found {
+  padding: 0 get-d(60px);
+  text-align: center;
+  @include respond(lg) {
+    padding: 0 get-lg(60px);
+  }
+  @include respond(md) {
+    padding: 0 25px;
+  }
+  & .container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: get-d(32px);
+    align-items: center;
+    @include respond(lg) {
+      gap: get-lg(32px);
+    }
+    @include respond(md) {
+      gap: 32px;
+    }
+  }
+  &__number {
+    font-size: get-d(32px);
+    color: $bg-yellow;
+    font-weight: 600;
+    @include respond(lg) {
+      font-size: get-lg(32px);
+    }
+    @include respond(md) {
+      font-size: 24px;
+    }
+  }
+  &__links {
+    display: flex;
+    align-items: center;
+    gap: get-d(16px);
+    @include respond(lg) {
+      gap: get-lg(16px);
+    }
+    @include respond(md) {
+      gap: 16px;
+    }
   }
 }

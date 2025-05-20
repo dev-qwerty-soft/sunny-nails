@@ -44,9 +44,7 @@
             );
         ?>
     </nav>
-    <div class="icons">
-        <?php displayIcon(); ?>
-    </div>
+    <div class="icons"><?php displayIcon(); ?></div>
     <a href="#" class="btn white">Book an Appointment</a>
 </div>
 <?php

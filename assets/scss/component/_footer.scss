@@ -73,6 +73,7 @@
   }
   & .menu-footer-aside-container {
     justify-self: flex-end;
+    text-transform: uppercase;
   }
   & .menu-footer-container {
     @include respond(md) {
@@ -99,6 +100,7 @@
       }
       @include respond(md) {
         font-size: 12px;
+        text-transform: capitalize;
       }
     }
   }
