@@ -11680,7 +11680,10 @@ if (filterSection) {
     (0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.add)(filter);
 
     const filteredImages = images?.filter((image) => {
-      return slug === "all" || image.getAttribute("data-slug") === slug;
+      if (slug === "all") return true;
+
+      const slugs = image.getAttribute("data-slug")?.split(" ") || [];
+      return slugs.includes(slug);
     });
 
     (0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.remove)(images);
