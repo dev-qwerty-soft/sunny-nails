@@ -11,7 +11,7 @@
       <?php
         $link_team = get_field('team_link_url', 'option');
         $text = get_field('team_link_text', 'option');
-        if ($link && $text && !$isPage) {
+        if ($link_team && $text && !$isPage) {
           echo "<a href='$link_team' class='btn yellow'>$text</a>";
         }
       ?>

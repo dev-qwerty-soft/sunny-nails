@@ -32,7 +32,7 @@
       @include respond(md) {
         display: none;
       }
-      & .current_page_item {
+      & .current_page_item a {
         background: $bg-yellow;
         border-radius: 100px;
         @include respond(md) {
