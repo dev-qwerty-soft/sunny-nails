@@ -1615,6 +1615,9 @@ $red: #dc3232;
 
 .about-section {
   padding: get-d(100px) get-d(60px);
+  min-height: var(--vh-min);
+  display: flex;
+  align-items: center;
   @include respond(lg) {
     padding: get-lg(100px) get-lg(40px);
   }
@@ -1625,6 +1628,7 @@ $red: #dc3232;
     display: grid;
     grid-template-columns: repeat(2, calc(50% - get-d(20px)));
     grid-gap: get-d(40px);
+    align-items: center;
     @include respond(lg) {
       grid-gap: get-lg(40px);
     }
@@ -2036,47 +2040,80 @@ $red: #dc3232;
 }
 
 .section-not-found {
-  padding: 0 get-d(60px);
+  padding: get-d(100px) get-d(60px);
   text-align: center;
   @include respond(lg) {
-    padding: 0 get-lg(60px);
+    padding: get-lg(100px) get-lg(60px);
   }
   @include respond(md) {
-    padding: 0 25px;
+    padding: 130px 25px;
   }
   & .container {
     display: flex;
     flex-direction: column;
     width: 100%;
-    gap: get-d(32px);
     align-items: center;
-    @include respond(lg) {
-      gap: get-lg(32px);
+    min-height: var(--vh-min);
+    justify-content: center;
+    & .title {
+      font-weight: 500;
+      font-size: get-d(24px);
+      line-height: 120%;
+      letter-spacing: -.03em;
+      margin: get-d(60px) 0 get-d(14px) 0;
+      @include respond(lg) {
+        font-size: get-lg(24px);
+        margin: get-lg(50px) 0 get-lg(14px) 0;
+      }
+      @include respond(md) {
+        font-size: 16px;
+        margin: 40px 0 14px 0;
+      }
     }
-    @include respond(md) {
-      gap: 32px;
+    & .paragraph {
+      font-weight: 500;
+      font-size: get-d(16px);
+      line-height: 140%;
+      width: get-d(420px);
+      color: #9A9A9A;
+      @include respond(lg) {
+        font-size: get-lg(16px);
+        width: get-lg(420px);
+      }
+      @include respond(md) {
+        font-size: 14px;
+        width: 100%;
+      }
     }
   }
   &__number {
-    font-size: get-d(32px);
-    color: $bg-yellow;
-    font-weight: 600;
+    display: inline-block;
+    width: get-d(390px);
+    height: get-d(144px);
+    background: url("../svg/404.svg") center / contain no-repeat;
     @include respond(lg) {
-      font-size: get-lg(32px);
+      width: get-lg(390px);
+      height: get-lg(144px);
     }
     @include respond(md) {
-      font-size: 24px;
+      width: 90%;
+      height: 120px;
     }
   }
   &__links {
     display: flex;
     align-items: center;
     gap: get-d(16px);
+    margin-top: get-d(32px);
     @include respond(lg) {
       gap: get-lg(16px);
+      margin-top: get-lg(32px);
     }
     @include respond(md) {
       gap: 16px;
+      width: 100%;
+      justify-content: space-between;
+      margin-top: 32px;
     }
   }
 }

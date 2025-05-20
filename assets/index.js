@@ -1,5 +1,6 @@
 import "./scss/main.min.scss";
 import "./js/index.js";
+// import "./js/gsap.js";
 import "./js/services-validation.js";
 import "./js/services.js";
 import "swiper/css";
@@ -9,6 +10,15 @@ import Swiper from "swiper";
 import "./js/map.js";
 import { Navigation, Pagination, Scrollbar, FreeMode } from "swiper/modules";
 import { has, g, add, remove, toggle, respond, updateDisplay } from "./js/function.js";
+
+const header = g(".site-header");
+const footer = g(".footer");
+const height = header.offsetHeight + footer.offsetHeight;
+function resize() {
+  document.body.style.setProperty("--vh-min", `${window.innerHeight - height}px`);
+};
+resize();
+window.addEventListener("resize", resize);
 
 let gallerySwiper;
 let filterFn;
@@ -220,3 +230,4 @@ document.onclick = (e) => {
     tabFn?.(e.target);
   }
 };
+
