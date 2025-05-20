@@ -1617,6 +1617,9 @@ $red: #DC3232;
 
 .about-section {
   padding: get-d(100px) get-d(60px);
+  min-height: var(--vh-min);
+  display: flex;
+  align-items: center;
   @include respond(lg) {
     padding: get-lg(100px) get-lg(40px);
   }
@@ -1627,7 +1630,6 @@ $red: #DC3232;
     display: grid;
     grid-template-columns: repeat(2, calc(50% - get-d(20px)));
     grid-gap: get-d(40px);
-    min-height: var(--vh-min);
     align-items: center;
     @include respond(lg) {
       grid-gap: get-lg(40px);
