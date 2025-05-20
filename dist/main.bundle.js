@@ -11742,6 +11742,16 @@ document.onclick = (e) => {
   }
 };
 
+(function(){
+  const header = (0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.g)(".site-header");
+  const footer = (0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.g)(".footer");
+  const height = header.offsetHeight + footer.offsetHeight;
+  function resize() {
+    document.body.style.setProperty("--vh-min", `${window.innerHeight - height}px`);
+  };
+  resize();
+  window.addEventListener("resize", resize);
+}());
 })();
 
 /******/ })()

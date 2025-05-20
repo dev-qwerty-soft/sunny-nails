@@ -1627,7 +1627,7 @@ $red: #DC3232;
     display: grid;
     grid-template-columns: repeat(2, calc(50% - get-d(20px)));
     grid-gap: get-d(40px);
-    min-height: 100dvh;
+    min-height: var(--vh-min);
     align-items: center;
     @include respond(lg) {
       grid-gap: get-lg(40px);
@@ -2054,6 +2054,8 @@ $red: #DC3232;
     width: 100%;
     gap: get-d(32px);
     align-items: center;
+    min-height: var(--vh-min);
+    justify-content: center;
     @include respond(lg) {
       gap: get-lg(32px);
     }

@@ -217,3 +217,14 @@ document.onclick = (e) => {
     tabFn?.(e.target);
   }
 };
+
+(function(){
+  const header = g(".site-header");
+  const footer = g(".footer");
+  const height = header.offsetHeight + footer.offsetHeight;
+  function resize() {
+    document.body.style.setProperty("--vh-min", `${window.innerHeight - height}px`);
+  };
+  resize();
+  window.addEventListener("resize", resize);
+}());
