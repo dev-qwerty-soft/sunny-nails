@@ -10,8 +10,8 @@ g("section", document, true)?.forEach((element) => {
 
   const tl = gsap.timeline({
     defaults: { 
-      ease: "power1.inOut",
-      duration: 1 
+      ease: "power4.inOut",
+      duration: .5 
     },
     scrollTrigger: {
       trigger: element,
@@ -23,6 +23,6 @@ g("section", document, true)?.forEach((element) => {
   tl.from([...firstLevelChildren, ...secondLevelChildren, ...thirdLevelChildren], {
     opacity: 0,
     y: 10,
-    stagger: 0.1
+    stagger: 0.075
   }, 0);
 });

@@ -20934,8 +20934,8 @@ gsap__WEBPACK_IMPORTED_MODULE_0__["default"].registerPlugin(gsap_ScrollTrigger__
 
   const tl = gsap__WEBPACK_IMPORTED_MODULE_0__["default"].timeline({
     defaults: { 
-      ease: "power1.inOut",
-      duration: 1 
+      ease: "power4.inOut",
+      duration: .5 
     },
     scrollTrigger: {
       trigger: element,
@@ -20947,7 +20947,7 @@ gsap__WEBPACK_IMPORTED_MODULE_0__["default"].registerPlugin(gsap_ScrollTrigger__
   tl.from([...firstLevelChildren, ...secondLevelChildren, ...thirdLevelChildren], {
     opacity: 0,
     y: 10,
-    stagger: 0.1
+    stagger: 0.075
   }, 0);
 });
 
