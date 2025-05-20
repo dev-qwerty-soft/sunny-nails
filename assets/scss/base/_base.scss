@@ -15,6 +15,7 @@ body {
   // justify-content: space-between;
   // height: auto;
   // min-height: 100vh;
+  --vh-min: 500px;
   &:has(.burger-menu.active) {
     height: 100vh;
     overflow: hidden;
