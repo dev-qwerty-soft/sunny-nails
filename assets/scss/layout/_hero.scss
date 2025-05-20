@@ -264,7 +264,7 @@
   }
 }
 
-@mixin codeBig () {
+@mixin codeBig() {
   grid-row: span 2;
   grid-column: span 2;
   & .image__back {
@@ -322,7 +322,6 @@
     }
   }
 
-
   & .star {
     width: get-d(24px);
     height: get-d(24px);
@@ -348,7 +347,7 @@
   @include respond(md) {
     padding: 75px 25px;
   }
-  
+
   &.full {
     padding-top: get-d(40px);
     @include respond(lg) {
@@ -456,12 +455,13 @@
       grid-gap: 10px;
       grid-template-columns: repeat(2, 1fr);
     }
-
+    .image-wrapper {
+    }
     & .image {
       width: 100%;
       height: 100%;
       aspect-ratio: 1 / 1;
-      
+
       position: relative;
       display: none;
       perspective: 1000px;
@@ -475,7 +475,6 @@
       &.big {
         @include codeBig();
       }
-
 
       & .wrapper {
         position: absolute;
@@ -504,11 +503,7 @@
             padding: get-lg(10px) get-lg(40px) get-lg(10px) get-lg(15px);
           }
           @include respond(md) {
-            padding: 
-              min(get-md(16px), 10px)
-              min(get-md(60px), 40px)
-              min(get-md(16px), 10px)
-              min(get-md(15px), 15px);
+            padding: min(get-md(16px), 10px) min(get-md(60px), 40px) min(get-md(16px), 10px) min(get-md(15px), 15px);
             font-size: min(get-md(24px), 12px);
           }
         }
@@ -523,12 +518,11 @@
           }
         }
       }
-      
 
       &.active {
         display: block;
       }
-    
+
       &__front,
       &__back {
         width: 100%;
@@ -548,12 +542,12 @@
           border-radius: 8px;
         }
       }
-    
+
       &__front {
         z-index: 2;
         transform: rotateY(0deg);
       }
-    
+
       &__back {
         background: $bg-yellow;
         transform: rotateY(180deg);
@@ -588,7 +582,8 @@
         }
       }
 
-      &__master, &__price {
+      &__master,
+      &__price {
         font-weight: 500;
         font-size: get-d(16px);
         line-height: 150%;
@@ -600,7 +595,7 @@
           font-size: 16px;
         }
       }
-    
+
       &:hover {
         .image__front {
           transform: rotateY(-180deg);
@@ -608,7 +603,7 @@
             transform: rotateY(0deg);
           }
         }
-    
+
         .image__back {
           transform: rotateY(0deg);
           @include respond(md) {
@@ -616,7 +611,7 @@
           }
         }
       }
-    
+
       & img {
         width: 100%;
         height: 100%;
@@ -624,7 +619,6 @@
         display: block;
       }
     }
-    
   }
 }
 
@@ -639,7 +633,7 @@
   padding: 72px 0;
   opacity: 0;
   pointer-events: none;
-  transition: all .5s;
+  transition: all 0.5s;
   display: none;
   @include respond(md) {
     display: block;
@@ -683,7 +677,8 @@
       font-size: 24px;
       line-height: 120%;
     }
-    & .image__master, & .image__price {
+    & .image__master,
+    & .image__price {
       font-weight: 500;
       font-size: 16px;
       line-height: 150%;
@@ -695,7 +690,7 @@
     height: 20px !important;
     top: clamp(32%, 10vw, 50%);
     transform: translateY(-50%);
-    
+
     z-index: 1;
     &.swiper-button-next {
       right: 0 !important;
@@ -757,7 +752,8 @@
       padding-bottom: get-d(24px);
       border-bottom: 1px solid $bg-grey;
       &:hover {
-        & .item__title, & .item__number {
+        & .item__title,
+        & .item__number {
           color: $bg-yellow;
         }
         & .item__arrow {
@@ -776,7 +772,7 @@
         font-weight: 400;
         font-size: get-d(45px);
         line-height: 100%;
-        transition: color .5s;
+        transition: color 0.5s;
         @include respond(lg) {
           font-size: get-lg(45px);
         }
@@ -789,7 +785,7 @@
         font-size: get-d(20px);
         line-height: 100%;
         text-transform: uppercase;
-        transition: color .5s;
+        transition: color 0.5s;
         @include respond(lg) {
           font-size: get-lg(20px);
         }
@@ -801,7 +797,7 @@
         width: get-d(48px);
         height: get-d(48px);
         background: url("../svg/arrow-down-outline.svg") center / contain no-repeat;
-        transition: transform .5s;
+        transition: transform 0.5s;
         @include respond(lg) {
           width: get-lg(48px);
           height: get-lg(48px);
@@ -838,7 +834,6 @@
         left: 0;
       }
     }
-    
   }
   &__top {
     display: flex;
@@ -994,7 +989,7 @@
   }
 }
 
-$red: #DC3232;
+$red: #dc3232;
 
 .promo-form-section {
   padding: get-d(45px) get-d(60px);
@@ -1075,13 +1070,13 @@ $red: #DC3232;
     }
     &.wpcf7-form.sent {
       & .wpcf7-response-output {
-        background: rgba(#06B569, 10%);
-        color: #06B569;
+        background: rgba(#06b569, 10%);
+        color: #06b569;
         &::before {
           background-image: url("../svg/check icon.svg");
         }
       }
-    } 
+    }
     & .wpcf7-not-valid-tip {
       font-weight: 500;
       font-size: get-d(14px);
@@ -1178,7 +1173,8 @@ $red: #DC3232;
         grid-gap: 16px;
         grid-template-columns: 1fr;
       }
-      & span, input {
+      & span,
+      input {
         width: 100%;
         max-width: 100%;
       }
@@ -1196,7 +1192,8 @@ $red: #DC3232;
           padding: 11px 4px;
           border-bottom: 2px solid $bg-grey;
         }
-        &, &::placeholder {
+        &,
+        &::placeholder {
           font-weight: 500;
           font-size: get-d(14px);
           line-height: 120%;
@@ -1283,8 +1280,6 @@ $red: #DC3232;
         }
       }
 
-   
-      
       & input[type="submit"] {
         position: absolute;
         inset: 0;
@@ -1293,7 +1288,8 @@ $red: #DC3232;
       }
     }
   }
-  & .title, .paragraph {
+  & .title,
+  .paragraph {
     grid-column: 1 / 2;
   }
   & .paragraph {
@@ -1310,7 +1306,8 @@ $red: #DC3232;
   }
   & .title {
     line-height: 120%;
-    & strong, b {
+    & strong,
+    b {
       font-weight: inherit;
       background: $bg-white;
       border-radius: 1000px;
@@ -1350,7 +1347,8 @@ $red: #DC3232;
       top: 30%;
     }
   }
-  &__top, &__wrapper {
+  &__top,
+  &__wrapper {
     padding: 0 get-d(60px);
     @include respond(lg) {
       padding: 0 get-lg(60px);
@@ -1783,7 +1781,7 @@ $red: #DC3232;
       border-bottom: 1px solid $bg-grey;
     }
     &::before {
-      content: '';
+      content: "";
       position: absolute;
       left: var(--offset-left);
       top: 100%;
@@ -1791,7 +1789,7 @@ $red: #DC3232;
       height: get-d(3px);
       width: var(--offset-width);
       background: $bg-yellow;
-      transition: left .25s, width .25s;
+      transition: left 0.25s, width 0.25s;
       @include respond(lg) {
         height: get-lg(3px);
       }
@@ -1807,7 +1805,7 @@ $red: #DC3232;
     flex: 1;
     padding: get-d(10px) 0;
     color: $bg-grey;
-    transition: font-weight .25s;
+    transition: font-weight 0.25s;
     @include respond(lg) {
       font-size: get-lg(20px);
       padding: get-lg(10px) 0;
@@ -1830,7 +1828,7 @@ $red: #DC3232;
     opacity: 0;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    transition: opacity .5s, transform .5s;
+    transition: opacity 0.5s, transform 0.5s;
     transform: translateY(100%);
     @include respond(md) {
       grid-gap: 16px;
@@ -1925,7 +1923,7 @@ $red: #DC3232;
       &.check {
         position: relative;
         &::after {
-          content: '';
+          content: "";
           position: absolute;
           top: 50%;
           left: 50%;
@@ -1965,7 +1963,7 @@ $red: #DC3232;
         padding: 20px 0;
       }
       &:nth-of-type(even) {
-        background: #FFE3911A;
+        background: #ffe3911a;
       }
       &.main {
         text-align: left;
@@ -1973,7 +1971,7 @@ $red: #DC3232;
         top: 0;
         bottom: 0;
         left: 0;
-        background: #FDFCF9;
+        background: #fdfcf9;
         z-index: 5;
         @include respond(md) {
           min-width: 200px;
@@ -2006,7 +2004,7 @@ $red: #DC3232;
     width: 100%;
     max-width: 100%;
     overflow: auto;
-    background: #FDFCF9;
+    background: #fdfcf9;
     border-radius: get-d(20px);
     margin-top: get-d(120px);
     @include respond(lg) {
@@ -2028,7 +2026,7 @@ $red: #DC3232;
       }
     }
     &::-webkit-scrollbar-track {
-      background: #FDFCF9;
+      background: #fdfcf9;
     }
     &::-webkit-scrollbar-thumb {
       background: $bg-yellow;
