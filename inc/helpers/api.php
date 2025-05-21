@@ -152,3 +152,9 @@ function get_services_by_category($category_id)
         'order' => 'ASC'
     ]);
 }
+
+function getAssetUrlAcf($str) {
+  $image = get_field($str, 'option');
+  $url = isset($image['url']) ? $image['url'] : null;
+  return $url;
+}
