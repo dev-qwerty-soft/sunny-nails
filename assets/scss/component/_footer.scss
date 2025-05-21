@@ -73,6 +73,7 @@
   }
   & .menu-footer-aside-container {
     justify-self: flex-end;
+    text-transform: uppercase;
   }
   & .menu-footer-container {
     @include respond(md) {
@@ -99,11 +100,23 @@
       }
       @include respond(md) {
         font-size: 12px;
+        text-transform: capitalize;
       }
     }
   }
   & .menu-aside-container {
     justify-self: flex-end;
+  }
+  & .footer__menu__aside a {
+    font-size: get-d(14px);
+    text-transform: capitalize;
+    opacity: 0.7;
+    @include respond(lg) {
+      font-size: get-lg(14px);
+    }
+    @include respond(md) {
+      font-size: 12px;
+    }
   }
 }
 

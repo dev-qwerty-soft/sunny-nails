@@ -11524,6 +11524,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _js_function_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./js/function.js */ "./js/function.js");
 
 
+// import "./js/gsap.js";
 
 
 
@@ -11533,6 +11534,15 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+
+const header = (0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.g)(".site-header");
+const footer = (0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.g)(".footer");
+const height = header.offsetHeight + footer.offsetHeight;
+function resize() {
+  document.body.style.setProperty("--vh-min", `${window.innerHeight - height}px`);
+};
+resize();
+window.addEventListener("resize", resize);
 
 let gallerySwiper;
 let filterFn;
@@ -11680,7 +11690,10 @@ if (filterSection) {
     (0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.add)(filter);
 
     const filteredImages = images?.filter((image) => {
-      return slug === "all" || image.getAttribute("data-slug") === slug;
+      if (slug === "all") return true;
+
+      const slugs = image.getAttribute("data-slug")?.split(" ") || [];
+      return slugs.includes(slug);
     });
 
     (0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.remove)(images);
@@ -11741,6 +11754,7 @@ document.onclick = (e) => {
     tabFn?.(e.target);
   }
 };
+
 
 })();
 

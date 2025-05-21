@@ -10,11 +10,12 @@ body {
   overflow-x: hidden;
   background: $bg-color;
   color: $bg-grey;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  height: auto;
-  min-height: 100vh;
+  // display: flex;
+  // flex-direction: column;
+  // justify-content: space-between;
+  // height: auto;
+  // min-height: 100vh;
+  --vh-min: 500px;
   &:has(.burger-menu.active) {
     height: 100vh;
     overflow: hidden;
@@ -24,10 +25,11 @@ body {
   overflow: hidden;
 }
 a {
-  display: block;
-  text-decoration: none !important;
-  cursor: pointer;
-  color: var(--Black);
+  // display: block;
+  text-decoration: none;
+  // cursor: pointer;
+  // color: var(--Black);
+  color: $bg-grey;
 }
 
 img {
