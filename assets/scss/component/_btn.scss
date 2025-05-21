@@ -649,3 +649,50 @@
   }
 }
 
+.stars {
+  display: flex;
+  align-items: center;
+
+  font-weight: 500;
+  font-size: get-d(14px);
+  line-height: 120%;
+
+  &.yellow {
+    & .star {
+      background-image: url("../svg/material-symbols-light_star-shine copy.svg");
+    }
+  }
+
+  @include respond(lg) {
+    font-size: get-lg(14px);
+  }
+  @include respond(md) {
+    font-size: 12px;
+  }
+
+  & span {
+    margin: 0 0 0 get-d(4px);
+    @include respond(lg) {
+      margin: 0 0 0 get-lg(4px);
+    }
+    @include respond(md) {
+      margin: 0 0 0 4px;
+    }
+  }
+
+  & .star {
+    width: get-d(24px);
+    height: get-d(24px);
+    background: url("../svg/material-symbols-light_star-shine.svg") center / cover no-repeat;
+
+    @include respond(lg) {
+      width: get-lg(24px);
+      height: get-lg(24px);
+    }
+    @include respond(md) {
+      width: 24px;
+      height: 24px;
+    }
+  }
+}
+
