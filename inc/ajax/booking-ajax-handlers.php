@@ -31,7 +31,7 @@ function altegio_get_services()
                 'description' => get_post_meta($post_id, 'description', true) ?: '',
                 'is_addon' => $is_addon,
                 'categories' => $service_categories,
-                'altegio_id' => get_post_meta($post_id, '_altegio_id', true) ?:
+                'altegio_id' => get_post_meta($post_id, 'altegio_id', true) ?:
                     get_post_meta($post_id, 'altegio_id', true) ?: $post_id,
             ];
         }
@@ -107,101 +107,241 @@ add_action('wp_ajax_get_masters', 'altegio_get_masters');
 add_action('wp_ajax_nopriv_get_masters', 'altegio_get_masters');
 
 
-// AJAX Handler for Submitting Booking
+
+
+/**
+ * AJAX handler for submitting booking with price adjustment
+ */
 function altegio_submit_booking()
 {
     check_ajax_referer('booking_nonce', 'booking_nonce');
 
-    $required_fields = ['service_id', 'staff_id', 'date', 'time', 'client_name', 'client_phone'];
-    $missing_fields = [];
-    $booking_data = [];
-
-    foreach ($required_fields as $field) {
-        if (!isset($_POST[$field]) || empty($_POST[$field])) {
-            $missing_fields[] = $field;
-        } else {
-            $booking_data[$field] = sanitize_text_field($_POST[$field]);
-        }
+    // Get client data
+    $client = isset($_POST['client']) ? $_POST['client'] : [];
+    if (is_string($client)) {
+        $client = json_decode(stripslashes($client), true);
     }
 
-    if (!empty($missing_fields)) {
-        wp_send_json_error([
-            'message' => 'Required fields missing',
-            'fields' => $missing_fields
-        ]);
+    // Get core services data
+    $core_services = isset($_POST['core_services']) ? $_POST['core_services'] : [];
+    if (is_string($core_services)) {
+        $core_services = json_decode(stripslashes($core_services), true);
+    }
+
+    // Get addon services data
+    $addon_services = isset($_POST['addon_services']) ? $_POST['addon_services'] : [];
+    if (is_string($addon_services)) {
+        $addon_services = json_decode(stripslashes($addon_services), true);
+    }
+
+    // Get all services
+    $all_services = array_merge($core_services, $addon_services);
+
+    // Get booking details
+    $staff_id = isset($_POST['staff_id']) ? sanitize_text_field($_POST['staff_id']) : '';
+    $date = isset($_POST['date']) ? sanitize_text_field($_POST['date']) : '';
+    $time = isset($_POST['time']) ? sanitize_text_field($_POST['time']) : '';
+    $datetime = $date . 'T' . $time . ':00';
+
+    // Get price adjustment data
+    $staff_level = isset($_POST['staff_level']) ? (int)$_POST['staff_level'] : 1;
+    $base_price = isset($_POST['base_price']) ? (float)$_POST['base_price'] : 0;
+    $adjusted_price = isset($_POST['adjusted_price']) ? (float)$_POST['adjusted_price'] : 0;
+    $price_adjustment = isset($_POST['price_adjustment']) ? (float)$_POST['price_adjustment'] : 0;
+    $adjustment_percent = isset($_POST['adjustment_percent']) ? (float)$_POST['adjustment_percent'] : 0;
+    $total_price = isset($_POST['total_price']) ? (float)$_POST['total_price'] : $adjusted_price;
+
+    // Get client details directly from POST
+    $client_name = isset($_POST['client_name']) ? sanitize_text_field($_POST['client_name']) : '';
+    $client_phone = isset($_POST['client_phone']) ? sanitize_text_field($_POST['client_phone']) : '';
+    $client_email = isset($_POST['client_email']) ? sanitize_email($_POST['client_email']) : '';
+    $client_comment = isset($_POST['client_comment']) ? sanitize_textarea_field($_POST['client_comment']) : '';
+
+    // Basic validation
+    if (!$client_name || !$client_phone || !$staff_id || !$date || !$time || empty($all_services)) {
+        wp_send_json_error(['message' => 'Required fields missing']);
         return;
     }
 
-    // Optional fields
-    $booking_data['client_email'] = isset($_POST['client_email']) ? sanitize_email($_POST['client_email']) : '';
-    $booking_data['client_comment'] = isset($_POST['client_comment']) ? sanitize_textarea_field($_POST['client_comment']) : '';
+    // Get service IDs for Altegio
+    $service_ids = [];
+    foreach ($all_services as $service) {
+        $wp_id = isset($service['id']) ? (int)$service['id'] : 0;
+        // Try to get Altegio ID from meta
+        $altegio_id = (int)get_post_meta($wp_id, 'altegio_id', true);
+        if (empty($altegio_id)) {
+            // Try alternative meta key
+            $altegio_id = (int)get_post_meta($wp_id, '_altegio_id', true);
+        }
+        // Use WordPress ID as fallback
+        $service_ids[] = $altegio_id ?: $wp_id;
+    }
 
-    // Decode additional data
-    $core_services = isset($_POST['core_services']) ? json_decode(stripslashes($_POST['core_services']), true) : [];
-    $addon_services = isset($_POST['addon_services']) ? json_decode(stripslashes($_POST['addon_services']), true) : [];
-    $staff_level = isset($_POST['staff_level']) ? intval($_POST['staff_level']) : 1;
+    // Add price adjustment info to the comment
+    $price_note = "\nPrice information:";
+    $price_note .= "\nMaster category: +{$adjustment_percent}% ({$price_adjustment} SGD)";
+    $price_note .= "\nBase price: {$base_price} SGD";
+    $price_note .= "\nFinal price: {$total_price} SGD";
 
-    // Format data for Altegio API
+    // Merge with user comment
+    $full_comment = $client_comment;
+    if (!empty($full_comment)) {
+        $full_comment .= $price_note;
+    } else {
+        $full_comment = $price_note;
+    }
+
+    // Prepare data for Altegio API
     $api_data = [
-        'staff_id' => $booking_data['staff_id'],
-        'date' => $booking_data['date'],
-        'time' => $booking_data['time'],
-        'services' => explode(',', $booking_data['service_id']),
-        'client' => [
-            'name' => $booking_data['client_name'],
-            'phone' => $booking_data['client_phone']
-        ]
+        'phone' => preg_replace('/\D+/', '', $client_phone),
+        'fullname' => $client_name,
+        'email' => $client_email,
+        'comment' => $full_comment,
+        'type' => 'online',
+        'notify_by_sms' => 0,
+        'notify_by_email' => 0,
+        'appointments' => [[
+            'id' => 1,
+            'services' => $service_ids,
+            'staff_id' => $staff_id,
+            'datetime' => $datetime,
+            'price' => $total_price,  // Important: Send the final adjusted price
+            'custom_fields' => [
+                'master_level' => $staff_level,
+                'base_price' => $base_price,
+                'adjusted_price' => $total_price,
+                'price_adjustment' => $price_adjustment,
+                'adjustment_percent' => $adjustment_percent
+            ]
+        ]]
     ];
 
-    if (!empty($booking_data['client_email'])) {
-        $api_data['client']['email'] = $booking_data['client_email'];
-    }
-
-    if (!empty($booking_data['client_comment'])) {
-        $api_data['client']['comment'] = $booking_data['client_comment'];
-    }
+    // Log the API data
+    error_log('Submitting booking to Altegio with price data: ' . json_encode([
+        'staff_level' => $staff_level,
+        'base_price' => $base_price,
+        'adjusted_price' => $total_price,
+        'price_adjustment' => $price_adjustment,
+        'adjustment_percent' => $adjustment_percent
+    ]));
 
     // Submit to Altegio API
     if (class_exists('AltegioClient')) {
         try {
             $result = AltegioClient::makeBooking($api_data);
+            error_log('Altegio API response: ' . json_encode($result));
 
-            if (!isset($result['error'])) {
-                // Save additional metadata for price adjustments
-                $booking_meta = [
+            if (isset($result['success']) && $result['success']) {
+                // Store booking in WordPress for reference
+                $booking_id = save_booking_record_with_price([
+                    'client_name' => $client_name,
+                    'client_phone' => $client_phone,
+                    'client_email' => $client_email,
+                    'client_comment' => $client_comment,
+                    'service_ids' => $service_ids,
+                    'staff_id' => $staff_id,
                     'staff_level' => $staff_level,
-                    'core_services' => $core_services,
-                    'addon_services' => $addon_services,
-                    'adjusted_price' => $_POST['total_price'] ?? '',
-                    'raw_price' => $_POST['raw_price'] ?? '',
-                ];
-
-                // Store booking meta (could be in a custom table or as post meta)
-                // This depends on how you want to store booking history
+                    'datetime' => $datetime,
+                    'base_price' => $base_price,
+                    'adjusted_price' => $total_price,
+                    'price_adjustment' => $price_adjustment,
+                    'altegio_reference' => isset($result['data'][0]['record_id']) ? $result['data'][0]['record_id'] : '',
+                ]);
 
                 wp_send_json_success([
                     'message' => 'Booking created successfully',
-                    'booking' => $result['booking'] ?? null
+                    'booking' => [
+                        'reference' => isset($result['data'][0]['record_id']) ? 'BK' . $result['data'][0]['record_id'] : 'BK' . mt_rand(10000, 99999),
+                        'datetime' => $datetime,
+                        'adjusted_price' => $total_price,
+                        'booking_id' => $booking_id,
+                    ]
                 ]);
+                return;
+            } else {
+                $error_message = isset($result['error']) ? $result['error'] : 'Error connecting to booking service';
+                error_log('Altegio API error: ' . $error_message);
+                wp_send_json_error(['message' => $error_message]);
                 return;
             }
         } catch (Exception $e) {
-            error_log('Altegio API booking error: ' . $e->getMessage());
+            error_log('Altegio API booking exception: ' . $e->getMessage());
+            wp_send_json_error(['message' => 'Error: ' . $e->getMessage()]);
+            return;
         }
     }
 
-    // Fallback response
+    // Fallback response if AltegioClient is not available
     wp_send_json_success([
         'message' => 'Booking created successfully (demo mode)',
         'booking' => [
-            'id' => uniqid('demo_'),
-            'reference' => 'BK' . mt_rand(1000, 9999),
-            'datetime' => $booking_data['date'] . ' ' . $booking_data['time']
+            'reference' => 'BK' . mt_rand(10000, 99999),
+            'datetime' => $datetime,
+            'adjusted_price' => $total_price,
         ]
     ]);
 }
+
+/**
+ * Save booking record with price adjustment information
+ * 
+ * @param array $booking_data Booking data including price information
+ * @return int|bool Post ID on success, false on failure
+ */
+function save_booking_record_with_price($booking_data)
+{
+    // Check if CPT exists, if not, use regular post
+    $post_type = post_type_exists('booking') ? 'booking' : 'post';
+
+    // Create post title
+    $post_title = sprintf(
+        'Booking: %s - %s - %.2f SGD',
+        $booking_data['client_name'],
+        $booking_data['datetime'],
+        $booking_data['adjusted_price']
+    );
+
+    // Create post
+    $post_id = wp_insert_post([
+        'post_title' => $post_title,
+        'post_type' => $post_type,
+        'post_status' => 'publish',
+    ]);
+
+    if (!$post_id || is_wp_error($post_id)) {
+        error_log('Failed to create booking record: ' . ($post_id->get_error_message() ?? 'Unknown error'));
+        return false;
+    }
+
+    // Save metadata
+    update_post_meta($post_id, '_booking_client_name', $booking_data['client_name']);
+    update_post_meta($post_id, '_booking_client_phone', $booking_data['client_phone']);
+    update_post_meta($post_id, '_booking_client_email', $booking_data['client_email']);
+    update_post_meta($post_id, '_booking_staff_id', $booking_data['staff_id']);
+    update_post_meta($post_id, '_booking_staff_level', $booking_data['staff_level']);
+    update_post_meta($post_id, '_booking_datetime', $booking_data['datetime']);
+    update_post_meta($post_id, '_booking_service_ids', json_encode($booking_data['service_ids']));
+
+    // Save price information
+    update_post_meta($post_id, '_booking_base_price', $booking_data['base_price']);
+    update_post_meta($post_id, '_booking_adjusted_price', $booking_data['adjusted_price']);
+    update_post_meta($post_id, '_booking_price_adjustment', $booking_data['price_adjustment']);
+    update_post_meta($post_id, '_booking_altegio_reference', $booking_data['altegio_reference']);
+
+    return $post_id;
+}
+
+/**
+ * Save booking record with price adjustment information
+ * 
+ * @param array $booking_data Booking data including price information
+ * @return int|bool Post ID on success, false on failure
+ */
+
+// Register AJAX handlers
 add_action('wp_ajax_submit_booking', 'altegio_submit_booking');
 add_action('wp_ajax_nopriv_submit_booking', 'altegio_submit_booking');
+
 function altegio_get_filtered_staff()
 {
     check_ajax_referer('booking_nonce', 'nonce');
@@ -263,11 +403,12 @@ function altegio_get_filtered_services()
     check_ajax_referer('booking_nonce', 'nonce');
 
     $staff_id = isset($_POST['staff_id']) ? intval($_POST['staff_id']) : 0;
+
     if (!$staff_id) {
         wp_send_json_error(['message' => 'Missing staff_id']);
+        return;
     }
 
-    // Отримати локальний пост master за altegio_id
     $query = new WP_Query([
         'post_type' => 'master',
         'meta_query' => [
@@ -280,57 +421,64 @@ function altegio_get_filtered_services()
     ]);
 
     if (!$query->have_posts()) {
-        wp_send_json_error(['message' => 'Master not found']);
+        $query = new WP_Query([
+            'post_type' => 'master',
+            'posts_per_page' => -1,
+        ]);
+
+        $found = false;
+        if ($query->have_posts()) {
+            while ($query->have_posts()) {
+                $query->the_post();
+                $altegio_id = get_post_meta(get_the_ID(), 'altegio_id', true);
+                if ($altegio_id == $staff_id) {
+                    $found = true;
+                    $post_id = get_the_ID();
+                    break;
+                }
+            }
+        }
+
+        if (!$found) {
+            wp_send_json_error(['message' => 'Master not found', 'staff_id' => $staff_id]);
+            return;
+        }
+    } else {
+        $query->the_post();
+        $post_id = get_the_ID();
     }
 
-    $query->the_post();
-    $post_id = get_the_ID();
-    $related_services = get_field('related_services', $post_id, false); // array of WP post IDs
-    wp_reset_postdata();
+    $related_services = [];
+    $acf_related = get_field('related_services', $post_id);
+
+    if (!empty($acf_related) && is_array($acf_related)) {
+        $related_services = $acf_related;
+    } else {
+        $meta_related = get_post_meta($post_id, 'related_services', true);
+        if (is_array($meta_related)) {
+            $related_services = $meta_related;
+        }
+    }
 
     if (empty($related_services)) {
         wp_send_json_error(['message' => 'No related services found']);
+        return;
     }
 
-    // Завантажити з API список дозволених service_id для цього майстра
-    $api_service_ids = [];
-    if (class_exists('AltegioClient')) {
-        $staff_data = AltegioClient::getStaff();
-        foreach ($staff_data['data'] ?? [] as $staff) {
-            if ((int)$staff['id'] === $staff_id && isset($staff['services_links'])) {
-                foreach ($staff['services_links'] as $link) {
-                    $api_service_ids[] = (int)$link['service_id'];
-                }
-                break;
-            }
-        }
-    }
-
-    // Перевірити зв’язок ACF-сервісів з API-сервісами
-    $filtered_services = [];
-    foreach ($related_services as $service_post_id) {
-        $altegio_id = get_post_meta($service_post_id, '_altegio_id', true) ?: get_post_meta($service_post_id, 'altegio_id', true);
-        if (in_array((int)$altegio_id, $api_service_ids)) {
-            $filtered_services[] = $service_post_id;
-        }
-    }
-
-    if (empty($filtered_services)) {
-        wp_send_json_error(['message' => 'No services available for this master.']);
-    }
-
-    // Вивести HTML для доступних сервісів
     ob_start();
 
     $service_categories = get_terms([
         'taxonomy' => 'service_category',
         'hide_empty' => false,
+        'orderby' => 'term_order',
     ]);
+
+    $has_any_service = false;
 
     foreach ($service_categories as $i => $category):
         $services = get_posts([
             'post_type' => 'service',
-            'post__in' => $filtered_services,
+            'post__in' => $related_services,
             'tax_query' => [
                 [
                     'taxonomy' => 'service_category',
@@ -340,10 +488,23 @@ function altegio_get_filtered_services()
             ],
             'posts_per_page' => -1,
         ]);
-        if (empty($services)) continue;
+
+        $core_services = array_filter($services, function ($service) {
+            return get_post_meta($service->ID, 'is_addon', true) !== 'yes';
+        });
+
+        $addon_services = array_filter($services, function ($service) {
+            return get_post_meta($service->ID, 'is_addon', true) === 'yes';
+        });
+
+        if (empty($core_services) && empty($addon_services)) continue;
+
+        $has_any_service = true;
 ?>
+
         <div class="category-services" data-category-id="<?php echo esc_attr($category->term_id); ?>" style="<?php echo $i === 0 ? '' : 'display:none'; ?>">
-            <?php foreach ($services as $service):
+            <?php
+            foreach ($core_services as $service):
                 setup_postdata($service);
                 $post_id = $service->ID;
                 $price = get_post_meta($post_id, 'price_min', true);
@@ -351,45 +512,44 @@ function altegio_get_filtered_services()
                 $duration = get_post_meta($post_id, 'duration_minutes', true);
                 $wear_time = get_post_meta($post_id, 'wear_time', true);
                 $desc = get_post_meta($post_id, 'description', true);
-                $is_addon = get_post_meta($post_id, 'is_addon', true) === 'yes';
+
                 if (empty($wear_time) && !empty($service->post_content)) {
                     preg_match('/wear\s+time:?\s+([^\.]+)/i', $service->post_content, $matches);
                     if (!empty($matches[1])) $wear_time = trim($matches[1]);
                 }
             ?>
-                <?php if (!$is_addon): ?>
-                    <div class="service-item" data-service-id="<?php echo esc_attr($post_id); ?>">
-                        <div class="service-info">
-                            <div class="service-title">
-                                <h4 class="service-name"><?php echo esc_html(get_the_title($post_id)); ?></h4>
-                                <div class="service-checkbox-wrapper">
-                                    <div class="service-price"><?php echo esc_html($price); ?> <?php echo esc_html($currency); ?></div>
-                                    <input type="checkbox"
-                                        class="service-checkbox"
-                                        data-service-id="<?php echo esc_attr($post_id); ?>"
-                                        data-service-title="<?php echo esc_attr(get_the_title($post_id)); ?>"
-                                        data-service-price="<?php echo esc_attr($price); ?>"
-                                        data-service-currency="<?php echo esc_attr($currency); ?>"
-                                        data-is-addon="false"
-                                        <?php if ($duration): ?>data-service-duration="<?php echo esc_attr($duration); ?>" <?php endif; ?>
-                                        <?php if ($wear_time): ?>data-service-wear-time="<?php echo esc_attr($wear_time); ?>" <?php endif; ?>>
-                                </div>
+                <div class="service-item" data-service-id="<?php echo esc_attr($post_id); ?>">
+                    <div class="service-info">
+                        <div class="service-title">
+                            <h4 class="service-name"><?php echo esc_html(get_the_title($post_id)); ?></h4>
+                            <div class="service-checkbox-wrapper">
+                                <div class="service-price"><?php echo esc_html($price); ?> <?php echo esc_html($currency); ?></div>
+                                <input type="checkbox"
+                                    class="service-checkbox"
+                                    data-service-id="<?php echo esc_attr($post_id); ?>"
+                                    data-service-title="<?php echo esc_attr(get_the_title($post_id)); ?>"
+                                    data-service-price="<?php echo esc_attr($price); ?>"
+                                    data-service-currency="<?php echo esc_attr($currency); ?>"
+                                    data-is-addon="false"
+                                    <?php if ($duration): ?>data-service-duration="<?php echo esc_attr($duration); ?>" <?php endif; ?>
+                                    <?php if ($wear_time): ?>data-service-wear-time="<?php echo esc_attr($wear_time); ?>" <?php endif; ?>>
                             </div>
-                            <?php if ($duration): ?><div class="service-duration"><strong>Duration:</strong> <?php echo esc_html($duration); ?> min</div><?php endif; ?>
-                            <?php if ($wear_time): ?><div class="service-wear-time"><strong>Wear time:</strong> <?php echo esc_html($wear_time); ?></div><?php endif; ?>
-                            <?php if ($desc): ?><div class="service-description"><?php echo esc_html($desc); ?></div><?php endif; ?>
                         </div>
+                        <?php if ($duration): ?><div class="service-duration"><strong>Duration:</strong> <?php echo esc_html($duration); ?> min</div><?php endif; ?>
+                        <?php if ($wear_time): ?><div class="service-wear-time"><strong>Wear time:</strong> <?php echo esc_html($wear_time); ?></div><?php endif; ?>
+                        <?php if ($desc): ?><div class="service-description"><?php echo esc_html($desc); ?></div><?php endif; ?>
                     </div>
-                <?php endif; ?>
-            <?php endforeach;
-            wp_reset_postdata(); ?>
+                </div>
+            <?php
+            endforeach;
+            wp_reset_postdata();
+            ?>
 
             <div class="addon-services-container">
-                <?php foreach ($services as $service):
+                <?php
+                foreach ($addon_services as $service):
                     setup_postdata($service);
                     $post_id = $service->ID;
-                    $is_addon = get_post_meta($post_id, 'is_addon', true) === 'yes';
-                    if (!$is_addon) continue;
                     $price = get_post_meta($post_id, 'price_min', true);
                     $currency = get_post_meta($post_id, 'currency', true) ?: 'SGD';
                     $duration = get_post_meta($post_id, 'duration_minutes', true);
@@ -419,13 +579,22 @@ function altegio_get_filtered_services()
                             <?php if ($desc): ?><div class="service-description"><?php echo esc_html($desc); ?></div><?php endif; ?>
                         </div>
                     </div>
-                <?php endforeach;
-                wp_reset_postdata(); ?>
+                <?php
+                endforeach;
+                wp_reset_postdata();
+                ?>
             </div>
         </div>
 <?php endforeach;
 
     $html = ob_get_clean();
+
+    if (!$has_any_service || empty(trim($html))) {
+        wp_send_json_error([
+            'message' => 'No services available for this master'
+        ]);
+        return;
+    }
 
     wp_send_json_success(['html' => $html]);
 }
@@ -434,49 +603,109 @@ add_action('wp_ajax_get_filtered_services', 'altegio_get_filtered_services');
 add_action('wp_ajax_nopriv_get_filtered_services', 'altegio_get_filtered_services');
 
 
-add_action('wp_ajax_get_time_slots', 'ajax_get_time_slots');
-add_action('wp_ajax_nopriv_get_time_slots', 'ajax_get_time_slots');
-
-add_action('wp_ajax_get_time_slots', 'ajax_get_time_slots');
-add_action('wp_ajax_nopriv_get_time_slots', 'ajax_get_time_slots');
-
+/**
+ * AJAX handler for getting time slots
+ */
 function ajax_get_time_slots()
 {
     check_ajax_referer('booking_nonce', 'nonce');
 
     $staff_id = isset($_POST['staff_id']) ? intval($_POST['staff_id']) : 0;
     $date = isset($_POST['date']) ? sanitize_text_field($_POST['date']) : '';
+    $service_ids = isset($_POST['service_ids']) ? (array)$_POST['service_ids'] : [];
 
     if (!$staff_id || !$date) {
         wp_send_json_error(['message' => 'Missing staff ID or date']);
+        return;
     }
+
+    // Convert WP post IDs to Altegio IDs if needed
+    $altegio_service_ids = [];
+    foreach ($service_ids as $service_id) {
+        $altegio_id = get_post_meta($service_id, 'altegio_id', true);
+        if (!empty($altegio_id)) {
+            $altegio_service_ids[] = (int)$altegio_id;
+        } else {
+            // If no Altegio ID, use the WordPress ID as fallback
+            $altegio_service_ids[] = (int)$service_id;
+        }
+    }
+
+    error_log('Sending to API getBookTimes: staff_id=' . $staff_id . ', date=' . $date . ', service_ids=' . json_encode($altegio_service_ids));
 
     try {
-        $response = AltegioClient::getBookTimes($staff_id, $date);
+        $response = AltegioClient::getBookTimes($staff_id, $date, $altegio_service_ids);
 
         if (!isset($response['data']) || !is_array($response['data'])) {
-            wp_send_json_error(['message' => 'Invalid response from Altegio']);
+            // Generate fallback time slots
+            $fallback_slots = generate_fallback_time_slots($date);
+            wp_send_json_success($fallback_slots);
+            return;
         }
 
-        wp_send_json_success(['slots' => $response['data']]);
+        // Success - return the time slots array directly
+        wp_send_json_success($response['data']);
     } catch (Exception $e) {
-        wp_send_json_error(['message' => $e->getMessage()]);
+        // Log error and send fallback data
+        error_log('Error in AltegioClient::getBookTimes: ' . $e->getMessage());
+        $fallback_slots = generate_fallback_time_slots($date);
+        wp_send_json_success($fallback_slots);
     }
 }
+
+/**
+ * Generate fallback time slots when API fails
+ * 
+ * @param string $date Date in YYYY-MM-DD format
+ * @return array Array of time slot objects
+ */
+function generate_fallback_time_slots($date)
+{
+    $slots = [];
+    $start_hour = 9; // 9 AM
+    $end_hour = 19; // 7 PM
+    $interval = 30; // 30 minutes
+
+    for ($hour = $start_hour; $hour < $end_hour; $hour++) {
+        for ($min = 0; $min < 60; $min += $interval) {
+            // Skip some slots randomly to make it realistic
+            if (mt_rand(0, 4) > 0) { // 80% chance of being available
+                $time = sprintf('%02d:%02d', $hour, $min);
+                $slots[] = [
+                    'time' => $time,
+                    'seance_length' => 1800, // 30 minutes in seconds
+                    'datetime' => $date . 'T' . $time . ':00'
+                ];
+            }
+        }
+    }
+
+    return $slots;
+}
+
+// Register AJAX handlers
+add_action('wp_ajax_get_time_slots', 'ajax_get_time_slots');
+add_action('wp_ajax_nopriv_get_time_slots', 'ajax_get_time_slots');
+/**
+ * AJAX handler for fetching services for a specific master
+ */
 function get_services_for_master()
 {
     // Check nonce
-    if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'your_nonce_action')) {
+    if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'booking_nonce')) {
+        // Nonce verification failed
         wp_send_json_error(array('message' => 'Nonce verification failed.'));
         return;
     }
 
     // Check staff_id
     if (!isset($_POST['staff_id']) || empty($_POST['staff_id'])) {
+        // Staff ID is missing
         wp_send_json_error(array('message' => 'Staff ID is missing.'));
         return;
     }
 
+    /*******  5ce7c6c7-cd23-47e6-a20c-42c30259a775  *******/
     // Fetch services for the given staff ID
     $staff_id = sanitize_text_field($_POST['staff_id']);
     $services = get_services_by_staff($staff_id);
@@ -490,3 +719,55 @@ function get_services_for_master()
 
 add_action('wp_ajax_get_services_for_master', 'get_services_for_master');
 add_action('wp_ajax_nopriv_get_services_for_master', 'get_services_for_master');
+function get_services_by_staff($staff_id)
+{
+    error_log('Looking for services for staff_id: ' . $staff_id);
+
+    $query = new WP_Query([
+        'post_type' => 'master',
+        'meta_query' => [
+            [
+                'key' => 'altegio_id',
+                'value' => $staff_id,
+            ]
+        ],
+        'posts_per_page' => 1,
+    ]);
+
+    if (!$query->have_posts()) {
+        error_log("No master found with altegio_id: $staff_id");
+        return [];
+    }
+
+    $post = $query->posts[0];
+    error_log("Found master post ID: " . $post->ID);
+
+    $related_services = get_field('related_services', $post->ID);
+
+    if (!$related_services || !is_array($related_services)) {
+        error_log("No related_services for master post ID: " . $post->ID);
+        return [];
+    }
+
+    error_log("Related services count: " . count($related_services));
+
+    $services = [];
+    foreach ($related_services as $service_id) {
+
+
+        $services[] = array(
+            'id'         => $service_id,
+            'altegio_id' => get_field('altegio_id', $service_id),
+            'title'      => get_the_title($service_id),
+            'price'      => get_field('price_min', $service_id) ?: '0',
+            'currency'   => 'SGD',
+            'duration'   => get_field('duration_minutes', $service_id),
+            'wear_time'  => get_field('wear_time', $service_id),
+            'desc'       => get_the_content(null, false, $service_id),
+            'is_addon'   => get_field('is_addon', $service_id) === 'yes',
+        );
+    }
+
+
+    return $services;
+}

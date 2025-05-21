@@ -172,42 +172,6 @@ class BookingPopupController
     }
 
     /**
-     * AJAX handler for getting time slots
-     */
-    public static function ajax_get_time_slots()
-    {
-        // Verify nonce
-        if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'booking_popup_nonce')) {
-            wp_send_json_error(['message' => 'Security check failed']);
-            exit;
-        }
-
-        // Get parameters
-        $staff_id = isset($_POST['staff_id']) ? sanitize_text_field($_POST['staff_id']) : '';
-        $date = isset($_POST['date']) ? sanitize_text_field($_POST['date']) : '';
-
-        if (empty($staff_id) || empty($date)) {
-            wp_send_json_error(['message' => 'Missing required parameters']);
-            exit;
-        }
-
-        // Try to get time slots from API
-        if (class_exists('AltegioClient')) {
-            $time_slots = AltegioClient::getTimeSlots($staff_id, $date);
-
-            if (!isset($time_slots['error'])) {
-                wp_send_json_success($time_slots);
-                exit;
-            }
-        }
-
-        // Generate fallback time slots
-        $fallback_slots = self::generate_fallback_time_slots($date);
-        wp_send_json_success(['slots' => $fallback_slots]);
-        exit;
-    }
-
-    /**
      * Generate fallback time slots for demo purposes
      */
     private static function generate_fallback_time_slots($date)
@@ -272,19 +236,26 @@ class BookingPopupController
         }
 
         // Parse service IDs
-        $service_ids = explode(',', $booking_data['service_id']);
+        $wp_service_ids = explode(',', $booking_data['service_id']);
+        $service_altegios = array_map(function ($post_id) {
+            return (int) get_post_meta($post_id, 'altegio_id', true);
+        }, $wp_service_ids);
+
 
         // Format data for API
         $api_data = [
-            'staff_id' => $booking_data['staff_id'],
-            'date' => $booking_data['date'],
-            'time' => $booking_data['time'],
-            'services' => $service_ids,
+            'company_id' => AltegioClient::COMPANY_ID,
+            'staff_id' => (int) $booking_data['staff_id'],
+            'datetime' => $booking_data['date'] . 'T' . $booking_data['time'] . ':00',
+            'services' => array_map(function ($id) {
+                return ['id' => (int) $id];
+            }, $service_ids),
             'client' => [
                 'name' => $booking_data['client_name'],
                 'phone' => $booking_data['client_phone']
             ]
         ];
+
 
         // Add optional client fields
         if (isset($booking_data['client_email'])) {

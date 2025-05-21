@@ -16,36 +16,46 @@ class AltegioClient
 
         $args = [
             'headers' => [
-                'Accept'        => 'application/vnd.api.v2+json',
-                'Content-Type'  => 'application/json',
-                'Authorization' => 'Bearer ' . self::PARTNER_TOKEN . ', User ' . self::USER_TOKEN,
+                'Accept' => 'application/vnd.api.v2+json',
+                'Content-Type' => 'application/json',
+                'Authorization' => 'Bearer ' . self::PARTNER_TOKEN,
             ],
-            'timeout' => 15,
-            'method'  => $method,
+            'timeout' => 20,
+            'method' => $method,
         ];
 
         if ($method === 'POST' && !empty($body)) {
-            $args['body'] = json_encode($body);
+            $args['body'] = json_encode($body); // ✅ тіло у форматі JSON
         }
 
-        $response = ($method === 'GET')
-            ? wp_remote_get($url, $args)
-            : wp_remote_post($url, $args);
+        error_log("Altegio API Request: $method $url");
+        if (!empty($body)) {
+            error_log("Request body: " . json_encode($body));
+        }
+
+        $response = wp_remote_request($url, $args);
 
         if (is_wp_error($response)) {
-            return ['error' => $response->get_error_message()];
+            return [
+                'success' => false,
+                'error' => $response->get_error_message()
+            ];
         }
 
         $code = wp_remote_retrieve_response_code($response);
         $body = wp_remote_retrieve_body($response);
         $data = json_decode($body, true);
 
-        if ($code !== 200) {
-            return ['error' => 'HTTP ' . $code, 'body' => $data];
-        }
+        error_log("Altegio API Response (HTTP $code): " . $body);
 
-        return $data;
+        return [
+            'success' => in_array($code, [200, 201]),
+            'data' => $data,
+            'body' => $body,
+            'status' => $code
+        ];
     }
+
 
     public static function getServices(): array
     {
@@ -100,14 +110,46 @@ class AltegioClient
         return self::request('book_times', $params);
     }
 
-    public static function makeBooking(array $bookingData): array
+    /**
+     * Submit booking to Altegio API
+     * 
+     * @param array $data Booking data
+     * @return array API response
+     */
+    public static function makeBooking(array $data)
     {
-        if (!isset($bookingData['company_id'])) {
-            $bookingData['company_id'] = self::COMPANY_ID;
+        error_log('Making booking with data: ' . json_encode($data));
+
+        // Валідація обов’язкових полів
+        $required = ['phone', 'fullname', 'appointments'];
+        foreach ($required as $field) {
+            if (empty($data[$field])) {
+                return [
+                    'success' => false,
+                    'error' => "Missing required field: {$field}"
+                ];
+            }
         }
 
-        return self::request('book', [], 'POST', $bookingData);
+        // Формування datetime якщо передано окремо date + time
+        if (isset($data['date'], $data['time']) && empty($data['datetime'])) {
+            $data['datetime'] = $data['date'] . 'T' . $data['time'] . ':00';
+            unset($data['date'], $data['time']);
+        }
+
+        // Видалити зайві поля
+        unset($data['company_id'], $data['action'], $data['nonce']);
+
+        // Визначити endpoint
+        $endpoint = 'book_record/' . self::COMPANY_ID;
+
+        // Відправити запит
+        return self::request($endpoint, [], 'POST', $data);
     }
+
+
+
+
 
     public static function getBookingForm(int $formId = null): array
     {
