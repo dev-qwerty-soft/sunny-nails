@@ -284,9 +284,10 @@
       goToStep(nextStep);
 
       // If pre-selected service, select it
-      if (nextStep === "services" && bookingData.preSelectedServiceId) {
+      if (nextStep === "services" && bookingData.preSelectedMasterId) {
         setTimeout(function () {
-          $(`input[data-service-id="${bookingData.preSelectedServiceId}"]`).prop("checked", true).trigger("change");
+          const masterId = bookingData.preSelectedMasterId;
+          loadServicesForMaster(masterId);
         }, 100);
       }
 
@@ -563,7 +564,9 @@
 
       debug("Master selected, proceeding to", nextStep);
 
-      if (nextStep === "datetime") {
+      if (nextStep === "services") {
+        loadServicesForMaster(bookingData.staffId);
+      } else if (nextStep === "datetime") {
         generateCalendar();
       }
 
@@ -675,23 +678,31 @@
     // Phone number formatting
     $(document).on("input", "#client-phone", function () {
       const input = $(this);
-      let phone = input.val().replace(/\D/g, "");
+      let raw = input.val().replace(/\D/g, "");
 
-      // Simple phone formatting
-      if (phone.length > 0) {
-        if (phone.length <= 3) {
-          phone = phone;
-        } else if (phone.length <= 6) {
-          phone = phone.slice(0, 3) + "-" + phone.slice(3);
-        } else if (phone.length <= 10) {
-          phone = phone.slice(0, 3) + "-" + phone.slice(3, 6) + "-" + phone.slice(6);
+      let formatted = raw;
+      if (raw.length > 0) {
+        formatted = "+";
+        if (raw.length <= 3) {
+          formatted += raw;
+        } else if (raw.length <= 6) {
+          formatted += raw.slice(0, 3) + "-" + raw.slice(3);
+        } else if (raw.length <= 10) {
+          formatted += raw.slice(0, 3) + "-" + raw.slice(3, 6) + "-" + raw.slice(6);
         } else {
-          phone = phone.slice(0, 3) + "-" + phone.slice(3, 6) + "-" + phone.slice(6, 10);
+          formatted += raw.slice(0, 3) + "-" + raw.slice(3, 6) + "-" + raw.slice(6, 10);
         }
-        input.val(phone);
+      }
+
+      input.val(formatted);
+
+      if (typeof bookingData !== "undefined") {
+        bookingData.contact = bookingData.contact || {};
+        bookingData.contact.phone = raw;
       }
     });
 
+    // Confirm booking button
     // Confirm booking button
     $(document).on("click", ".confirm-booking-btn", function () {
       const form = $("#booking-form")[0];
@@ -730,9 +741,19 @@
         return;
       }
 
-      // Proceed to confirmation step
-      bookingData.flowHistory.push("confirm");
-      goToStep("confirm");
+      // Зберігаємо контактну інформацію
+      bookingData.contact = {
+        name: $("#client-name").val().trim(),
+        phone: $("#client-phone").val().trim(),
+        email: $("#client-email").val().trim(),
+        comment: $("#client-comment").val().trim(),
+      };
+
+      // Викликаємо відправлення даних на сервер
+      submitBooking();
+
+      // НЕ переходимо на крок confirmation зараз
+      // goToStep("confirm") буде викликано після успішного відправлення даних
     });
   }
 
@@ -873,8 +894,30 @@
    * Show validation alert when validation fails
    * @param {string} message - Alert message to show
    */
-  function showValidationAlert(message) {}
+  function showValidationAlert(message) {
+    // Remove any existing alerts
+    $(".validation-alert-overlay").remove();
 
+    // Create custom alert
+    const alertHtml = `
+    <div class="validation-alert-overlay">
+      <div class="validation-alert">
+        <div class="validation-alert-title">Message</div>
+        <div class="validation-alert-message">${message}</div>
+        <button class="validation-alert-button">OK</button>
+      </div>
+    </div>
+  `;
+
+    $("body").append(alertHtml);
+
+    // Bind click event to the button
+    $(document).on("click", ".validation-alert-button", function () {
+      $(".validation-alert-overlay").remove();
+    });
+
+    console.log("[Booking Fix] Validation alert shown:", message);
+  }
   /**
    * Reset the booking form to initial state
    */
@@ -1093,66 +1136,80 @@
   function loadServicesForMaster(masterId) {
     debug("Loading services for master", masterId);
 
-    $(".booking-popup .services-list").html('<p class="loading-message">Loading services...</p>');
-
-    $.ajax({
-      url: config.apiEndpoint,
-      type: "POST",
-      data: {
-        action: "get_services_for_master",
-        staff_id: masterId,
-        nonce: config.nonce,
-      },
-      success: function (response) {
-        if (response.success && Array.isArray(response.data)) {
-          renderServices(response.data);
-        } else {
-          console.warn("No services available for the selected master");
-          $(".booking-popup .services-list").html('<p class="no-items-message">No services available for this master.</p>');
-        }
-      },
-      error: function (xhr, status, error) {
-        console.error("Error loading services for master:", error);
-        $(".booking-popup .services-list").html('<p class="no-items-message">Error loading services.</p>');
-      },
-    });
+    $(".services-list").html('<p class="loading-message">Loading services...</p>');
 
     $.ajax({
       url: booking_params.ajax_url,
-      type: "POST",
+      method: "POST",
       data: {
         action: "get_filtered_services",
         staff_id: masterId,
         nonce: booking_params.nonce,
       },
       success: function (response) {
-        if (response.success && response.data && response.data.html) {
-          $(".booking-popup .services-list").html(response.data.html);
-          debug("Filtered services HTML loaded");
+        console.log("Full Response:", response);
 
+        if (response.success && response.data && response.data.html) {
+          $(".services-list").html(response.data.html);
           updateAddonAvailability();
           updateNextButtonState();
         } else {
-          $(".booking-popup .services-list").html('<p class="no-items-message">No services available for this master.</p>');
+          console.error("Services response details:", response);
+          $(".services-list").html('<p class="no-items-message">No services available for this master. Details logged in console.</p>');
         }
       },
-      error: function () {
-        $(".booking-popup .services-list").html('<p class="no-items-message">Error loading services.</p>');
+      error: function (xhr, status, error) {
+        console.error("AJAX Error:", {
+          status: status,
+          error: error,
+          responseText: xhr.responseText,
+        });
+        $(".services-list").html('<p class="no-items-message">Error loading services. Check console for details.</p>');
       },
     });
   }
-
-  // Додай цю частину одразу після оголошення функції
   $(document).on("click", ".staff-item", function () {
     const masterId = $(this).data("staff-id");
+    const initialOption = window.bookingData ? window.bookingData.initialOption : "services";
+
+    // Якщо обраний конкретний майстер (не "any")
     if (masterId && masterId !== "any") {
-      loadServicesForMaster(masterId);
+      // Перевірка, чи є вже обрані сервіси
+      const selectedServices = $(".service-checkbox:checked");
+
+      if (selectedServices.length === 0) {
+        // Якщо сервіси не обрані, завантажимо всі доступні для майстра
+        loadServicesForMaster(masterId);
+      } else {
+        // Якщо сервіси вже обрані, перевіримо їх відповідність майстру
+        $.ajax({
+          url: booking_params.ajax_url,
+          method: "POST",
+          data: {
+            action: "get_filtered_services",
+            staff_id: masterId,
+            nonce: booking_params.nonce,
+          },
+          success: function (response) {
+            if (response.success && response.data && response.data.html) {
+              $(".services-list").html(response.data.html);
+              updateAddonAvailability();
+              updateNextButtonState();
+            }
+          },
+          error: function () {
+            console.error("Failed to load services for master");
+          },
+        });
+      }
     } else {
+      // Якщо обраний "будь-який майстер"
       $(".service-item").show();
+      updateAddonAvailability();
+      updateNextButtonState();
     }
   });
   function filterServicesByAllowedIds(allowedIds) {
-    // Пройтись по кожній категорії
     $(".category-services").each(function () {
       let hasVisible = false;
 
@@ -1172,7 +1229,6 @@
           }
         });
 
-      // Показуємо/ховаємо категорію цілком, якщо в ній нічого не лишилось
       if (hasVisible) {
         $(this).show();
       } else {
@@ -1180,7 +1236,6 @@
       }
     });
 
-    // Активуємо першу доступну вкладку
     $(".category-tab").each(function () {
       const categoryId = $(this).data("category-id");
       const $categoryBlock = $(`.category-services[data-category-id="${categoryId}"]`);
@@ -1479,25 +1534,29 @@
    * @param {string} date - Date in YYYY-MM-DD format
    */
 
+  /**
+   * Load time slots for selected date and staff
+   * @param {string} date - Date in YYYY-MM-DD format
+   */
   function loadTimeSlots(date) {
     if (!bookingData.staffId || bookingData.services.length === 0) {
       console.warn("Staff or service not selected");
-      $(".time-slots").html('<p class="error-message">Please select a staff and service first.</p>');
+      $(".time-sections").html('<p class="error-message">Please select a staff and service first.</p>');
       return;
     }
 
     if (!date) {
-      $(".time-slots").html('<p class="error-message">Please select a date.</p>');
+      $(".time-sections").html('<p class="error-message">Please select a date.</p>');
       return;
     }
 
-    const serviceIds = bookingData.coreServices.map((s) => s.altegioId || s.id).join(",");
-    if (!serviceIds) {
-      $(".time-slots").html('<p class="error-message">Please select at least one core service.</p>');
+    const serviceIds = bookingData.coreServices.map((s) => s.altegioId || s.id);
+    if (!serviceIds.length) {
+      $(".time-sections").html('<p class="error-message">Please select at least one core service.</p>');
       return;
     }
 
-    $(".time-slots").html('<p class="loading-message">Loading available time slots...</p>');
+    $(".time-sections").html('<p class="loading-message">Loading available time slots...</p>');
     console.log("Sending service IDs:", serviceIds);
 
     $.ajax({
@@ -1512,216 +1571,87 @@
       },
       success: function (response) {
         if (response.success) {
-          const slots = response.data?.slots ?? [];
+          // Check if we have slots data from the API
+          let slots = [];
+
+          // Handle different response formats
+          if (response.data && Array.isArray(response.data)) {
+            slots = response.data;
+          } else if (response.data && Array.isArray(response.data.slots)) {
+            slots = response.data.slots;
+          } else if (response.data && response.data.data && Array.isArray(response.data.data)) {
+            slots = response.data.data;
+          }
+
           if (slots.length > 0) {
             renderTimeSlots(slots);
           } else {
-            $(".time-slots").html('<p class="error-message">No available time slots for this day.</p>');
+            $(".time-sections").html('<p class="error-message">No available time slots for this day.</p>');
           }
         } else {
-          $(".time-slots").html('<p class="error-message">Error loading time slots. Please try again later.</p>');
+          $(".time-sections").html('<p class="error-message">Error loading time slots. Please try again later.</p>');
         }
       },
       error: function (xhr, status, error) {
-        console.error("Error loading time slots:", error);
-        $(".time-slots").html('<p class="error-message">Error loading time slots. Please try again later.</p>');
+        console.error("Error loading time slots:", error, xhr.responseText);
+        $(".time-sections").html('<p class="error-message">Error loading time slots. Please try again later.</p>');
       },
     });
   }
 
+  /**
+   * Render time slots
+   * @param {Array} slots - Array of time slot objects from API
+   */
   function renderTimeSlots(slots) {
+    const $target = $(".time-sections");
     if (!slots || slots.length === 0) {
-      $(".time-sections").html('<div class="no-slots-message">No available time slots for this date.</div>');
+      $target.html('<div class="no-slots-message">No available time slots for this date.</div>');
       return;
     }
 
-    const getTime = (slot) => {
-      if (typeof slot === "object" && slot.time) return slot.time.slice(0, 5);
-      if (typeof slot === "string") return slot.split(" ")[1]?.slice(0, 5) || slot.slice(0, 5);
-      return "";
-    };
+    // Process the time slots from API format to simple time strings
+    const times = [];
+    slots.forEach((slot) => {
+      // Handle different data formats from API
+      if (typeof slot === "object" && slot.time) {
+        times.push(slot.time);
+      } else if (typeof slot === "string") {
+        // If it's a string like "2025-05-23 10:00:00", extract just the time part
+        const timePart = slot.split(" ")[1];
+        if (timePart) {
+          times.push(timePart.slice(0, 5)); // Get just HH:MM
+        }
+      }
+    });
 
-    const times = slots.map(getTime).filter(Boolean);
-
+    // Group times by period of day
     const grouped = {
       Morning: times.filter((t) => parseInt(t.split(":")[0]) < 12),
-      Day: times.filter((t) => {
+      Afternoon: times.filter((t) => {
         const h = parseInt(t.split(":")[0]);
         return h >= 12 && h < 17;
       }),
       Evening: times.filter((t) => parseInt(t.split(":")[0]) >= 17),
     };
 
+    // Build HTML for each time group
     let html = "";
     for (const [label, group] of Object.entries(grouped)) {
       if (!group.length) continue;
       html += `<div class="time-group">
       <div class="time-group-title">${label}</div>
-      <div class="time-slots">${group.map((t) => `<div class="time-slot" data-time="${t}">${t}</div>`).join("")}</div>
+      <div class="time-slot-list">${group.map((t) => `<div class="time-slot" data-time="${t}">${t}</div>`).join("")}</div>
     </div>`;
     }
 
-    $(".time-sections").html(html);
+    $target.html(html);
 
+    // If a time was previously selected, mark it as selected
     if (bookingData.time) {
       $(`.time-slot[data-time="${bookingData.time}"]`).addClass("selected");
     }
   }
-
-  document.addEventListener("DOMContentLoaded", () => {
-    const calendarGrid = document.querySelector(".calendar-grid");
-    const timeSlotsContainer = document.querySelector(".time-slots");
-    const currentMonthElem = document.querySelector(".current-month");
-    const prevMonthBtn = document.querySelector(".prev-month");
-    const nextMonthBtn = document.querySelector(".next-month");
-    const nextBtn = document.querySelector(".next-btn");
-
-    let staffId = window.bookingData?.staffId || null;
-    let serviceIds = window.bookingData?.services || [];
-    let selectedDate = null;
-    let currentYear = new Date().getFullYear();
-    let currentMonth = new Date().getMonth();
-
-    function renderCalendar(year, month, availableDates = []) {
-      currentMonthElem.textContent = new Date(year, month).toLocaleString("en-US", { month: "long", year: "numeric" });
-      calendarGrid.innerHTML = "";
-
-      const firstDayOfMonth = new Date(year, month, 1);
-      const startDay = firstDayOfMonth.getDay() || 7;
-      const daysInMonth = new Date(year, month + 1, 0).getDate();
-
-      for (let i = 1; i < startDay; i++) {
-        const emptyCell = document.createElement("div");
-        emptyCell.classList.add("empty-day");
-        calendarGrid.appendChild(emptyCell);
-      }
-
-      for (let day = 1; day <= daysInMonth; day++) {
-        const dayCell = document.createElement("div");
-        dayCell.textContent = day;
-        dayCell.classList.add("calendar-day");
-
-        const dateStr = `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
-        if (availableDates.includes(dateStr)) {
-          dayCell.classList.add("available");
-          dayCell.addEventListener("click", () => {
-            selectedDate = dateStr;
-            highlightSelectedDate(dayCell);
-            loadTimeSlots();
-          });
-        } else {
-          dayCell.classList.add("unavailable");
-        }
-        calendarGrid.appendChild(dayCell);
-      }
-    }
-
-    function highlightSelectedDate(selectedElem) {
-      document.querySelectorAll(".calendar-day.available").forEach((el) => el.classList.remove("selected"));
-      selectedElem.classList.add("selected");
-    }
-
-    async function loadAvailableDates() {
-      if (!staffId || serviceIds.length === 0) {
-        console.warn("Staff or service not selected");
-        return;
-      }
-
-      try {
-        const response = await fetch(ajaxurl, {
-          method: "POST",
-          headers: { "Content-Type": "application/x-www-form-urlencoded" },
-          body: new URLSearchParams({
-            action: "get_booking_dates",
-            nonce: booking_nonce,
-            staff_id: staffId,
-            service_ids: serviceIds.join(","),
-            year: currentYear,
-            month: currentMonth + 1,
-          }),
-        });
-        const data = await response.json();
-
-        if (data.success) {
-          renderCalendar(currentYear, currentMonth, data.data.available_dates);
-        } else {
-          renderCalendar(currentYear, currentMonth, []);
-          console.error("Error fetching dates:", data.data?.message);
-        }
-      } catch (error) {
-        console.error("Ajax error:", error);
-      }
-    }
-
-    async function loadTimeSlots() {
-      if (!staffId || !selectedDate || serviceIds.length === 0) {
-        timeSlotsContainer.innerHTML = "<p>Please select a date to see available time slots</p>";
-        return;
-      }
-
-      timeSlotsContainer.innerHTML = "<p>Loading...</p>";
-
-      try {
-        const response = await fetch(ajaxurl, {
-          method: "POST",
-          headers: { "Content-Type": "application/x-www-form-urlencoded" },
-          body: new URLSearchParams({
-            action: "get_time_slots",
-            nonce: booking_nonce,
-            staff_id: staffId,
-            date: selectedDate,
-            service_id: serviceIds.join(","),
-          }),
-        });
-        const data = await response.json();
-
-        if (data.success && data.slots.length) {
-          timeSlotsContainer.innerHTML = "";
-          data.slots.forEach((slot) => {
-            const slotBtn = document.createElement("button");
-            slotBtn.type = "button";
-            slotBtn.classList.add("time-slot");
-            slotBtn.textContent = `${slot.time} (${Math.floor(slot.seance_length / 60)} min)`;
-            slotBtn.addEventListener("click", () => {
-              window.bookingData.time = slot.time;
-              updateSelectedTimeUI(slotBtn);
-            });
-            timeSlotsContainer.appendChild(slotBtn);
-          });
-        } else {
-          timeSlotsContainer.innerHTML = "<p>No available time slots for this day.</p>";
-        }
-      } catch (error) {
-        timeSlotsContainer.innerHTML = "<p>Error loading time slots.</p>";
-        console.error("Ajax error:", error);
-      }
-    }
-
-    function updateSelectedTimeUI(selectedBtn) {
-      document.querySelectorAll(".time-slot").forEach((btn) => btn.classList.remove("selected"));
-      selectedBtn.classList.add("selected");
-    }
-
-    prevMonthBtn.addEventListener("click", () => {
-      currentMonth--;
-      if (currentMonth < 0) {
-        currentMonth = 11;
-        currentYear--;
-      }
-      loadAvailableDates();
-    });
-
-    nextMonthBtn.addEventListener("click", () => {
-      currentMonth++;
-      if (currentMonth > 11) {
-        currentMonth = 0;
-        currentYear++;
-      }
-      loadAvailableDates();
-    });
-
-    loadAvailableDates();
-  });
 
   /**
    * Format time for display (24h to 12h)
@@ -1867,6 +1797,11 @@
    * This function is called when navigating to the contact step
    * and populates all data dynamically from previous selections
    */
+  /**
+   * Update booking summary with selected services and master
+   * This function is called when navigating to the contact step
+   * and populates all data dynamically from previous selections
+   */
   function updateSummary() {
     // Select all the elements we need to update
     const masterBox = $(".summary-master-date .master-info");
@@ -1908,22 +1843,26 @@
     // Build service items and calculate totals
     let serviceHTML = "";
     let addonHTML = "";
-    let total = 0;
-    let bonus = 0;
+    let basePrice = 0;
+    let adjustedTotal = 0;
+    let priceAdjustment = 0;
 
     // Process each service
     bookingData.services.forEach((service) => {
       // Convert price to number
       let price = parseFloat(service.price);
-      let adjusted = price;
+      basePrice += price;
 
-      // Apply master level price adjustment
+      // Calculate individual service adjustment based on master level
+      let adjustedPrice = price;
       if (bookingData.staffLevel > 1) {
         const percent = (bookingData.staffLevel - 1) * config.priceAdjustmentPerLevel;
-        const extra = price * (percent / 100);
-        adjusted += extra;
-        bonus += extra;
+        const adjustment = price * (percent / 100);
+        adjustedPrice = price + adjustment;
+        priceAdjustment += adjustment;
       }
+
+      adjustedTotal += adjustedPrice;
 
       // Create service item HTML
       const itemHTML = `
@@ -1932,10 +1871,9 @@
           <strong>${service.title}</strong>
           ${service.duration ? `<div class="meta"><strong>Duration:</strong> ${service.duration} min</div>` : ""}
           ${service.wearTime ? `<div class="meta"><strong>Wear time:</strong> ${service.wearTime}</div>` : ""}
-         ${service.desc ? `<div class="meta service-description">${service.desc}</div>` : ""}
-
+          ${service.desc ? `<div class="meta service-description">${service.desc}</div>` : ""}
         </div>
-        <div class="service-price"><strong>${adjusted.toFixed(2)} ${service.currency || "SGD"}</strong></div>
+        <div class="service-price"><strong>${adjustedPrice.toFixed(2)} ${service.currency || "SGD"}</strong></div>
       </div>
     `;
 
@@ -1945,8 +1883,6 @@
       } else {
         serviceHTML += itemHTML;
       }
-
-      total += adjusted;
     });
 
     // Update service sections
@@ -1955,27 +1891,36 @@
     // Update add-ons section with title if there are add-ons
     if (addonHTML) {
       addonsList.html(`
-        <h3 class="section-subtitle">Add-ons</h3>
-        ${addonHTML}
-      `);
+      <h3 class="section-subtitle">Add-ons</h3>
+      ${addonHTML}
+    `);
     } else {
       addonsList.empty();
     }
 
     // Update master bonus and total
     const bonusPercent = bookingData.staffLevel > 1 ? (bookingData.staffLevel - 1) * config.priceAdjustmentPerLevel : 0;
+    masterPercent.text(bonusPercent);
+
+    // Format the adjustment to 2 decimal places
+    const formattedAdjustment = priceAdjustment.toFixed(2);
+    masterBonusEl.text(`${formattedAdjustment} SGD`);
 
     // Only show master bonus if there is one
-    if (bonus > 0) {
-      masterBonusEl.text(`${bonus.toFixed(2)} SGD`);
-      masterPercent.text(bonusPercent);
-      $(".master-bonus-row").show();
+    if (priceAdjustment > 0) {
+      $(".summary-item:not(.total)").show();
     } else {
-      $(".master-bonus-row").hide();
+      $(".summary-item:not(.total)").hide();
     }
 
-    const finalTotal = total + bonus;
-    totalAmountEl.text(`${finalTotal.toFixed(2)} SGD`);
+    // Update total amount
+    totalAmountEl.text(`${adjustedTotal.toFixed(2)} SGD`);
+
+    // Store the calculated values in bookingData for later use
+    bookingData.basePrice = basePrice;
+    bookingData.adjustedPrice = adjustedTotal;
+    bookingData.priceAdjustment = priceAdjustment;
+    bookingData.adjustmentPercent = bonusPercent;
 
     // Restore any previously entered contact info
     if (bookingData.contact) {
@@ -1984,6 +1929,13 @@
       $("#client-email").val(bookingData.contact.email || "");
       $("#client-comment").val(bookingData.contact.comment || "");
     }
+
+    console.log("Updated booking summary with price calculation:", {
+      basePrice: basePrice.toFixed(2),
+      adjustment: priceAdjustment.toFixed(2),
+      adjustedTotal: adjustedTotal.toFixed(2),
+      adjustmentPercent: bonusPercent,
+    });
   }
 
   /**
@@ -2051,28 +2003,75 @@
    * Submit the booking
    * This function is called when clicking the confirmation button
    */
+
   function submitBooking() {
     // Show loading state
     $(".confirm-booking-btn").prop("disabled", true).text("Processing...");
+    $(".loading-overlay").show();
 
-    // Prepare data for submission
+    // Check if booking data is ready
+    if (!bookingData.staffId || !bookingData.date || !bookingData.time || bookingData.services.length === 0) {
+      showValidationAlert("Missing booking information. Please complete all steps.");
+      $(".confirm-booking-btn").prop("disabled", false).text("Book an appointment");
+      $(".loading-overlay").hide();
+      return;
+    }
+
+    // Format the datetime string properly
+    const formattedDateTime = bookingData.date + "T" + bookingData.time + ":00";
+
+    // Calculate price adjustments
+    const basePrice = calculateBasePrice();
+    const staffLevel = parseInt(bookingData.staffLevel) || 1;
+    const adjustmentPercent = staffLevel > 1 ? (staffLevel - 1) * config.priceAdjustmentPerLevel : 0;
+    const priceAdjustment = calculatePriceAdjustment(basePrice, staffLevel);
+    const adjustedPrice = parseFloat((basePrice + priceAdjustment).toFixed(2));
+
+    // Format services array with price adjustments
+    const formattedServices = bookingData.services.map((service) => {
+      // Calculate individual service price adjustment
+      const origPrice = parseFloat(service.price);
+      const serviceAdjustment = staffLevel > 1 ? origPrice * (adjustmentPercent / 100) : 0;
+      const serviceAdjustedPrice = origPrice + serviceAdjustment;
+
+      return {
+        id: parseInt(service.id),
+        price: serviceAdjustedPrice.toFixed(2), // Send adjusted price per service
+      };
+    });
+
+    // Prepare client data
+    const clientData = {
+      name: bookingData.contact.name,
+      phone: bookingData.contact.phone,
+      email: bookingData.contact.email || "",
+      comment: bookingData.contact.comment || "",
+    };
+
+    // Prepare data for submission with the correct structure and price data
     const bookingRequest = {
       action: "submit_booking",
       booking_nonce: booking_params.nonce,
-      service_id: bookingData.services.map((s) => s.id).join(","),
       staff_id: bookingData.staffId,
       date: bookingData.date,
       time: bookingData.time,
-      client_name: bookingData.contact.name,
-      client_phone: bookingData.contact.phone,
-      client_email: bookingData.contact.email || "",
-      client_comment: bookingData.contact.comment || "",
-      // Include additional data
-      core_services: JSON.stringify(bookingData.coreServices.map((s) => s.id)),
-      addon_services: JSON.stringify(bookingData.addons.map((s) => s.id)),
-      staff_level: bookingData.staffLevel,
-      total_price: $(".summary-total-amount").text(),
+      core_services: JSON.stringify(bookingData.coreServices),
+      addon_services: JSON.stringify(bookingData.addons),
+      client_name: clientData.name,
+      client_phone: clientData.phone,
+      client_email: clientData.email,
+      client_comment: clientData.comment,
+
+      // Critical price adjustment data
+      staff_level: staffLevel,
+      base_price: basePrice.toFixed(2),
+      adjusted_price: adjustedPrice.toFixed(2),
+      price_adjustment: priceAdjustment.toFixed(2),
+      adjustment_percent: adjustmentPercent,
+      total_price: adjustedPrice.toFixed(2), // Important: send the proper total price
     };
+
+    console.log("Submitting booking with price data:", bookingRequest);
 
     // Submit booking via AJAX
     $.ajax({
@@ -2080,32 +2079,64 @@
       type: "POST",
       data: bookingRequest,
       success: function (response) {
+        console.log("Booking API response:", response);
         $(".confirm-booking-btn").prop("disabled", false).text("Book an appointment");
+        $(".loading-overlay").hide();
 
         if (response.success) {
           // Handle successful booking
           handleSuccessfulBooking(response.data);
         } else {
           // Show error message
-          showValidationAlert(response.data?.message || "Booking failed. Please try again.");
+          const errorMsg = response.data?.message || "Booking failed. Please try again.";
+          showValidationAlert(errorMsg);
         }
       },
       error: function (xhr, status, error) {
+        console.error("Booking API error:", {
+          status: status,
+          error: error,
+          responseText: xhr.responseText,
+        });
+
         // Show error message
+        $(".loading-overlay").hide();
         $(".confirm-booking-btn").prop("disabled", false).text("Book an appointment");
-        showValidationAlert("Error submitting booking. Please try again.");
-
-        console.error("Booking submission error:", error);
-
-        // If maximum retries reached, show fallback confirmation
-        window.bookingRetryCount = (window.bookingRetryCount || 0) + 1;
-        if (window.bookingRetryCount >= config.maxRetries) {
-          handleFallbackBookingConfirmation();
-        }
+        showValidationAlert("Error communicating with server: " + (xhr.statusText || error));
       },
     });
   }
 
+  /**
+   * Calculate base price (before adjustment)
+   * @returns {number} Base price
+   */
+  function calculateBasePrice() {
+    let total = 0;
+    bookingData.services.forEach(function (service) {
+      const price = parseFloat(service.price.toString().replace(/[^\d.]/g, ""));
+      if (!isNaN(price)) {
+        total += price;
+      }
+    });
+    return parseFloat(total.toFixed(2));
+  }
+
+  /**
+   * Calculate price adjustment based on master level
+   * @param {number} basePrice - Base price
+   * @param {number} staffLevel - Staff level
+   * @returns {number} Price adjustment amount
+   */
+  function calculatePriceAdjustment(basePrice, staffLevel) {
+    if (staffLevel <= 1) {
+      return 0;
+    }
+
+    const adjustmentPercent = (staffLevel - 1) * config.priceAdjustmentPerLevel;
+    const adjustment = basePrice * (adjustmentPercent / 100);
+    return parseFloat(adjustment.toFixed(2));
+  }
   /**
    * Handle successful booking response
    * @param {Object} data - Response data
@@ -2128,6 +2159,7 @@
     // Navigate to confirmation step
     goToStep("confirm");
     updateSummary();
+
     // Clear session data
     if (config.useLocalStorage) {
       clearBookingSession();
@@ -2142,6 +2174,7 @@
         services: bookingData.services,
         staffName: bookingData.staffName,
         staffLevel: bookingData.staffLevel,
+        adjustedPrice: data.booking?.adjusted_price || calculateTotalPrice(),
       },
     ]);
   }
