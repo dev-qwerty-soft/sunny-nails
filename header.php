@@ -6,11 +6,6 @@
     <link rel="profile" href="http://gmpg.org/xfn/11">
     <link rel="icon" href="<?= getAssetUrlAcf('favicon_black_theme'); ?>" media="(prefers-color-scheme: dark)">
     <link rel="icon" href="<?= getAssetUrlAcf('favicon_light_theme'); ?>" media="(prefers-color-scheme: light)">
-    <?php
-        console(getAssetUrlAcf('favicon_black_theme'));
-        console(getAssetUrlAcf('favicon_light_theme'));
-        console(1);
-    ?>
     <title><?= wp_get_document_title(); ?></title>
     <?php wp_head(); ?>
 </head>
