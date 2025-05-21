@@ -166,7 +166,10 @@ if (filterSection) {
     add(filter);
 
     const filteredImages = images?.filter((image) => {
-      return slug === "all" || image.getAttribute("data-slug") === slug;
+      if (slug === "all") return true;
+
+      const slugs = image.getAttribute("data-slug")?.split(" ") || [];
+      return slugs.includes(slug);
     });
 
     remove(images);

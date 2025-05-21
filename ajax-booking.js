@@ -1974,7 +1974,8 @@
       $(".master-bonus-row").hide();
     }
 
-    totalAmountEl.text(`${total.toFixed(2)} SGD`);
+    const finalTotal = total + bonus;
+    totalAmountEl.text(`${finalTotal.toFixed(2)} SGD`);
 
     // Restore any previously entered contact info
     if (bookingData.contact) {
