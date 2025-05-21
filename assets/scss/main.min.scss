@@ -2,7 +2,7 @@
 @import "./fonts.scss";
 @import "./base/_base.scss";
 @import "./base/_container.scss";
-
+ 
 @import "./component/preloader";
 @import "./component/_btn.scss";
 @import "./component/header";
@@ -14,3 +14,7 @@
 @import "./layout/main.min.scss";
 
 @import "./component/footer";
+
+.wpcf7-spinner {
+  display: none !important;
+}

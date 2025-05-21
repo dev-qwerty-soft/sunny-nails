@@ -226,6 +226,13 @@ document.onclick = (e) => {
   } else if (has(e.target, ".gallery-modal .cross")) {
     remove(modal);
     gallerySwiper?.slideTo(0);
+  } else if (has(e.target, "[data-popup]")) {
+    e.preventDefault();
+    const popup = e.target.closest("[data-popup]");
+    const id = popup.getAttribute("data-popup");
+    add(g(id));
+  } else if (has(e.target, ".popup-join .cross")) {
+    remove(g(".popup-join"));
   } else if (has(e.target, ".sunny-friends-table-section__button")) {
     tabFn?.(e.target);
   }

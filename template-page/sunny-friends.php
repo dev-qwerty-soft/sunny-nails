@@ -10,6 +10,7 @@
   if($notEmpty) {
     $percent = 100 / count($tabs);
   };
+  get_template_part('template-parts/shared/popup-join');
 ?>
 <main>
   <section class="sunny-friends-section">
@@ -120,7 +121,7 @@
         $link = get_field('sunny_friends_join_link');
         $text = get_field('sunny_friends_join_text');
         if($link && $text) {
-          echo "<a href='$link' class='btn yellow'>$text</a>";
+          echo "<a data-popup='$link' href='$link' class='btn yellow'>$text</a>";
         };
       ?>
     </div>

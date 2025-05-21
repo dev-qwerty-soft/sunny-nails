@@ -11750,6 +11750,13 @@ document.onclick = (e) => {
   } else if ((0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.has)(e.target, ".gallery-modal .cross")) {
     (0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.remove)(modal);
     gallerySwiper?.slideTo(0);
+  } else if ((0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.has)(e.target, "[data-popup]")) {
+    e.preventDefault();
+    const popup = e.target.closest("[data-popup]");
+    const id = popup.getAttribute("data-popup");
+    (0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.add)((0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.g)(id));
+  } else if ((0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.has)(e.target, ".popup-join .cross")) {
+    (0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.remove)((0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.g)(".popup-join"));
   } else if ((0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.has)(e.target, ".sunny-friends-table-section__button")) {
     tabFn?.(e.target);
   }
