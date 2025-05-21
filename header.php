@@ -9,6 +9,7 @@
     <?php
         console(getAssetUrlAcf('favicon_black_theme'));
         console(getAssetUrlAcf('favicon_light_theme'));
+        console(1);
     ?>
     <title><?= wp_get_document_title(); ?></title>
     <?php wp_head(); ?>
