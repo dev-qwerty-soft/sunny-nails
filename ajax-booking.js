@@ -1865,17 +1865,20 @@
       adjustedTotal += adjustedPrice;
 
       // Create service item HTML
+      const adjustment = adjustedPrice - price;
+
       const itemHTML = `
-      <div class="summary-service-item">
-        <div class="service-info">
-          <strong>${service.title}</strong>
-          ${service.duration ? `<div class="meta"><strong>Duration:</strong> ${service.duration} min</div>` : ""}
-          ${service.wearTime ? `<div class="meta"><strong>Wear time:</strong> ${service.wearTime}</div>` : ""}
-          ${service.desc ? `<div class="meta service-description">${service.desc}</div>` : ""}
+        <div class="summary-service-item">
+          <div class="service-info">
+            <strong>${service.title}</strong>
+            ${service.duration ? `<div class="meta"><strong>Duration:</strong> ${service.duration} min</div>` : ""}
+            ${service.wearTime ? `<div class="meta"><strong>Wear time:</strong> ${service.wearTime}</div>` : ""}
+            ${service.desc ? `<div class="meta service-description">${service.desc}</div>` : ""}
+          </div>
+        <div class="service-price"><strong>${price.toFixed(2)} ${service.currency || "SGD"}</strong></div>
+
         </div>
-        <div class="service-price"><strong>${adjustedPrice.toFixed(2)} ${service.currency || "SGD"}</strong></div>
-      </div>
-    `;
+      `;
 
       // Add to appropriate section (core services or add-ons)
       if (service.isAddon) {
