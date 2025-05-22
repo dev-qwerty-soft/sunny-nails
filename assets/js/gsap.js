@@ -7,7 +7,7 @@ g("section", document, true)?.forEach((element) => {
   const tl = gsap.timeline({
     defaults: { 
       ease: "power4.inOut",
-      duration: .5 
+      duration: 1.5 
     },
     scrollTrigger: {
       trigger: element,

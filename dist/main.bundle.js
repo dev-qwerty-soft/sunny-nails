@@ -20931,7 +20931,7 @@ gsap__WEBPACK_IMPORTED_MODULE_0__["default"].registerPlugin(gsap_ScrollTrigger__
   const tl = gsap__WEBPACK_IMPORTED_MODULE_0__["default"].timeline({
     defaults: { 
       ease: "power4.inOut",
-      duration: .5 
+      duration: 1.5 
     },
     scrollTrigger: {
       trigger: element,
