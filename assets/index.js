@@ -1,6 +1,6 @@
 import "./scss/main.min.scss";
 import "./js/index.js";
-// import "./js/gsap.js";
+import "./js/gsap.js";
 import "./js/services-validation.js";
 import "./js/services.js";
 import "swiper/css";
