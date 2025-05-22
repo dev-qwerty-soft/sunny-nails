@@ -70,7 +70,7 @@ $link_team = get_field('team_link_url', 'option');
     <div class='swiper-scrollbar'></div>
   </div>
 
-  <div class='team-card__buttons<?= $isPage ? ' page' : ''; ?>'>
+  <div class='team-card__buttons page'>
     <button data-staff-id="<?= esc_attr($id); ?>" class='btn yellow book-tem'>Book an Appointment</button>
     <?php if (!$isPage && $link_team): ?>
       <a href='<?= esc_url($link_team); ?>' class='btn'>Learn More</a>
