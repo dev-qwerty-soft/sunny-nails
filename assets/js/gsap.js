@@ -4,10 +4,6 @@ gsap.registerPlugin(ScrollTrigger);
 import {g} from "./function.js";
 
 g("section", document, true)?.forEach((element) => {
-  const firstLevelChildren = Array.from(element.children);
-  const secondLevelChildren = firstLevelChildren.flatMap(child => Array.from(child.children));
-  const thirdLevelChildren = secondLevelChildren.flatMap(child => Array.from(child.children));
-
   const tl = gsap.timeline({
     defaults: { 
       ease: "power4.inOut",
@@ -20,9 +16,8 @@ g("section", document, true)?.forEach((element) => {
     },
   });
 
-  tl.from([...firstLevelChildren, ...secondLevelChildren, ...thirdLevelChildren], {
+  tl.from(element, {
     opacity: 0,
-    y: 10,
-    stagger: 0.075
+    yPercent: 10,
   }, 0);
 });

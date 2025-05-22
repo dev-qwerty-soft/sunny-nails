@@ -20928,10 +20928,6 @@ gsap__WEBPACK_IMPORTED_MODULE_0__["default"].registerPlugin(gsap_ScrollTrigger__
 
 
 (0,_function_js__WEBPACK_IMPORTED_MODULE_2__.g)("section", document, true)?.forEach((element) => {
-  const firstLevelChildren = Array.from(element.children);
-  const secondLevelChildren = firstLevelChildren.flatMap(child => Array.from(child.children));
-  const thirdLevelChildren = secondLevelChildren.flatMap(child => Array.from(child.children));
-
   const tl = gsap__WEBPACK_IMPORTED_MODULE_0__["default"].timeline({
     defaults: { 
       ease: "power4.inOut",
@@ -20944,10 +20940,9 @@ gsap__WEBPACK_IMPORTED_MODULE_0__["default"].registerPlugin(gsap_ScrollTrigger__
     },
   });
 
-  tl.from([...firstLevelChildren, ...secondLevelChildren, ...thirdLevelChildren], {
+  tl.from(element, {
     opacity: 0,
-    y: 10,
-    stagger: 0.075
+    yPercent: 10,
   }, 0);
 });
 
