@@ -20935,14 +20935,14 @@ gsap__WEBPACK_IMPORTED_MODULE_0__["default"].registerPlugin(gsap_ScrollTrigger__
     },
     scrollTrigger: {
       trigger: element,
-      start: "top center",
+      start: "top center+=25%",
       end: "bottom bottom",
       toggleActions: "play none none none",
       markers: !false
     },
   });
 
-  tl.from(element, {
+  tl.from(element, { 
     opacity: 0,
     y: 75,
   }, 0);
