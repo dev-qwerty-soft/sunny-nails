@@ -20930,8 +20930,8 @@ gsap__WEBPACK_IMPORTED_MODULE_0__["default"].registerPlugin(gsap_ScrollTrigger__
 (0,_function_js__WEBPACK_IMPORTED_MODULE_2__.g)("section", document, true)?.forEach((element) => {
   const tl = gsap__WEBPACK_IMPORTED_MODULE_0__["default"].timeline({
     defaults: { 
-      ease: "power4.inOut",
-      duration: 1.5 
+      ease: "sine.inOut",
+      duration: 1 
     },
     scrollTrigger: {
       trigger: element,

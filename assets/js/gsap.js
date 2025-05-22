@@ -6,8 +6,8 @@ import {g} from "./function.js";
 g("section", document, true)?.forEach((element) => {
   const tl = gsap.timeline({
     defaults: { 
-      ease: "power4.inOut",
-      duration: 1.5 
+      ease: "sine.inOut",
+      duration: 1 
     },
     scrollTrigger: {
       trigger: element,
