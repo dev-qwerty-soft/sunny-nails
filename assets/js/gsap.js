@@ -14,7 +14,7 @@ g("section", document, true)?.forEach((element) => {
       start: "top center",
       end: "bottom bottom",
       toggleActions: "play none none none",
-      // markers: !false
+      markers: !false
     },
   });
 

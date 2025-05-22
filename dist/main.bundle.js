@@ -20938,7 +20938,7 @@ gsap__WEBPACK_IMPORTED_MODULE_0__["default"].registerPlugin(gsap_ScrollTrigger__
       start: "top center",
       end: "bottom bottom",
       toggleActions: "play none none none",
-      // markers: !false
+      markers: !false
     },
   });
 
