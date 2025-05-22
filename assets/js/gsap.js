@@ -12,12 +12,15 @@ g("section", document, true)?.forEach((element) => {
     scrollTrigger: {
       trigger: element,
       start: "top center",
-      end: "bottom center",
+      end: "bottom bottom",
+      toggleActions: "play none none none",
+      // markers: !false
     },
   });
 
   tl.from(element, {
     opacity: 0,
-    yPercent: 10,
+    y: 75,
   }, 0);
+  
 });
