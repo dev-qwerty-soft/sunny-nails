@@ -1850,17 +1850,15 @@
 
       // Calculate individual service adjustment based on master level
       let adjustedPrice = price;
+      let adjustment = 0;
       if (bookingData.staffLevel > 1) {
         const percent = (bookingData.staffLevel - 1) * config.priceAdjustmentPerLevel;
-        const adjustment = price * (percent / 100);
+        adjustment = price * (percent / 100);
         adjustedPrice = price + adjustment;
-        priceAdjustment += adjustment;
       }
 
+      priceAdjustment += adjustment;
       adjustedTotal += adjustedPrice;
-
-      // Create service item HTML
-      const adjustment = adjustedPrice - price;
 
       const itemHTML = `
         <div class="summary-service-item">
