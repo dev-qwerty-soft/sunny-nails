@@ -4,25 +4,22 @@ gsap.registerPlugin(ScrollTrigger);
 import {g} from "./function.js";
 
 g("section", document, true)?.forEach((element) => {
-  const firstLevelChildren = Array.from(element.children);
-  const secondLevelChildren = firstLevelChildren.flatMap(child => Array.from(child.children));
-  const thirdLevelChildren = secondLevelChildren.flatMap(child => Array.from(child.children));
-
   const tl = gsap.timeline({
     defaults: { 
-      ease: "power4.inOut",
-      duration: .5 
+      ease: "sine.inOut",
+      duration: 1 
     },
     scrollTrigger: {
       trigger: element,
-      start: "top center",
-      end: "bottom center",
+      start: "top center+=25%",
+      end: "bottom bottom",
+      toggleActions: "play none none none",
     },
   });
 
-  tl.from([...firstLevelChildren, ...secondLevelChildren, ...thirdLevelChildren], {
+  tl.from(element, { 
     opacity: 0,
-    y: 10,
-    stagger: 0.075
+    y: 75,
   }, 0);
+  
 });
