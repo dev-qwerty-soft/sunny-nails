@@ -710,7 +710,6 @@
       $form.find(".input-error").text("");
       $(".global-form-error").hide();
 
-      // Перевірити поля вручну
       const fields = [
         { id: "client-name", label: "Name" },
         { id: "client-email", label: "Email" },
@@ -747,8 +746,6 @@
 
       updateSummary();
       submitBooking();
-
-      // goToStep("confirm") буде викликано після успішного відправлення даних
     });
   }
 
@@ -1932,10 +1929,11 @@
 
     // Restore any previously entered contact info
     if (bookingData.contact) {
+      const cleaned = (bookingData.contact.comment || "").replace(/Price information:[\s\S]*/i, "").trim();
       $("#client-name").val(bookingData.contact.name || "");
       $("#client-phone").val(bookingData.contact.phone || "");
       $("#client-email").val(bookingData.contact.email || "");
-      $("#client-comment").val(bookingData.contact.comment || "");
+      $("#client-comment").val(cleaned);
     }
 
     console.log("Updated booking summary with price calculation:", {
@@ -2013,11 +2011,9 @@
    */
 
   function submitBooking() {
-    // Show loading state
     $(".confirm-booking-btn").prop("disabled", true).text("Processing...");
     $(".loading-overlay").show();
 
-    // Check if booking data is ready
     if (!bookingData.staffId || !bookingData.date || !bookingData.time || bookingData.services.length === 0) {
       showValidationAlert("Missing booking information. Please complete all steps.");
       $(".confirm-booking-btn").prop("disabled", false).text("Book an appointment");
@@ -2025,57 +2021,57 @@
       return;
     }
 
-    // Format the datetime string properly
-    const formattedDateTime = bookingData.date + "T" + bookingData.time + ":00";
-
-    // Calculate price adjustments
     const basePrice = calculateBasePrice();
     const staffLevel = parseInt(bookingData.staffLevel) || 1;
     const adjustmentPercent = staffLevel > 1 ? (staffLevel - 1) * config.priceAdjustmentPerLevel : 0;
     const priceAdjustment = calculatePriceAdjustment(basePrice, staffLevel);
     const adjustedPrice = parseFloat((basePrice + priceAdjustment).toFixed(2));
 
-    // Format services array with price adjustments
     const formattedServices = bookingData.services.map((service) => {
-      // Calculate individual service price adjustment
       const origPrice = parseFloat(service.price);
       const serviceAdjustment = staffLevel > 1 ? origPrice * (adjustmentPercent / 100) : 0;
-      const serviceAdjustedPrice = origPrice + serviceAdjustment;
+      const serviceWithMaster = origPrice + serviceAdjustment;
+      const finalServicePrice = serviceWithMaster * 1.09;
 
       return {
         id: parseInt(service.id),
-        price: serviceAdjustedPrice.toFixed(2), // Send adjusted price per service
+        price: finalServicePrice.toFixed(2),
       };
     });
+    const clientCommentRaw = $("#client-comment").val().trim();
+    const cleanComment = clientCommentRaw.replace(/Price information:[\s\S]*$/i, "").trim();
 
-    // Prepare client data
-    const clientData = {
-      name: bookingData.contact.name,
-      phone: bookingData.contact.phone,
-      email: bookingData.contact.email || "",
-      client_comment: `${bookingData.contact.comment || ""}
-      Price information:
-      Base price: ${bookingData.basePrice.toFixed(2)} SGD
-      Master category: +${bookingData.adjustmentPercent}% (${bookingData.priceAdjustment.toFixed(2)} SGD)
-      Tax included (9%): ${bookingData.tax.toFixed(2)} SGD
-      Final price: ${bookingData.totalWithTax.toFixed(2)} SGD`,
-    };
+    const serviceDescriptions = bookingData.services.map((service) => `- ${service.title}: ${parseFloat(service.price).toFixed(2)} SGD`).join("\n");
 
-    // Prepare data for submission with the correct structure and price data
+    const fullComment = `${cleanComment ? "Comment from client: " + cleanComment + "\n\n" : ""}
+    Price information:
+    ${serviceDescriptions}
+    Base price: ${bookingData.basePrice.toFixed(2)} SGD
+    Master category: +${bookingData.adjustmentPercent}% (${bookingData.priceAdjustment.toFixed(2)} SGD)
+    Tax included (9%): ${bookingData.tax.toFixed(2)} SGD
+    Final price: ${bookingData.totalWithTax.toFixed(2)} SGD`;
+
     const bookingRequest = {
       action: "submit_booking",
       booking_nonce: booking_params.nonce,
       staff_id: bookingData.staffId,
       date: bookingData.date,
       time: bookingData.time,
-      core_services: JSON.stringify(bookingData.coreServices),
-      addon_services: JSON.stringify(bookingData.addons),
-      client_name: clientData.name,
-      client_phone: clientData.phone,
-      client_email: clientData.email,
-      client_comment: clientData.comment,
+      core_services: JSON.stringify(
+        formattedServices.filter((s) => {
+          return bookingData.coreServices.find((cs) => parseInt(cs.id) === s.id);
+        })
+      ),
+      addon_services: JSON.stringify(
+        formattedServices.filter((s) => {
+          return bookingData.addons.find((a) => parseInt(a.id) === s.id);
+        })
+      ),
 
-      // Critical price adjustment data
+      client_name: bookingData.contact.name,
+      client_phone: bookingData.contact.phone,
+      client_email: bookingData.contact.email || "",
+      client_comment: fullComment,
       staff_level: staffLevel,
       base_price: basePrice.toFixed(2),
       adjusted_price: adjustedPrice.toFixed(2),
@@ -2086,7 +2082,6 @@
 
     console.log("Submitting booking with price data:", bookingRequest);
 
-    // Submit booking via AJAX
     $.ajax({
       url: booking_params.ajax_url,
       type: "POST",
@@ -2095,12 +2090,9 @@
         console.log("Booking API response:", response);
         $(".confirm-booking-btn").prop("disabled", false).text("Book an appointment");
         $(".loading-overlay").hide();
-
         if (response.success) {
-          // Handle successful booking
           handleSuccessfulBooking(response.data);
         } else {
-          // Show error message
           const errorMsg = response.data?.message || "Booking failed. Please try again.";
           showValidationAlert(errorMsg);
         }
@@ -2111,8 +2103,6 @@
           error: error,
           responseText: xhr.responseText,
         });
-
-        // Show error message
         $(".loading-overlay").hide();
         $(".confirm-booking-btn").prop("disabled", false).text("Book an appointment");
         showValidationAlert("Error communicating with server: " + (xhr.statusText || error));
