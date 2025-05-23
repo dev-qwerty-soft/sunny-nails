@@ -706,19 +706,6 @@ add_action('wp_ajax_force_altegio_sync_categories', function () {
     wp_send_json_success(['result' => $result]);
 });
 
-/**
- * Quick admin bar link for FORCE sync
- */
-add_action('admin_bar_menu', function ($wp_admin_bar) {
-    if (!current_user_can('manage_options')) return;
-
-    $wp_admin_bar->add_node([
-        'id' => 'force-altegio-sync',
-        'title' => '🔥 FORCE Sync',
-        'href' => admin_url('tools.php?page=force-altegio-sync'),
-        'meta' => ['title' => 'Altegio Synchronization - Updates ALL fields']
-    ]);
-}, 100);
 
 /**
  * Individual field force update function for testing
