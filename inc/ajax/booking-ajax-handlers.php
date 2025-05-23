@@ -176,20 +176,8 @@ function altegio_submit_booking()
         // Use WordPress ID as fallback
         $service_ids[] = $altegio_id ?: $wp_id;
     }
-
-    // Add price adjustment info to the comment
-    $price_note = "\nPrice information:";
-    $price_note .= "\nMaster category: +{$adjustment_percent}% ({$price_adjustment} SGD)";
-    $price_note .= "\nBase price: {$base_price} SGD";
-    $price_note .= "\nFinal price: {$total_price} SGD";
-
-    // Merge with user comment
     $full_comment = $client_comment;
-    if (!empty($full_comment)) {
-        $full_comment .= $price_note;
-    } else {
-        $full_comment = $price_note;
-    }
+
 
     // Prepare data for Altegio API
     $api_data = [
