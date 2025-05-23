@@ -430,6 +430,8 @@ if (empty($ordered_category_ids)) {
 
                             <div class="summary-total-group">
                                 <div class="summary-item"><span>Master category (+<span class="percent">0</span>%)</span> <span class="master-bonus">0 SGD</span></div>
+                                <div class="summary-item tax"><span>Tax (9%)</span> <span class="summary-tax-amount">0.00 SGD</span></div>
+
                                 <div class="summary-item total"><span>Total</span> <span class="summary-total-amount">0.00 SGD</span></div>
                             </div>
                             <form id="booking-form" class="contact-form" novalidate>
@@ -551,6 +553,8 @@ if (empty($ordered_category_ids)) {
 
                             <div class="summary-total-group">
                                 <div class="summary-item"><span>Master category (+<span class="percent">0</span>%)</span> <span class="master-bonus">0 SGD</span></div>
+                                <div class="summary-item tax"><span>Tax (9%)</span> <span class="summary-tax-amount">0.00 SGD</span></div>
+
                                 <div class="summary-item total"><span>Total</span> <span class="summary-total-amount">0.00 SGD</span></div>
                             </div>
 

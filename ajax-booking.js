@@ -702,14 +702,11 @@
       }
     });
 
-    // Confirm booking button
-    // Confirm booking button
     $(document).on("click", ".confirm-booking-btn", function () {
       const form = $("#booking-form")[0];
       const $form = $("#booking-form");
       let valid = true;
 
-      // Очистити попередні помилки
       $form.find(".input-error").text("");
       $(".global-form-error").hide();
 
@@ -741,7 +738,6 @@
         return;
       }
 
-      // Зберігаємо контактну інформацію
       bookingData.contact = {
         name: $("#client-name").val().trim(),
         phone: $("#client-phone").val().trim(),
@@ -749,10 +745,9 @@
         comment: $("#client-comment").val().trim(),
       };
 
-      // Викликаємо відправлення даних на сервер
+      updateSummary();
       submitBooking();
 
-      // НЕ переходимо на крок confirmation зараз
       // goToStep("confirm") буде викликано після успішного відправлення даних
     });
   }
@@ -1917,7 +1912,19 @@
     }
 
     // Update total amount
-    totalAmountEl.text(`${adjustedTotal.toFixed(2)} SGD`);
+    // Calculate tax (9%)
+    const taxAmount = adjustedTotal * 0.09;
+    const finalTotal = adjustedTotal + taxAmount;
+
+    // Update tax and total in UI
+    $(".summary-tax-amount").text(`${taxAmount.toFixed(2)} SGD`);
+    $(".summary-total-amount").text(`${finalTotal.toFixed(2)} SGD`);
+
+    totalAmountEl.text(`${finalTotal.toFixed(2)} SGD`);
+
+    // Save to bookingData for confirmation step
+    bookingData.tax = taxAmount;
+    bookingData.totalWithTax = finalTotal;
 
     // Store the calculated values in bookingData for later use
     bookingData.basePrice = basePrice;
@@ -2048,7 +2055,7 @@
       name: bookingData.contact.name,
       phone: bookingData.contact.phone,
       email: bookingData.contact.email || "",
-      comment: bookingData.contact.comment || "",
+      comment: `Tax included (9%): ${bookingData.tax?.toFixed(2) || "0.00"} SGD. ${bookingData.contact.comment || ""}`,
     };
 
     // Prepare data for submission with the correct structure and price data
@@ -2071,7 +2078,7 @@
       adjusted_price: adjustedPrice.toFixed(2),
       price_adjustment: priceAdjustment.toFixed(2),
       adjustment_percent: adjustmentPercent,
-      total_price: adjustedPrice.toFixed(2), // Important: send the proper total price
+      total_price: bookingData.totalWithTax?.toFixed(2) || adjustedPrice.toFixed(2),
     };
 
     console.log("Submitting booking with price data:", bookingRequest);
