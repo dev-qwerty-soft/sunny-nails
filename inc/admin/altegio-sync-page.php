@@ -634,8 +634,8 @@ HTML;
             <p>
                 <label><input type="radio" name="sync_type" value="all" checked> 🔄 Complete FORCE Sync (Recommended)</label><br>
                 <label><input type="radio" name="sync_type" value="categories"> 📂 Categories FORCE Sync</label><br>
-                <label><input type="radio" name="sync_type" value="services"> 🛠️ Services FORCE Sync (with base_price fix)</label><br>
-                <label><input type="radio" name="sync_type" value="masters"> 👥 Masters FORCE Sync (with photo replacement)</label>
+                <label><input type="radio" name="sync_type" value="services"> 🛠️ Services FORCE Sync </label><br>
+                <label><input type="radio" name="sync_type" value="masters"> 👥 Masters FORCE Sync </label>
             </p>
             <p>
                 <input type="submit" name="force_sync_now" class="button button-primary" value="🚀 Altegio Sync"
