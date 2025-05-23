@@ -2053,7 +2053,12 @@
       name: bookingData.contact.name,
       phone: bookingData.contact.phone,
       email: bookingData.contact.email || "",
-      comment: `Tax included (9%): ${bookingData.tax?.toFixed(2) || "0.00"} SGD. ${bookingData.contact.comment || ""}`,
+      client_comment: `${bookingData.contact.comment || ""}
+      Price information:
+      Base price: ${bookingData.basePrice.toFixed(2)} SGD
+      Master category: +${bookingData.adjustmentPercent}% (${bookingData.priceAdjustment.toFixed(2)} SGD)
+      Tax included (9%): ${bookingData.tax.toFixed(2)} SGD
+      Final price: ${bookingData.totalWithTax.toFixed(2)} SGD`,
     };
 
     // Prepare data for submission with the correct structure and price data
