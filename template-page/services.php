@@ -8,7 +8,7 @@
 
 get_header();
 
-$ordered_category_ids = function_exists('get_field') ? get_field('category_selection') : [];
+$ordered_category_ids = function_exists('get_field') ? get_field('category_selection', 'option') : [];
 
 if (empty($ordered_category_ids)) {
     $categories = get_terms([
