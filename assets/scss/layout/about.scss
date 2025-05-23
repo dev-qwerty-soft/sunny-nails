@@ -1,0 +1,62 @@
+.about-section {
+  padding: get-d(100px) get-d(60px);
+  min-height: var(--vh-min);
+  display: flex;
+  align-items: center;
+  @include respond(lg) {
+    padding: get-lg(100px) get-lg(40px);
+  }
+  @include respond(md) {
+    padding: 0px 25px 50px 25px;
+  }
+  & .container {
+    display: grid;
+    grid-template-columns: repeat(2, calc(50% - get-d(20px)));
+    grid-gap: get-d(40px);
+    align-items: center;
+    @include respond(lg) {
+      grid-gap: get-lg(40px);
+    }
+    @include respond(md) {
+      grid-template-columns: 1fr;
+      grid-gap: 10px;
+    }
+  }
+  &__image {
+    width: 100%;
+    height: auto;
+    border-radius: get-d(10px);
+    object-fit: cover;
+    @include respond(lg) {
+      border-radius: get-lg(10px);
+    }
+    @include respond(md) {
+      border-radius: 6px;
+    }
+  }
+  &__text {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: get-d(16px);
+    @include respond(lg) {
+      gap: get-lg(16px);
+    }
+    @include respond(md) {
+      gap: 10px;
+    }
+    & .paragraph {
+      width: get-d(550px);
+      max-width: 100%;
+      @include respond(lg) {
+        width: get-lg(550px);
+      }
+      @include respond(md) {
+        width: 100%;
+      }
+      & * {
+        width: 100%;
+      }
+    }
+  }
+}

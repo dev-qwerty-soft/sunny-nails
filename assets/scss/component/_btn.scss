@@ -323,3 +323,376 @@
   }
 }
 
+.popup-join {
+  position: fixed;
+  width: get-d(520px);
+  height: get-d(560px);
+  padding: get-d(40px);
+  background: #F7F1E0;
+  border-radius: get-d(10px);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 110;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .5s, pointer-events .5s;
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: repeat(2, max-content) 1fr max-content;
+  align-items: start;
+  overflow: auto;
+  & .cross {
+    position: absolute;
+    top: get-d(24px);
+    right: get-d(24px);
+    width: get-d(20px);
+    height: get-d(20px);
+    background: url("../svg/cross.svg") center / cover no-repeat;
+    // cursor: pointer;
+    @include respond(lg) {
+      top: get-lg(24px);
+      right: get-lg(24px);
+      width: get-lg(20px);
+      height: get-lg(20px);
+    }
+    @include respond(md) {
+      top: 55px;
+      right: 25px;
+      width: 20px;
+      height: 20px;
+    }
+  }
+  @include respond(lg) {
+    width: get-lg(520px);
+    height: get-lg(550px);
+    padding: get-lg(40px);
+    border-radius: get-lg(10px);
+  }
+  @include respond(md) {
+    width: 100vw;
+    height: 100dvh;
+    padding: 70px 25px 30px 25px;
+    border-radius: 0;
+  }
+  &.active {
+    opacity: 1;
+    pointer-events: all;
+  }
+  & .wpcf7 {
+    display: contents;
+  }
+  & form {
+    display: contents;
+    & br {
+      display: none;
+    }
+    &.wpcf7-form.sent {
+      & .wpcf7-response-output {
+        background: rgba(#06B569, 10%);
+        color: #06B569;
+        &::before {
+          background-image: url("../svg/check icon.svg");
+        }
+      }
+    } 
+    & .wpcf7-not-valid-tip {
+      font-weight: 500;
+      font-size: get-d(14px);
+      line-height: get-d(16px);
+      text-align: left;
+      padding-top: get-d(6px);
+      color: $red;
+      @include respond(lg) {
+        font-size: get-lg(14px);
+        line-height: get-lg(16px);
+        padding-top: get-lg(6px);
+      }
+      @include respond(md) {
+        font-size: 12px;
+        line-height: 14px;
+        padding-top: 6px;
+      }
+    }
+    & .wpcf7-response-output {
+      padding: get-d(8px);
+      width: 100%;
+      border: none;
+      border-radius: get-d(10px);
+      font-weight: 500;
+      font-size: get-d(14px);
+      line-height: get-d(16px);
+      color: $red;
+      text-align: left;
+      background: rgba($red, 10%);
+      display: flex;
+      align-items: center;
+      gap: get-d(8px);
+      position: relative;
+      @include respond(lg) {
+        padding: get-lg(8px);
+        border-radius: get-lg(10px);
+        font-size: get-lg(14px);
+        line-height: get-lg(16px);
+        gap: get-lg(8px);
+      }
+      @include respond(md) {
+        padding: 8px;
+        border-radius: 10px;
+        font-size: 12px;
+        line-height: 14px;
+        gap: 8px;
+      }
+      &::before {
+        width: get-d(24px);
+        height: get-d(24px);
+        background: $bg-white url("../svg/error icon.svg") center / 75% no-repeat;
+        display: block;
+        content: "";
+        border-radius: get-d(6px);
+        min-width: get-d(24px);
+        min-height: get-d(24px);
+        @include respond(lg) {
+          width: get-lg(24px);
+          height: get-lg(24px);
+          border-radius: get-lg(6px);
+          min-width: get-lg(24px);
+          min-height: get-lg(24px);
+        }
+        @include respond(md) {
+          width: 24px;
+          height: 24px;
+          border-radius: 6px;
+          min-width: 24px;
+          min-height: 24px;
+        }
+      }
+    }
+    & .form-fields .wpcf7-form-control-wrap:has(.wpcf7-not-valid-tip) input {
+      border-color: $red;
+    }
+    & .promo-form {
+      display: contents;
+    }
+    & .form-fields p {
+      background: $bg-white;
+      padding: get-d(28px);
+      border-radius: get-d(14px) get-d(14px) 0 0;
+      display: grid;
+      grid-template-columns: 1fr;
+      align-items: center;
+      grid-gap: get-d(16px);
+      height: 100%;
+      @include respond(lg) {
+        grid-gap: get-lg(16px);
+        padding: get-lg(28px);
+        border-radius: get-lg(14px) get-lg(14px) 0 0 ;
+      }
+      @include respond(md) {
+        grid-gap: 16px;
+        padding: 24px;
+        border-radius: 20px 20px 0 0;
+      }
+      & span, input {
+        width: 100%;
+        max-width: 100%;
+      }
+      & input {
+        padding: get-d(11px) get-d(4px);
+        border: none;
+        background: none;
+        border-bottom: get-d(2px) solid $bg-grey;
+        border-radius: 0;
+        @include respond(lg) {
+          padding: get-lg(11px) get-lg(4px);
+          border-bottom: get-lg(2px) solid $bg-grey;
+        }
+        @include respond(md) {
+          padding: 11px 4px;
+          border-bottom: 2px solid $bg-grey;
+        }
+        &, &::placeholder {
+          font-weight: 500;
+          font-size: get-d(14px);
+          line-height: 120%;
+          color: $bg-grey;
+          @include respond(lg) {
+            font-size: get-lg(14px);
+          }
+          @include respond(md) {
+            font-size: 14px;
+          }
+        }
+        &:focus {
+          outline: none;
+          border-color: $bg-yellow;
+        }
+      }
+    }
+    & .form-checkbox-submit {
+      display: contents;
+
+      & p {
+        display: flex;
+        align-items: center;
+        font-weight: 500;
+        font-size: get-d(14px);
+        line-height: 120%;
+        @include respond(lg) {
+          font-size: get-lg(14px);
+        }
+        @include respond(md) {
+          font-size: 14px;
+        }
+      }
+
+      & .wpcf7-list-item {
+        margin: 0;
+      }
+
+      & .checkbox-label {
+        padding: 0 get-d(28px) get-d(40px) get-d(28px);
+        border-radius: 0 0 get-d(14px) get-d(14px);
+        @include respond(lg) {
+          padding: 0 get-lg(28px) get-lg(40px) get-lg(28px);
+          border-radius: 0 0 get-lg(14px) get-lg(14px);
+        }
+        @include respond(md) {
+          padding: 0 24px 24px 24px;
+          border-radius: 0 0 14px 14px;
+        }
+      }
+
+      & label:has(input) {
+        display: flex;
+        align-items: center;
+        background: $bg-white;
+        width: 100%;
+        gap: get-d(8px);
+        
+        @include respond(lg) {
+          gap: get-lg(8px);
+        }
+        @include respond(md) {
+          gap: 8px;
+        }
+
+        & input {
+          width: get-d(20px);
+          height: get-d(20px);
+          min-width: get-d(20px);
+          min-height: get-d(20px);
+          appearance: none;
+          border: get-d(2px) solid #14141480;
+          border-radius: get-d(5px);
+          @include respond(lg) {
+            width: get-lg(20px);
+            height: get-lg(20px);
+            min-width: get-lg(20px);
+            min-height: get-lg(20px);
+            border: get-lg(2px) solid #14141480;
+            border-radius: get-lg(5px);
+          }
+          @include respond(md) {
+            width: 20px;
+            height: 20px;
+            min-width: 20px;
+            min-height: 20px;
+            border: 2px solid #14141480;
+            border-radius: 5px;
+          }
+          &:checked {
+            background: url("../svg/mark.svg") center / contain no-repeat;
+          }
+        }
+      }
+
+      & input[type="submit"] {
+        position: absolute;
+        inset: 0;
+        opacity: 0;
+        cursor: pointer;
+      }
+    }
+
+    & .btn {
+      justify-self: center;
+    }
+  }
+  & .title {
+    font-weight: 500;
+    font-size: get-d(36px);
+    line-height: 120%;
+    letter-spacing: -.03em;
+    text-align: center;
+    margin-bottom: get-d(32px);
+    & strong, b {
+      font-weight: inherit;
+      background: $bg-yellow;
+      border-radius: 1000px;
+      padding: get-d(4px) get-d(10px);
+      @include respond(lg) {
+        padding: get-lg(4px) get-lg(10px);
+      }
+      @include respond(md) {
+        padding: 4px 10px;
+      }
+    }
+    @include respond(lg) {
+      font-size: get-lg(36px);
+      margin-bottom: get-lg(32px);
+    }
+    @include respond(md) {
+      font-size: 36px;
+      margin-bottom: 32px;
+    }
+  }
+}
+
+.stars {
+  display: flex;
+  align-items: center;
+
+  font-weight: 500;
+  font-size: get-d(14px);
+  line-height: 120%;
+
+  &.yellow {
+    & .star {
+      background-image: url("../svg/material-symbols-light_star-shine copy.svg");
+    }
+  }
+
+  @include respond(lg) {
+    font-size: get-lg(14px);
+  }
+  @include respond(md) {
+    font-size: 12px;
+  }
+
+  & span {
+    margin: 0 0 0 get-d(4px);
+    @include respond(lg) {
+      margin: 0 0 0 get-lg(4px);
+    }
+    @include respond(md) {
+      margin: 0 0 0 4px;
+    }
+  }
+
+  & .star {
+    width: get-d(24px);
+    height: get-d(24px);
+    background: url("../svg/material-symbols-light_star-shine.svg") center / cover no-repeat;
+
+    @include respond(lg) {
+      width: get-lg(24px);
+      height: get-lg(24px);
+    }
+    @include respond(md) {
+      width: 24px;
+      height: 24px;
+    }
+  }
+}
+

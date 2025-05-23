@@ -25,8 +25,9 @@
             $tag_name = $content_link ? 'a' : 'span';
             $href_attr = $content_link ? "href='$content_link'" : "";
             $tag_subtext = $content_subtext ? "<span>$content_subtext</span>" : "";
+            $target = $tag_name === "a" ? "target='_blank'" : "";
 
-            $content_str .= "<$tag_name $href_attr class='info-item__item'>
+            $content_str .= "<$tag_name $target $href_attr class='info-item__item'>
               <b>$content_text</b>
               $tag_subtext
             </$tag_name>";

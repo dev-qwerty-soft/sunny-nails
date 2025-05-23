@@ -511,6 +511,56 @@
             "selected": 0
         },
         {
+            "key": "field_682d9a54f03c1",
+            "label": "Favicon black theme",
+            "name": "favicon_black_theme",
+            "aria-label": "",
+            "type": "image",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "return_format": "array",
+            "library": "all",
+            "min_width": "",
+            "min_height": "",
+            "min_size": "",
+            "max_width": "",
+            "max_height": "",
+            "max_size": "",
+            "mime_types": "",
+            "preview_size": "medium"
+        },
+        {
+            "key": "field_682d9a6cf03c2",
+            "label": "Favicon light theme",
+            "name": "favicon_light_theme",
+            "aria-label": "",
+            "type": "image",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "return_format": "array",
+            "library": "all",
+            "min_width": "",
+            "min_height": "",
+            "min_size": "",
+            "max_width": "",
+            "max_height": "",
+            "max_size": "",
+            "mime_types": "",
+            "preview_size": "medium"
+        },
+        {
             "key": "field_681dd1062ab3e",
             "label": "Chat link url",
             "name": "chat_link_url",
@@ -1031,5 +1081,5 @@
     "active": true,
     "description": "",
     "show_in_rest": 0,
-    "modified": 1747651020
+    "modified": 1747819167
 }

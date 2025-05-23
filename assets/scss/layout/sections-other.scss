@@ -1,0 +1,409 @@
+.promo-form-section {
+  padding: get-d(45px) get-d(60px);
+  position: relative;
+  background: $bg-yellow;
+  overflow: hidden;
+  @include respond(lg) {
+    padding: get-lg(45px) get-lg(60px);
+  }
+  @include respond(md) {
+    padding: 50px 25px;
+  }
+  &__image {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    inset: 0;
+    object-fit: contain;
+    z-index: 1;
+    transform: translateX(10%);
+    @include respond(md) {
+      transform: translateX(0);
+      height: auto;
+      bottom: 38%;
+      top: auto;
+    }
+    @include respond(sm) {
+      bottom: 35%;
+    }
+  }
+  &::before {
+    content: "";
+    background: url("../svg/bigArrow.svg") center / contain no-repeat;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: get-d(90px);
+    height: get-d(100px);
+    z-index: 2;
+    @include respond(lg) {
+      width: get-lg(90px);
+      height: get-lg(100px);
+    }
+    @include respond(md) {
+      width: 62px;
+      height: 72px;
+    }
+  }
+  & .container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    text-align: center;
+    position: relative;
+    z-index: 5;
+    @include respond(md) {
+      grid-template-columns: 1fr;
+      text-align: left;
+    }
+    & > div:has(form) {
+      grid-column: 1 / -1;
+    }
+  }
+  & form {
+    background: $bg-white;
+    grid-column: 1 / -1;
+    padding: get-d(12px) get-d(24px);
+    border-radius: get-d(20px);
+    @include respond(lg) {
+      padding: get-lg(12px) get-lg(24px);
+      border-radius: get-lg(20px);
+    }
+    @include respond(md) {
+      padding: 24px;
+      border-radius: 20px;
+    }
+    & br {
+      display: none;
+    }
+    &.wpcf7-form.sent {
+      & .wpcf7-response-output {
+        background: rgba(#06b569, 10%);
+        color: #06b569;
+        &::before {
+          background-image: url("../svg/check icon.svg");
+        }
+      }
+    }
+    & .wpcf7-not-valid-tip {
+      font-weight: 500;
+      font-size: get-d(14px);
+      line-height: get-d(16px);
+      text-align: left;
+      padding-top: get-d(6px);
+      color: $red;
+      @include respond(lg) {
+        font-size: get-lg(14px);
+        line-height: get-lg(16px);
+        padding-top: get-lg(6px);
+      }
+      @include respond(md) {
+        font-size: 12px;
+        line-height: 14px;
+        padding-top: 6px;
+      }
+    }
+    & .wpcf7-response-output {
+      padding: get-d(8px);
+      width: 100%;
+      border: none;
+      border-radius: get-d(10px);
+      font-weight: 500;
+      font-size: get-d(14px);
+      line-height: get-d(16px);
+      color: $red;
+      text-align: left;
+      background: rgba($red, 10%);
+      display: flex;
+      align-items: center;
+      gap: get-d(8px);
+      position: relative;
+      @include respond(lg) {
+        padding: get-lg(8px);
+        border-radius: get-lg(10px);
+        font-size: get-lg(14px);
+        line-height: get-lg(16px);
+        gap: get-lg(8px);
+      }
+      @include respond(md) {
+        padding: 8px;
+        border-radius: 10px;
+        font-size: 12px;
+        line-height: 14px;
+        gap: 8px;
+      }
+      &::before {
+        width: get-d(24px);
+        height: get-d(24px);
+        background: $bg-white url("../svg/error icon.svg") center / 75% no-repeat;
+        display: block;
+        content: "";
+        border-radius: get-d(6px);
+        min-width: get-d(24px);
+        min-height: get-d(24px);
+        @include respond(lg) {
+          width: get-lg(24px);
+          height: get-lg(24px);
+          border-radius: get-lg(6px);
+          min-width: get-lg(24px);
+          min-height: get-lg(24px);
+        }
+        @include respond(md) {
+          width: 24px;
+          height: 24px;
+          border-radius: 6px;
+          min-width: 24px;
+          min-height: 24px;
+        }
+      }
+    }
+    & .form-fields .wpcf7-form-control-wrap:has(.wpcf7-not-valid-tip) input {
+      border-color: $red;
+    }
+    & .promo-form {
+      display: grid;
+      grid-template-columns: 3fr 2fr;
+      @include respond(md) {
+        grid-template-columns: 1fr;
+        grid-gap: 16px;
+      }
+    }
+    & .form-fields p {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      align-items: center;
+      grid-gap: get-d(16px);
+      height: 100%;
+      @include respond(lg) {
+        grid-gap: get-lg(16px);
+      }
+      @include respond(md) {
+        grid-gap: 16px;
+        grid-template-columns: 1fr;
+      }
+      & span,
+      input {
+        width: 100%;
+        max-width: 100%;
+      }
+      & input {
+        padding: get-d(11px) get-d(4px);
+        border: none;
+        background: none;
+        border-bottom: get-d(2px) solid $bg-grey;
+        border-radius: 0;
+        @include respond(lg) {
+          padding: get-lg(11px) get-lg(4px);
+          border-bottom: get-lg(2px) solid $bg-grey;
+        }
+        @include respond(md) {
+          padding: 11px 4px;
+          border-bottom: 2px solid $bg-grey;
+        }
+        &,
+        &::placeholder {
+          font-weight: 500;
+          font-size: get-d(14px);
+          line-height: 120%;
+          color: $bg-grey;
+          @include respond(lg) {
+            font-size: get-lg(14px);
+          }
+          @include respond(md) {
+            font-size: 14px;
+          }
+        }
+        &:focus {
+          outline: none;
+          border-color: $bg-yellow;
+        }
+      }
+    }
+    & .form-checkbox-submit {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      grid-gap: get-d(16px);
+      margin: 0 0 0 get-d(16px);
+      @include respond(lg) {
+        grid-gap: get-lg(16px);
+        margin: 0 0 0 get-lg(16px);
+        grid-template-columns: 1fr;
+      }
+      @include respond(md) {
+        grid-gap: 16px;
+        margin: 0;
+      }
+
+      & p {
+        display: flex;
+        align-items: center;
+        font-weight: 500;
+        font-size: get-d(14px);
+        line-height: 120%;
+        @include respond(lg) {
+          font-size: get-lg(14px);
+        }
+        @include respond(md) {
+          font-size: 14px;
+        }
+      }
+
+      & label:has(input) {
+        display: flex;
+        align-items: center;
+        @include respond(lg) {
+          gap: get-lg(8px);
+        }
+        @include respond(md) {
+          gap: 8px;
+        }
+
+        & input {
+          width: get-d(20px);
+          height: get-d(20px);
+          min-width: get-d(20px);
+          min-height: get-d(20px);
+          appearance: none;
+          border: get-d(2px) solid #14141480;
+          border-radius: get-d(5px);
+          @include respond(lg) {
+            width: get-lg(20px);
+            height: get-lg(20px);
+            min-width: get-lg(20px);
+            min-height: get-lg(20px);
+            border: get-lg(2px) solid #14141480;
+            border-radius: get-lg(5px);
+          }
+          @include respond(md) {
+            width: 20px;
+            height: 20px;
+            min-width: 20px;
+            min-height: 20px;
+            border: 2px solid #14141480;
+            border-radius: 5px;
+          }
+          &:checked {
+            background: url("../svg/mark.svg") center / contain no-repeat;
+          }
+        }
+      }
+
+      & input[type="submit"] {
+        position: absolute;
+        inset: 0;
+        opacity: 0;
+        cursor: pointer;
+      }
+    }
+  }
+  & .title,
+  .paragraph {
+    grid-column: 1 / 2;
+  }
+  & .paragraph {
+    margin: get-d(26px) auto get-d(45px) auto;
+    max-width: get-d(525px);
+    @include respond(lg) {
+      margin: get-lg(26px) auto get-lg(45px) auto;
+      max-width: get-lg(525px);
+    }
+    @include respond(md) {
+      max-width: none;
+      margin-bottom: 260px;
+    }
+  }
+  & .title {
+    line-height: 120%;
+    & strong,
+    b {
+      font-weight: inherit;
+      background: $bg-white;
+      border-radius: 1000px;
+      padding: get-d(4px) get-d(10px);
+      @include respond(lg) {
+        padding: get-lg(4px) get-lg(10px);
+      }
+      @include respond(md) {
+        padding: 4px 10px;
+      }
+    }
+  }
+}
+
+.section-not-found {
+  padding: get-d(100px) get-d(60px);
+  text-align: center;
+  @include respond(lg) {
+    padding: get-lg(100px) get-lg(60px);
+  }
+  @include respond(md) {
+    padding: 130px 25px;
+  }
+  & .container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    align-items: center;
+    min-height: var(--vh-min);
+    justify-content: center;
+    & .title {
+      font-weight: 500;
+      font-size: get-d(24px);
+      line-height: 120%;
+      letter-spacing: -.03em;
+      margin: get-d(60px) 0 get-d(14px) 0;
+      @include respond(lg) {
+        font-size: get-lg(24px);
+        margin: get-lg(50px) 0 get-lg(14px) 0;
+      }
+      @include respond(md) {
+        font-size: 16px;
+        margin: 40px 0 14px 0;
+      }
+    }
+    & .paragraph {
+      font-weight: 500;
+      font-size: get-d(16px);
+      line-height: 140%;
+      width: get-d(420px);
+      color: #9A9A9A;
+      @include respond(lg) {
+        font-size: get-lg(16px);
+        width: get-lg(420px);
+      }
+      @include respond(md) {
+        font-size: 14px;
+        width: 100%;
+      }
+    }
+  }
+  &__number {
+    display: inline-block;
+    width: get-d(390px);
+    height: get-d(144px);
+    background: url("../svg/404.svg") center / contain no-repeat;
+    @include respond(lg) {
+      width: get-lg(390px);
+      height: get-lg(144px);
+    }
+    @include respond(md) {
+      width: 90%;
+      height: 120px;
+    }
+  }
+  &__links {
+    display: flex;
+    align-items: center;
+    gap: get-d(16px);
+    margin-top: get-d(32px);
+    @include respond(lg) {
+      gap: get-lg(16px);
+      margin-top: get-lg(32px);
+    }
+    @include respond(md) {
+      gap: 16px;
+      width: 100%;
+      justify-content: space-between;
+      margin-top: 32px;
+    }
+  }
+}

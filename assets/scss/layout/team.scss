@@ -1,0 +1,132 @@
+.team-section {
+  padding: get-d(150px) 0;
+  &.page {
+    padding-top: get-d(40px);
+    @include respond(lg) {
+      padding-top: get-lg(40px);
+    }
+    @include respond(md) {
+      padding-top: 0px;
+    }
+  }
+  @include respond(lg) {
+    padding: get-lg(150px) 0;
+  }
+  @include respond(md) {
+    padding: 75px 0;
+    & .swiper-button-next {
+      right: 3px !important;
+      top: 30%;
+    }
+    & .swiper-button-prev {
+      left: 3px !important;
+      top: 30%;
+    }
+  }
+  &__top,
+  &__wrapper {
+    padding: 0 get-d(60px);
+    @include respond(lg) {
+      padding: 0 get-lg(60px);
+    }
+    @include respond(md) {
+      padding: 0 25px;
+    }
+  }
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(3, calc(33% - get-d(12px)));
+    grid-gap: get-d(24px);
+    width: 100%;
+    padding: 0 get-d(60px);
+    @include respond(lg) {
+      grid-gap: get-lg(24px);
+      grid-template-columns: repeat(2, calc(50% - get-lg(12px)));
+    }
+    @include respond(md) {
+      grid-template-columns: 100%;
+      grid-gap: 16px;
+    }
+  }
+  &__top {
+    display: grid;
+    grid-template-columns: 4fr 1fr;
+    grid-gap: get-d(24px);
+    grid-template-rows: repeat(2, max-content);
+    align-items: center;
+    margin-bottom: get-d(12px);
+    @include respond(lg) {
+      grid-gap: get-lg(24px);
+      margin-bottom: get-lg(12px);
+    }
+    @include respond(md) {
+      grid-template-columns: 1fr;
+      margin-bottom: 16px;
+    }
+    & .btn {
+      grid-column: 2 / 3;
+      grid-row: 2 / 3;
+      @include respond(md) {
+        display: none;
+      }
+    }
+    & .paragraph {
+      grid-column: 1 / 2;
+      grid-row: 2 / 3;
+      max-width: get-d(800px);
+      @include respond(lg) {
+        max-width: get-lg(800px);
+      }
+      @include respond(md) {
+        max-width: none;
+      }
+    }
+    & .title {
+      grid-column: 1 / -1;
+    }
+  }
+  & .button {
+    width: get-d(20px);
+    height: get-d(20px);
+    @include respond(lg) {
+      width: get-lg(20px);
+      height: get-lg(20px);
+    }
+    @include respond(md) {
+      width: 20px;
+      height: 20px;
+    }
+  }
+}
+
+.team-swiper {
+  width: 100%;
+  & .swiper-wrapper {
+    align-items: stretch;
+    & .swiper-slide {
+      height: auto;
+      & .team-card {
+        height: 100%;
+      }
+    }
+  }
+}
+
+.mini-swiper {
+  width: 100%;
+  & .swiper-slide {
+    & img {
+      width: 100%;
+      height: auto;
+      aspect-ratio: 1/1;
+      object-fit: cover;
+      border-radius: get-d(6px);
+      @include respond(lg) {
+        border-radius: get-lg(6px);
+      }
+      @include respond(md) {
+        border-radius: 6px;
+      }
+    }
+  }
+}

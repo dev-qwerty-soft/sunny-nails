@@ -10,20 +10,34 @@ body {
   overflow-x: hidden;
   background: $bg-color;
   color: $bg-grey;
-  // display: flex;
-  // flex-direction: column;
-  // justify-content: space-between;
-  // height: auto;
-  // min-height: 100vh;
   --vh-min: 500px;
-  &:has(.burger-menu.active) {
+  &:has(.burger-menu.active), &:has(.popup-join.active) {
     height: 100vh;
     overflow: hidden;
   }
+  position: relative;
+  &::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: #00000080;
+    z-index: 100;
+    backdrop-filter: blur(6px);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity .5s;
+  }
+  &:has(.popup-join.active) {
+    &::before {
+      opacity: 1;
+      pointer-events: all;
+    }
+  }
 }
-.hidden {
-  overflow: hidden;
-}
+
 a {
   // display: block;
   text-decoration: none;
@@ -97,4 +111,8 @@ button {
   @include respond(md) {
     font-size: 14px;
   }
+}
+
+.wpcf7-spinner {
+  display: none !important;
 }

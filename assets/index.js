@@ -1,6 +1,6 @@
 import "./scss/main.min.scss";
 import "./js/index.js";
-// import "./js/gsap.js";
+import "./js/gsap.js";
 import "./js/services-validation.js";
 import "./js/services.js";
 import "swiper/css";
@@ -166,7 +166,10 @@ if (filterSection) {
     add(filter);
 
     const filteredImages = images?.filter((image) => {
-      return slug === "all" || image.getAttribute("data-slug") === slug;
+      if (slug === "all") return true;
+
+      const slugs = image.getAttribute("data-slug")?.split(" ") || [];
+      return slugs.includes(slug);
     });
 
     remove(images);
@@ -223,6 +226,13 @@ document.onclick = (e) => {
   } else if (has(e.target, ".gallery-modal .cross")) {
     remove(modal);
     gallerySwiper?.slideTo(0);
+  } else if (has(e.target, "[data-popup]")) {
+    e.preventDefault();
+    const popup = e.target.closest("[data-popup]");
+    const id = popup.getAttribute("data-popup");
+    add(g(id));
+  } else if (has(e.target, ".popup-join .cross")) {
+    remove(g(".popup-join"));
   } else if (has(e.target, ".sunny-friends-table-section__button")) {
     tabFn?.(e.target);
   }

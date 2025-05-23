@@ -136,6 +136,7 @@ if (empty($ordered_category_ids)) {
                                                         <input type="checkbox"
                                                             class="service-checkbox"
                                                             data-service-id="<?php echo esc_attr($post_id); ?>"
+                                                            data-altegio-id="<?php echo esc_attr($altegio_id); ?>"
                                                             data-service-title="<?php echo esc_attr(get_the_title($post_id)); ?>"
                                                             data-service-price="<?php echo esc_attr($price); ?>"
                                                             data-service-currency="<?php echo esc_attr($currency); ?>"
@@ -184,6 +185,7 @@ if (empty($ordered_category_ids)) {
                                                             <input type="checkbox"
                                                                 class="service-checkbox"
                                                                 data-service-id="<?php echo esc_attr($post_id); ?>"
+                                                                data-altegio-id="<?php echo esc_attr($altegio_id); ?>"
                                                                 data-service-title="<?php echo esc_attr(get_the_title($post_id)); ?>"
                                                                 data-service-price="<?php echo esc_attr($price); ?>"
                                                                 data-service-currency="<?php echo esc_attr($currency); ?>"
@@ -434,15 +436,15 @@ if (empty($ordered_category_ids)) {
                                 <h3>Personal Information</h3>
 
                                 <div class="form-group">
-                                    <input type="text" id="client-name" name="client_name" placeholder="Name*" required />
+                                    <input type="text" id="client-name" name="client[name]" placeholder="Name*" required />
                                 </div>
 
                                 <div class="form-group">
-                                    <input type="email" id="client-email" name="client_email" placeholder="Email*" required />
+                                    <input type="email" id="client-email" name="client[email]" placeholder="Email*" required />
                                 </div>
 
                                 <div class="form-group">
-                                    <input type="tel" id="client-phone" name="client_phone" placeholder="Phone*" required />
+                                    <input type="tel" id="client-phone" name="client[phone]" placeholder="Phone*" required />
                                 </div>
 
                                 <div class="form-group">

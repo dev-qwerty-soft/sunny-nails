@@ -38,6 +38,7 @@
             },
             "default_value": "",
             "maxlength": "",
+            "allow_in_bindings": 0,
             "placeholder": "",
             "prepend": "",
             "append": ""
@@ -150,7 +151,7 @@
             "bidirectional_target": []
         },
         {
-            "key": "field_682727c52bf2c",
+            "key": "field_682c43ab6e278",
             "label": "Master images work",
             "name": "master_images_work",
             "aria-label": "",
@@ -172,9 +173,9 @@
             "rows_per_page": 20,
             "sub_fields": [
                 {
-                    "key": "field_682727e62bf2d",
-                    "label": "Master image work",
-                    "name": "master_image_work",
+                    "key": "field_682c43e76e27a",
+                    "label": "image",
+                    "name": "image",
                     "aria-label": "",
                     "type": "image",
                     "instructions": "",
@@ -195,10 +196,10 @@
                     "max_size": "",
                     "mime_types": "",
                     "preview_size": "thumbnail",
-                    "parent_repeater": "field_682727c52bf2c"
+                    "parent_repeater": "field_682c43ab6e278"
                 },
                 {
-                    "key": "field_68272baa9a4b0",
+                    "key": "field_682c43b46e279",
                     "label": "Master image work tag",
                     "name": "master_image_work_tag",
                     "aria-label": "",
@@ -211,17 +212,44 @@
                         "class": "",
                         "id": ""
                     },
-                    "taxonomy": "service_category",
+                    "taxonomy": "gallery_tag",
                     "add_term": 1,
-                    "save_terms": 1,
+                    "save_terms": 0,
                     "load_terms": 0,
-                    "return_format": "object",
-                    "field_type": "select",
+                    "return_format": "id",
+                    "field_type": "multi_select",
                     "allow_null": 0,
                     "bidirectional": 0,
                     "multiple": 0,
                     "bidirectional_target": [],
-                    "parent_repeater": "field_682727c52bf2c"
+                    "parent_repeater": "field_682c43ab6e278"
+                },
+                {
+                    "key": "field_682c43f56e27b",
+                    "label": "servise",
+                    "name": "servise",
+                    "aria-label": "",
+                    "type": "post_object",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "post_type": [
+                        "service"
+                    ],
+                    "post_status": "",
+                    "taxonomy": "",
+                    "return_format": "id",
+                    "multiple": 0,
+                    "allow_null": 0,
+                    "bidirectional": 0,
+                    "ui": 1,
+                    "bidirectional_target": [],
+                    "parent_repeater": "field_682c43ab6e278"
                 }
             ]
         }
@@ -244,5 +272,5 @@
     "active": true,
     "description": "",
     "show_in_rest": 0,
-    "modified": 1747419913
+    "modified": 1747753396
 }

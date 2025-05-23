@@ -1,0 +1,89 @@
+.contact-section {
+  &.page {
+    padding-top: get-d(75px);
+    @include respond(lg) {
+      padding-top: get-lg(75px);
+    }
+    @include respond(md) {
+      padding-top: 0px;
+    }
+  }
+  padding: get-d(150px) get-d(60px);
+  @include respond(lg) {
+    padding: get-lg(150px) get-lg(60px);
+  }
+  @include respond(md) {
+    padding: 75px 25px;
+  }
+  & .container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    @include respond(lg) {
+      grid-template-columns: 1fr;
+      grid-gap: get-lg(32px);
+    }
+    @include respond(md) {
+      grid-template-columns: 1fr;
+      grid-gap: 20px;
+    }
+  }
+  &__text {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-direction: column;
+    gap: get-d(16px);
+    @include respond(lg) {
+      gap: get-lg(16px);
+    }
+    @include respond(md) {
+      gap: 10px;
+    }
+  }
+  &__content {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-gap: get-d(36px) get-d(10px);
+    @include respond(lg) {
+      grid-gap: get-lg(36px) get-lg(10px);
+    }
+    @include respond(md) {
+      grid-template-columns: 1fr;
+      grid-gap: 20px;
+    }
+    & .info-item:nth-of-type(4) {
+      @include respond(md) {
+        grid-row: 3 / 4;
+        & .info-item__content {
+          grid-gap: 45px;
+        }
+      }
+    }
+  }
+  &__map {
+    position: relative;
+    overflow: hidden;
+    border-radius: get-d(10px);
+    @include respond(lg) {
+      border-radius: get-lg(10px);
+      aspect-ratio: 1/1;
+    }
+    @include respond(md) {
+      border-radius: 6px;
+    }
+    & .btn {
+      position: absolute;
+      left: get-d(20px);
+      bottom: get-d(24px);
+      z-index: 1;
+      @include respond(lg) {
+        left: get-lg(20px);
+        bottom: get-lg(24px);
+      }
+      @include respond(md) {
+        left: 50%;
+        transform: translateX(-50%);
+        bottom: 16px;
+      }
+    }
+  }
+}

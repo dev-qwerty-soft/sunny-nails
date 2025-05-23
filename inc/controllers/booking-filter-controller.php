@@ -485,15 +485,18 @@ class BookingFilterController
 
         // Format data for Altegio API
         $api_data = [
-            'staff_id' => $booking_data['staff_id'],
-            'date' => $booking_data['date'],
-            'time' => $booking_data['time'],
-            'services' => explode(',', $booking_data['service_id']),
+            'company_id' => AltegioClient::COMPANY_ID,
+            'staff_id' => (int) $booking_data['staff_id'],
+            'datetime' => $booking_data['date'] . 'T' . $booking_data['time'] . ':00',
+            'services' => array_map(function ($id) {
+                return ['id' => (int) $id];
+            }, $service_ids),
             'client' => [
                 'name' => $booking_data['client_name'],
                 'phone' => $booking_data['client_phone']
             ]
         ];
+
 
         if (!empty($booking_data['client_email'])) {
             $api_data['client']['email'] = $booking_data['client_email'];
