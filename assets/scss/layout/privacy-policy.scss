@@ -80,6 +80,15 @@
         font-weight: 600;
         font-size: get-d(20px);
         line-height: get-d(24px);
+        &:not(:first-of-type) {
+          margin-top: get-d(28px);
+          @include respond(lg) {
+            margin-top: get-lg(28px);
+          }
+          @include respond(md) {
+            margin-top: 28px;
+          }
+        }
         @include respond(lg) {
           font-size: get-lg(20px);
           line-height: get-lg(24px);

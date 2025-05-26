@@ -56,3 +56,7 @@ require_once get_template_directory() . '/inc/admin/google.php';
 add_action('after_setup_theme', ['BookingController', 'init']);
 add_action('after_setup_theme', ['BookingPopupController', 'init']);
 add_action('after_setup_theme', ['BookingFilterController', 'init']);
+
+add_action("login_enqueue_scripts", function () {
+    wp_enqueue_style('login-css', getUrl("login/style.css"), false, '1.0.0');
+});
