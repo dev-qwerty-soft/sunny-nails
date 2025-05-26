@@ -244,11 +244,32 @@
                     "post_status": "",
                     "taxonomy": "",
                     "return_format": "id",
-                    "multiple": 0,
+                    "multiple": 1,
                     "allow_null": 0,
                     "bidirectional": 0,
                     "ui": 1,
                     "bidirectional_target": [],
+                    "parent_repeater": "field_682c43ab6e278"
+                },
+                {
+                    "key": "field_6834432e2ab97",
+                    "label": "custom_title",
+                    "name": "custom_title",
+                    "aria-label": "",
+                    "type": "text",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "maxlength": "",
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
                     "parent_repeater": "field_682c43ab6e278"
                 }
             ]
@@ -272,5 +293,5 @@
     "active": true,
     "description": "",
     "show_in_rest": 0,
-    "modified": 1748028701
+    "modified": 1748256795
 }

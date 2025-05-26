@@ -1,13 +1,9 @@
 .services-section {
   background-color: #f7f1e0;
 
-  padding-top: get-d(40px);
+  padding: get-d(40px) 0;
   @include respond(lg) {
-    padding-top: get-lg(40px);
-  }
-  @include respond(md) {
-    padding: 75px 0;
-    padding-top: 0px;
+    padding: get-lg(40px) 0;
   }
 
   .container {
@@ -64,6 +60,11 @@
   flex: 1 0 0;
   border-radius: 10px;
   background: rgba(255, 255, 255, 0.75);
+  &:last-child {
+    .book-btn {
+      display: none;
+    }
+  }
 }
 .services-list {
   display: flex;

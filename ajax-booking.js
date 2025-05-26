@@ -314,6 +314,98 @@
       }
     });
   }
+  $(document).on("click", ".want-this-btn", function (e) {
+    e.preventDefault();
+
+    const masterId = parseInt($(this).data("master-id"));
+    const serviceIds = $(this)
+      .data("service-ids")
+      .toString()
+      .split(",")
+      .map((id) => parseInt(id.trim()));
+
+    if (!masterId || !serviceIds.length) return;
+
+    resetBookingForm();
+
+    bookingData.staffId = masterId;
+    bookingData.initialOption = "master";
+    bookingData.flowHistory = ["initial", "master"];
+
+    $(".booking-popup-overlay").addClass("active");
+
+    const $staffItem = $(`.staff-item[data-staff-id="${masterId}"]`);
+    if ($staffItem.length) {
+      $(".staff-item").removeClass("selected");
+      $staffItem.addClass("selected");
+
+      const $radio = $staffItem.find('input[type="radio"]');
+      if ($radio.length) {
+        $radio.prop("checked", true).trigger("change").trigger("click");
+      }
+
+      const name = $staffItem.find(".staff-name").text().trim();
+      const level = $staffItem.find(".star").length || 1;
+      const specialization = $staffItem.find(".stars span").text().trim().replace(/[()]/g, "");
+
+      bookingData.staffName = name || "Selected Master";
+      bookingData.staffLevel = level;
+      bookingData.staffSpecialization = specialization;
+
+      $staffItem.trigger("click");
+    } else {
+      bookingData.staffName = "Selected Master";
+      bookingData.staffLevel = 1;
+    }
+
+    bookingData.services = [];
+    bookingData.coreServices = [];
+    bookingData.addons = [];
+
+    loadServicesForMaster(masterId);
+
+    function waitForServiceCheckboxes(serviceIds, callback, maxTries = 20, delay = 100) {
+      let tries = 0;
+      const interval = setInterval(() => {
+        const allFound = serviceIds.every((id) => $(`.service-checkbox[data-service-id="${id}"]`).length > 0);
+        if (allFound || tries >= maxTries) {
+          clearInterval(interval);
+          callback();
+        }
+        tries++;
+      }, delay);
+    }
+
+    waitForServiceCheckboxes(serviceIds, () => {
+      serviceIds.forEach((id) => {
+        const $checkbox = $(`.service-checkbox[data-service-id="${id}"]`);
+        if ($checkbox.length) {
+          $checkbox.prop("checked", true).trigger("change");
+          $checkbox.closest(".service-item").addClass("selected");
+
+          if (typeof window.addService === "function") {
+            const title = $checkbox.data("service-title") || "Service";
+            const price = parseFloat($checkbox.data("service-price")) || 0;
+            const currency = $checkbox.data("service-currency") || "SGD";
+            const duration = $checkbox.data("service-duration") || "";
+            const wearTime = $checkbox.data("service-wear-time") || "";
+            const isAddon = $checkbox.data("is-addon") === true || $checkbox.data("is-addon") === "true";
+
+            addService(id, title, price, currency, duration, wearTime, isAddon, id, "");
+          }
+        }
+      });
+
+      bookingData.flowHistory.push("datetime");
+      goToStep("datetime");
+      generateCalendar();
+      updateSummary();
+
+      $(".booking-popup-overlay .booking-popup").css("display", "block");
+      $(".loading-overlay").hide();
+    });
+  });
+
   function initServiceStep() {
     $(document).on("click", '.booking-step[data-step="services"] .next-btn', function () {
       if (bookingData.coreServices.length === 0) return;
