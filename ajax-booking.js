@@ -1795,7 +1795,6 @@
    * and populates all data dynamically from previous selections
    */
   function updateSummary() {
-    // Select all the elements we need to update
     const masterBox = $(".summary-master-date .master-info");
     const dateTimeBox = $(".booking-date-time");
     const serviceList = $(".summary-services-list");
@@ -1804,17 +1803,15 @@
     const masterPercent = $(".summary-total-group .percent");
     const totalAmountEl = $(".summary-total-amount");
 
-    // Update master info
     if (bookingData.staffAvatar) {
       masterBox.find(".avatar").attr("src", bookingData.staffAvatar);
     } else {
-      // If no avatar, use placeholder
       masterBox.find(".avatar").attr("src", "https://be.cdn.alteg.io/images/no-master-sm.png");
     }
 
-    // Set master name and stars
     masterBox.find(".name").text(bookingData.staffName || "Any Master");
     masterBox.find(".stars").html(generateStarsHtml(bookingData.staffLevel));
+
     const levelTitles = {
       1: "Sunny Ray",
       2: "Sunny Shine",
@@ -1826,51 +1823,44 @@
       .text(title ? `(${title})` : "")
       .toggle(!!title);
 
-    // Update date/time
     const dateStr = formatDateDisplay(bookingData.date);
     const timeStr = formatTimeRange(bookingData.time);
     dateTimeBox.find(".calendar-date").text(dateStr);
     dateTimeBox.find(".calendar-time").text(timeStr);
 
-    // Build service items and calculate totals
     let serviceHTML = "";
     let addonHTML = "";
     let basePrice = 0;
     let adjustedTotal = 0;
     let priceAdjustment = 0;
 
-    // Process each service
     bookingData.services.forEach((service) => {
-      // Convert price to number
-      let price = parseFloat(service.price);
-      basePrice += price;
+      let price = parseFloat(service.price) || 0;
+      basePrice = parseFloat((basePrice + price).toFixed(2));
 
-      // Calculate individual service adjustment based on master level
-      let adjustedPrice = price;
       let adjustment = 0;
       if (bookingData.staffLevel > 1) {
         const percent = (bookingData.staffLevel - 1) * config.priceAdjustmentPerLevel;
-        adjustment = price * (percent / 100);
-        adjustedPrice = price + adjustment;
+        adjustment = parseFloat((price * (percent / 100)).toFixed(2));
       }
 
-      priceAdjustment += adjustment;
-      adjustedTotal += adjustedPrice;
+      let adjustedPrice = parseFloat(((price + adjustment) * 1.09).toFixed(2));
+
+      priceAdjustment = parseFloat((priceAdjustment + adjustment).toFixed(2));
+      adjustedTotal = parseFloat((adjustedTotal + adjustedPrice).toFixed(2));
 
       const itemHTML = `
-        <div class="summary-service-item">
-          <div class="service-info">
-            <strong>${service.title}</strong>
-            ${service.duration ? `<div class="meta"><strong>Duration:</strong> ${service.duration} min</div>` : ""}
-            ${service.wearTime ? `<div class="meta"><strong>Wear time:</strong> ${service.wearTime}</div>` : ""}
-            ${service.desc ? `<div class="meta service-description">${service.desc}</div>` : ""}
-          </div>
-        <div class="service-price"><strong>${price.toFixed(2)} ${service.currency || "SGD"}</strong></div>
-
+      <div class="summary-service-item">
+        <div class="service-info">
+          <strong>${service.title}</strong>
+          ${service.duration ? `<div class="meta"><strong>Duration:</strong> ${service.duration} min</div>` : ""}
+          ${service.wearTime ? `<div class="meta"><strong>Wear time:</strong> ${service.wearTime}</div>` : ""}
+          ${service.desc ? `<div class="meta service-description">${service.desc}</div>` : ""}
         </div>
-      `;
+        <div class="service-price"><strong>${price.toFixed(2)} ${service.currency || "SGD"}</strong></div>
+      </div>
+    `;
 
-      // Add to appropriate section (core services or add-ons)
       if (service.isAddon) {
         addonHTML += itemHTML;
       } else {
@@ -1878,10 +1868,8 @@
       }
     });
 
-    // Update service sections
     serviceList.html(serviceHTML || '<p class="no-services">No services selected</p>');
 
-    // Update add-ons section with title if there are add-ons
     if (addonHTML) {
       addonsList.html(`
       <h3 class="section-subtitle">Add-ons</h3>
@@ -1891,43 +1879,32 @@
       addonsList.empty();
     }
 
-    // Update master bonus and total
     const bonusPercent = bookingData.staffLevel > 1 ? (bookingData.staffLevel - 1) * config.priceAdjustmentPerLevel : 0;
     masterPercent.text(bonusPercent);
 
-    // Format the adjustment to 2 decimal places
-    const formattedAdjustment = priceAdjustment.toFixed(2);
-    masterBonusEl.text(`${formattedAdjustment} SGD`);
+    masterBonusEl.text(`${priceAdjustment.toFixed(2)} SGD`);
 
-    // Only show master bonus if there is one
     if (priceAdjustment > 0) {
       $(".summary-item:not(.total)").show();
     } else {
       $(".summary-item:not(.total)").hide();
     }
 
-    // Update total amount
-    // Calculate tax (9%)
-    const taxAmount = adjustedTotal * 0.09;
-    const finalTotal = adjustedTotal + taxAmount;
+    const taxAmount = parseFloat((adjustedTotal - adjustedTotal / 1.09).toFixed(2));
+    const finalTotal = adjustedTotal;
 
-    // Update tax and total in UI
     $(".summary-tax-amount").text(`${taxAmount.toFixed(2)} SGD`);
     $(".summary-total-amount").text(`${finalTotal.toFixed(2)} SGD`);
-
     totalAmountEl.text(`${finalTotal.toFixed(2)} SGD`);
 
-    // Save to bookingData for confirmation step
     bookingData.tax = taxAmount;
     bookingData.totalWithTax = finalTotal;
 
-    // Store the calculated values in bookingData for later use
     bookingData.basePrice = basePrice;
     bookingData.adjustedPrice = adjustedTotal;
     bookingData.priceAdjustment = priceAdjustment;
     bookingData.adjustmentPercent = bonusPercent;
 
-    // Restore any previously entered contact info
     if (bookingData.contact) {
       const cleaned = (bookingData.contact.comment || "").replace(/Price information:[\s\S]*/i, "").trim();
       $("#client-name").val(bookingData.contact.name || "");
@@ -1941,6 +1918,100 @@
       adjustment: priceAdjustment.toFixed(2),
       adjustedTotal: adjustedTotal.toFixed(2),
       adjustmentPercent: bonusPercent,
+    });
+  }
+
+  function submitBooking() {
+    $(".confirm-booking-btn").prop("disabled", true).text("Processing...");
+    $(".loading-overlay").show();
+
+    if (!bookingData.staffId || !bookingData.date || !bookingData.time || bookingData.services.length === 0) {
+      showValidationAlert("Missing booking information. Please complete all steps.");
+      $(".confirm-booking-btn").prop("disabled", false).text("Book an appointment");
+      $(".loading-overlay").hide();
+      return;
+    }
+
+    const basePrice = calculateBasePrice();
+    const staffLevel = parseInt(bookingData.staffLevel) || 1;
+    const adjustmentPercent = staffLevel > 1 ? (staffLevel - 1) * config.priceAdjustmentPerLevel : 0;
+    const priceAdjustment = calculatePriceAdjustment(basePrice, staffLevel);
+    const adjustedPriceWithoutTax = basePrice + priceAdjustment;
+    const adjustedPrice = parseFloat((adjustedPriceWithoutTax * 1.09).toFixed(2));
+
+    const formattedServices = bookingData.services.map((service) => {
+      const origPrice = parseFloat(service.price) || 0;
+      const serviceAdjustment = staffLevel > 1 ? origPrice * (adjustmentPercent / 100) : 0;
+      const serviceWithMaster = origPrice + serviceAdjustment;
+      const finalServicePrice = parseFloat((serviceWithMaster * 1.09).toFixed(2));
+
+      return {
+        id: parseInt(service.id),
+        price: finalServicePrice.toFixed(2),
+      };
+    });
+
+    const clientCommentRaw = $("#client-comment").val().trim();
+    const cleanComment = clientCommentRaw.replace(/Price information:[\s\S]*$/i, "").trim();
+
+    const serviceDescriptions = bookingData.services.map((service) => `- ${service.title}: ${parseFloat(service.price).toFixed(2)} SGD`).join("\n");
+
+    const fullComment = `${cleanComment ? "Comment from client: " + cleanComment + "\n\n" : ""}
+Price information:
+${serviceDescriptions}
+Base price: ${bookingData.basePrice.toFixed(2)} SGD
+Master category: +${bookingData.adjustmentPercent}% (${bookingData.priceAdjustment.toFixed(2)} SGD)
+Tax included (9%): ${bookingData.tax.toFixed(2)} SGD
+Final price: ${bookingData.totalWithTax.toFixed(2)} SGD`;
+
+    const bookingRequest = {
+      action: "submit_booking",
+      booking_nonce: booking_params.nonce,
+      staff_id: bookingData.staffId,
+      date: bookingData.date,
+      time: bookingData.time,
+      core_services: JSON.stringify(formattedServices.filter((s) => bookingData.coreServices.find((cs) => parseInt(cs.id) === s.id))),
+      addon_services: JSON.stringify(formattedServices.filter((s) => bookingData.addons.find((a) => parseInt(a.id) === s.id))),
+
+      client_name: bookingData.contact.name,
+      client_phone: bookingData.contact.phone,
+      client_email: bookingData.contact.email || "",
+      client_comment: fullComment,
+      staff_level: staffLevel,
+      base_price: basePrice.toFixed(2),
+      adjusted_price: adjustedPrice.toFixed(2),
+      price_adjustment: priceAdjustment.toFixed(2),
+      adjustment_percent: adjustmentPercent,
+      total_price: bookingData.totalWithTax?.toFixed(2) || adjustedPrice.toFixed(2),
+    };
+
+    console.log("Submitting booking with price data:", bookingRequest);
+
+    $.ajax({
+      url: booking_params.ajax_url,
+      type: "POST",
+      data: bookingRequest,
+      success: function (response) {
+        console.log("Booking API response:", response);
+        $(".confirm-booking-btn").prop("disabled", false).text("Book an appointment");
+        $(".loading-overlay").hide();
+        if (response.success) {
+          handleSuccessfulBooking(response.data);
+        } else {
+          const errorMsg = response.data?.message || "Booking failed. Please try again.";
+          showValidationAlert(errorMsg);
+        }
+      },
+      error: function (xhr, status, error) {
+        console.error("Booking API error:", {
+          status: status,
+          error: error,
+          responseText: xhr.responseText,
+        });
+        $(".loading-overlay").hide();
+        $(".confirm-booking-btn").prop("disabled", false).text("Book an appointment");
+        showValidationAlert("Error communicating with server: " + (xhr.statusText || error));
+      },
     });
   }
 
@@ -2025,31 +2096,36 @@
     const staffLevel = parseInt(bookingData.staffLevel) || 1;
     const adjustmentPercent = staffLevel > 1 ? (staffLevel - 1) * config.priceAdjustmentPerLevel : 0;
     const priceAdjustment = calculatePriceAdjustment(basePrice, staffLevel);
-    const adjustedPrice = parseFloat((basePrice + priceAdjustment).toFixed(2));
+
+    // Ціна з надбавкою майстра без податку
+    const adjustedPriceWithoutTax = basePrice + priceAdjustment;
+    // Додаємо 9% ПДВ
+    const adjustedPrice = parseFloat((adjustedPriceWithoutTax * 1.09).toFixed(2));
 
     const formattedServices = bookingData.services.map((service) => {
       const origPrice = parseFloat(service.price);
       const serviceAdjustment = staffLevel > 1 ? origPrice * (adjustmentPercent / 100) : 0;
       const serviceWithMaster = origPrice + serviceAdjustment;
-      const finalServicePrice = serviceWithMaster * 1.09;
+      const finalServicePrice = serviceWithMaster * 1.09; // +9% ПДВ
 
       return {
         id: parseInt(service.id),
         price: finalServicePrice.toFixed(2),
       };
     });
+
     const clientCommentRaw = $("#client-comment").val().trim();
     const cleanComment = clientCommentRaw.replace(/Price information:[\s\S]*$/i, "").trim();
 
     const serviceDescriptions = bookingData.services.map((service) => `- ${service.title}: ${parseFloat(service.price).toFixed(2)} SGD`).join("\n");
 
     const fullComment = `${cleanComment ? "Comment from client: " + cleanComment + "\n\n" : ""}
-    Price information:
-    ${serviceDescriptions}
-    Base price: ${bookingData.basePrice.toFixed(2)} SGD
-    Master category: +${bookingData.adjustmentPercent}% (${bookingData.priceAdjustment.toFixed(2)} SGD)
-    Tax included (9%): ${bookingData.tax.toFixed(2)} SGD
-    Final price: ${bookingData.totalWithTax.toFixed(2)} SGD`;
+Price information:
+${serviceDescriptions}
+Base price: ${basePrice.toFixed(2)} SGD
+Master category: +${adjustmentPercent}% (${priceAdjustment.toFixed(2)} SGD)
+Tax included (9%): ${(adjustedPrice - adjustedPriceWithoutTax).toFixed(2)} SGD
+Final price: ${adjustedPrice.toFixed(2)} SGD`;
 
     const bookingRequest = {
       action: "submit_booking",
@@ -2077,7 +2153,7 @@
       adjusted_price: adjustedPrice.toFixed(2),
       price_adjustment: priceAdjustment.toFixed(2),
       adjustment_percent: adjustmentPercent,
-      total_price: bookingData.totalWithTax?.toFixed(2) || adjustedPrice.toFixed(2),
+      total_price: adjustedPrice.toFixed(2),
     };
 
     console.log("Submitting booking with price data:", bookingRequest);

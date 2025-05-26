@@ -66,6 +66,7 @@
                     "collapsed": "",
                     "button_label": "Add Row",
                     "rows_per_page": 20,
+                    "parent_repeater": "field_68260273c45bd",
                     "sub_fields": [
                         {
                             "key": "field_682602d04b700",
@@ -114,8 +115,7 @@
                             "append": "",
                             "parent_repeater": "field_682602b34b6ff"
                         }
-                    ],
-                    "parent_repeater": "field_68260273c45bd"
+                    ]
                 }
             ]
         },
@@ -248,6 +248,7 @@
                     "collapsed": "",
                     "button_label": "Add Row",
                     "rows_per_page": 20,
+                    "parent_repeater": "field_682b2a8b3c084",
                     "sub_fields": [
                         {
                             "key": "field_682b2ad03c087",
@@ -291,8 +292,7 @@
                             "ui_off_text": "",
                             "parent_repeater": "field_682b2abd3c086"
                         }
-                    ],
-                    "parent_repeater": "field_682b2a8b3c084"
+                    ]
                 }
             ]
         },
@@ -437,5 +437,5 @@
     "active": true,
     "description": "",
     "show_in_rest": 0,
-    "modified": 1747669369
+    "modified": 1748028701
 }
