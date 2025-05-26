@@ -11,3 +11,8 @@
 @import "./component/validation-alert.scss";
 @import "./layout/main.min.scss";
 @import "./component/footer";
+
+section {
+  opacity: 0;
+  transform: translateY(75px);
+}

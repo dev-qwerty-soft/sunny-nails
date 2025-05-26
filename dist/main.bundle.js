@@ -20941,11 +20941,13 @@ gsap__WEBPACK_IMPORTED_MODULE_0__["default"].registerPlugin(gsap_ScrollTrigger__
     },
   });
 
-  tl.from(element, { 
+  tl.fromTo(element, { 
     opacity: 0,
     y: 75,
+  }, {
+    opacity: 1,
+    y: 0
   }, 0);
-  
 });
 
 
