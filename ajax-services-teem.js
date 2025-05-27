@@ -23,8 +23,8 @@
     const serviceTitle = $serviceCard.find(".service-title").clone().children().remove().end().text().trim();
 
     const servicePriceText = $serviceCard.find(".service-price").text().trim();
-    const serviceDuration = $serviceCard.find(".service-duration").text().replace("Duration:", "").trim();
-    const serviceWearTime = $serviceCard.find(".service-wear-time").text().replace("Wear time:", "").trim();
+    const serviceDuration = $serviceCard.find(".service-duration").text().replace("<strong>Duration:</strong>", "").trim();
+    const serviceWearTime = $serviceCard.find(".service-wear-time").text().replace("<strong>Wear time:</strong>", "").trim();
 
     const priceMatch = servicePriceText.match(/(\d+(?:\.\d+)?)/);
     const servicePrice = priceMatch ? priceMatch[0] : "0";
@@ -238,8 +238,8 @@
 
     const serviceTitle = $serviceCard.find(".service-title").clone().children().remove().end().text().trim();
     const servicePriceText = $serviceCard.find(".service-price").text().trim();
-    const serviceDuration = $serviceCard.find(".service-duration").text().replace("Duration:", "").trim();
-    const serviceWearTime = $serviceCard.find(".service-wear-time").text().replace("Wear time:", "").trim();
+    const serviceDuration = $serviceCard.find(".service-duration").text().replace("<strong>Duration:</strong>", "").trim();
+    const serviceWearTime = $serviceCard.find(".service-wear-time").text().replace("<strong>Wear time:</strong>", "").trim();
     const priceMatch = servicePriceText.match(/(\d+(?:\.\d+)?)/);
     const servicePrice = priceMatch ? priceMatch[0] : "0";
     const currency = servicePriceText.replace(/[\d.,]/g, "").trim() || "SGD";
