@@ -400,8 +400,10 @@
       }
     }, 400);
   });
+  let allowAutoAdvanceFromMaster = false;
+
   $(document).on("bookingStepChanged", function (e, step) {
-    if (step === "master" && window.bookingData?.staffId) {
+    if (step === "master" && window.bookingData?.staffId && allowAutoAdvanceFromMaster) {
       setTimeout(() => {
         const $nextBtn = $('.booking-step[data-step="master"] .next-btn');
         if ($nextBtn.length && !$nextBtn.prop("disabled")) {
