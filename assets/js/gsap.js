@@ -17,9 +17,8 @@ g("section", document, true)?.forEach((element) => {
     },
   });
 
-  tl.from(element, { 
-    opacity: 0,
-    y: 75,
-  }, 0);
-  
+  tl.to(element, {
+    opacity: 1,
+    y: 0,
+  })
 });

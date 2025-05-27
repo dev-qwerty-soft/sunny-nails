@@ -1,0 +1,11 @@
+#login {
+  & .button-primary {
+    background-color: #fdc41f !important;
+    border-color: #fdc41f !important;
+    color: #302f34 !important;
+  }
+
+  & .wp-login-logo a {
+    background-image: url("./favicon_32x32.png") !important;
+  }
+}

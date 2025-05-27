@@ -1,3 +1,125 @@
 .privacy-policy-section {
-  
+  padding: get-d(75px) get-d(60px);
+  @include respond(lg) {
+    padding: get-lg(75px) get-lg(60px);
+  }
+  @include respond(md) {
+    padding: 0px 25px 50px 25px;
+  }
+  &__top {
+    display: flex;
+    flex-direction: column;
+    gap: get-d(16px);
+    @include respond(lg) {
+      gap: get-lg(16px);
+    }
+    @include respond(md) {
+      gap: 10px;
+    }
+  }
+  &__blocks {
+    margin-top: get-d(36px);
+    @include respond(lg) {
+      margin-top: get-lg(36px);
+    }
+    @include respond(md) {
+      margin-top: 20px;
+    }
+  }
+  &__block {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    padding: get-d(36px) 0;
+    border-bottom: get-d(1px) solid $bg-grey;
+    @include respond(lg) {
+      padding: get-lg(36px) 0;
+      border-bottom: get-lg(1px) solid $bg-grey;
+    }
+    @include respond(md) {
+      padding: 24px 0;
+      border-bottom: 1px solid $bg-grey;
+      grid-template-columns: 100%;
+      grid-gap: 16px;
+    }
+    &:first-of-type {
+      padding-top: 0;
+    }
+    &:last-of-type {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+    & h2 {
+      font-weight: 600;
+      font-size: get-d(24px);
+      line-height: 120%;
+      @include respond(lg) {
+        font-size: get-lg(24px);
+      }
+      @include respond(md) {
+        font-size: 24px;
+      }
+    }
+    & .content {
+      font-weight: 400;
+      font-size: get-d(16px);
+      line-height: get-d(22px);
+      display: flex;
+      flex-direction: column;
+      gap: get-d(12px);
+      @include respond(lg) {
+        font-size: get-lg(16px);
+        line-height: get-lg(22px);
+        gap: get-lg(12px);
+      }
+      @include respond(md) {
+        font-size: 14px;
+        line-height: 20px;
+        gap: 8px;
+      }
+      & h3 {
+        font-weight: 600;
+        font-size: get-d(20px);
+        line-height: get-d(24px);
+        &:not(:first-of-type) {
+          margin-top: get-d(28px);
+          @include respond(lg) {
+            margin-top: get-lg(28px);
+          }
+          @include respond(md) {
+            margin-top: 28px;
+          }
+        }
+        @include respond(lg) {
+          font-size: get-lg(20px);
+          line-height: get-lg(24px);
+        }
+        @include respond(md) {
+          font-size: 20px;
+          line-height: 24px;
+        }
+      }
+      & a {
+        text-decoration: underline;
+        color: inherit;
+      }
+    }
+    & ul, ol {
+      display: flex;
+      flex-direction: column;
+      gap: get-d(12px);
+      padding-left: get-d(20px);
+      @include respond(lg) {
+        gap: get-lg(12px);
+        padding-left: get-lg(20px);
+      }
+      @include respond(md) {
+        gap: 8px;
+        padding-left: 20px;
+      }
+      & li::marker {
+        color: $bg-yellow;
+        font-size: 1.2em;
+      }
+    }
+  }
 }
