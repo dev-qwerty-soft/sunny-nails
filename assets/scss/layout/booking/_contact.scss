@@ -143,6 +143,9 @@
     }
   }
   .summary-services-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
     padding: 20px;
     margin: 0;
 
