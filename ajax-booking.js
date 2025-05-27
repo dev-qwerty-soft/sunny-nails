@@ -1428,7 +1428,7 @@
   function loadServicesForMaster(masterId) {
     debug("Loading services for master", masterId);
 
-    $(".services-list").html('<p class="loading-message">Loading services...</p>');
+    $(".booking-popup .services-list").html('<p class="loading-message">Loading services...</p>');
 
     $.ajax({
       url: booking_params.ajax_url,
@@ -1442,12 +1442,12 @@
         console.log("Full Response:", response);
 
         if (response.success && response.data && response.data.html) {
-          $(".services-list").html(response.data.html);
+          $(".booking-popup .services-list").html(response.data.html);
           updateAddonAvailability();
           updateNextButtonState();
         } else {
           console.error("Services response details:", response);
-          $(".services-list").html('<p class="no-items-message">No services available for this master. Details logged in console.</p>');
+          $(".booking-popup .services-list").html('<p class="no-items-message">No services available for this master. Details logged in console.</p>');
         }
       },
       error: function (xhr, status, error) {
@@ -1456,7 +1456,7 @@
           error: error,
           responseText: xhr.responseText,
         });
-        $(".services-list").html('<p class="no-items-message">Error loading services. Check console for details.</p>');
+        $(".booking-popup .services-list").html('<p class="no-items-message">Error loading services. Check console for details.</p>');
       },
     });
   }
@@ -1480,7 +1480,7 @@
           },
           success: function (response) {
             if (response.success && response.data && response.data.html) {
-              $(".services-list").html(response.data.html);
+              $(".booking-popup .services-list").html(response.data.html);
               updateAddonAvailability();
               updateNextButtonState();
             }
