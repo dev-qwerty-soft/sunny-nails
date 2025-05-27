@@ -328,6 +328,9 @@
 
     resetBookingForm();
 
+    $(".booking-popup").hide();
+    $(".loading-overlay").show();
+
     bookingData.staffId = masterId;
     bookingData.initialOption = "master";
     bookingData.flowHistory = ["initial", "master"];
@@ -364,7 +367,7 @@
 
     loadServicesForMaster(masterId);
 
-    function waitForServiceCheckboxes(serviceIds, callback, maxTries = 20, delay = 100) {
+    function waitForServiceCheckboxes(serviceIds, callback, maxTries = 30, delay = 100) {
       let tries = 0;
       const interval = setInterval(() => {
         const allFound = serviceIds.every((id) => $(`.service-checkbox[data-service-id="${id}"]`).length > 0);
@@ -391,7 +394,7 @@
             const wearTime = $checkbox.data("service-wear-time") || "";
             const isAddon = $checkbox.data("is-addon") === true || $checkbox.data("is-addon") === "true";
 
-            addService(id, title, price, currency, duration, wearTime, isAddon, id, "");
+            addService(id, title, price, currency, duration, wearTime, isAddon, isAddon ? id : null, "");
           }
         }
       });
@@ -401,7 +404,7 @@
       generateCalendar();
       updateSummary();
 
-      $(".booking-popup-overlay .booking-popup").css("display", "block");
+      $(".booking-popup").fadeIn(200);
       $(".loading-overlay").hide();
     });
   });
