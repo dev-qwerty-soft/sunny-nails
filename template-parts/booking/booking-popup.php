@@ -557,7 +557,7 @@ if (empty($ordered_category_ids)) {
                         </div>
                         <div class="step-actions">
                             <button type="button" class="btn yellow new-booking-btn">Make another booking</button>
-                            <button type="button" class="btn  outline edit-booking-btn">Edit Booking</button>
+                            <!-- <button type="button" class="btn  outline edit-booking-btn">Edit Booking</button> -->
                             <button type="button" class="btn  outline cancel-booking-btn">Cancel Booking</button>
                         </div>
                     </div>
