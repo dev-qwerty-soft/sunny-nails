@@ -2666,15 +2666,29 @@ Final price: ${adjustedPrice.toFixed(2)} SGD`;
     return totalPrice.toFixed(2);
   }
 
-  /**
-   * Add CSS styles for validation, alerts, and star ratings
-   */
   $(document).on("click", ".new-booking-btn", function () {
     resetBookingForm();
   });
   $(document).on("click", ".edit-booking-btn", function () {
     goToStep("contact");
     updateSummary();
+  });
+  $(document).on("click", ".cancel-booking-btn", function (e) {
+    e.preventDefault();
+
+    $(".booking-popup-overlay").removeClass("active");
+    $(".booking-popup").hide();
+    $(".loading-overlay").hide();
+
+    if (typeof resetBookingForm === "function") {
+      resetBookingForm();
+    }
+
+    if (window.localStorage) {
+      localStorage.removeItem("bookingData");
+    }
+
+    console.log("[Booking] Popup closed via cancel button.");
   });
 
   // Initialize styles when document is ready
