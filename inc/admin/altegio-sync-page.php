@@ -617,12 +617,9 @@ HTML;
                 <p><?php echo $notice; ?></p>
             </div>
         <?php endif; ?>
-        <div class="notice notice-warning">
-            <p><strong>⚠️ WARNING:</strong> This will FORCE update only fields synchronized with Altegio API. Manual changes in other fields will not be touched.</p>
-        </div>
         <form method="post">
             <?php wp_nonce_field('force_altegio_sync_nonce'); ?>
-            <h2>🔥 FORCE Sync Options</h2>
+            <h2>Synchronization Options</h2>
             <p><strong>This sync will:</strong></p>
             <ul>
                 <li>✅ Delete and overwrite only meta and ACF fields synced with Altegio API</li>
@@ -648,29 +645,7 @@ HTML;
             <p><strong>Services:</strong> <?php echo isset($service_count->publish) ? $service_count->publish : '0'; ?></p>
             <p><strong>Masters:</strong> <?php echo isset($master_count->publish) ? $master_count->publish : '0'; ?></p>
         </div>
-        <?php if ($test_post_id) : ?>
-            <div style="margin-top: 30px; padding: 20px; background: #fff3cd; border-radius: 5px;">
-                <h3>🔍 Debug ACF Fields</h3>
-                <p>Test Service ID: <strong><?php echo $test_post_id; ?></strong> - <?php echo esc_html($test_post_title); ?></p>
-                <table border="1" style="border-collapse: collapse;">
-                    <tr>
-                        <th>Field</th>
-                        <th>Meta Value</th>
-                        <th>ACF Value</th>
-                    </tr>
-                    <?php foreach ($fields_to_check as $field):
-                        $meta_value = get_post_meta($test_post_id, $field, true);
-                        $acf_value = function_exists('get_field') ? get_field($field, $test_post_id) : 'ACF not available';
-                    ?>
-                        <tr>
-                            <td><?php echo esc_html($field); ?></td>
-                            <td><?php echo $meta_value !== '' ? esc_html($meta_value) : 'empty'; ?></td>
-                            <td><?php echo $acf_value !== '' ? esc_html($acf_value) : 'empty'; ?></td>
-                        </tr>
-                    <?php endforeach; ?>
-                </table>
-            </div>
-        <?php endif; ?>
+
     </div>
 <?php
 }
