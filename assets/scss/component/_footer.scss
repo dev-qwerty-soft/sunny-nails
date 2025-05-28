@@ -1,4 +1,6 @@
 .footer {
+  background: $bg-yellow;
+  padding: get-d(50px) get-d(60px) get-d(15px) get-d(60px);
   & .container {
     @include respond(md) {
       display: grid;
@@ -28,8 +30,7 @@
       }
     }
   }
-  background: $bg-yellow;
-  padding: get-d(50px) get-d(60px) get-d(15px) get-d(60px);
+
   @include respond(lg) {
     padding: get-lg(50px) get-lg(60px) get-lg(15px) get-lg(60px);
   }

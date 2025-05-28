@@ -328,6 +328,9 @@
 
     resetBookingForm();
 
+    $(".booking-popup").hide();
+    $(".loading-overlay").show();
+
     bookingData.staffId = masterId;
     bookingData.initialOption = "master";
     bookingData.flowHistory = ["initial", "master"];
@@ -364,7 +367,7 @@
 
     loadServicesForMaster(masterId);
 
-    function waitForServiceCheckboxes(serviceIds, callback, maxTries = 20, delay = 100) {
+    function waitForServiceCheckboxes(serviceIds, callback, maxTries = 30, delay = 100) {
       let tries = 0;
       const interval = setInterval(() => {
         const allFound = serviceIds.every((id) => $(`.service-checkbox[data-service-id="${id}"]`).length > 0);
@@ -391,17 +394,20 @@
             const wearTime = $checkbox.data("service-wear-time") || "";
             const isAddon = $checkbox.data("is-addon") === true || $checkbox.data("is-addon") === "true";
 
-            addService(id, title, price, currency, duration, wearTime, isAddon, id, "");
+            addService(id, title, price, currency, duration, wearTime, isAddon, isAddon ? id : null, "");
           }
         }
       });
+      if (!bookingData.flowHistory.includes("services")) {
+        bookingData.flowHistory.push("services");
+      }
+      bookingData.flowHistory = ["initial", "services", "master", "datetime"];
 
-      bookingData.flowHistory.push("datetime");
       goToStep("datetime");
       generateCalendar();
       updateSummary();
 
-      $(".booking-popup-overlay .booking-popup").css("display", "block");
+      $(".booking-popup").fadeIn(200);
       $(".loading-overlay").hide();
     });
   });
@@ -1422,7 +1428,7 @@
   function loadServicesForMaster(masterId) {
     debug("Loading services for master", masterId);
 
-    $(".services-list").html('<p class="loading-message">Loading services...</p>');
+    $(".booking-popup .services-list").html('<p class="loading-message">Loading services...</p>');
 
     $.ajax({
       url: booking_params.ajax_url,
@@ -1436,12 +1442,12 @@
         console.log("Full Response:", response);
 
         if (response.success && response.data && response.data.html) {
-          $(".services-list").html(response.data.html);
+          $(".booking-popup .services-list").html(response.data.html);
           updateAddonAvailability();
           updateNextButtonState();
         } else {
           console.error("Services response details:", response);
-          $(".services-list").html('<p class="no-items-message">No services available for this master. Details logged in console.</p>');
+          $(".booking-popup .services-list").html('<p class="no-items-message">No services available for this master. Details logged in console.</p>');
         }
       },
       error: function (xhr, status, error) {
@@ -1450,7 +1456,7 @@
           error: error,
           responseText: xhr.responseText,
         });
-        $(".services-list").html('<p class="no-items-message">Error loading services. Check console for details.</p>');
+        $(".booking-popup .services-list").html('<p class="no-items-message">Error loading services. Check console for details.</p>');
       },
     });
   }
@@ -1474,7 +1480,7 @@
           },
           success: function (response) {
             if (response.success && response.data && response.data.html) {
-              $(".services-list").html(response.data.html);
+              $(".booking-popup .services-list").html(response.data.html);
               updateAddonAvailability();
               updateNextButtonState();
             }
@@ -2072,6 +2078,49 @@
     // Return just the time if we can't calculate a range
     return timeStr;
   }
+  function selectRandomMaster() {
+    const $availableStaff = $(".staff-item").not(".any-master");
+
+    if ($availableStaff.length === 0) return;
+
+    const randomIndex = Math.floor(Math.random() * $availableStaff.length);
+    const $randomStaff = $availableStaff.eq(randomIndex);
+
+    $randomStaff.find('input[type="radio"]').prop("checked", true).trigger("change").trigger("click");
+    $randomStaff.addClass("selected");
+
+    const staffId = $randomStaff.data("staff-id");
+    const staffName = $randomStaff.find(".staff-name").text().trim();
+    const staffLevel = $randomStaff.find(".star").length || 1;
+    const specialization = $randomStaff.find(".stars span").text().trim().replace(/[()]/g, "");
+
+    bookingData.staffId = staffId;
+    bookingData.staffName = staffName;
+    bookingData.staffLevel = staffLevel;
+    bookingData.staffSpecialization = specialization;
+
+    console.log("[Booking] Random master selected:", {
+      id: staffId,
+      name: staffName,
+      level: staffLevel,
+      specialization: specialization,
+    });
+
+    return staffId;
+  }
+  $(document).on("click", ".booking-step[data-step='master'] .next-btn", function () {
+    if (bookingData.staffId === "any") {
+      const selectedId = selectRandomMaster();
+      if (!selectedId) {
+        showValidationAlert("No available masters.");
+        return;
+      }
+    }
+
+    goToStep("datetime");
+    generateCalendar();
+    updateSummary();
+  });
 
   /**
    * Updated updateSummary function with proper add-on handling
@@ -2387,116 +2436,6 @@ Final price: ${bookingData.totalWithTax.toFixed(2)} SGD`;
   }
 
   /**
-   * Submit the booking
-   * This function is called when clicking the confirmation button
-   */
-
-  function submitBooking() {
-    $(".confirm-booking-btn").prop("disabled", true).text("Processing...");
-    $(".loading-overlay").show();
-
-    if (!bookingData.staffId || !bookingData.date || !bookingData.time || bookingData.services.length === 0) {
-      showValidationAlert("Missing booking information. Please complete all steps.");
-      $(".confirm-booking-btn").prop("disabled", false).text("Book an appointment");
-      $(".loading-overlay").hide();
-      return;
-    }
-
-    const basePrice = calculateBasePrice();
-    const staffLevel = parseInt(bookingData.staffLevel) || 1;
-    const adjustmentPercent = staffLevel > 1 ? (staffLevel - 1) * config.priceAdjustmentPerLevel : 0;
-    const priceAdjustment = calculatePriceAdjustment(basePrice, staffLevel);
-
-    // Ціна з надбавкою майстра без податку
-    const adjustedPriceWithoutTax = basePrice + priceAdjustment;
-    // Додаємо 9% ПДВ
-    const adjustedPrice = parseFloat((adjustedPriceWithoutTax * 1.09).toFixed(2));
-
-    const formattedServices = bookingData.services.map((service) => {
-      const origPrice = parseFloat(service.price);
-      const serviceAdjustment = staffLevel > 1 ? origPrice * (adjustmentPercent / 100) : 0;
-      const serviceWithMaster = origPrice + serviceAdjustment;
-      const finalServicePrice = serviceWithMaster * 1.09; // +9% ПДВ
-
-      return {
-        id: parseInt(service.id),
-        price: finalServicePrice.toFixed(2),
-      };
-    });
-
-    const clientCommentRaw = $("#client-comment").val().trim();
-    const cleanComment = clientCommentRaw.replace(/Price information:[\s\S]*$/i, "").trim();
-
-    const serviceDescriptions = bookingData.services.map((service) => `- ${service.title}: ${parseFloat(service.price).toFixed(2)} SGD`).join("\n");
-
-    const fullComment = `${cleanComment ? "Comment from client: " + cleanComment + "\n\n" : ""}
-Price information:
-${serviceDescriptions}
-Base price: ${basePrice.toFixed(2)} SGD
-Master category: +${adjustmentPercent}% (${priceAdjustment.toFixed(2)} SGD)
-Tax included (9%): ${(adjustedPrice - adjustedPriceWithoutTax).toFixed(2)} SGD
-Final price: ${adjustedPrice.toFixed(2)} SGD`;
-
-    const bookingRequest = {
-      action: "submit_booking",
-      booking_nonce: booking_params.nonce,
-      staff_id: bookingData.staffId,
-      date: bookingData.date,
-      time: bookingData.time,
-      core_services: JSON.stringify(
-        formattedServices.filter((s) => {
-          return bookingData.coreServices.find((cs) => parseInt(cs.id) === s.id);
-        })
-      ),
-      addon_services: JSON.stringify(
-        formattedServices.filter((s) => {
-          return bookingData.addons.find((a) => parseInt(a.id) === s.id);
-        })
-      ),
-
-      client_name: bookingData.contact.name,
-      client_phone: bookingData.contact.phone,
-      client_email: bookingData.contact.email || "",
-      client_comment: fullComment,
-      staff_level: staffLevel,
-      base_price: basePrice.toFixed(2),
-      adjusted_price: adjustedPrice.toFixed(2),
-      price_adjustment: priceAdjustment.toFixed(2),
-      adjustment_percent: adjustmentPercent,
-      total_price: adjustedPrice.toFixed(2),
-    };
-
-    console.log("Submitting booking with price data:", bookingRequest);
-
-    $.ajax({
-      url: booking_params.ajax_url,
-      type: "POST",
-      data: bookingRequest,
-      success: function (response) {
-        console.log("Booking API response:", response);
-        $(".confirm-booking-btn").prop("disabled", false).text("Book an appointment");
-        $(".loading-overlay").hide();
-        if (response.success) {
-          handleSuccessfulBooking(response.data);
-        } else {
-          const errorMsg = response.data?.message || "Booking failed. Please try again.";
-          showValidationAlert(errorMsg);
-        }
-      },
-      error: function (xhr, status, error) {
-        console.error("Booking API error:", {
-          status: status,
-          error: error,
-          responseText: xhr.responseText,
-        });
-        $(".loading-overlay").hide();
-        $(".confirm-booking-btn").prop("disabled", false).text("Book an appointment");
-        showValidationAlert("Error communicating with server: " + (xhr.statusText || error));
-      },
-    });
-  }
-
-  /**
    * Calculate base price (before adjustment)
    * @returns {number} Base price
    */
@@ -2663,15 +2602,29 @@ Final price: ${adjustedPrice.toFixed(2)} SGD`;
     return totalPrice.toFixed(2);
   }
 
-  /**
-   * Add CSS styles for validation, alerts, and star ratings
-   */
   $(document).on("click", ".new-booking-btn", function () {
     resetBookingForm();
   });
   $(document).on("click", ".edit-booking-btn", function () {
     goToStep("contact");
     updateSummary();
+  });
+  $(document).on("click", ".cancel-booking-btn", function (e) {
+    e.preventDefault();
+
+    $(".booking-popup-overlay").removeClass("active");
+    $(".booking-popup").hide();
+    $(".loading-overlay").hide();
+
+    if (typeof resetBookingForm === "function") {
+      resetBookingForm();
+    }
+
+    if (window.localStorage) {
+      localStorage.removeItem("bookingData");
+    }
+
+    console.log("[Booking] Popup closed via cancel button.");
   });
 
   // Initialize styles when document is ready
