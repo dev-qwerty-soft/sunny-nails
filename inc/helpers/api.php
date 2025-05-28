@@ -106,54 +106,62 @@ function getPlaceReviews()
   ];
 }
 
-function getPosts($slug) {
-	$query = new WP_Query([
-		'post_type' => $slug,
-		'posts_per_page' => -1
-	]);
-	wp_reset_postdata();
-	return $query->posts;
+function getPosts($slug)
+{
+  $query = new WP_Query([
+    'post_type' => $slug,
+    'posts_per_page' => -1
+  ]);
+  wp_reset_postdata();
+  return $query->posts;
 }
 
 function logo($str)
 {
   $logo_data = get_field($str, 'option');
-  $url = isset($logo_data['url']) ? $logo_data['url'] : null;
-  $alt = isset($logo_data['title']) ? $logo_data['title'] : null;
+  if (!$logo_data || !isset($logo_data['url'])) return '';
 
-  if ($url && $alt) {
-    return "<a href='" . esc_url(home_url('/')) . "' class='logo'>
-      <img src='" . esc_url($url) . "' alt='" . esc_attr($alt) . "'>
-    </a>";
-  }
+  $url = $logo_data['url'];
+  $alt = $logo_data['title'] ?? '';
+  $width = $logo_data['width'] ?? '215';
+  $height = $logo_data['height'] ?? '40';
 
-  return '';
+  return "<a href='" . esc_url(home_url('/')) . "' class='logo'>
+    <img src='" . esc_url($url) . "'
+         alt='" . esc_attr($alt) . "'
+         width='{$width}' height='{$height}'
+         fetchpriority='high'
+         decoding='async'>
+  </a>";
 }
 
-function console($data) {
+
+function console($data)
+{
   echo '<script>console.log(' . json_encode($data) . ');</script>';
 }
 
 // Function to get services for a specific category
 function get_services_by_category($category_id)
 {
-    return get_posts([
-        'post_type' => 'service',
-        'posts_per_page' => -1,
-        'tax_query' => [
-            [
-                'taxonomy' => 'service_category',
-                'field' => 'term_id',
-                'terms' => $category_id
-            ]
-        ],
-        'meta_key' => 'price_min',
-        'orderby' => 'meta_value_num',
-        'order' => 'ASC'
-    ]);
+  return get_posts([
+    'post_type' => 'service',
+    'posts_per_page' => -1,
+    'tax_query' => [
+      [
+        'taxonomy' => 'service_category',
+        'field' => 'term_id',
+        'terms' => $category_id
+      ]
+    ],
+    'meta_key' => 'price_min',
+    'orderby' => 'meta_value_num',
+    'order' => 'ASC'
+  ]);
 }
 
-function getAssetUrlAcf($str) {
+function getAssetUrlAcf($str)
+{
   $image = get_field($str, 'option');
   $url = isset($image['url']) ? $image['url'] : null;
   return $url;
