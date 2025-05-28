@@ -314,6 +314,98 @@
       }
     });
   }
+  $(document).on("click", ".want-this-btn", function (e) {
+    e.preventDefault();
+
+    const masterId = parseInt($(this).data("master-id"));
+    const serviceIds = $(this)
+      .data("service-ids")
+      .toString()
+      .split(",")
+      .map((id) => parseInt(id.trim()));
+
+    if (!masterId || !serviceIds.length) return;
+
+    resetBookingForm();
+
+    bookingData.staffId = masterId;
+    bookingData.initialOption = "master";
+    bookingData.flowHistory = ["initial", "master"];
+
+    $(".booking-popup-overlay").addClass("active");
+
+    const $staffItem = $(`.staff-item[data-staff-id="${masterId}"]`);
+    if ($staffItem.length) {
+      $(".staff-item").removeClass("selected");
+      $staffItem.addClass("selected");
+
+      const $radio = $staffItem.find('input[type="radio"]');
+      if ($radio.length) {
+        $radio.prop("checked", true).trigger("change").trigger("click");
+      }
+
+      const name = $staffItem.find(".staff-name").text().trim();
+      const level = $staffItem.find(".star").length || 1;
+      const specialization = $staffItem.find(".stars span").text().trim().replace(/[()]/g, "");
+
+      bookingData.staffName = name || "Selected Master";
+      bookingData.staffLevel = level;
+      bookingData.staffSpecialization = specialization;
+
+      $staffItem.trigger("click");
+    } else {
+      bookingData.staffName = "Selected Master";
+      bookingData.staffLevel = 1;
+    }
+
+    bookingData.services = [];
+    bookingData.coreServices = [];
+    bookingData.addons = [];
+
+    loadServicesForMaster(masterId);
+
+    function waitForServiceCheckboxes(serviceIds, callback, maxTries = 20, delay = 100) {
+      let tries = 0;
+      const interval = setInterval(() => {
+        const allFound = serviceIds.every((id) => $(`.service-checkbox[data-service-id="${id}"]`).length > 0);
+        if (allFound || tries >= maxTries) {
+          clearInterval(interval);
+          callback();
+        }
+        tries++;
+      }, delay);
+    }
+
+    waitForServiceCheckboxes(serviceIds, () => {
+      serviceIds.forEach((id) => {
+        const $checkbox = $(`.service-checkbox[data-service-id="${id}"]`);
+        if ($checkbox.length) {
+          $checkbox.prop("checked", true).trigger("change");
+          $checkbox.closest(".service-item").addClass("selected");
+
+          if (typeof window.addService === "function") {
+            const title = $checkbox.data("service-title") || "Service";
+            const price = parseFloat($checkbox.data("service-price")) || 0;
+            const currency = $checkbox.data("service-currency") || "SGD";
+            const duration = $checkbox.data("service-duration") || "";
+            const wearTime = $checkbox.data("service-wear-time") || "";
+            const isAddon = $checkbox.data("is-addon") === true || $checkbox.data("is-addon") === "true";
+
+            addService(id, title, price, currency, duration, wearTime, isAddon, id, "");
+          }
+        }
+      });
+
+      bookingData.flowHistory.push("datetime");
+      goToStep("datetime");
+      generateCalendar();
+      updateSummary();
+
+      $(".booking-popup-overlay .booking-popup").css("display", "block");
+      $(".loading-overlay").hide();
+    });
+  });
+
   function initServiceStep() {
     $(document).on("click", '.booking-step[data-step="services"] .next-btn', function () {
       if (bookingData.coreServices.length === 0) return;
@@ -435,31 +527,50 @@
       const serviceCurrency = $(this).data("service-currency");
       const serviceDuration = $(this).data("service-duration") || "";
       const serviceWearTime = $(this).data("service-wear-time") || "";
-      const isAddon = $(this).data("is-addon") === true || $(this).data("is-addon") === "true";
+
+      // Check if it's an add-on more thoroughly
+      const isAddon = $(this).data("is-addon") === true || $(this).data("is-addon") === "true" || $(this).closest(".service-item").hasClass("addon-item") || $(this).closest(".core-related-addons").length > 0;
+
       const altegioId = $(this).data("altegio-id") || serviceId;
 
-      // Update UI classes
+      const $serviceItem = $(this).closest(".service-item");
+      const desc = $serviceItem.find(".service-description").text().trim();
+
       if ($(this).is(":checked")) {
-        $(this).closest(".service-item").addClass("selected");
+        $serviceItem.addClass("selected");
 
-        // Add service to bookingData
-        const serviceWearTime = $(this).data("service-wear-time") || "";
-        const desc = $(this).closest(".service-item").find(".service-description").text().trim();
         addService(serviceId, serviceTitle, servicePrice, serviceCurrency, serviceDuration, serviceWearTime, isAddon, altegioId, desc);
+        debug("Service added", { id: serviceId, title: serviceTitle, isAddon });
 
-        debug("Service added", {
-          id: serviceId,
-          title: serviceTitle,
-          isAddon: isAddon,
-        });
+        if (!isAddon) {
+          const coreId = $(this).data("service-id");
+          const $container = $(`.core-related-addons[data-core-id="${coreId}"]`);
+          $container.addClass("open");
+          // Enable related add-ons
+          $container.find(".service-checkbox").prop("disabled", false);
+          $container.find(".addon-item").removeClass("disabled");
+        }
       } else {
-        $(this).closest(".service-item").removeClass("selected");
+        $serviceItem.removeClass("selected");
         removeService(serviceId);
-
         debug("Service removed", serviceId);
+
+        if (!isAddon) {
+          const coreId = $(this).data("service-id");
+          const $container = $(`.core-related-addons[data-core-id="${coreId}"]`);
+          $container.removeClass("open");
+          // Disable and uncheck related add-ons
+          $container.find("input[type=checkbox]").prop("checked", false).prop("disabled", true);
+          $container.find(".addon-item").removeClass("selected").addClass("disabled");
+
+          // Remove related add-ons from bookingData
+          $container.find(".service-checkbox").each(function () {
+            const addonId = $(this).data("service-id");
+            removeService(addonId);
+          });
+        }
       }
 
-      // Update addon availability and enable/disable the Next button
       updateAddonAvailability();
       updateNextButtonState();
     });
@@ -1017,6 +1128,9 @@
    * @param {string|number} altegioId - Altegio API ID
    * @returns {boolean} - Whether the service was added
    */
+  /**
+   * Updated addService function to properly handle add-ons
+   */
   function addService(id, title, price, currency, duration, wearTime, isAddon, altegioId, desc = "") {
     try {
       if (!id || !title || !price) return false;
@@ -1032,14 +1146,17 @@
           isAddon: isAddon || false,
           duration,
           wearTime,
-          desc, // <- важливо!
+          desc,
         };
 
         bookingData.services.push(newService);
+
         if (isAddon) {
           bookingData.addons.push(newService);
+          console.log("Add-on service added:", newService);
         } else {
           bookingData.coreServices.push(newService);
+          console.log("Core service added:", newService);
         }
 
         return true;
@@ -1050,6 +1167,183 @@
       console.error("Error in addService:", error);
       return false;
     }
+  }
+
+  /**
+   * Updated removeService function to properly handle add-ons
+   */
+  function removeService(id) {
+    // Find the service to check if it's an addon
+    const service = bookingData.services.find((s) => s.id == id);
+
+    // Remove from main services array
+    bookingData.services = bookingData.services.filter((service) => service.id != id);
+
+    // Also remove from core or addon arrays
+    if (service && service.isAddon) {
+      bookingData.addons = bookingData.addons.filter((addon) => addon.id != id);
+      console.log("Add-on service removed:", id);
+    } else {
+      bookingData.coreServices = bookingData.coreServices.filter((core) => core.id != id);
+      console.log("Core service removed:", id);
+    }
+
+    debug("Service removed", id);
+  }
+
+  /**
+   * Updated updateSummary function with proper add-on handling
+   */
+  /**
+   * Fixed updateSummary function that properly displays add-ons
+   */
+  /**
+   * Completely fixed updateSummary function
+   */
+  function updateSummary() {
+    console.log("=== UPDATE SUMMARY START ===");
+    console.log("bookingData:", bookingData);
+
+    const masterBox = $(".summary-master-date .master-info");
+    const dateTimeBox = $(".booking-date-time");
+    const serviceList = $(".summary-services-list");
+    const addonsList = $(".summary-addons");
+    const masterBonusEl = $(".master-bonus");
+    const masterPercent = $(".summary-total-group .percent");
+    const totalAmountEl = $(".summary-total-amount");
+
+    // Update master info
+    if (bookingData.staffAvatar) {
+      masterBox.find(".avatar").attr("src", bookingData.staffAvatar);
+    } else {
+      masterBox.find(".avatar").attr("src", "https://be.cdn.alteg.io/images/no-master-sm.png");
+    }
+
+    masterBox.find(".name").text(bookingData.staffName || "Any Master");
+    masterBox.find(".stars").html(generateStarsHtml(bookingData.staffLevel));
+
+    const levelTitles = {
+      1: "Sunny Ray",
+      2: "Sunny Shine",
+      3: "Sunny Inferno",
+    };
+    const title = levelTitles[bookingData.staffLevel];
+    masterBox
+      .find(".stars-name")
+      .text(title ? `(${title})` : "")
+      .toggle(!!title);
+
+    // Update date/time
+    const dateStr = formatDateDisplay(bookingData.date);
+    const timeStr = formatTimeRange(bookingData.time);
+    dateTimeBox.find(".calendar-date").text(dateStr);
+    dateTimeBox.find(".calendar-time").text(timeStr);
+
+    let serviceHTML = "";
+    let addonHTML = "";
+    let basePrice = 0;
+    let adjustedTotal = 0;
+    let priceAdjustment = 0;
+
+    console.log("Processing services:", {
+      allServices: bookingData.services,
+      coreServices: bookingData.coreServices,
+      addons: bookingData.addons,
+    });
+
+    // Process ALL services and separate them
+    if (bookingData.services && bookingData.services.length > 0) {
+      bookingData.services.forEach((service) => {
+        let price = parseFloat(service.price) || 0;
+        basePrice = parseFloat((basePrice + price).toFixed(2));
+
+        let adjustment = 0;
+        if (bookingData.staffLevel > 1) {
+          const percent = (bookingData.staffLevel - 1) * config.priceAdjustmentPerLevel;
+          adjustment = parseFloat((price * (percent / 100)).toFixed(2));
+        }
+
+        let adjustedPrice = parseFloat(((price + adjustment) * 1.09).toFixed(2));
+        priceAdjustment = parseFloat((priceAdjustment + adjustment).toFixed(2));
+        adjustedTotal = parseFloat((adjustedTotal + adjustedPrice).toFixed(2));
+
+        const itemHTML = `
+      <div class="summary-service-item ${service.isAddon ? "addon-service" : ""}">
+        <div class="service-info">
+          <strong>${service.title}${service.isAddon ? ' <span class="addon-label"></span>' : ""}</strong>
+          ${service.duration ? `<div class="meta"><strong>Duration:</strong> ${service.duration} min</div>` : ""}
+          ${service.wearTime ? `<div class="meta"><strong>Wear time:</strong> ${service.wearTime}</div>` : ""}
+          ${service.desc ? `<div class="meta service-description">${service.desc}</div>` : ""}
+        </div>
+        <div class="service-price"><strong>${price.toFixed(2)} ${service.currency || "SGD"}</strong></div>
+      </div>
+    `;
+
+        if (service.isAddon) {
+          addonHTML += itemHTML;
+          console.log("Added add-on to summary:", service.title, price);
+        } else {
+          serviceHTML += itemHTML;
+          console.log("Added core service to summary:", service.title, price);
+        }
+      });
+    }
+
+    // Update service sections
+    serviceList.html(serviceHTML || '<p class="no-services">No services selected</p>');
+    console.log("Core services HTML updated");
+
+    // Update add-ons section
+    if (addonHTML) {
+      addonsList.html(`<h3 class="section-subtitle">Add-ons</h3>${addonHTML}`).show();
+      console.log("Add-ons HTML updated:", addonHTML);
+    } else {
+      addonsList.empty().hide();
+      console.log("No add-ons to display");
+    }
+
+    // Calculate pricing
+    const bonusPercent = bookingData.staffLevel > 1 ? (bookingData.staffLevel - 1) * config.priceAdjustmentPerLevel : 0;
+    masterPercent.text(bonusPercent);
+    masterBonusEl.text(`${priceAdjustment.toFixed(2)} SGD`);
+
+    if (priceAdjustment > 0) {
+      $(".summary-item:not(.total):not(.tax)").show();
+    } else {
+      $(".summary-item:not(.total):not(.tax)").hide();
+    }
+
+    const taxAmount = parseFloat((adjustedTotal - adjustedTotal / 1.09).toFixed(2));
+    const finalTotal = adjustedTotal;
+
+    $(".summary-tax-amount").text(`${taxAmount.toFixed(2)} SGD`);
+    $(".summary-total-amount").text(`${finalTotal.toFixed(2)} SGD`);
+    totalAmountEl.text(`${finalTotal.toFixed(2)} SGD`);
+
+    // Store calculated values
+    bookingData.tax = taxAmount;
+    bookingData.totalWithTax = finalTotal;
+    bookingData.basePrice = basePrice;
+    bookingData.adjustedPrice = adjustedTotal;
+    bookingData.priceAdjustment = priceAdjustment;
+    bookingData.adjustmentPercent = bonusPercent;
+
+    // Restore contact form data
+    if (bookingData.contact) {
+      const cleaned = (bookingData.contact.comment || "").replace(/Price information:[\s\S]*/i, "").trim();
+      $("#client-name").val(bookingData.contact.name || "");
+      $("#client-phone").val(bookingData.contact.phone || "");
+      $("#client-email").val(bookingData.contact.email || "");
+      $("#client-comment").val(cleaned);
+    }
+
+    console.log("=== FINAL SUMMARY RESULTS ===");
+    console.log("Core services HTML:", serviceHTML ? "Generated" : "Empty");
+    console.log("Add-ons HTML:", addonHTML ? "Generated" : "Empty");
+    console.log("Base price:", basePrice.toFixed(2));
+    console.log("Price adjustment:", priceAdjustment.toFixed(2));
+    console.log("Final total:", finalTotal.toFixed(2));
+    console.log("=== UPDATE SUMMARY END ===");
   }
 
   /**
@@ -1164,16 +1458,12 @@
     const masterId = $(this).data("staff-id");
     const initialOption = window.bookingData ? window.bookingData.initialOption : "services";
 
-    // Якщо обраний конкретний майстер (не "any")
     if (masterId && masterId !== "any") {
-      // Перевірка, чи є вже обрані сервіси
       const selectedServices = $(".service-checkbox:checked");
 
       if (selectedServices.length === 0) {
-        // Якщо сервіси не обрані, завантажимо всі доступні для майстра
         loadServicesForMaster(masterId);
       } else {
-        // Якщо сервіси вже обрані, перевіримо їх відповідність майстру
         $.ajax({
           url: booking_params.ajax_url,
           method: "POST",
@@ -1195,7 +1485,6 @@
         });
       }
     } else {
-      // Якщо обраний "будь-який майстер"
       $(".service-item").show();
       updateAddonAvailability();
       updateNextButtonState();
@@ -1530,6 +1819,7 @@
    * Load time slots for selected date and staff
    * @param {string} date - Date in YYYY-MM-DD format
    */
+
   function loadTimeSlots(date) {
     if (!bookingData.staffId || bookingData.services.length === 0) {
       console.warn("Staff or service not selected");
@@ -1542,14 +1832,16 @@
       return;
     }
 
-    const serviceIds = bookingData.coreServices.map((s) => s.altegioId || s.id);
+    // Include ALL services (core services + addons) for time slot calculation
+    const serviceIds = bookingData.services.map((s) => s.altegioId || s.id);
+
     if (!serviceIds.length) {
-      $(".time-sections").html('<p class="error-message">Please select at least one core service.</p>');
+      $(".time-sections").html('<p class="error-message">Please select at least one service.</p>');
       return;
     }
 
     $(".time-sections").html('<p class="loading-message">Loading available time slots...</p>');
-    console.log("Sending service IDs:", serviceIds);
+    console.log("Sending ALL service IDs (core + addons):", serviceIds);
 
     $.ajax({
       url: booking_params.ajax_url,
@@ -1563,10 +1855,8 @@
       },
       success: function (response) {
         if (response.success) {
-          // Check if we have slots data from the API
           let slots = [];
 
-          // Handle different response formats
           if (response.data && Array.isArray(response.data)) {
             slots = response.data;
           } else if (response.data && Array.isArray(response.data.slots)) {
@@ -1590,7 +1880,6 @@
       },
     });
   }
-
   /**
    * Render time slots
    * @param {Array} slots - Array of time slot objects from API
@@ -1785,14 +2074,7 @@
   }
 
   /**
-   * Update booking summary with selected services and master
-   * This function is called when navigating to the contact step
-   * and populates all data dynamically from previous selections
-   */
-  /**
-   * Update booking summary with selected services and master
-   * This function is called when navigating to the contact step
-   * and populates all data dynamically from previous selections
+   * Updated updateSummary function with proper add-on handling
    */
   function updateSummary() {
     const masterBox = $(".summary-master-date .master-info");
@@ -1834,7 +2116,8 @@
     let adjustedTotal = 0;
     let priceAdjustment = 0;
 
-    bookingData.services.forEach((service) => {
+    // Process core services
+    bookingData.coreServices.forEach((service) => {
       let price = parseFloat(service.price) || 0;
       basePrice = parseFloat((basePrice + price).toFixed(2));
 
@@ -1850,33 +2133,59 @@
       adjustedTotal = parseFloat((adjustedTotal + adjustedPrice).toFixed(2));
 
       const itemHTML = `
-      <div class="summary-service-item">
+    <div class="summary-service-item">
+      <div class="service-info">
+        <strong>${service.title}</strong>
+        ${service.duration ? `<div class="meta"><strong>Duration:</strong> ${service.duration} min</div>` : ""}
+        ${service.wearTime ? `<div class="meta"><strong>Wear time:</strong> ${service.wearTime}</div>` : ""}
+        ${service.desc ? `<div class="meta service-description">${service.desc}</div>` : ""}
+      </div>
+      <div class="service-price"><strong>${price.toFixed(2)} ${service.currency || "SGD"}</strong></div>
+    </div>
+  `;
+
+      serviceHTML += itemHTML;
+    });
+
+    // Process add-on services
+    if (bookingData.addons && bookingData.addons.length > 0) {
+      bookingData.addons.forEach((addon) => {
+        let price = parseFloat(addon.price) || 0;
+        basePrice = parseFloat((basePrice + price).toFixed(2));
+
+        let adjustment = 0;
+        if (bookingData.staffLevel > 1) {
+          const percent = (bookingData.staffLevel - 1) * config.priceAdjustmentPerLevel;
+          adjustment = parseFloat((price * (percent / 100)).toFixed(2));
+        }
+
+        let adjustedPrice = parseFloat(((price + adjustment) * 1.09).toFixed(2));
+
+        priceAdjustment = parseFloat((priceAdjustment + adjustment).toFixed(2));
+        adjustedTotal = parseFloat((adjustedTotal + adjustedPrice).toFixed(2));
+
+        const addonItemHTML = `
+      <div class="summary-service-item addon-service">
         <div class="service-info">
-          <strong>${service.title}</strong>
-          ${service.duration ? `<div class="meta"><strong>Duration:</strong> ${service.duration} min</div>` : ""}
-          ${service.wearTime ? `<div class="meta"><strong>Wear time:</strong> ${service.wearTime}</div>` : ""}
-          ${service.desc ? `<div class="meta service-description">${service.desc}</div>` : ""}
+          <strong>Add-on: ${addon.title} <span class="addon-label"></span></strong>
+          ${addon.duration ? `<div class="meta"><strong>Duration:</strong> ${addon.duration} min</div>` : ""}
+          ${addon.wearTime ? `<div class="meta"><strong>Wear time:</strong> ${addon.wearTime}</div>` : ""}
+          ${addon.desc ? `<div class="meta service-description">${addon.desc}</div>` : ""}
         </div>
-        <div class="service-price"><strong>${price.toFixed(2)} ${service.currency || "SGD"}</strong></div>
+        <div class="service-price"><strong>${price.toFixed(2)} ${addon.currency || "SGD"}</strong></div>
       </div>
     `;
 
-      if (service.isAddon) {
-        addonHTML += itemHTML;
-      } else {
-        serviceHTML += itemHTML;
-      }
-    });
+        addonHTML += addonItemHTML;
+      });
+    }
 
     serviceList.html(serviceHTML || '<p class="no-services">No services selected</p>');
 
     if (addonHTML) {
-      addonsList.html(`
-      <h3 class="section-subtitle">Add-ons</h3>
-      ${addonHTML}
-    `);
+      addonsList.html(addonHTML).show();
     } else {
-      addonsList.empty();
+      addonsList.empty().hide();
     }
 
     const bonusPercent = bookingData.staffLevel > 1 ? (bookingData.staffLevel - 1) * config.priceAdjustmentPerLevel : 0;
@@ -1885,9 +2194,9 @@
     masterBonusEl.text(`${priceAdjustment.toFixed(2)} SGD`);
 
     if (priceAdjustment > 0) {
-      $(".summary-item:not(.total)").show();
+      $(".summary-item:not(.total):not(.tax)").show();
     } else {
-      $(".summary-item:not(.total)").hide();
+      $(".summary-item:not(.total):not(.tax)").hide();
     }
 
     const taxAmount = parseFloat((adjustedTotal - adjustedTotal / 1.09).toFixed(2));
@@ -1899,7 +2208,6 @@
 
     bookingData.tax = taxAmount;
     bookingData.totalWithTax = finalTotal;
-
     bookingData.basePrice = basePrice;
     bookingData.adjustedPrice = adjustedTotal;
     bookingData.priceAdjustment = priceAdjustment;
@@ -1918,6 +2226,8 @@
       adjustment: priceAdjustment.toFixed(2),
       adjustedTotal: adjustedTotal.toFixed(2),
       adjustmentPercent: bonusPercent,
+      addons: bookingData.addons,
+      coreServices: bookingData.coreServices,
     });
   }
 
@@ -2313,7 +2623,7 @@ Final price: ${adjustedPrice.toFixed(2)} SGD`;
       servicesHtml += `
         <div class="booked-service-item">
           <span class="booked-service-name">
-            ${service.title}${service.isAddon ? ' <span class="addon-label">(add-on)</span>' : ""}
+            ${service.title}${service.isAddon ? ' <span class="addon-label"></span>' : ""}
           </span>
           <span class="booked-service-price">
             ${displayPrice.toFixed(2)} ${service.currency || "SGD"}

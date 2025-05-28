@@ -30,38 +30,74 @@ if (is_array($tags)) {
 }
 $slug = implode(' ', $tagSlugs);
 
+// === MULTI-SERVICE SUPPORT ===
+$customTitle = $args['image']['custom_title'] ?? '';
+$service_ids = $args['image']['servise'] ?? [];
 
-$service_id = !empty($args['image']['servise']) ? (int) $args['image']['servise'] : null;
-$price = $service_id ? get_field('price_min', $service_id) : 0;
-$currency = $service_id ? get_field('currency', $service_id) : 'SGD';
-$serviceTitle = $service_id ? get_the_title($service_id) : '';
+if (!is_array($service_ids)) {
+  $service_ids = [$service_ids];
+}
+
+$total_price = 0;
+$currency = 'SGD';
+$service_titles = [];
+
+foreach ($service_ids as $service_id) {
+  $price = floatval(get_field('price_min', $service_id));
+  $total_price += $price;
+
+  $service_titles[] = get_the_title($service_id);
+  $currency_field = get_field('currency', $service_id);
+  if (!empty($currency_field)) {
+    $currency = $currency_field;
+  }
+}
+
+$service_titles_string = implode(', ', $service_titles);
+$service_ids_string = implode(',', $service_ids);
 ?>
 
-<div data-index='<?= $index; ?>' data-slug='<?= esc_attr(implode(" ", $tagSlugs)); ?>' class='image active<?= $addClass; ?>'>
+<div data-index='<?= $index; ?>' data-slug='<?= esc_attr($slug); ?>' class='image active<?= esc_attr($addClass); ?>'>
 
   <div class='image__front'>
     <?php if ($url): ?>
-      <img src='<?= esc_url($url); ?>' alt='<?= esc_attr($serviceTitle); ?>'>
+      <img src='<?= esc_url($url); ?>' alt='<?= esc_attr($customTitle ?: $service_titles_string); ?>'>
     <?php endif; ?>
     <div class='wrapper'>
       <button type='button' aria-label='View' class='view'></button>
-      <a href='#' class='btn white'>I want this</a>
+      <button type="button"
+        class="btn white want-this-btn"
+        data-master-id="<?= esc_attr($master ? $master->ID : 0); ?>"
+        data-service-ids="<?= esc_attr($service_ids_string); ?>">
+        I want this
+      </button>
     </div>
   </div>
+
   <div class='image__back'>
-    <?php if ($serviceTitle): ?>
-      <span class='image__title'><?= esc_html($serviceTitle); ?></span>
-    <?php endif; ?>
-    <span class='image__price'>Price: <?= esc_html("$price $currency"); ?></span>
+    <span class='image__title'>
+      <?= esc_html($customTitle ?: $service_titles_string); ?>
+    </span>
+    <span class='image__price'>Price: <?= esc_html(number_format($total_price, 2)); ?> <?= esc_html($currency); ?></span>
     <span class='image__master'>Master: <?= esc_html($name); ?></span>
+
     <div class='stars'>
       <?= str_repeat("<div class='star'></div>", $level); ?>
       <?php if ($levelName): ?>
         <span>(<?= esc_html($levelName); ?>)</span>
       <?php endif; ?>
     </div>
+
     <div class='wrapper'>
-      <a href='#' class='btn white'>I want this</a>
+      <button type="button"
+        class="btn white want-this-btn"
+        data-master-id="<?= esc_attr(get_field('altegio_id', $master ? $master->ID : 0)); ?>"
+
+        data-service-ids="<?= esc_attr($service_ids_string); ?>">
+        I want this
+      </button>
+
     </div>
   </div>
+
 </div>
