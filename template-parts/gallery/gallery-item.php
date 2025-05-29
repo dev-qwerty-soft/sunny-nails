@@ -34,7 +34,6 @@ if (is_array($tags)) {
 }
 $slug = implode(' ', $tagSlugs);
 
-// === MULTI-SERVICE SUPPORT ===
 $customTitle = $args['image']['custom_title'] ?? '';
 $service_ids = $args['image']['servise'] ?? [];
 
@@ -59,6 +58,14 @@ foreach ($service_ids as $service_id) {
 
 $service_titles_string = implode(', ', $service_titles);
 $service_ids_string = implode(',', $service_ids);
+
+
+$avatar_url = $master ? get_the_post_thumbnail_url($master->ID, 'medium') : '';
+if (!$avatar_url) {
+  $avatar_url = get_template_directory_uri() . '/assets/svg/custom-user.png';
+}
+
+$master_altegio_id = $master ? get_field('altegio_id', $master->ID) : 0;
 ?>
 
 <div data-index='<?= $index; ?>' data-slug='<?= esc_attr($slug); ?>' class='image active<?= esc_attr($addClass); ?>'>
@@ -71,7 +78,8 @@ $service_ids_string = implode(',', $service_ids);
       <button type='button' aria-label='View' class='view'></button>
       <button type="button"
         class="btn white want-this-btn"
-        data-master-id="<?= esc_attr($master ? $master->ID : 0); ?>"
+        data-staff-avatar="<?= esc_url($avatar_url); ?>"
+        data-master-id="<?= esc_attr($master_altegio_id); ?>"
         data-service-ids="<?= esc_attr($service_ids_string); ?>">
         I want this
       </button>
@@ -102,16 +110,14 @@ $service_ids_string = implode(',', $service_ids);
       <?php endif; ?>
     </div>
 
-
     <div class='wrapper'>
       <button type="button"
         class="btn white want-this-btn"
-        data-master-id="<?= esc_attr(get_field('altegio_id', $master ? $master->ID : 0)); ?>"
-
+        data-staff-avatar="<?= esc_url($avatar_url); ?>"
+        data-master-id="<?= esc_attr($master_altegio_id); ?>"
         data-service-ids="<?= esc_attr($service_ids_string); ?>">
         I want this
       </button>
-
     </div>
   </div>
 
