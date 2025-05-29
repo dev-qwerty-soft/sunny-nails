@@ -336,6 +336,7 @@
       }
     });
   }
+
   $(document).on("click", ".want-this-btn", function (e) {
     e.preventDefault();
 
@@ -346,8 +347,9 @@
       .split(",")
       .map((id) => parseInt(id.trim()));
 
+    const galleryTitle = $(this).data("gallery-title") || "";
+    bookingData.galleryTitle = galleryTitle;
     if (!masterId || !serviceIds.length) return;
-
     resetBookingForm();
 
     $(".booking-popup").hide();
@@ -356,7 +358,7 @@
     bookingData.staffId = masterId;
     bookingData.initialOption = "master";
     bookingData.flowHistory = ["initial", "master"];
-
+    bookingData.galleryTitle = galleryTitle;
     $(".booking-popup-overlay").addClass("active");
 
     const $staffItem = $(`.staff-item[data-staff-id="${masterId}"]`);
@@ -2018,17 +2020,27 @@
       };
     });
 
-    const clientCommentRaw = $("#client-comment").val().trim();
-    const cleanComment = clientCommentRaw.replace(/Price information:[\s\S]*$/i, "").trim();
+    const cleanComment = $("#client-comment")
+      .val()
+      .trim()
+      .replace(/Price information:[\s\S]*$/i, "")
+      .trim();
+
+    let galleryInfo = "";
+    if (bookingData.initialOption === "master" && bookingData.galleryTitle) {
+      galleryInfo = `Gallery photo title: ${bookingData.galleryTitle}\n\n`;
+    }
 
     const serviceDescriptions = bookingData.services.map((service) => `- ${service.title}: ${parseFloat(service.price).toFixed(2)} SGD`).join("\n");
 
-    const fullComment = `${cleanComment ? "Comment from client: " + cleanComment + "\n\n" : ""}
-Price information:
-${serviceDescriptions}
-Base price: ${basePrice.toFixed(2)} SGD
-Master category: ${adjustmentPercent > 0 ? "+" : ""}${adjustmentPercent}% (${priceAdjustment.toFixed(2)} SGD)
-Final price: ${adjustedPrice.toFixed(2)} SGD`;
+    const fullComment =
+      `${cleanComment ? "Comment from client: " + cleanComment + "\n\n" : ""}` +
+      galleryInfo +
+      `Price information:
+        ${serviceDescriptions}
+        Base price: ${basePrice.toFixed(2)} SGD
+        Master category: ${adjustmentPercent >= 0 ? "+" : ""}${adjustmentPercent}% (${priceAdjustment.toFixed(2)} SGD)
+        Final price: ${adjustedPrice.toFixed(2)} SGD`;
 
     const bookingRequest = {
       action: "submit_booking",
