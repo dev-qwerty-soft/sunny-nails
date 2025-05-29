@@ -12,10 +12,14 @@ $name = $master ? get_the_title($master) : '';
 $level = $master ? (int) get_field('master_level', $master->ID) : 0;
 
 $levelTitles = [
+  0 => 'Intern',
   1 => 'Sunny Ray',
   2 => 'Sunny Shine',
   3 => 'Sunny Inferno',
+  4 => 'Trainer',
+  5 => 'Supervisor',
 ];
+
 $levelName = $levelTitles[$level] ?? '';
 
 $tags = $args['image']['master_image_work_tag'] ?? [];
@@ -81,12 +85,23 @@ $service_ids_string = implode(',', $service_ids);
     <span class='image__price'>Price: <?= esc_html(number_format($total_price, 2)); ?> <?= esc_html($currency); ?></span>
     <span class='image__master'>Master: <?= esc_html($name); ?></span>
 
+    <?php
+    $starsCount = match (true) {
+      $level === 0 => 0,
+      $level === 1 => 1,
+      $level === 2 => 2,
+      $level === 3 => 3,
+      $level === 4, $level === 5 => 4,
+      default => 0,
+    };
+    ?>
     <div class='stars'>
-      <?= str_repeat("<div class='star'></div>", $level); ?>
+      <?= str_repeat("<div class='star'></div>", $starsCount); ?>
       <?php if ($levelName): ?>
         <span>(<?= esc_html($levelName); ?>)</span>
       <?php endif; ?>
     </div>
+
 
     <div class='wrapper'>
       <button type="button"

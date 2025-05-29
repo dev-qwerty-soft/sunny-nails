@@ -400,16 +400,32 @@
       }
     }, 400);
   });
-  let allowAutoAdvanceFromMaster = false;
+  let allowAutoAdvanceFromMaster = true;
 
   $(document).on("bookingStepChanged", function (e, step) {
-    if (step === "master" && window.bookingData?.staffId && allowAutoAdvanceFromMaster) {
-      setTimeout(() => {
-        const $nextBtn = $('.booking-step[data-step="master"] .next-btn');
-        if ($nextBtn.length && !$nextBtn.prop("disabled")) {
-          $nextBtn.trigger("click");
-        }
-      }, 300);
+    if (step === "master") {
+      const isFromTeamPage = window.location.pathname.includes("/team");
+
+      if (isFromTeamPage && allowAutoAdvanceFromMaster && window.bookingData?.staffId) {
+        let attempts = 0;
+        const maxAttempts = 20;
+
+        const tryClick = setInterval(() => {
+          const $nextBtn = $('.booking-step[data-step="master"] .next-btn');
+
+          if ($nextBtn.length && !$nextBtn.prop("disabled")) {
+            $nextBtn.trigger("click");
+            clearInterval(tryClick);
+            allowAutoAdvanceFromMaster = false;
+          }
+
+          if (++attempts >= maxAttempts) {
+            clearInterval(tryClick);
+          }
+        }, 300);
+      }
+    } else if (step === "services" || step === "datetime" || step === "contact") {
+      allowAutoAdvanceFromMaster = false;
     }
   });
 

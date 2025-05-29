@@ -37,28 +37,50 @@
     maxRetries: 3, // Maximum API call retries
   };
 
-  // Star SVG template for consistent usage
-  const starSvg = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M20.8965 18.008L18.6085 15.7L19.2965 15.012L21.6045 17.3L20.8965 18.008ZM17.7005 6.373L17.0125 5.685L19.3005 3.396L20.0085 4.085L17.7005 6.373ZM6.30048 6.393L4.01148 4.084L4.70048 3.395L7.00848 5.684L6.30048 6.393ZM3.08548 18.007L2.39648 17.299L4.68548 15.01L5.39248 15.699L3.08548 18.007ZM6.44048 20L7.91048 13.725L3.00048 9.481L9.47048 8.933L12.0005 3L14.5505 8.933L21.0205 9.481L16.1085 13.725L17.5785 20L12.0005 16.66L6.44048 20Z" fill="#FDC41F"/>
-  </svg>`;
-
   /**
    * Generate stars HTML based on level
    * @param {number} level - Star level (1-5)
    * @returns {string} - HTML with star SVGs
    */
+  const levelTitles = {
+    0: "Intern",
+    1: "Sunny Ray",
+    2: "Sunny Shine",
+    3: "Sunny Inferno",
+    4: "Trainer",
+    5: "Supervisor",
+  };
+
+  const percentMap = {
+    0: -50,
+    1: 0,
+    2: 10,
+    3: 20,
+    4: 30,
+    5: 30,
+  };
+
+  const starsMap = {
+    0: 0,
+    1: 1,
+    2: 2,
+    3: 3,
+    4: 3,
+    5: 3,
+  };
+
   function generateStarsHtml(level) {
-    if (!level || level <= 0) return "";
+    if (typeof level === "undefined" || level === null) return "";
 
-    // Ensure level is a reasonable number (1-5)
-    const starCount = Math.min(Math.max(parseInt(level) || 1, 1), 5);
-    let stars = "";
+    const starsCount = starsMap[level];
 
-    for (let i = 0; i < starCount; i++) {
-      stars += `<span class="star">${starSvg}</span>`;
-    }
+    if (typeof starsCount === "undefined" || starsCount === 0) return "";
 
-    return `<div class="staff-stars">${stars}</div>`;
+    const starSvg = `<div class='star'><svg width='24' height='24' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'>
+    <path d='M20.8965 18.008L18.6085 15.7L19.2965 15.012L21.6045 17.3L20.8965 18.008ZM17.7005 6.373L17.0125 5.685L19.3005 3.396L20.0085 4.085L17.7005 6.373ZM6.30048 6.393L4.01148 4.084L4.70048 3.395L7.00848 5.684L6.30048 6.393ZM3.08548 18.007L2.39648 17.299L4.68548 15.01L5.39248 15.699L3.08548 18.007ZM6.44048 20L7.91048 13.725L3.00048 9.481L9.47048 8.933L12.0005 3L14.5505 8.933L21.0205 9.481L16.1085 13.725L17.5785 20L12.0005 16.66L6.44048 20Z' fill='#FDC41F'/>
+  </svg></div>`;
+
+    return starSvg.repeat(starsCount);
   }
 
   /**
@@ -348,7 +370,7 @@
       }
 
       const name = $staffItem.find(".staff-name").text().trim();
-      const level = $staffItem.find(".star").length || 1;
+      const level = $staffItem.find(".star").length || 0;
       const specialization = $staffItem.find(".stars span").text().trim().replace(/[()]/g, "");
 
       bookingData.staffName = name || "Selected Master";
@@ -412,78 +434,6 @@
     });
   });
 
-  function initServiceStep() {
-    $(document).on("click", '.booking-step[data-step="services"] .next-btn', function () {
-      if (bookingData.coreServices.length === 0) return;
-
-      const serviceIds = bookingData.coreServices.map((s) => s.id);
-
-      $.ajax({
-        url: config.apiEndpoint,
-        type: "POST",
-        data: {
-          action: "get_staff_for_service",
-          service_ids: serviceIds,
-          nonce: config.nonce,
-        },
-        success: function (response) {
-          if (response.success && response.data && response.data.data) {
-            renderStaff(response.data.data);
-          } else {
-            $(".staff-list").html('<p class="no-items-message">No specialists available for the selected services.</p>');
-            debug("Failed to load staff from API", response);
-          }
-        },
-        error: function (xhr) {
-          console.error("Error loading staff for selected services", xhr);
-        },
-      });
-
-      const nextStep = bookingData.initialOption === "services" ? "master" : "datetime";
-      bookingData.flowHistory.push(nextStep);
-      if (nextStep === "master") loadStaffForServices();
-      if (nextStep === "datetime") generateCalendar();
-      goToStep(nextStep);
-    });
-  }
-
-  function initMasterStep() {
-    $(document).on("click", ".staff-item", function () {
-      const staffId = $(this).data("staff-id");
-      bookingData.staffId = staffId;
-
-      // AJAX call to filter available services for selected master
-      $.ajax({
-        url: config.apiEndpoint,
-        type: "POST",
-        data: {
-          action: "get_services_for_master",
-          staff_id: staffId,
-          nonce: config.nonce,
-        },
-        success: function (response) {
-          if (response.success && Array.isArray(response.data)) {
-            console.log("Filtered services:", response.data);
-            // handle rendering filtered services if necessary
-          } else {
-            console.warn("Service filtering failed or empty response", response);
-          }
-        },
-        error: function (xhr) {
-          console.error("Error loading services for selected master", xhr);
-        },
-      });
-    });
-
-    $(document).on("click", '.booking-step[data-step="master"] .next-btn', function () {
-      if (!bookingData.staffId) return;
-      let nextStep = "datetime";
-      if (bookingData.initialOption === "master" && !bookingData.coreServices.length) nextStep = "services";
-      bookingData.flowHistory.push(nextStep);
-      if (nextStep === "datetime") generateCalendar();
-      goToStep(nextStep);
-    });
-  }
   /**
    * Initialize service selection handling
    */
@@ -630,45 +580,38 @@
    * Initialize master selection handling
    */
   function initMasterHandling() {
-    // Staff selection
     $(document).on("click", ".staff-item", function () {
       const staffId = $(this).data("staff-id");
       const staffName = $(this).find(".staff-name").text();
       let staffAvatar = "";
 
-      // Get avatar if exists
       const avatarImg = $(this).find(".staff-avatar img");
       if (avatarImg.length) {
         staffAvatar = avatarImg.attr("src") || "";
       }
       const specialization = $(this).data("staff-specialization");
-      const staffLevel = $(this).data("staff-level") || 1;
+      const staffLevel = typeof $(this).data("staff-level") !== "undefined" ? parseInt($(this).data("staff-level")) : 1;
+
       bookingData.staffLevel = staffLevel;
       bookingData.staffSpecialization = specialization;
-      // Update bookingData
       selectStaff(staffId, staffName, staffAvatar, staffLevel, specialization);
 
-      // Update UI
       $(".staff-item").removeClass("selected");
       $(this).addClass("selected");
 
-      // Enable next button
       updateMasterNextButtonState();
     });
 
-    // Next button in master step
     $(document).on("click", '.booking-step[data-step="master"] .next-btn', function () {
       if (!bookingData.staffId) {
         showValidationAlert("Please select a specialist");
         return;
       }
 
-      // Determine next step based on initial option and flow history
       let nextStep;
       if (bookingData.initialOption === "master") {
         nextStep = "services";
 
-        // Check if we're coming back to master from datetime
         if (bookingData.flowHistory.includes("datetime")) {
           nextStep = "datetime";
         }
@@ -676,7 +619,6 @@
         nextStep = "datetime";
       }
 
-      // Add to flow history
       bookingData.flowHistory.push(nextStep);
 
       debug("Master selected, proceeding to", nextStep);
@@ -689,7 +631,6 @@
 
       goToStep(nextStep);
 
-      // Trigger custom event
       $(document).trigger("bookingMasterSelected", [
         {
           id: bookingData.staffId,
@@ -701,13 +642,7 @@
   }
 
   function renderContactStepSummary() {
-    const levelTitles = {
-      1: "Sunny Ray",
-      2: "Sunny Shine",
-      3: "Sunny Inferno",
-    };
-
-    const level = parseInt(bookingData.staffLevel || 1);
+    const level = typeof bookingData.staffLevel !== "undefined" ? parseInt(bookingData.staffLevel) : 1;
 
     $(".summary-master .name").text(bookingData.staffName || "N/A");
 
@@ -909,19 +844,26 @@
   function validateField(field) {
     const value = field.val().trim();
     const fieldId = field.attr("id");
-    const fieldName = field.prev("label").text() || fieldId;
 
-    // Remove any existing error
+    const fieldLabels = {
+      "client-name": "Name",
+      "client-email": "Email",
+      "client-phone": "Phone",
+      "client-comment": "Comment",
+    };
+    const fieldName = fieldLabels[fieldId] || fieldId;
+
     field.removeClass("error");
     field.next(".field-error").remove();
 
+    // Required
     if (field.prop("required") && !value) {
       field.addClass("error");
       field.after(`<div class="field-error">${fieldName} is required</div>`);
       return false;
     }
 
-    // Email validation
+    // Email
     if (fieldId === "client-email" && value) {
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailRegex.test(value)) {
@@ -931,9 +873,8 @@
       }
     }
 
-    // Phone validation
+    // Phone
     if (fieldId === "client-phone" && value) {
-      // Simple check for min length
       if (value.replace(/\D/g, "").length < 7) {
         field.addClass("error");
         field.after('<div class="field-error">Please enter a valid phone number</div>');
@@ -1198,161 +1139,6 @@
   }
 
   /**
-   * Updated updateSummary function with proper add-on handling
-   */
-  /**
-   * Fixed updateSummary function that properly displays add-ons
-   */
-  /**
-   * Completely fixed updateSummary function
-   */
-  function updateSummary() {
-    console.log("=== UPDATE SUMMARY START ===");
-    console.log("bookingData:", bookingData);
-
-    const masterBox = $(".summary-master-date .master-info");
-    const dateTimeBox = $(".booking-date-time");
-    const serviceList = $(".summary-services-list");
-    const addonsList = $(".summary-addons");
-    const masterBonusEl = $(".master-bonus");
-    const masterPercent = $(".summary-total-group .percent");
-    const totalAmountEl = $(".summary-total-amount");
-
-    // Update master info
-    if (bookingData.staffAvatar) {
-      masterBox.find(".avatar").attr("src", bookingData.staffAvatar);
-    } else {
-      masterBox.find(".avatar").attr("src", "https://be.cdn.alteg.io/images/no-master-sm.png");
-    }
-
-    masterBox.find(".name").text(bookingData.staffName || "Any Master");
-    masterBox.find(".stars").html(generateStarsHtml(bookingData.staffLevel));
-
-    const levelTitles = {
-      1: "Sunny Ray",
-      2: "Sunny Shine",
-      3: "Sunny Inferno",
-    };
-    const title = levelTitles[bookingData.staffLevel];
-    masterBox
-      .find(".stars-name")
-      .text(title ? `(${title})` : "")
-      .toggle(!!title);
-
-    // Update date/time
-    const dateStr = formatDateDisplay(bookingData.date);
-    const timeStr = formatTimeRange(bookingData.time);
-    dateTimeBox.find(".calendar-date").text(dateStr);
-    dateTimeBox.find(".calendar-time").text(timeStr);
-
-    let serviceHTML = "";
-    let addonHTML = "";
-    let basePrice = 0;
-    let adjustedTotal = 0;
-    let priceAdjustment = 0;
-
-    console.log("Processing services:", {
-      allServices: bookingData.services,
-      coreServices: bookingData.coreServices,
-      addons: bookingData.addons,
-    });
-
-    // Process ALL services and separate them
-    if (bookingData.services && bookingData.services.length > 0) {
-      bookingData.services.forEach((service) => {
-        let price = parseFloat(service.price) || 0;
-        basePrice = parseFloat((basePrice + price).toFixed(2));
-
-        let adjustment = 0;
-        if (bookingData.staffLevel > 1) {
-          const percent = (bookingData.staffLevel - 1) * config.priceAdjustmentPerLevel;
-          adjustment = parseFloat((price * (percent / 100)).toFixed(2));
-        }
-
-        let adjustedPrice = parseFloat(((price + adjustment) * 1.09).toFixed(2));
-        priceAdjustment = parseFloat((priceAdjustment + adjustment).toFixed(2));
-        adjustedTotal = parseFloat((adjustedTotal + adjustedPrice).toFixed(2));
-
-        const itemHTML = `
-      <div class="summary-service-item ${service.isAddon ? "addon-service" : ""}">
-        <div class="service-info">
-          <strong>${service.title}${service.isAddon ? ' <span class="addon-label"></span>' : ""}</strong>
-          ${service.duration ? `<div class="meta"><strong>Duration:</strong> ${service.duration} min</div>` : ""}
-          ${service.wearTime ? `<div class="meta"><strong>Wear time:</strong> ${service.wearTime}</div>` : ""}
-          ${service.desc ? `<div class="meta service-description">${service.desc}</div>` : ""}
-        </div>
-        <div class="service-price"><strong>${price.toFixed(2)} ${service.currency || "SGD"}</strong></div>
-      </div>
-    `;
-
-        if (service.isAddon) {
-          addonHTML += itemHTML;
-          console.log("Added add-on to summary:", service.title, price);
-        } else {
-          serviceHTML += itemHTML;
-          console.log("Added core service to summary:", service.title, price);
-        }
-      });
-    }
-
-    // Update service sections
-    serviceList.html(serviceHTML || '<p class="no-services">No services selected</p>');
-    console.log("Core services HTML updated");
-
-    // Update add-ons section
-    if (addonHTML) {
-      addonsList.html(`<h3 class="section-subtitle">Add-ons</h3>${addonHTML}`).show();
-      console.log("Add-ons HTML updated:", addonHTML);
-    } else {
-      addonsList.empty().hide();
-      console.log("No add-ons to display");
-    }
-
-    // Calculate pricing
-    const bonusPercent = bookingData.staffLevel > 1 ? (bookingData.staffLevel - 1) * config.priceAdjustmentPerLevel : 0;
-    masterPercent.text(bonusPercent);
-    masterBonusEl.text(`${priceAdjustment.toFixed(2)} SGD`);
-
-    if (priceAdjustment > 0) {
-      $(".summary-item:not(.total):not(.tax)").show();
-    } else {
-      $(".summary-item:not(.total):not(.tax)").hide();
-    }
-
-    const taxAmount = parseFloat((adjustedTotal - adjustedTotal / 1.09).toFixed(2));
-    const finalTotal = adjustedTotal;
-
-    $(".summary-tax-amount").text(`${taxAmount.toFixed(2)} SGD`);
-    $(".summary-total-amount").text(`${finalTotal.toFixed(2)} SGD`);
-    totalAmountEl.text(`${finalTotal.toFixed(2)} SGD`);
-
-    // Store calculated values
-    bookingData.tax = taxAmount;
-    bookingData.totalWithTax = finalTotal;
-    bookingData.basePrice = basePrice;
-    bookingData.adjustedPrice = adjustedTotal;
-    bookingData.priceAdjustment = priceAdjustment;
-    bookingData.adjustmentPercent = bonusPercent;
-
-    // Restore contact form data
-    if (bookingData.contact) {
-      const cleaned = (bookingData.contact.comment || "").replace(/Price information:[\s\S]*/i, "").trim();
-      $("#client-name").val(bookingData.contact.name || "");
-      $("#client-phone").val(bookingData.contact.phone || "");
-      $("#client-email").val(bookingData.contact.email || "");
-      $("#client-comment").val(cleaned);
-    }
-
-    console.log("=== FINAL SUMMARY RESULTS ===");
-    console.log("Core services HTML:", serviceHTML ? "Generated" : "Empty");
-    console.log("Add-ons HTML:", addonHTML ? "Generated" : "Empty");
-    console.log("Base price:", basePrice.toFixed(2));
-    console.log("Price adjustment:", priceAdjustment.toFixed(2));
-    console.log("Final total:", finalTotal.toFixed(2));
-    console.log("=== UPDATE SUMMARY END ===");
-  }
-
-  /**
    * Remove a service from the booking
    * @param {string|number} id - Service ID to remove
    */
@@ -1385,9 +1171,16 @@
     bookingData.staffName = name;
     bookingData.staffAvatar = avatar;
     bookingData.staffSpecialization = specialization || "";
-    bookingData.staffLevel = parseInt(level) || 1;
+    if (typeof level === "number") {
+      bookingData.staffLevel = level;
+    } else {
+      const parsedLevel = parseInt(level);
+      bookingData.staffLevel = isNaN(parsedLevel) ? 1 : parsedLevel;
+    }
 
     debug("Staff selected", { id, name, level, specialization });
+
+    updateSummary();
   }
 
   /**
@@ -1461,82 +1254,32 @@
     });
   }
   $(document).on("click", ".staff-item", function () {
-    const masterId = $(this).data("staff-id");
-    const initialOption = window.bookingData ? window.bookingData.initialOption : "services";
+    const staffId = $(this).data("staff-id");
+    const staffName = $(this).find(".staff-name").text();
+    let staffAvatar = "";
 
-    if (masterId && masterId !== "any") {
-      const selectedServices = $(".service-checkbox:checked");
-
-      if (selectedServices.length === 0) {
-        loadServicesForMaster(masterId);
-      } else {
-        $.ajax({
-          url: booking_params.ajax_url,
-          method: "POST",
-          data: {
-            action: "get_filtered_services",
-            staff_id: masterId,
-            nonce: booking_params.nonce,
-          },
-          success: function (response) {
-            if (response.success && response.data && response.data.html) {
-              $(".booking-popup .services-list").html(response.data.html);
-              updateAddonAvailability();
-              updateNextButtonState();
-            }
-          },
-          error: function () {
-            console.error("Failed to load services for master");
-          },
-        });
-      }
-    } else {
-      $(".service-item").show();
-      updateAddonAvailability();
-      updateNextButtonState();
+    const avatarImg = $(this).find(".staff-avatar img");
+    if (avatarImg.length) {
+      staffAvatar = avatarImg.attr("src") || "";
     }
+    const specialization = $(this).data("staff-specialization");
+    const staffLevel = typeof $(this).data("staff-level") !== "undefined" ? parseInt($(this).data("staff-level")) : 1;
+
+    bookingData.staffLevel = staffLevel;
+    bookingData.staffSpecialization = specialization;
+    bookingData.staffId = staffId;
+    bookingData.staffName = staffName;
+    bookingData.staffAvatar = staffAvatar;
+
+    $(".staff-item").removeClass("selected");
+    $(this).addClass("selected");
+
+    if ($(".booking-step[data-step='contact']").hasClass("active")) {
+      updateSummary();
+    }
+
+    updateMasterNextButtonState();
   });
-  function filterServicesByAllowedIds(allowedIds) {
-    $(".category-services").each(function () {
-      let hasVisible = false;
-
-      $(this)
-        .find(".service-item")
-        .each(function () {
-          const $item = $(this);
-          const serviceId = String($item.data("service-id"));
-
-          if (allowedIds.includes(serviceId)) {
-            $item.show();
-            hasVisible = true;
-          } else {
-            $item.hide();
-            $item.removeClass("selected");
-            $item.find(".service-checkbox").prop("checked", false);
-          }
-        });
-
-      if (hasVisible) {
-        $(this).show();
-      } else {
-        $(this).hide();
-      }
-    });
-
-    $(".category-tab").each(function () {
-      const categoryId = $(this).data("category-id");
-      const $categoryBlock = $(`.category-services[data-category-id="${categoryId}"]`);
-      if ($categoryBlock.is(":visible")) {
-        $(".category-tab").removeClass("active");
-        $(this).addClass("active");
-        return false; // break .each
-      }
-    });
-
-    updateAddonAvailability();
-    updateNextButtonState();
-    debug("Filtered visible services by master:", allowedIds);
-  }
 
   /**
    * Load a specific staff member by ID
@@ -1576,90 +1319,93 @@
     });
   }
 
-  /**
-   * Render staff list with fallback if API fails
-   * Use a blend of existing staff items and default values
-   */
-
-  /**
-   * Render staff list
-   * @param {Array} staffList - List of staff members
-   */
   function renderStaff(staffList) {
     if (!staffList || staffList.length === 0) {
-      // If no staff available, show a message
       $(".staff-list").html('<p class="no-items-message">No specialists available for the selected services.</p>');
       return;
     }
+
     let html = "";
-    const levelTitles = {
-      1: "Sunny Ray",
-      2: "Sunny Shine",
-      3: "Sunny Inferno",
-    };
     const isSelected = bookingData.staffId == "any" ? " selected" : "";
-    // Start with "Any master" option
+
     html = `
-        <label class="staff-item any-master first${isSelected}"   data-staff-id="any" data-staff-level="1">
+    <label class="staff-item any-master first${isSelected}" data-staff-id="any" data-staff-level="1">
+      <input type="radio" name="staff">
+      <div class="staff-radio-content">
+        <div class="staff-avatar circle yellow-bg">
+          <svg width="21" height="21" viewBox="0 0 21 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M16.4891 6.89062C16.3689 8.55873 15.1315 9.84375 13.7821 9.84375C12.4327 9.84375 11.1932 8.55914 11.0751 6.89062C10.952 5.15525 12.1566 3.9375 13.7821 3.9375C15.4075 3.9375 16.6122 5.18684 16.4891 6.89062Z" stroke="#302F34" stroke-linecap="round" stroke-linejoin="round" />
+            <path d="M13.7811 12.4688C11.1081 12.4688 8.53765 13.7964 7.8937 16.3821C7.80839 16.7241 8.0229 17.0625 8.37441 17.0625H19.1882C19.5397 17.0625 19.753 16.7241 19.6689 16.3821C19.0249 13.755 16.4545 12.4688 13.7811 12.4688Z" stroke="#302F34" stroke-miterlimit="10" />
+            <path d="M8.20211 7.62645C8.10614 8.95863 7.10618 10.0078 6.02828 10.0078C4.95039 10.0078 3.94879 8.95904 3.85446 7.62645C3.75643 6.24053 4.72973 5.25 6.02828 5.25C7.32684 5.25 8.30014 6.26596 8.20211 7.62645Z" stroke="#302F34" stroke-linecap="round" stroke-linejoin="round" />
+            <path d="M8.44962 12.5507C7.70929 12.2115 6.8939 12.0811 6.0297 12.0811C3.89689 12.0811 1.842 13.1413 1.32726 15.2065C1.25958 15.4796 1.43103 15.7499 1.71157 15.7499H6.31681" stroke="#302F34" stroke-miterlimit="10" stroke-linecap="round" />
+          </svg>
+        </div>
+        <div class="staff-info">
+          <h4 class="staff-name">Any master</h4>
+        </div>
+        <span class="radio-indicator"></span>
+      </div>
+    </label>
+  `;
+
+    staffList.forEach(function (staff) {
+      const isSelected = bookingData.staffId == staff.id ? " selected" : "";
+      const staffLevel = Number.isInteger(staff.level) ? staff.level : 1;
+      const levelTitle = levelTitles[staffLevel] || "";
+
+      let priceModifier = "";
+      const modifier = percentMap[staffLevel];
+
+      if (typeof modifier === "number") {
+        const sign = modifier > 0 ? "+" : "";
+        priceModifier = `<div class="staff-price-modifier">${sign}${modifier}% to price</div>`;
+      }
+
+      html += `
+      <label class="staff-item${isSelected}" data-staff-id="${staff.id}" data-staff-level="${staffLevel}">
         <input type="radio" name="staff">
         <div class="staff-radio-content">
-          <div class="staff-avatar circle yellow-bg">
-            <svg width="21" height="21" viewBox="0 0 21 21" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M16.4891 6.89062C16.3689 8.55873 15.1315 9.84375 13.7821 9.84375C12.4327 9.84375 11.1932 8.55914 11.0751 6.89062C10.952 5.15525 12.1566 3.9375 13.7821 3.9375C15.4075 3.9375 16.6122 5.18684 16.4891 6.89062Z" stroke="#302F34" stroke-linecap="round" stroke-linejoin="round" />
-              <path d="M13.7811 12.4688C11.1081 12.4688 8.53765 13.7964 7.8937 16.3821C7.80839 16.7241 8.0229 17.0625 8.37441 17.0625H19.1882C19.5397 17.0625 19.753 16.7241 19.6689 16.3821C19.0249 13.755 16.4545 12.4688 13.7811 12.4688Z" stroke="#302F34" stroke-miterlimit="10" />
-              <path d="M8.20211 7.62645C8.10614 8.95863 7.10618 10.0078 6.02828 10.0078C4.95039 10.0078 3.94879 8.95904 3.85446 7.62645C3.75643 6.24053 4.72973 5.25 6.02828 5.25C7.32684 5.25 8.30014 6.26596 8.20211 7.62645Z" stroke="#302F34" stroke-linecap="round" stroke-linejoin="round" />
-              <path d="M8.44962 12.5507C7.70929 12.2115 6.8939 12.0811 6.0297 12.0811C3.89689 12.0811 1.842 13.1413 1.32726 15.2065C1.25958 15.4796 1.43103 15.7499 1.71157 15.7499H6.31681" stroke="#302F34" stroke-miterlimit="10" stroke-linecap="round" />
-            </svg>
+          <div class="staff-avatar">
+            ${staff.avatar ? `<img src="${staff.avatar}" alt="${staff.name}">` : ""}
           </div>
           <div class="staff-info">
-            <h4 class="staff-name">Any master</h4>
+            <h4 class="staff-name">${staff.name}</h4>
+            <div class="staff-specialization">
+             <div class="staff-stars">
+                    ${generateStarsHtml(staffLevel)}
+            </div>
+              ${levelTitle ? `<span class="studio-name">(${levelTitle})</span>` : ""}
+            </div>
           </div>
+          ${priceModifier}
           <span class="radio-indicator"></span>
         </div>
       </label>
     `;
-
-    // Then add each staff member
-    staffList.forEach(function (staff) {
-      // Check if already selected
-      const isSelected = bookingData.staffId == staff.id ? " selected" : "";
-
-      // Get staff level (defaulting to 1)
-      const staffLevel = staff.level || 1;
-      const levelTitle = levelTitles[staffLevel] || "";
-      let priceModifier = "";
-
-      if (staffLevel > 1) {
-        const priceIncrease = (staffLevel - 1) * config.priceAdjustmentPerLevel;
-        priceModifier = `<div class="staff-price-modifier">+${priceIncrease}% to price</div>`;
-      }
-
-      html += `
-        <label class="staff-item${isSelected}" data-staff-id="${staff.id}" data-staff-level="${staffLevel}">
-          <input type="radio" name="staff">
-          <div class="staff-radio-content">
-            <div class="staff-avatar">
-              ${staff.avatar ? `<img src="${staff.avatar}" alt="${staff.name}">` : ""}
-            </div>
-            <div class="staff-info">
-              <h4 class="staff-name">${staff.name}</h4>
-              <div class="staff-specialization">
-                ${generateStarsHtml(staffLevel)}
-                ${levelTitle ? `<span class="studio-name">(${levelTitle})</span>` : ""}
-              </div>
-            </div>
-            ${priceModifier}
-            <span class="radio-indicator"></span>
-          </div>
-        </label>
-      `;
     });
 
     $(".staff-list").html(html);
 
-    // If a staff member was previously selected, reselect it
     if (bookingData.staffId) {
       $(`.staff-item[data-staff-id="${bookingData.staffId}"]`).addClass("selected");
+    }
+  }
+
+  function renderContactStepSummary() {
+    const level = typeof bookingData.staffLevel !== "undefined" ? parseInt(bookingData.staffLevel) : 1;
+
+    $(".summary-master .name").text(bookingData.staffName || "N/A");
+
+    const stars = generateStarsHtml(level);
+    $(".summary-master .stars").html(stars);
+
+    const levelTitle = levelTitles[level];
+    $(".summary-master .stars-name")
+      .text(levelTitle ? `(${levelTitle})` : "")
+      .toggle(!!levelTitle);
+
+    if (bookingData.staffAvatar) {
+      $(".summary-master .avatar").attr("src", bookingData.staffAvatar);
     }
   }
 
@@ -1941,22 +1687,6 @@
   }
 
   /**
-   * Format time for display (24h to 12h)
-   * @param {string} timeStr - Time in 24-hour format (HH:MM)
-   * @returns {string} - Formatted time in 12-hour format with AM/PM
-   */
-  function formatTimeDisplay(timeStr) {
-    if (!timeStr || !timeStr.includes(":")) return timeStr;
-
-    // Convert 24-hour time to 12-hour format with AM/PM
-    const [hours, minutes] = timeStr.split(":");
-    const hour = parseInt(hours, 10);
-    const period = hour >= 12 ? "PM" : "AM";
-    const hour12 = hour % 12 || 12; // Convert 0 to 12
-    return `${hour12}:${minutes} ${period}`;
-  }
-
-  /**
    * Calculate price with adjustment based on staff level
    * @param {string|number} basePrice - Original price
    * @param {string|number} staffLevel - Staff level
@@ -2091,7 +1821,8 @@
 
     const staffId = $randomStaff.data("staff-id");
     const staffName = $randomStaff.find(".staff-name").text().trim();
-    const staffLevel = $randomStaff.find(".star").length || 1;
+    const staffLevel = typeof bookingData.staffLevel === "number" ? bookingData.staffLevel : 1;
+
     const specialization = $randomStaff.find(".stars span").text().trim().replace(/[()]/g, "");
 
     bookingData.staffId = staffId;
@@ -2108,6 +1839,7 @@
 
     return staffId;
   }
+
   $(document).on("click", ".booking-step[data-step='master'] .next-btn", function () {
     if (bookingData.staffId === "any") {
       const selectedId = selectRandomMaster();
@@ -2126,9 +1858,9 @@
    * Updated updateSummary function with proper add-on handling
    */
   function updateSummary() {
-    const masterBox = $(".summary-master-date .master-info");
+    const masterBox = $(".summary-master .master-info");
     const dateTimeBox = $(".booking-date-time");
-    const serviceList = $(".summary-services-list");
+    const serviceList = $(".summary-services-list").not(".summary-addons");
     const addonsList = $(".summary-addons");
     const masterBonusEl = $(".master-bonus");
     const masterPercent = $(".summary-total-group .percent");
@@ -2141,18 +1873,12 @@
     }
 
     masterBox.find(".name").text(bookingData.staffName || "Any Master");
-    masterBox.find(".stars").html(generateStarsHtml(bookingData.staffLevel));
 
-    const levelTitles = {
-      1: "Sunny Ray",
-      2: "Sunny Shine",
-      3: "Sunny Inferno",
-    };
+    const stars = generateStarsHtml(bookingData.staffLevel);
+    masterBox.find(".stars").html(stars);
+
     const title = levelTitles[bookingData.staffLevel];
-    masterBox
-      .find(".stars-name")
-      .text(title ? `(${title})` : "")
-      .toggle(!!title);
+    masterBox.find(".stars-name").text(title ? `(${title})` : "");
 
     const dateStr = formatDateDisplay(bookingData.date);
     const timeStr = formatTimeRange(bookingData.time);
@@ -2165,65 +1891,65 @@
     let adjustedTotal = 0;
     let priceAdjustment = 0;
 
-    // Process core services
+    let percent = percentMap[bookingData.staffLevel];
+    if (typeof percent === "undefined") {
+      percent = 0;
+    }
+    if (bookingData.staffLevel === 0) {
+      percent = -50;
+    }
+
     bookingData.coreServices.forEach((service) => {
       let price = parseFloat(service.price) || 0;
       basePrice = parseFloat((basePrice + price).toFixed(2));
 
-      let adjustment = 0;
-      if (bookingData.staffLevel > 1) {
-        const percent = (bookingData.staffLevel - 1) * config.priceAdjustmentPerLevel;
-        adjustment = parseFloat((price * (percent / 100)).toFixed(2));
-      }
-
-      let adjustedPrice = parseFloat(((price + adjustment) * 1.09).toFixed(2));
+      let adjustment = parseFloat((price * (percent / 100)).toFixed(2));
+      let adjustedPrice = parseFloat((price + adjustment).toFixed(2));
 
       priceAdjustment = parseFloat((priceAdjustment + adjustment).toFixed(2));
       adjustedTotal = parseFloat((adjustedTotal + adjustedPrice).toFixed(2));
 
       const itemHTML = `
-    <div class="summary-service-item">
-      <div class="service-info">
-        <strong>${service.title}</strong>
-        ${service.duration ? `<div class="meta"><strong>Duration:</strong> ${service.duration} min</div>` : ""}
-        ${service.wearTime ? `<div class="meta"><strong>Wear time:</strong> ${service.wearTime}</div>` : ""}
-        ${service.desc ? `<div class="meta service-description">${service.desc}</div>` : ""}
+      <div class="summary-service-item">
+        <div class="service-info">
+          <strong>${service.title}</strong>
+          ${service.duration ? `<div class="meta"><strong>Duration:</strong> ${service.duration} min</div>` : ""}
+          ${service.wearTime ? `<div class="meta"><strong>Wear time:</strong> ${service.wearTime}</div>` : ""}
+          ${service.desc ? `<div class="meta service-description">${service.desc}</div>` : ""}
+        </div>
+        <div class="service-price">
+          ${percent !== 0 ? `<strong>${adjustedPrice.toFixed(2)} ${service.currency || "SGD"}</strong>` : `<strong>${adjustedPrice.toFixed(2)} ${service.currency || "SGD"}</strong>`}
+        </div>
       </div>
-      <div class="service-price"><strong>${price.toFixed(2)} ${service.currency || "SGD"}</strong></div>
-    </div>
-  `;
+    `;
 
       serviceHTML += itemHTML;
     });
 
-    // Process add-on services
     if (bookingData.addons && bookingData.addons.length > 0) {
       bookingData.addons.forEach((addon) => {
         let price = parseFloat(addon.price) || 0;
         basePrice = parseFloat((basePrice + price).toFixed(2));
 
-        let adjustment = 0;
-        if (bookingData.staffLevel > 1) {
-          const percent = (bookingData.staffLevel - 1) * config.priceAdjustmentPerLevel;
-          adjustment = parseFloat((price * (percent / 100)).toFixed(2));
-        }
-
-        let adjustedPrice = parseFloat(((price + adjustment) * 1.09).toFixed(2));
+        let adjustment = parseFloat((price * (percent / 100)).toFixed(2));
+        let adjustedPrice = parseFloat((price + adjustment).toFixed(2));
 
         priceAdjustment = parseFloat((priceAdjustment + adjustment).toFixed(2));
         adjustedTotal = parseFloat((adjustedTotal + adjustedPrice).toFixed(2));
 
         const addonItemHTML = `
-      <div class="summary-service-item addon-service">
-        <div class="service-info">
-          <strong>Add-on: ${addon.title} <span class="addon-label"></span></strong>
-          ${addon.duration ? `<div class="meta"><strong>Duration:</strong> ${addon.duration} min</div>` : ""}
-          ${addon.wearTime ? `<div class="meta"><strong>Wear time:</strong> ${addon.wearTime}</div>` : ""}
-          ${addon.desc ? `<div class="meta service-description">${addon.desc}</div>` : ""}
+        <div class="summary-service-item addon-service">
+          <div class="service-info">
+            <strong>Add-on: ${addon.title}</strong>
+            ${addon.duration ? `<div class="meta"><strong>Duration:</strong> ${addon.duration} min</div>` : ""}
+            ${addon.wearTime ? `<div class="meta"><strong>Wear time:</strong> ${addon.wearTime}</div>` : ""}
+            ${addon.desc ? `<div class="meta service-description">${addon.desc}</div>` : ""}
+          </div>
+          <div class="service-price">
+            ${percent !== 0 ? ` <strong>${adjustedPrice.toFixed(2)} ${addon.currency || "SGD"}</strong>` : `<strong>${adjustedPrice.toFixed(2)} ${addon.currency || "SGD"}</strong>`}
+          </div>
         </div>
-        <div class="service-price"><strong>${price.toFixed(2)} ${addon.currency || "SGD"}</strong></div>
-      </div>
-    `;
+      `;
 
         addonHTML += addonItemHTML;
       });
@@ -2237,30 +1963,15 @@
       addonsList.empty().hide();
     }
 
-    const bonusPercent = bookingData.staffLevel > 1 ? (bookingData.staffLevel - 1) * config.priceAdjustmentPerLevel : 0;
-    masterPercent.text(bonusPercent);
-
+    masterPercent.text(`${percent > 0 ? "+" : ""}${percent}`);
     masterBonusEl.text(`${priceAdjustment.toFixed(2)} SGD`);
+    totalAmountEl.text(`${adjustedTotal.toFixed(2)} SGD`);
 
-    if (priceAdjustment > 0) {
-      $(".summary-item:not(.total):not(.tax)").show();
-    } else {
-      $(".summary-item:not(.total):not(.tax)").hide();
-    }
-
-    const taxAmount = parseFloat((adjustedTotal - adjustedTotal / 1.09).toFixed(2));
-    const finalTotal = adjustedTotal;
-
-    $(".summary-tax-amount").text(`${taxAmount.toFixed(2)} SGD`);
-    $(".summary-total-amount").text(`${finalTotal.toFixed(2)} SGD`);
-    totalAmountEl.text(`${finalTotal.toFixed(2)} SGD`);
-
-    bookingData.tax = taxAmount;
-    bookingData.totalWithTax = finalTotal;
+    bookingData.totalWithTax = adjustedTotal;
     bookingData.basePrice = basePrice;
     bookingData.adjustedPrice = adjustedTotal;
     bookingData.priceAdjustment = priceAdjustment;
-    bookingData.adjustmentPercent = bonusPercent;
+    bookingData.adjustmentPercent = percent;
 
     if (bookingData.contact) {
       const cleaned = (bookingData.contact.comment || "").replace(/Price information:[\s\S]*/i, "").trim();
@@ -2270,16 +1981,14 @@
       $("#client-comment").val(cleaned);
     }
 
-    console.log("Updated booking summary with price calculation:", {
-      basePrice: basePrice.toFixed(2),
-      adjustment: priceAdjustment.toFixed(2),
-      adjustedTotal: adjustedTotal.toFixed(2),
-      adjustmentPercent: bonusPercent,
-      addons: bookingData.addons,
-      coreServices: bookingData.coreServices,
+    console.log("Summary updated:", {
+      staffLevel: bookingData.staffLevel,
+      percent: percent,
+      basePrice: basePrice,
+      adjustment: priceAdjustment,
+      total: adjustedTotal,
     });
   }
-
   function submitBooking() {
     $(".confirm-booking-btn").prop("disabled", true).text("Processing...");
     $(".loading-overlay").show();
@@ -2292,17 +2001,16 @@
     }
 
     const basePrice = calculateBasePrice();
-    const staffLevel = parseInt(bookingData.staffLevel) || 1;
-    const adjustmentPercent = staffLevel > 1 ? (staffLevel - 1) * config.priceAdjustmentPerLevel : 0;
-    const priceAdjustment = calculatePriceAdjustment(basePrice, staffLevel);
-    const adjustedPriceWithoutTax = basePrice + priceAdjustment;
-    const adjustedPrice = parseFloat((adjustedPriceWithoutTax * 1.09).toFixed(2));
+    const staffLevel = bookingData.staffLevel != null ? parseInt(bookingData.staffLevel) : 1;
 
-    const formattedServices = bookingData.services.map((service) => {
+    const adjustmentPercent = percentMap[staffLevel] || 0;
+    const priceAdjustment = basePrice * (adjustmentPercent / 100);
+    const adjustedPrice = basePrice + priceAdjustment;
+
+    const formattedServices = [...bookingData.coreServices, ...bookingData.addons].map((service) => {
       const origPrice = parseFloat(service.price) || 0;
-      const serviceAdjustment = staffLevel > 1 ? origPrice * (adjustmentPercent / 100) : 0;
-      const serviceWithMaster = origPrice + serviceAdjustment;
-      const finalServicePrice = parseFloat((serviceWithMaster * 1.09).toFixed(2));
+      const serviceAdjustment = origPrice * (adjustmentPercent / 100);
+      const finalServicePrice = origPrice + serviceAdjustment;
 
       return {
         id: parseInt(service.id),
@@ -2318,10 +2026,9 @@
     const fullComment = `${cleanComment ? "Comment from client: " + cleanComment + "\n\n" : ""}
 Price information:
 ${serviceDescriptions}
-Base price: ${bookingData.basePrice.toFixed(2)} SGD
-Master category: +${bookingData.adjustmentPercent}% (${bookingData.priceAdjustment.toFixed(2)} SGD)
-Tax included (9%): ${bookingData.tax.toFixed(2)} SGD
-Final price: ${bookingData.totalWithTax.toFixed(2)} SGD`;
+Base price: ${basePrice.toFixed(2)} SGD
+Master category: ${adjustmentPercent > 0 ? "+" : ""}${adjustmentPercent}% (${priceAdjustment.toFixed(2)} SGD)
+Final price: ${adjustedPrice.toFixed(2)} SGD`;
 
     const bookingRequest = {
       action: "submit_booking",
@@ -2331,7 +2038,6 @@ Final price: ${bookingData.totalWithTax.toFixed(2)} SGD`;
       time: bookingData.time,
       core_services: JSON.stringify(formattedServices.filter((s) => bookingData.coreServices.find((cs) => parseInt(cs.id) === s.id))),
       addon_services: JSON.stringify(formattedServices.filter((s) => bookingData.addons.find((a) => parseInt(a.id) === s.id))),
-
       client_name: bookingData.contact.name,
       client_phone: bookingData.contact.phone,
       client_email: bookingData.contact.email || "",
@@ -2341,17 +2047,14 @@ Final price: ${bookingData.totalWithTax.toFixed(2)} SGD`;
       adjusted_price: adjustedPrice.toFixed(2),
       price_adjustment: priceAdjustment.toFixed(2),
       adjustment_percent: adjustmentPercent,
-      total_price: bookingData.totalWithTax?.toFixed(2) || adjustedPrice.toFixed(2),
+      total_price: adjustedPrice.toFixed(2),
     };
-
-    console.log("Submitting booking with price data:", bookingRequest);
 
     $.ajax({
       url: booking_params.ajax_url,
       type: "POST",
       data: bookingRequest,
       success: function (response) {
-        console.log("Booking API response:", response);
         $(".confirm-booking-btn").prop("disabled", false).text("Book an appointment");
         $(".loading-overlay").hide();
         if (response.success) {
@@ -2362,91 +2065,26 @@ Final price: ${bookingData.totalWithTax.toFixed(2)} SGD`;
         }
       },
       error: function (xhr, status, error) {
-        console.error("Booking API error:", {
-          status: status,
-          error: error,
-          responseText: xhr.responseText,
-        });
         $(".loading-overlay").hide();
         $(".confirm-booking-btn").prop("disabled", false).text("Book an appointment");
         showValidationAlert("Error communicating with server: " + (xhr.statusText || error));
       },
     });
   }
-
-  /**
-   * Validate the contact form
-   * @returns {boolean} Whether the form is valid
-   */
-  function validateContactStep() {
-    let isValid = true;
-
-    // Clear previous errors
-    $(".field-error").remove();
-    $(".contact-form input, .contact-form textarea").removeClass("error");
-
-    // Required fields validation
-    const name = $("#client-name").val().trim();
-    if (!name) {
-      $("#client-name").addClass("error").after('<div class="field-error">Name is required</div>');
-      isValid = false;
-    }
-
-    const phone = $("#client-phone").val().trim();
-    if (!phone) {
-      $("#client-phone").addClass("error").after('<div class="field-error">Phone is required</div>');
-      isValid = false;
-    }
-
-    // Email validation (optional)
-    const email = $("#client-email").val().trim();
-    if (email && !isValidEmail(email)) {
-      $("#client-email").addClass("error").after('<div class="field-error">Please enter a valid email address</div>');
-      isValid = false;
-    }
-
-    // Privacy policy checkbox
-    if ($("#privacy-policy").length && !$("#privacy-policy").prop("checked")) {
-      $("#privacy-policy").addClass("error");
-      $(".form-group.checkbox").append('<div class="field-error">You must accept the Privacy Policy</div>');
-      isValid = false;
-    }
-
-    // If form is valid, save contact info to bookingData
-    if (isValid) {
-      bookingData.contact = {
-        name: name,
-        phone: phone,
-        email: email,
-        comment: $("#client-comment").val().trim(),
-      };
-    }
-
-    return isValid;
-  }
-
-  /**
-   * Check if email is valid
-   * @param {string} email - Email to validate
-   * @returns {boolean} - Whether email is valid
-   */
-  function isValidEmail(email) {
-    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return re.test(email);
-  }
-
   /**
    * Calculate base price (before adjustment)
    * @returns {number} Base price
    */
   function calculateBasePrice() {
     let total = 0;
-    bookingData.services.forEach(function (service) {
-      const price = parseFloat(service.price.toString().replace(/[^\d.]/g, ""));
-      if (!isNaN(price)) {
-        total += price;
+
+    [...bookingData.coreServices, ...bookingData.addons].forEach(function (service) {
+      const rawPrice = parseFloat(service.price);
+      if (!isNaN(rawPrice)) {
+        total += rawPrice;
       }
     });
+
     return parseFloat(total.toFixed(2));
   }
 
@@ -2505,33 +2143,6 @@ Final price: ${bookingData.totalWithTax.toFixed(2)} SGD`;
         adjustedPrice: data.booking?.adjusted_price || calculateTotalPrice(),
       },
     ]);
-  }
-
-  /**
-   * Handle fallback booking confirmation when API fails
-   */
-  function handleFallbackBookingConfirmation() {
-    debug("Using fallback booking confirmation");
-
-    // Clear booking session
-    clearBookingSession();
-
-    // Generate reference number
-    const reference = generateBookingReference();
-
-    // Set values in confirmation page
-    $(".booking-reference").text(reference);
-    $(".booking-date").text(formatDateDisplay(bookingData.date));
-    $(".booking-time").text(formatTimeRange(bookingData.time));
-
-    // Build summary
-    buildBookingConfirmationSummary();
-
-    // Navigate to confirmation step
-    goToStep("confirm");
-
-    // Show notification about using fallback
-    $(".confirmation-message").after('<p class="fallback-notice">(Your booking will be processed as soon as our system is back online)</p>');
   }
 
   /**

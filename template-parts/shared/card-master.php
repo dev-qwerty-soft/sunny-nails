@@ -6,20 +6,33 @@ if (!$post) {
 }
 
 $levelTitles = [
+  0 => 'Intern',
   1 => 'Sunny Ray',
   2 => 'Sunny Shine',
   3 => 'Sunny Inferno',
+  4 => 'Trainer',
+  5 => 'Supervisor',
 ];
+
+$level = (int) get_field('master_level', $post->ID);
+$levelName = $levelTitles[$level] ?? '';
+
+$starsCount = match (true) {
+  $level === 1 => 1,
+  $level === 2 => 2,
+  $level === 3 => 3,
+  $level === 4, $level === 5 => 4,
+  default => 0,
+};
 
 $id = get_field('altegio_id', $post->ID);
 $image = get_the_post_thumbnail_url($post->ID);
 $images = get_field('master_images_work', $post->ID);
 $name = isset($post->post_title) ? $post->post_title : '';
 $instagram = get_field('instagram_url', $post->ID);
-$level = (int) get_field('master_level', $post->ID);
-$levelName = $levelTitles[$level] ?? '';
 $link_team = get_field('team_link_url', 'option');
 ?>
+
 <div data-altegio-id='<?= esc_attr($id); ?>' class='team-card'>
   <img class='team-card__image' src='<?= esc_url($image); ?>' alt='<?= esc_attr($name); ?>'>
   <div class='team-card__text'>
@@ -29,11 +42,12 @@ $link_team = get_field('team_link_url', 'option');
     <?php endif; ?>
     <div class='team-card__rate'>
       <div class='stars yellow'>
-        <?= str_repeat("<div class='star'></div>", $level); ?>
+        <?= str_repeat("<div class='star'></div>", $starsCount); ?>
         <?php if ($levelName): ?>
           <span>(<?= esc_html($levelName); ?>)</span>
         <?php endif; ?>
       </div>
+
     </div>
   </div>
   <div class='swiper mini-swiper'>
