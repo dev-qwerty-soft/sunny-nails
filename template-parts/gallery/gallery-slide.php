@@ -36,7 +36,6 @@ $slug = implode(' ', $tagSlugs);
 
 $customTitle = $args['image']['custom_title'] ?? '';
 $service_ids = $args['image']['servise'] ?? [];
-
 if (!is_array($service_ids)) {
   $service_ids = [$service_ids];
 }
@@ -59,6 +58,18 @@ foreach ($service_ids as $service_id) {
 $service_titles_string = implode(', ', $service_titles);
 $service_ids_string = implode(',', $service_ids);
 
+// 🔢 Фінальна ціна з урахуванням рівня майстра
+$adjustmentPercents = [
+  0 => -50,
+  1 => 0,
+  2 => 10,
+  3 => 20,
+  4 => 30,
+  5 => 30,
+];
+$adjustment = $adjustmentPercents[$level] ?? 0;
+$final_price = $total_price + ($total_price * $adjustment / 100);
+
 $starsCount = match (true) {
   $level === 0 => 0,
   $level === 1 => 1,
@@ -68,12 +79,10 @@ $starsCount = match (true) {
   default => 0,
 };
 
-
 $avatar_url = $master ? get_the_post_thumbnail_url($master->ID, 'medium') : '';
 if (!$avatar_url) {
   $avatar_url = get_template_directory_uri() . '/assets/svg/custom-user.png';
 }
-
 $master_altegio_id = $master ? get_field('altegio_id', $master->ID) : 0;
 ?>
 
@@ -83,7 +92,11 @@ $master_altegio_id = $master ? get_field('altegio_id', $master->ID) : 0;
   <?php endif; ?>
 
   <span class="image__title"><?= esc_html($customTitle ?: $service_titles_string); ?></span>
-  <span class="image__price">Price: <?= esc_html(number_format($total_price, 2)); ?> <?= esc_html($currency); ?></span>
+
+  <span class="image__price">
+    Price: <?= esc_html(number_format($final_price, 2)); ?> <?= esc_html($currency); ?>
+  </span>
+
   <span class="image__master">Master: <?= esc_html($name); ?></span>
 
   <div class="stars">
@@ -95,6 +108,7 @@ $master_altegio_id = $master ? get_field('altegio_id', $master->ID) : 0;
 
   <button type="button"
     class="btn white want-this-btn"
+    data-gallery-title="<?= esc_attr($customTitle ?: $service_titles_string); ?>"
     data-staff-avatar="<?= esc_url($avatar_url); ?>"
     data-master-id="<?= esc_attr($master_altegio_id); ?>"
     data-service-ids="<?= esc_attr($service_ids_string); ?>">
