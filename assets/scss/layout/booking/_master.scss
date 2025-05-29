@@ -42,9 +42,22 @@
   input[type="radio"] {
     display: none;
   }
+  &.any-master {
+    @media screen and (max-width: 768px) {
+      .radio-indicator,
+      .staff-avatar {
+        position: static;
+        transform: none;
+      }
+      .staff-info {
+        padding: 0;
+      }
+    }
+  }
 }
 
 .staff-radio-content {
+  position: relative;
   display: flex;
   align-items: center;
   gap: 16px;
@@ -68,6 +81,12 @@
     height: 100%;
     object-fit: cover;
   }
+  @media screen and (max-width: 768px) {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    left: 0;
+  }
 }
 
 .staff-avatar.circle {
@@ -81,6 +100,9 @@
   flex: 1;
   display: flex;
   flex-direction: column;
+  @media screen and (max-width: 768px) {
+    padding: 0 30px 0 70px;
+  }
 }
 
 .staff-name {
@@ -114,6 +136,12 @@
   font-weight: 500;
   color: #302f34;
   margin-left: auto;
+  @media screen and (max-width: 768px) {
+    margin: 0 auto;
+  }
+  @media screen and (min-width: 400px) and (max-width: 768px) {
+    padding-right: 40px;
+  }
 }
 
 .radio-indicator {
@@ -124,6 +152,12 @@
   position: relative;
   margin-left: auto;
   flex-shrink: 0;
+  @media screen and (max-width: 768px) {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    right: 0;
+  }
 }
 
 .staff-item.selected .radio-indicator,
