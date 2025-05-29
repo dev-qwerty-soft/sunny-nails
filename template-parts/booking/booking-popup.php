@@ -37,12 +37,15 @@ if (empty($ordered_category_ids)) {
     </div>
 
     <div class="booking-popup">
-        <button class="booking-popup-close">
-            <svg width="29" height="29" viewBox="0 0 29 29" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M13.2178 14.5L5.70132 6.98538C5.61706 6.90112 5.55022 6.80109 5.50462 6.691C5.45902 6.5809 5.43555 6.46291 5.43555 6.34375C5.43555 6.22459 5.45902 6.1066 5.50462 5.99651C5.55022 5.88642 5.61706 5.78638 5.70132 5.70213C5.78558 5.61787 5.88561 5.55103 5.9957 5.50543C6.10579 5.45983 6.22378 5.43636 6.34294 5.43636C6.4621 5.43636 6.5801 5.45983 6.69019 5.50543C6.80028 5.55103 6.90031 5.61787 6.98457 5.70213L14.4992 13.2186L22.0138 5.70213C22.184 5.53196 22.4148 5.43636 22.6554 5.43636C22.8961 5.43636 23.1269 5.53196 23.2971 5.70213C23.4672 5.87229 23.5628 6.10309 23.5628 6.34375C23.5628 6.58441 23.4672 6.81521 23.2971 6.98538L15.7806 14.5L23.2971 22.0146C23.4672 22.1848 23.5628 22.4156 23.5628 22.6562C23.5628 22.8969 23.4672 23.1277 23.2971 23.2979C23.1269 23.468 22.8961 23.5636 22.6554 23.5636C22.4148 23.5636 22.184 23.468 22.0138 23.2979L14.4992 15.7814L6.98457 23.2979C6.8144 23.468 6.5836 23.5636 6.34294 23.5636C6.10229 23.5636 5.87149 23.468 5.70132 23.2979C5.53115 23.1277 5.43555 22.8969 5.43555 22.6562C5.43555 22.4156 5.53115 22.1848 5.70132 22.0146L13.2178 14.5Z" fill="#302F34" />
-            </svg>
-        </button>
+        <div class="booking-popup-btns">
+            <button type="button" class="booking-back-btn mob"> back</button>
+            <button class="booking-popup-close">
+                <svg width="29" height="29" viewBox="0 0 29 29" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M13.2178 14.5L5.70132 6.98538C5.61706 6.90112 5.55022 6.80109 5.50462 6.691C5.45902 6.5809 5.43555 6.46291 5.43555 6.34375C5.43555 6.22459 5.45902 6.1066 5.50462 5.99651C5.55022 5.88642 5.61706 5.78638 5.70132 5.70213C5.78558 5.61787 5.88561 5.55103 5.9957 5.50543C6.10579 5.45983 6.22378 5.43636 6.34294 5.43636C6.4621 5.43636 6.5801 5.45983 6.69019 5.50543C6.80028 5.55103 6.90031 5.61787 6.98457 5.70213L14.4992 13.2186L22.0138 5.70213C22.184 5.53196 22.4148 5.43636 22.6554 5.43636C22.8961 5.43636 23.1269 5.53196 23.2971 5.70213C23.4672 5.87229 23.5628 6.10309 23.5628 6.34375C23.5628 6.58441 23.4672 6.81521 23.2971 6.98538L15.7806 14.5L23.2971 22.0146C23.4672 22.1848 23.5628 22.4156 23.5628 22.6562C23.5628 22.8969 23.4672 23.1277 23.2971 23.2979C23.1269 23.468 22.8961 23.5636 22.6554 23.5636C22.4148 23.5636 22.184 23.468 22.0138 23.2979L14.4992 15.7814L6.98457 23.2979C6.8144 23.468 6.5836 23.5636 6.34294 23.5636C6.10229 23.5636 5.87149 23.468 5.70132 23.2979C5.53115 23.1277 5.43555 22.8969 5.43555 22.6562C5.43555 22.4156 5.53115 22.1848 5.70132 22.0146L13.2178 14.5Z" fill="#302F34" />
+                </svg>
+            </button>
 
+        </div>
         <div class="booking-popup-content">
             <!-- Booking Steps Content -->
             <div class="booking-steps-container">
@@ -269,8 +272,8 @@ if (empty($ordered_category_ids)) {
                         ];
 
                         $starSvg = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M20.8965 18.008L18.6085 15.7L19.2965 15.012L21.6045 17.3L20.8965 18.008ZM17.7005 6.373L17.0125 5.685L19.3005 3.396L20.0085 4.085L17.7005 6.373ZM6.30048 6.393L4.01148 4.084L4.70048 3.395L7.00848 5.684L6.30048 6.393ZM3.08548 18.007L2.39648 17.299L4.68548 15.01L5.39248 15.699L3.08548 18.007ZM6.44048 20L7.91048 13.725L3.00048 9.481L9.47048 8.933L12.0005 3L14.5505 8.933L21.0205 9.481L16.1085 13.725L17.5785 20L12.0005 16.66L6.44048 20Z" fill="#FDC41F"/>
-</svg>';
+                            <path d="M20.8965 18.008L18.6085 15.7L19.2965 15.012L21.6045 17.3L20.8965 18.008ZM17.7005 6.373L17.0125 5.685L19.3005 3.396L20.0085 4.085L17.7005 6.373ZM6.30048 6.393L4.01148 4.084L4.70048 3.395L7.00848 5.684L6.30048 6.393ZM3.08548 18.007L2.39648 17.299L4.68548 15.01L5.39248 15.699L3.08548 18.007ZM6.44048 20L7.91048 13.725L3.00048 9.481L9.47048 8.933L12.0005 3L14.5505 8.933L21.0205 9.481L16.1085 13.725L17.5785 20L12.0005 16.66L6.44048 20Z" fill="#FDC41F"/>
+                        </svg>';
 
                         if ($master_query->have_posts()) :
                             while ($master_query->have_posts()) : $master_query->the_post();
@@ -397,7 +400,8 @@ if (empty($ordered_category_ids)) {
                             <div class="summary-master-date">
                                 <div class="summary-master">
                                     <div class="master-info">
-                                        <img class="avatar" src="" alt="Master photo" />
+                                        <img class="avatar" src="" alt="Master photo" data-no-lazy="1" loading="eager" decoding="async" />
+
                                         <div class="master-meta">
                                             <div class="name-stars">
                                                 <span class="name"></span>
@@ -454,9 +458,8 @@ if (empty($ordered_category_ids)) {
 
                             <div class="summary-total-group">
                                 <div class="summary-item"><span>Master category (<span class="percent">0</span>%)</span> <span class="master-bonus">0 SGD</span></div>
-                                <div class="summary-item tax">GST included</div>
-
                                 <div class="summary-item total"><span>Total</span> <span class="summary-total-amount">0.00 SGD</span></div>
+                                <div class="summary-item tax"> GST includedю Final pricing may vary depending on nail condition, length, or additional work required (e.g., repairs or broken nails). Prices listed may be adjusted at the discretion of the nail technician</div>
                             </div>
                             <form id="booking-form" class="contact-form" novalidate>
                                 <h3>Personal Information</h3>
@@ -529,7 +532,8 @@ if (empty($ordered_category_ids)) {
                             <div class="summary-master-date">
                                 <div class="summary-master">
                                     <div class="master-info">
-                                        <img class="avatar" src="" alt="Master photo" />
+                                        <img class="avatar" src="" alt="Master photo" data-no-lazy="1" loading="eager" decoding="async" />
+
                                         <div class="master-meta">
                                             <div class="name-stars">
                                                 <span class="name"></span>
@@ -576,9 +580,8 @@ if (empty($ordered_category_ids)) {
 
                             <div class="summary-total-group">
                                 <div class="summary-item"><span>Master category (<span class="percent">0</span>%)</span> <span class="master-bonus">0 SGD</span></div>
-                                <div class="summary-item tax">GST included</div>
-
                                 <div class="summary-item total"><span>Total</span> <span class="summary-total-amount">0.00 SGD</span></div>
+                                <div class="summary-item tax"> GST includedю Final pricing may vary depending on nail condition, length, or additional work required (e.g., repairs or broken nails). Prices listed may be adjusted at the discretion of the nail technician</div>
                             </div>
 
 
