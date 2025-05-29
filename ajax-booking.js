@@ -1371,7 +1371,9 @@
           <div class="staff-info">
             <h4 class="staff-name">${staff.name}</h4>
             <div class="staff-specialization">
-              ${generateStarsHtml(staffLevel)}
+             <div class="staff-stars">
+                    ${generateStarsHtml(staffLevel)}
+            </div>
               ${levelTitle ? `<span class="studio-name">(${levelTitle})</span>` : ""}
             </div>
           </div>
