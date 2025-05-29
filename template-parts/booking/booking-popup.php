@@ -304,7 +304,9 @@ if (empty($ordered_category_ids)) {
                                         <div class="staff-info">
                                             <h4 class="staff-name"><?php the_title(); ?></h4>
                                             <div class="staff-specialization">
-                                                <?php echo $stars; ?>
+                                                <div class="staff-stars">
+                                                    <?php echo $stars; ?>
+                                                </div>
                                                 <?php if ($levelTitle): ?>
                                                     <span class="studio-name">(<?php echo esc_html($levelTitle); ?>)</span>
                                                 <?php endif; ?>

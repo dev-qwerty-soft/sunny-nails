@@ -50,6 +50,9 @@
   gap: 16px;
   width: 100%;
   position: relative;
+  @media screen and (max-width: 768px) {
+    flex-wrap: wrap;
+  }
 }
 
 .staff-avatar {
@@ -100,6 +103,9 @@
   @media screen and (max-width: 768px) {
     flex-direction: column;
     align-items: start;
+  }
+  .staff-stars {
+    display: flex;
   }
 }
 
