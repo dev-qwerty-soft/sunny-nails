@@ -32,7 +32,7 @@
   background: rgba(255, 255, 255, 0.75);
 
   @media screen and (max-width: 768px) {
-    padding: 15px;
+    padding: 10px;
   }
   &::-webkit-scrollbar {
     width: 5px;
@@ -91,6 +91,9 @@
   align-self: stretch;
   border-radius: 12px;
   background: var(--beige, #f7f1e0);
+  @media screen and (max-width: 768px) {
+    padding: 10px;
+  }
 }
 .service-info {
   width: 100%;
