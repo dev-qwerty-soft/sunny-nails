@@ -1,5 +1,19 @@
 .site-header {
   padding: get-d(15px) get-d(60px) 0 get-d(60px);
+  position: static;
+  top: 0;
+  right: 0;
+  left: 0;
+  z-index: 1;
+  background: $bg-color;
+  &.active {
+    z-index: 1000;
+    background: none;
+    & .location, .logo {
+      display: none !important;
+    }
+    
+  }
   // @include respond(lg) {
   //   padding: get-lg(15px) get-lg(40px) 0 get-lg(40px);
   // }
@@ -96,6 +110,11 @@
       }
     }
   }
+
+  & .menu-container {
+    grid-column: -2 / -1;
+  }
+
 }
 
 body {
