@@ -26,7 +26,6 @@
   max-width: 929px;
   width: 100%;
   max-height: 90vh;
-  border-radius: 10px;
   background: #f7f1e0;
   overflow: hidden;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
@@ -39,25 +38,7 @@
     height: 100%;
   }
 }
-.booking-popup-btns {
-  .booking-back-btn.mob {
-    display: none;
-  }
-  @media screen and (max-width: 768px) {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-top: 20px;
-    padding: 10px;
-    .booking-back-btn.mob {
-      display: flex;
-    }
-    .booking-popup-close {
-      position: static;
-    }
-  }
-}
+
 .booking-popup-close {
   position: absolute;
   top: 20px;
@@ -73,13 +54,24 @@
   &:hover {
     transform: rotate(90deg);
   }
+  @media screen and (max-width: 768px) {
+    top: 5px;
+    right: -5px;
+    width: 20px;
+    height: 20px;
+    svg {
+      width: 20px;
+      height: 20px;
+    }
+  }
 }
+
 .step-header {
   display: flex;
   align-items: center;
   margin-bottom: 30px;
   @media screen and (max-width: 768px) {
-    margin: 30px 0;
+    margin-bottom: 10px;
   }
 }
 .booking-back-btn {
@@ -108,7 +100,11 @@
     transition: all 0.3s ease-in-out;
   }
   @media screen and (max-width: 768px) {
-    display: none;
+    position: absolute;
+    font-size: 0;
+    border: none;
+    padding: 0;
+    gap: 0;
   }
   &:hover {
     background-color: #fdc41f;
@@ -140,7 +136,7 @@
   line-height: 1.2;
 
   @media (max-width: 768px) {
-    font-size: 28px;
+    font-size: 24px;
   }
 }
 
@@ -164,6 +160,11 @@
   line-height: normal;
   &::before {
     margin-left: 22px;
+  }
+  @media screen and (max-width: 768px) {
+    font-size: 12px;
+    height: 40px !important;
+    width: max-content !important;
   }
 }
 
@@ -245,4 +246,7 @@
   display: flex;
   justify-content: center;
   margin: 30px auto 0;
+  @media screen and (max-width: 768px) {
+    margin: 10px auto 0;
+  }
 }
