@@ -3,7 +3,7 @@
   flex-direction: column;
   gap: 8px;
 
-  max-height: 60vh;
+  max-height: 80vh;
   overflow-y: auto;
 
   &::-webkit-scrollbar {
@@ -21,6 +21,7 @@
   }
 }
 
+.loading-message,
 .staff-item {
   display: flex;
   align-items: center;
@@ -46,7 +47,7 @@
     @media screen and (max-width: 768px) {
       .radio-indicator,
       .staff-avatar {
-        position: static;
+        position: relative;
         transform: none;
       }
       .staff-info {
@@ -65,6 +66,7 @@
   position: relative;
   @media screen and (max-width: 768px) {
     flex-wrap: wrap;
+    gap: 4px;
   }
 }
 

@@ -1,12 +1,26 @@
 .booking-step.confirm,
 .booking-step.contact {
   .booking-details-content {
-    max-height: calc(80vh - 124px);
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    @media screen and (max-width: 768px) {
+      gap: 10px;
+    }
+  }
+
+  .booking-summary-box {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    max-height: calc(100vh - 140px);
     overflow-y: auto;
     display: flex;
     flex-direction: column;
     gap: 20px;
-
+    @media screen and (max-width: 768px) {
+      gap: 10px;
+    }
     &::-webkit-scrollbar {
       width: 6px;
     }
@@ -19,12 +33,6 @@
       background: rgba(253, 196, 31, 0.6);
       border-radius: 3px;
     }
-  }
-
-  .booking-summary-box {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
     .summary-master-date {
       display: flex;
       flex-direction: column;
@@ -37,7 +45,9 @@
       display: flex;
       gap: 16px;
       flex: 1;
-
+      @media screen and (max-width: 768px) {
+        gap: 10px;
+      }
       .avatar {
         width: 55px;
         height: 55px;
@@ -62,7 +72,9 @@
             align-items: center;
             gap: 4px;
             @media screen and (max-width: 768px) {
-              flex-direction: column;
+              .stars-name {
+                font-size: 12px;
+              }
             }
             .star {
               display: flex;
@@ -161,10 +173,22 @@
       flex-direction: column;
       align-items: flex-start;
       gap: 4px;
+      strong {
+        font-weight: 700;
+        @media screen and (max-width: 768px) {
+          font-size: 16px;
+        }
+      }
       .meta {
         display: flex;
         align-items: flex-start;
         gap: 4px;
+        strong {
+          font-weight: 700;
+          @media screen and (max-width: 768px) {
+            font-size: 14px;
+          }
+        }
       }
     }
   }
@@ -172,6 +196,9 @@
     display: flex;
     flex-direction: column;
     gap: 16px;
+    @media screen and (max-width: 768px) {
+      gap: 10px;
+    }
     .summary-item {
       display: flex;
       justify-content: space-between;
@@ -183,6 +210,32 @@
       line-height: 120%; /* 21.6px */
       border-radius: 10px;
       background: rgba(255, 255, 255, 0.75);
+      @media screen and (max-width: 768px) {
+        font-size: 14px;
+      }
+      &.tax {
+        display: flex;
+        padding: 12px 25px;
+        align-items: flex-start;
+        gap: 8px;
+        align-self: stretch;
+        border-radius: 10px;
+        background: rgba(154, 154, 154, 0.14);
+        color: var(--black, #302f34);
+        font-family: "Montserrat", sans-serif;
+        font-size: 12px;
+        font-style: italic;
+        font-weight: 500;
+        line-height: 140%; /* 16.8px */
+      }
+      .summary-total-amount,
+      .master-bonus {
+        text-wrap: nowrap;
+        font-weight: 700;
+        @media screen and (max-width: 768px) {
+          font-size: 16px;
+        }
+      }
     }
   }
 
@@ -197,6 +250,9 @@
       font-size: 20px;
       font-weight: 600;
       line-height: 120%; /* 24px */
+      @media screen and (max-width: 768px) {
+        font-size: 16px;
+      }
     }
 
     .form-group {
@@ -251,6 +307,11 @@
         display: flex;
         align-items: center;
         gap: 6px;
+        color: var(--black, #302f34);
+        font-size: 12px;
+        font-style: normal;
+        font-weight: 500;
+        line-height: 120%; /* 14.4px */
       }
     }
 
@@ -314,7 +375,6 @@
         flex-direction: column;
         padding: 15px;
         .master-info {
-          margin-bottom: 16px;
           width: 100%;
         }
 
