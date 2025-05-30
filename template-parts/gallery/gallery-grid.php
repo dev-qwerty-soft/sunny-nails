@@ -38,7 +38,6 @@ if (!empty($masters)) {
               "index" => $index,
               "master" => $master,
               "image" => $image,
-
             ]);
             $index++;
           };

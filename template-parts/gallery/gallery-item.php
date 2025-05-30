@@ -86,12 +86,7 @@ if (!$avatar_url) {
 $master_altegio_id = $master ? get_field('altegio_id', $master->ID) : 0;
 ?>
 
-<<<<<<< HEAD
 <div data-index='<?= $index; ?>' data-slug='<?= esc_attr($slug); ?>' class='image active'>
-
-=======
-<div data-index='<?= $index; ?>' data-slug='<?= esc_attr($slug); ?>' class='image active<?= esc_attr($addClass); ?>'>
->>>>>>> 28372732211b5f64d276fb4688460288070f7a7d
   <div class='image__front'>
     <?php if ($url): ?>
       <img src='<?= esc_url($url); ?>' alt='<?= esc_attr($customTitle ?: $service_titles_string); ?>'>
