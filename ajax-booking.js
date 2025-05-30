@@ -89,13 +89,12 @@
    * @param {*} data - Optional data to log
    */
   function debug(message, data) {
-    if (config.debug) {
-      if (data !== undefined) {
-        console.log(`[Booking] ${message}:`, data);
-      } else {
-        console.log(`[Booking] ${message}`);
-      }
-    }
+    // if (!config.debug) return;
+    // if (data !== undefined) {
+    //   console.log(message, data);
+    // } else {
+    //   console.log(message);
+    // }
   }
 
   /**
@@ -571,7 +570,6 @@
 
         return true;
       } catch (error) {
-        console.error("Error in services next button:", error);
         showValidationAlert("An error occurred. Please try again.");
         return false;
       }
@@ -967,8 +965,6 @@
     $(document).on("click", ".validation-alert-button", function () {
       $(".validation-alert-overlay").remove();
     });
-
-    console.log("[Booking Fix] Validation alert shown:", message);
   }
   /**
    * Reset the booking form to initial state
@@ -1102,10 +1098,8 @@
 
         if (isAddon) {
           bookingData.addons.push(newService);
-          console.log("Add-on service added:", newService);
         } else {
           bookingData.coreServices.push(newService);
-          console.log("Core service added:", newService);
         }
 
         return true;
@@ -1131,10 +1125,8 @@
     // Also remove from core or addon arrays
     if (service && service.isAddon) {
       bookingData.addons = bookingData.addons.filter((addon) => addon.id != id);
-      console.log("Add-on service removed:", id);
     } else {
       bookingData.coreServices = bookingData.coreServices.filter((core) => core.id != id);
-      console.log("Core service removed:", id);
     }
 
     debug("Service removed", id);
@@ -1234,8 +1226,6 @@
         nonce: booking_params.nonce,
       },
       success: function (response) {
-        console.log("Full Response:", response);
-
         if (response.success && response.data && response.data.html) {
           $(".booking-popup .services-list").html(response.data.html);
           updateAddonAvailability();
@@ -1595,7 +1585,6 @@
     }
 
     $(".time-sections").html('<p class="loading-message">Loading available time slots...</p>');
-    console.log("Sending ALL service IDs (core + addons):", serviceIds);
 
     $.ajax({
       url: booking_params.ajax_url,
@@ -1832,13 +1821,6 @@
     bookingData.staffLevel = staffLevel;
     bookingData.staffSpecialization = specialization;
 
-    console.log("[Booking] Random master selected:", {
-      id: staffId,
-      name: staffName,
-      level: staffLevel,
-      specialization: specialization,
-    });
-
     return staffId;
   }
 
@@ -1982,14 +1964,6 @@
       $("#client-email").val(bookingData.contact.email || "");
       $("#client-comment").val(cleaned);
     }
-
-    console.log("Summary updated:", {
-      staffLevel: bookingData.staffLevel,
-      percent: percent,
-      basePrice: basePrice,
-      adjustment: priceAdjustment,
-      total: adjustedTotal,
-    });
   }
   function submitBooking() {
     $(".confirm-booking-btn").prop("disabled", true).text("Processing...");
@@ -2246,8 +2220,6 @@
     if (window.localStorage) {
       localStorage.removeItem("bookingData");
     }
-
-    console.log("[Booking] Popup closed via cancel button.");
   });
 
   // Initialize styles when document is ready
