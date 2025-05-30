@@ -15,12 +15,12 @@
     grid-template-columns: max-content 1fr max-content;
     grid-gap: get-d(40px);
     align-items: center;
-    border-bottom: get-d(2px) solid rgba($bg-grey, 50%);
+    border-bottom: get-d(2px) solid #D5CCB5;
     padding-bottom: get-d(15px);
     @include respond(lg) {
       grid-gap: get-lg(40px);
       padding-bottom: get-lg(15px);
-      border-bottom: get-lg(2px) solid rgba($bg-grey, 50%);
+      border-bottom: get-lg(2px) solid #D5CCB5;
     }
     @include respond(lg) {
       grid-gap: 16px;
