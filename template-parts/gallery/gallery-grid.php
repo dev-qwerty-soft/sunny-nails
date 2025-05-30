@@ -23,15 +23,6 @@ if (!empty($masters)) {
   }
   $usedTermsArray = array_values($usedTermsArray);
 }
-
-function get_image_class($index)
-{
-  $nth = $index + 1;
-  if ($nth % 10 === 3 || $nth % 10 === 6) {
-    return ' big';
-  }
-  return '';
-}
 ?>
 <div class="gallery-modal">
   <button type="button" aria-label="Close" class="cross"></button>
@@ -47,7 +38,6 @@ function get_image_class($index)
               "index" => $index,
               "master" => $master,
               "image" => $image,
-
             ]);
             $index++;
           };
@@ -86,7 +76,6 @@ function get_image_class($index)
               "index" => $index,
               "master" => $master,
               "image" => $image,
-              "addClass" => get_image_class($index)
             ]);
             $index++;
           };

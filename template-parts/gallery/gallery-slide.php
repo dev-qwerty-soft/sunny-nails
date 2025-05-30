@@ -1,6 +1,5 @@
 <?php
 $index = $args["index"] ?? 0;
-$addClass = $args["addClass"] ?? "";
 
 $imageData = $args['image']['image'] ?? '';
 $url = is_numeric($imageData)
@@ -86,7 +85,7 @@ if (!$avatar_url) {
 $master_altegio_id = $master ? get_field('altegio_id', $master->ID) : 0;
 ?>
 
-<div data-index="<?= $index; ?>" data-slug='<?= esc_attr($slug); ?>' class="swiper-slide image<?= esc_attr($addClass); ?>">
+<div data-index="<?= $index; ?>" data-slug='<?= esc_attr($slug); ?>' class="swiper-slide image">
   <?php if ($url): ?>
     <img src="<?= esc_url($url); ?>" alt="<?= esc_attr($customTitle ?: $service_titles_string); ?>">
   <?php endif; ?>

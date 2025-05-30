@@ -157,7 +157,6 @@ if (filterSection) {
   const filters = g(".gallery-section__filters .filter", document, true);
   const images = g(".gallery-section__images .image", document, true);
   const isFull = has(filterSection, ".full");
-  const isMobile = respond("md");
 
   filterFn = (filter) => {
     if (!filters) return;
@@ -167,26 +166,13 @@ if (filterSection) {
 
     const filteredImages = images?.filter((image) => {
       if (slug === "all") return true;
-
       const slugs = image.getAttribute("data-slug")?.split(" ") || [];
       return slugs.includes(slug);
     });
 
     remove(images);
-    remove(images, "big");
 
-    const final = isFull ? filteredImages : filteredImages.slice(0, isMobile ? 6 : 5);
-
-    if (!isMobile) {
-      final.forEach((image, i) => {
-        const nth = i + 1;
-        if (nth % 10 === 3 || nth % 10 === 6) {
-          add(image, "big");
-        }
-      });
-    }
-
-    add(final);
+    add(isFull ? filteredImages : filteredImages.slice(0, 8));
   };
 
   filterFn(filters[0]);

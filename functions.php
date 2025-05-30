@@ -60,3 +60,8 @@ add_action('after_setup_theme', ['BookingFilterController', 'init']);
 add_action("login_enqueue_scripts", function () {
     wp_enqueue_style('login-css', getUrl("login/style.css"), false, '1.0.0');
 });
+
+add_action('admin_head', function () {
+    echo '<link rel="icon" href="'.getAssetUrlAcf('favicon_black_theme').'" media="(prefers-color-scheme: dark)">';
+    echo '<link rel="icon" href="'.getAssetUrlAcf('favicon_light_theme').'" media="(prefers-color-scheme: light)">';
+});

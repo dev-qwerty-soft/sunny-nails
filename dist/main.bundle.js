@@ -21392,7 +21392,6 @@ if (filterSection) {
   const filters = (0,_js_function_js__WEBPACK_IMPORTED_MODULE_11__.g)(".gallery-section__filters .filter", document, true);
   const images = (0,_js_function_js__WEBPACK_IMPORTED_MODULE_11__.g)(".gallery-section__images .image", document, true);
   const isFull = (0,_js_function_js__WEBPACK_IMPORTED_MODULE_11__.has)(filterSection, ".full");
-  const isMobile = (0,_js_function_js__WEBPACK_IMPORTED_MODULE_11__.respond)("md");
 
   filterFn = (filter) => {
     if (!filters) return;
@@ -21402,26 +21401,13 @@ if (filterSection) {
 
     const filteredImages = images?.filter((image) => {
       if (slug === "all") return true;
-
       const slugs = image.getAttribute("data-slug")?.split(" ") || [];
       return slugs.includes(slug);
     });
 
     (0,_js_function_js__WEBPACK_IMPORTED_MODULE_11__.remove)(images);
-    (0,_js_function_js__WEBPACK_IMPORTED_MODULE_11__.remove)(images, "big");
 
-    const final = isFull ? filteredImages : filteredImages.slice(0, isMobile ? 6 : 5);
-
-    if (!isMobile) {
-      final.forEach((image, i) => {
-        const nth = i + 1;
-        if (nth % 10 === 3 || nth % 10 === 6) {
-          (0,_js_function_js__WEBPACK_IMPORTED_MODULE_11__.add)(image, "big");
-        }
-      });
-    }
-
-    (0,_js_function_js__WEBPACK_IMPORTED_MODULE_11__.add)(final);
+    (0,_js_function_js__WEBPACK_IMPORTED_MODULE_11__.add)(isFull ? filteredImages : filteredImages.slice(0, 8));
   };
 
   filterFn(filters[0]);
