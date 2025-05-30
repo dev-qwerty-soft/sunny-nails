@@ -4,7 +4,7 @@
   //   padding: get-lg(15px) get-lg(40px) 0 get-lg(40px);
   // }
   @include respond(lg) {
-    padding: 45px 25px 22px 25px;
+    padding: 28px 25px 16px 25px;
     & .buttons {
       display: none;
     }
