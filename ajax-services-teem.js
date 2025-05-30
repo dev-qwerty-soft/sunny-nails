@@ -1,9 +1,7 @@
 (function ($) {
   "use strict";
 
-  function debug(message, ...args) {
-    console.log(`[BookingFix] ${message}`, ...args);
-  }
+  function debug(message, ...args) {}
 
   $(document).on("click", ".service-card .book-btn, button.book-btn[data-popup-open='true']", function (e) {
     e.preventDefault();

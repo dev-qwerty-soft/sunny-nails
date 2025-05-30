@@ -33,10 +33,8 @@ if (is_array($tags)) {
 }
 $slug = implode(' ', $tagSlugs);
 
-// === MULTI-SERVICE SUPPORT ===
 $customTitle = $args['image']['custom_title'] ?? '';
 $service_ids = $args['image']['servise'] ?? [];
-
 if (!is_array($service_ids)) {
   $service_ids = [$service_ids];
 }
@@ -58,10 +56,42 @@ foreach ($service_ids as $service_id) {
 
 $service_titles_string = implode(', ', $service_titles);
 $service_ids_string = implode(',', $service_ids);
+
+// ✴ Фінальна ціна з урахуванням рівня майстра
+$adjustmentPercents = [
+  0 => -50,
+  1 => 0,
+  2 => 10,
+  3 => 20,
+  4 => 30,
+  5 => 30,
+];
+
+$adjustment = $adjustmentPercents[$level] ?? 0;
+$final_price = $total_price + ($total_price * $adjustment / 100);
+
+$starsCount = match (true) {
+  $level === 0 => 0,
+  $level === 1 => 1,
+  $level === 2 => 2,
+  $level === 3 => 3,
+  $level === 4, $level === 5 => 4,
+  default => 0,
+};
+
+$avatar_url = $master ? get_the_post_thumbnail_url($master->ID, 'medium') : '';
+if (!$avatar_url) {
+  $avatar_url = get_template_directory_uri() . '/assets/svg/custom-user.png';
+}
+$master_altegio_id = $master ? get_field('altegio_id', $master->ID) : 0;
 ?>
 
+<<<<<<< HEAD
 <div data-index='<?= $index; ?>' data-slug='<?= esc_attr($slug); ?>' class='image active'>
 
+=======
+<div data-index='<?= $index; ?>' data-slug='<?= esc_attr($slug); ?>' class='image active<?= esc_attr($addClass); ?>'>
+>>>>>>> 28372732211b5f64d276fb4688460288070f7a7d
   <div class='image__front'>
     <?php if ($url): ?>
       <img src='<?= esc_url($url); ?>' alt='<?= esc_attr($customTitle ?: $service_titles_string); ?>'>
@@ -70,30 +100,20 @@ $service_ids_string = implode(',', $service_ids);
       <button type='button' aria-label='View' class='view'></button>
       <button type="button"
         class="btn white want-this-btn"
-        data-master-id="<?= esc_attr($master ? $master->ID : 0); ?>"
-        data-service-ids="<?= esc_attr($service_ids_string); ?>">
+        data-staff-avatar="<?= esc_url($avatar_url); ?>"
+        data-master-id="<?= esc_attr($master_altegio_id); ?>"
+        data-service-ids="<?= esc_attr($service_ids_string); ?>"
+        data-gallery-title="<?= esc_attr($customTitle ?: $service_titles_string); ?>">
         I want this
       </button>
     </div>
   </div>
 
   <div class='image__back'>
-    <span class='image__title'>
-      <?= esc_html($customTitle ?: $service_titles_string); ?>
-    </span>
-    <span class='image__price'>Price: <?= esc_html(number_format($total_price, 2)); ?> <?= esc_html($currency); ?></span>
+    <span class='image__title'><?= esc_html($customTitle ?: $service_titles_string); ?></span>
+    <span class='image__price'>Price: <?= esc_html(number_format($final_price, 2)); ?> <?= esc_html($currency); ?></span>
     <span class='image__master'>Master: <?= esc_html($name); ?></span>
 
-    <?php
-    $starsCount = match (true) {
-      $level === 0 => 0,
-      $level === 1 => 1,
-      $level === 2 => 2,
-      $level === 3 => 3,
-      $level === 4, $level === 5 => 4,
-      default => 0,
-    };
-    ?>
     <div class='stars'>
       <?= str_repeat("<div class='star'></div>", $starsCount); ?>
       <?php if ($levelName): ?>
@@ -101,17 +121,15 @@ $service_ids_string = implode(',', $service_ids);
       <?php endif; ?>
     </div>
 
-
     <div class='wrapper'>
       <button type="button"
         class="btn white want-this-btn"
-        data-master-id="<?= esc_attr(get_field('altegio_id', $master ? $master->ID : 0)); ?>"
-
-        data-service-ids="<?= esc_attr($service_ids_string); ?>">
+        data-staff-avatar="<?= esc_url($avatar_url); ?>"
+        data-master-id="<?= esc_attr($master_altegio_id); ?>"
+        data-service-ids="<?= esc_attr($service_ids_string); ?>"
+        data-gallery-title="<?= esc_attr($customTitle ?: $service_titles_string); ?>">
         I want this
       </button>
-
     </div>
   </div>
-
 </div>

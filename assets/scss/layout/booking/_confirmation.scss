@@ -1,7 +1,9 @@
 .confirmation-body {
-  max-height: 80vh;
+  max-height: 75vh;
   overflow-y: auto;
-
+  @media screen and (max-width: 768px) {
+    max-height: 90vh;
+  }
   &::-webkit-scrollbar {
     width: 5px;
   }
@@ -14,6 +16,21 @@
   &::-webkit-scrollbar-thumb {
     background: rgba(253, 196, 31, 0.7);
     border-radius: 10px;
+  }
+  .summary-title {
+    color: var(--black, #302f34);
+    font-size: 24px;
+    font-weight: 500;
+    line-height: 120%; /* 28.8px */
+    letter-spacing: -0.72px;
+    @media screen and (max-width: 768px) {
+      display: none;
+    }
+  }
+  .booking-summary-box {
+    overflow-y: hidden !important;
+    max-height: 100% !important;
+    gap: 16px;
   }
 }
 
@@ -29,22 +46,31 @@
   border-radius: 10px;
   background: rgba(255, 255, 255, 0.75);
   @media screen and (max-width: 768px) {
-    margin-top: 20px;
+    margin: 10px;
   }
 }
 .confirmation-success-icon {
   display: flex;
   width: 85px;
   height: 85px;
-  padding: 27px;
+  padding: 25px;
   align-items: center;
   justify-content: center;
-  gap: 10px;
+  gap: 20px;
   border-radius: 50%;
   background: #fdc41f;
   svg {
     width: 31px;
     height: 31px;
+  }
+  @media screen and (max-width: 768px) {
+    width: 57px;
+    height: 57px;
+    padding: 0;
+    svg {
+      width: 23px;
+      height: 23px;
+    }
   }
 }
 .confirmation-message {
@@ -54,22 +80,22 @@
   font-weight: 500;
   line-height: 120%; /* 28.8px */
   letter-spacing: -0.72px;
+  @media screen and (max-width: 768px) {
+    font-size: 16px;
+  }
 }
-.summary-title {
-  margin-bottom: 10px;
-  color: var(--black, #302f34);
-  font-size: 24px;
-  font-weight: 500;
-  line-height: 120%; /* 28.8px */
-  letter-spacing: -0.72px;
-}
+
 .confirm .step-actions {
   @media screen and (max-width: 768px) {
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 10px;
   }
   .btn {
+    font-size: 14px;
+    font-weight: 500;
+    padding: 10px !important;
+    height: 50px !important;
     &::before {
       display: none;
     }

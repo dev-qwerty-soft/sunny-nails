@@ -23,7 +23,7 @@
 }
 
 .booking-step .services-list {
-  max-height: 45vh;
+  max-height: 50vh;
   overflow-y: auto;
   max-width: 825px;
   padding: 30px;
@@ -33,6 +33,7 @@
 
   @media screen and (max-width: 768px) {
     padding: 10px;
+    max-height: 60vh;
   }
   &::-webkit-scrollbar {
     width: 5px;
@@ -77,7 +78,10 @@
 .category-services {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 30px;
+  @media screen and (max-width: 768px) {
+    gap: 16px;
+  }
 }
 .service-item {
   position: relative;
@@ -91,9 +95,6 @@
   align-self: stretch;
   border-radius: 12px;
   background: var(--beige, #f7f1e0);
-  @media screen and (max-width: 768px) {
-    padding: 10px;
-  }
 }
 .service-info {
   width: 100%;
@@ -109,7 +110,8 @@
   font-weight: 700;
   line-height: 110%; /* 19.8px */
   @media screen and (max-width: 768px) {
-    flex-direction: column;
+    gap: 8px;
+    font-size: 16px;
   }
 }
 
@@ -121,12 +123,6 @@
   font-weight: 400;
   line-height: 140%; /* 19.6px */
   font-size: get-d(14px);
-  @include respond(lg) {
-    font-size: get-lg(14px);
-  }
-  @include respond(md) {
-    font-size: 12px;
-  }
   strong {
     font-weight: 700;
   }
@@ -136,6 +132,9 @@
   display: flex;
   align-items: center;
   gap: 24px;
+  @media screen and (max-width: 768px) {
+    gap: 8px;
+  }
 }
 
 .service-checkbox {
@@ -171,6 +170,7 @@
     border-color: #fdc41f;
   }
 }
+
 .core-related-addons {
   max-height: 0;
   overflow: hidden;

@@ -89,13 +89,12 @@
    * @param {*} data - Optional data to log
    */
   function debug(message, data) {
-    if (config.debug) {
-      if (data !== undefined) {
-        console.log(`[Booking] ${message}:`, data);
-      } else {
-        console.log(`[Booking] ${message}`);
-      }
-    }
+    // if (!config.debug) return;
+    // if (data !== undefined) {
+    //   console.log(message, data);
+    // } else {
+    //   console.log(message);
+    // }
   }
 
   /**
@@ -336,6 +335,7 @@
       }
     });
   }
+
   $(document).on("click", ".want-this-btn", function (e) {
     e.preventDefault();
 
@@ -346,8 +346,9 @@
       .split(",")
       .map((id) => parseInt(id.trim()));
 
+    const galleryTitle = $(this).data("gallery-title") || "";
+    bookingData.galleryTitle = galleryTitle;
     if (!masterId || !serviceIds.length) return;
-
     resetBookingForm();
 
     $(".booking-popup").hide();
@@ -356,7 +357,7 @@
     bookingData.staffId = masterId;
     bookingData.initialOption = "master";
     bookingData.flowHistory = ["initial", "master"];
-
+    bookingData.galleryTitle = galleryTitle;
     $(".booking-popup-overlay").addClass("active");
 
     const $staffItem = $(`.staff-item[data-staff-id="${masterId}"]`);
@@ -569,7 +570,6 @@
 
         return true;
       } catch (error) {
-        console.error("Error in services next button:", error);
         showValidationAlert("An error occurred. Please try again.");
         return false;
       }
@@ -965,8 +965,6 @@
     $(document).on("click", ".validation-alert-button", function () {
       $(".validation-alert-overlay").remove();
     });
-
-    console.log("[Booking Fix] Validation alert shown:", message);
   }
   /**
    * Reset the booking form to initial state
@@ -1100,10 +1098,8 @@
 
         if (isAddon) {
           bookingData.addons.push(newService);
-          console.log("Add-on service added:", newService);
         } else {
           bookingData.coreServices.push(newService);
-          console.log("Core service added:", newService);
         }
 
         return true;
@@ -1129,10 +1125,8 @@
     // Also remove from core or addon arrays
     if (service && service.isAddon) {
       bookingData.addons = bookingData.addons.filter((addon) => addon.id != id);
-      console.log("Add-on service removed:", id);
     } else {
       bookingData.coreServices = bookingData.coreServices.filter((core) => core.id != id);
-      console.log("Core service removed:", id);
     }
 
     debug("Service removed", id);
@@ -1232,8 +1226,6 @@
         nonce: booking_params.nonce,
       },
       success: function (response) {
-        console.log("Full Response:", response);
-
         if (response.success && response.data && response.data.html) {
           $(".booking-popup .services-list").html(response.data.html);
           updateAddonAvailability();
@@ -1593,7 +1585,6 @@
     }
 
     $(".time-sections").html('<p class="loading-message">Loading available time slots...</p>');
-    console.log("Sending ALL service IDs (core + addons):", serviceIds);
 
     $.ajax({
       url: booking_params.ajax_url,
@@ -1830,13 +1821,6 @@
     bookingData.staffLevel = staffLevel;
     bookingData.staffSpecialization = specialization;
 
-    console.log("[Booking] Random master selected:", {
-      id: staffId,
-      name: staffName,
-      level: staffLevel,
-      specialization: specialization,
-    });
-
     return staffId;
   }
 
@@ -1980,14 +1964,6 @@
       $("#client-email").val(bookingData.contact.email || "");
       $("#client-comment").val(cleaned);
     }
-
-    console.log("Summary updated:", {
-      staffLevel: bookingData.staffLevel,
-      percent: percent,
-      basePrice: basePrice,
-      adjustment: priceAdjustment,
-      total: adjustedTotal,
-    });
   }
   function submitBooking() {
     $(".confirm-booking-btn").prop("disabled", true).text("Processing...");
@@ -2018,17 +1994,27 @@
       };
     });
 
-    const clientCommentRaw = $("#client-comment").val().trim();
-    const cleanComment = clientCommentRaw.replace(/Price information:[\s\S]*$/i, "").trim();
+    const cleanComment = $("#client-comment")
+      .val()
+      .trim()
+      .replace(/Price information:[\s\S]*$/i, "")
+      .trim();
+
+    let galleryInfo = "";
+    if (bookingData.initialOption === "master" && bookingData.galleryTitle) {
+      galleryInfo = `Gallery photo title: ${bookingData.galleryTitle}\n\n`;
+    }
 
     const serviceDescriptions = bookingData.services.map((service) => `- ${service.title}: ${parseFloat(service.price).toFixed(2)} SGD`).join("\n");
 
-    const fullComment = `${cleanComment ? "Comment from client: " + cleanComment + "\n\n" : ""}
-Price information:
-${serviceDescriptions}
-Base price: ${basePrice.toFixed(2)} SGD
-Master category: ${adjustmentPercent > 0 ? "+" : ""}${adjustmentPercent}% (${priceAdjustment.toFixed(2)} SGD)
-Final price: ${adjustedPrice.toFixed(2)} SGD`;
+    const fullComment =
+      `${cleanComment ? "Comment from client: " + cleanComment + "\n\n" : ""}` +
+      galleryInfo +
+      `Price information:
+        ${serviceDescriptions}
+        Base price: ${basePrice.toFixed(2)} SGD
+        Master category: ${adjustmentPercent >= 0 ? "+" : ""}${adjustmentPercent}% (${priceAdjustment.toFixed(2)} SGD)
+        Final price: ${adjustedPrice.toFixed(2)} SGD`;
 
     const bookingRequest = {
       action: "submit_booking",
@@ -2234,8 +2220,6 @@ Final price: ${adjustedPrice.toFixed(2)} SGD`;
     if (window.localStorage) {
       localStorage.removeItem("bookingData");
     }
-
-    console.log("[Booking] Popup closed via cancel button.");
   });
 
   // Initialize styles when document is ready

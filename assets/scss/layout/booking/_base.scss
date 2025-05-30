@@ -16,6 +16,9 @@
   &.active {
     display: flex;
   }
+  @media screen and (max-width: 768px) {
+    padding: 0;
+  }
 }
 
 .booking-popup {
@@ -23,16 +26,23 @@
   max-width: 929px;
   width: 100%;
   max-height: 90vh;
-  border-radius: 10px;
   background: #f7f1e0;
   overflow: hidden;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  @media screen and (max-width: 768px) {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    max-height: 100vh;
+    height: 100%;
+  }
 }
 
 .booking-popup-close {
   position: absolute;
-  top: 20px;
-  right: 20px;
+  top: -30px;
+  right: -30px;
   width: 30px;
   height: 30px;
   background: none;
@@ -44,13 +54,24 @@
   &:hover {
     transform: rotate(90deg);
   }
+  @media screen and (max-width: 768px) {
+    top: 5px;
+    right: -5px;
+    width: 20px;
+    height: 20px;
+    svg {
+      width: 20px;
+      height: 20px;
+    }
+  }
 }
+
 .step-header {
   display: flex;
   align-items: center;
   margin-bottom: 30px;
   @media screen and (max-width: 768px) {
-    margin: 30px 0;
+    margin-bottom: 10px;
   }
 }
 .booking-back-btn {
@@ -80,8 +101,10 @@
   }
   @media screen and (max-width: 768px) {
     position: absolute;
-    top: -40px;
-    left: 0;
+    font-size: 0;
+    border: none;
+    padding: 0;
+    gap: 0;
   }
   &:hover {
     background-color: #fdc41f;
@@ -98,7 +121,8 @@
   padding: 50px;
 
   @media (max-width: 768px) {
-    padding: 20px 15px;
+    padding: 20px;
+    width: 100vw;
   }
 }
 
@@ -112,7 +136,7 @@
   line-height: 1.2;
 
   @media (max-width: 768px) {
-    font-size: 28px;
+    font-size: 24px;
   }
 }
 
@@ -136,6 +160,11 @@
   line-height: normal;
   &::before {
     margin-left: 22px;
+  }
+  @media screen and (max-width: 768px) {
+    font-size: 12px;
+    height: 40px !important;
+    width: max-content !important;
   }
 }
 
@@ -217,6 +246,9 @@
   display: flex;
   justify-content: center;
   margin: 30px auto 0;
+  @media screen and (max-width: 768px) {
+    margin: 10px auto 0;
+  }
 }
 
 .menu-container {
