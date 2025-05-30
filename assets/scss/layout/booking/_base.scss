@@ -31,8 +31,8 @@
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
   @media screen and (max-width: 768px) {
     display: flex;
-    align-items: flex-start;
-    justify-content: center;
+    align-items: center;
+    justify-content: flex-start;
     flex-direction: column;
     max-height: 100vh;
     height: 100%;
