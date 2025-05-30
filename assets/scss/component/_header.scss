@@ -19,6 +19,8 @@
   // }
   @include respond(lg) {
     padding: 28px 25px 16px 25px;
+    border-bottom: 2px solid #D5CCB5;
+    
     & .buttons {
       display: none;
     }
@@ -31,11 +33,11 @@
     align-items: center;
     border-bottom: get-d(2px) solid #D5CCB5;
     padding-bottom: get-d(15px);
-    @include respond(lg) {
-      grid-gap: get-lg(40px);
-      padding-bottom: get-lg(15px);
-      border-bottom: get-lg(2px) solid #D5CCB5;
-    }
+    // @include respond(lg) {
+    //   grid-gap: get-lg(40px);
+    //   padding-bottom: get-lg(15px);
+    //   border-bottom: get-lg(2px) solid #D5CCB5;
+    // }
     @include respond(lg) {
       grid-gap: 16px;
       padding-bottom: 0;
@@ -64,10 +66,10 @@
         text-transform: uppercase;
         padding: get-d(10px) get-d(14px);
         color: rgba($bg-grey, 90%);
-        @include respond(lg) {
-          font-size: get-lg(12px);
-          padding: get-lg(10px) get-lg(14px);
-        }
+        // @include respond(lg) {
+        //   font-size: get-lg(12px);
+        //   padding: get-lg(10px) get-lg(14px);
+        // }
         @include respond(lg) {
           font-size: 20px;
           padding: 0;
