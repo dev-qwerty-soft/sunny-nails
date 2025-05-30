@@ -30,6 +30,15 @@
     padding-right: get-d(24px + 32px);
     position: relative;
     overflow: hidden;
+    &.mini {
+      padding-right: get-d(20px + 24px);
+      @include respond(lg) {
+        padding-right: get-lg(20px + 24px);
+      }
+      @include respond(md) {
+        padding-right: 20px + 24px;
+      }
+    }
     @include respond(lg) {
       padding-right: get-lg(25px + 47px);
     }
@@ -75,6 +84,15 @@
     @include respond(md) {
       padding-right: 25px + 47px;
     }
+    &.mini {
+      padding-right: get-d(20px + 24px);
+      @include respond(lg) {
+        padding-right: get-lg(20px + 24px);
+      }
+      @include respond(md) {
+        padding-right: 20px + 24px;
+      }
+    }
     &::before {
       position: absolute;
       height: calc(100% - get-d(8px));
@@ -100,6 +118,18 @@
       &::before {
         transform: translateY(-50%) rotate(45deg);
       }
+    }
+  }
+  &.mini {
+    padding: get-d(12px) get-d(20px);
+    font-size: get-d(12px);
+    @include respond(lg) {
+      padding: get-lg(12px) get-lg(20px);
+      font-size: get-lg(12px);
+    }
+    @include respond(md) {
+      padding: 10px 20px;
+      font-size: 10px;
     }
   }
 }

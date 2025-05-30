@@ -1,29 +1,29 @@
-@mixin codeBig() {
-  grid-row: span 2;
-  grid-column: span 2;
-  & .image__back {
-    padding-top: get-d(170px);
-    & .image__title {
-      font-size: get-d(36px);
-    }
-  }
-  @include respond(lg) {
-    & .image__back {
-      padding-top: get-lg(32px);
-      & .image__title {
-        font-size: get-lg(36px);
-      }
-    }
-  }
-  @include respond(md) {
-    & .image__back {
-      padding-top: 170px;
-      & .image__title {
-        font-size: 24px;
-      }
-    }
-  }
-}
+// @mixin codeBig() {
+//   grid-row: span 2;
+//   grid-column: span 2;
+//   & .image__back {
+//     padding-top: get-d(170px);
+//     & .image__title {
+//       font-size: get-d(36px);
+//     }
+//   }
+//   @include respond(lg) {
+//     & .image__back {
+//       padding-top: get-lg(32px);
+//       & .image__title {
+//         font-size: get-lg(36px);
+//       }
+//     }
+//   }
+//   @include respond(md) {
+//     & .image__back {
+//       padding-top: 170px;
+//       & .image__title {
+//         font-size: 24px;
+//       }
+//     }
+//   }
+// }
 
 .gallery-section {
   padding: get-d(75px) get-d(60px);
@@ -142,8 +142,8 @@
       grid-gap: 10px;
       grid-template-columns: repeat(2, 1fr);
     }
-    .image-wrapper {
-    }
+    // .image-wrapper {
+    // }
     & .image {
       width: 100%;
       height: 100%;
@@ -159,9 +159,9 @@
         grid-row: span 1 !important;
       }
 
-      &.big {
-        @include codeBig();
-      }
+      // &.big {
+      //   @include codeBig();
+      // }
 
       & .wrapper {
         position: absolute;

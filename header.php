@@ -32,6 +32,9 @@
                     );
                 ?>
             </nav>
+            <div class="buttons">
+                <button type="button" class="btn yellow open-popup mini">Book an Appointment</button>
+            </div>
         </div>
     </div>
 </header>
@@ -47,7 +50,7 @@
         ?>
     </nav>
     <div class="icons"><?php displayIcon(); ?></div>
-    <a href="#" class="btn white">Book an Appointment</a>
+    <a href="#" class="btn white open-popup">Book an Appointment</a>
 </div>
 <?php
     $chat_link_url = get_field('chat_link_url', 'option');

@@ -1,10 +1,13 @@
 .site-header {
   padding: get-d(15px) get-d(60px) 0 get-d(60px);
+  // @include respond(lg) {
+  //   padding: get-lg(15px) get-lg(40px) 0 get-lg(40px);
+  // }
   @include respond(lg) {
-    padding: get-lg(15px) get-lg(40px) 0 get-lg(40px);
-  }
-  @include respond(md) {
     padding: 45px 25px 22px 25px;
+    & .buttons {
+      display: none;
+    }
   }
 
   & .container {
@@ -19,7 +22,7 @@
       padding-bottom: get-lg(15px);
       border-bottom: get-lg(2px) solid rgba($bg-grey, 50%);
     }
-    @include respond(md) {
+    @include respond(lg) {
       grid-gap: 16px;
       padding-bottom: 0;
       border-bottom: 0;
@@ -29,13 +32,13 @@
       display: flex;
       align-items: center;
       list-style: none;
-      @include respond(md) {
+      @include respond(lg) {
         display: none;
       }
       & .current_page_item a {
         background: $bg-yellow;
         border-radius: 100px;
-        @include respond(md) {
+        @include respond(lg) {
           background: none;
           border-radius: none;
         }
@@ -51,7 +54,7 @@
           font-size: get-lg(12px);
           padding: get-lg(10px) get-lg(14px);
         }
-        @include respond(md) {
+        @include respond(lg) {
           font-size: 20px;
           padding: 0;
         }
@@ -67,11 +70,11 @@
       display: flex;
       align-items: center;
       gap: get-d(4px);
+      // @include respond(lg) {
+      //   font-size: get-lg(14px);
+      //   gap: get-lg(4px);
+      // }
       @include respond(lg) {
-        font-size: get-lg(14px);
-        gap: get-lg(4px);
-      }
-      @include respond(md) {
         font-size: 12px;
         gap: 4px;
       }
@@ -82,11 +85,11 @@
         height: get-d(26px);
         background: url("../svg/location.svg") center / cover no-repeat;
         
+        // @include respond(lg) {
+        //   width: get-lg(26px);
+        //   height: get-lg(26px);
+        // }
         @include respond(lg) {
-          width: get-lg(26px);
-          height: get-lg(26px);
-        }
-        @include respond(md) {
           width: 26px;
           height: 26px;
         }
@@ -107,10 +110,10 @@ body {
   & img {
     height: auto;
     width: get-d(190px);
+    // @include respond(lg) {
+    //   width: get-lg(190px);
+    // }
     @include respond(lg) {
-      width: get-lg(190px);
-    }
-    @include respond(md) {
       width: 112px;
     }
   }

@@ -1,6 +1,5 @@
 <?php
 $index = $args["index"] ?? 0;
-$addClass = $args["addClass"] ?? "";
 
 $imageData = $args['image']['image'] ?? '';
 $url = is_numeric($imageData)
@@ -61,7 +60,7 @@ $service_titles_string = implode(', ', $service_titles);
 $service_ids_string = implode(',', $service_ids);
 ?>
 
-<div data-index='<?= $index; ?>' data-slug='<?= esc_attr($slug); ?>' class='image active<?= esc_attr($addClass); ?>'>
+<div data-index='<?= $index; ?>' data-slug='<?= esc_attr($slug); ?>' class='image active'>
 
   <div class='image__front'>
     <?php if ($url): ?>

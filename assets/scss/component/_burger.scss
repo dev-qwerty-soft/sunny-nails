@@ -6,7 +6,7 @@
   height: calc(2px * 3 + 5px * 2);
   z-index: 102;
   display: none;
-  @include respond(md) {
+  @include respond(lg) {
     display: block;
   }
   &::before {
@@ -90,7 +90,7 @@
     opacity: 1;
     pointer-events: all;
   }
-  @include respond(md) {
+  @include respond(lg) {
     display: grid;
   }
   & nav {
