@@ -1,7 +1,9 @@
 .confirmation-body {
-  max-height: 90vh;
+  max-height: 75vh;
   overflow-y: auto;
-
+  @media screen and (max-width: 768px) {
+    max-height: 90vh;
+  }
   &::-webkit-scrollbar {
     width: 5px;
   }
@@ -16,7 +18,6 @@
     border-radius: 10px;
   }
   .summary-title {
-    margin-bottom: 10px;
     color: var(--black, #302f34);
     font-size: 24px;
     font-weight: 500;
@@ -29,6 +30,7 @@
   .booking-summary-box {
     overflow-y: hidden !important;
     max-height: 100% !important;
+    gap: 16px;
   }
 }
 
