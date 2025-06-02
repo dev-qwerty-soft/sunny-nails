@@ -13,10 +13,16 @@ import { has, g, add, remove, toggle, respond, updateDisplay } from "./js/functi
 
 const header = g(".site-header");
 const footer = g(".footer");
-const height = header.offsetHeight + footer.offsetHeight;
+const headerHeight = header.offsetHeight;
+const height = headerHeight + footer.offsetHeight;
+const main = g("main");
+main.style.paddingTop = `${headerHeight}px`;
+header.style.position = "absolute";
+
 function resize() {
   document.body.style.setProperty("--vh-min", `${window.innerHeight - height}px`);
 };
+
 resize();
 window.addEventListener("resize", resize);
 
@@ -196,14 +202,15 @@ if (buttonsTabsWrapper) {
   tabFn(buttonsTabs[0]);
 }
 
+const btn = g("#burger");
+const menu = g(".burger-menu");
+
 document.onclick = (e) => {
   if (has(e.target, ".gallery-section__filters .filter")) {
     filterFn?.(e.target);
   } else if (has(e.target, "#burger")) {
-    const btn = g("#burger");
-    const menu = g(".burger-menu");
     window.scrollTo(0, 0);
-    toggle([btn, menu]);
+    toggle([btn, menu, header]);
   } else if (has(e.target, ".gallery-section__images .image")) {
     const image = e.target.closest(".image");
     const index = Number(image.getAttribute("data-index"));
