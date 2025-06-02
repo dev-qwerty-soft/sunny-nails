@@ -334,10 +334,6 @@ if (empty($ordered_category_ids)) {
                     </div>
                 </div>
 
-
-
-
-
                 <!-- Step 4: Select Date and Time -->
                 <div class="booking-step" data-step="datetime">
                     <div class="step-header">
@@ -577,7 +573,12 @@ if (empty($ordered_category_ids)) {
                             <div class="summary-total-group">
                                 <div class="summary-item"><span>Master category (<span class="percent">0</span>%)</span> <span class="master-bonus">0 SGD</span></div>
                                 <div class="summary-item total"><span>Total</span> <span class="summary-total-amount">0.00 SGD</span></div>
-                                <div class="summary-item tax"> GST includedю Final pricing may vary depending on nail condition, length, or additional work required (e.g., repairs or broken nails). Prices listed may be adjusted at the discretion of the nail technician</div>
+                                <?php
+                                $price_notice = get_field('booking_price_note', 'option');
+                                if ($price_notice) : ?>
+                                    <div class="summary-item tax"><?= esc_html($price_notice); ?></div>
+                                <?php endif; ?>
+
                             </div>
 
 

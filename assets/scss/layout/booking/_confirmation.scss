@@ -86,10 +86,10 @@
 }
 
 .confirm .step-actions {
+  display: flex;
+  gap: 10px;
   @media screen and (max-width: 768px) {
-    display: flex;
     flex-direction: column;
-    gap: 10px;
   }
   .btn {
     font-size: 14px;
