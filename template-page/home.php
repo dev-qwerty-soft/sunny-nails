@@ -84,23 +84,25 @@ if (empty($ordered_category_ids)) {
         </div>
     </section>
     <?php
-        get_template_part("template-parts/gallery/gallery-grid", null, [
-            "full" => false
-        ]);
+    get_template_part("template-parts/gallery/gallery-grid", null, [
+        "full" => false
+    ]);
     ?>
     <?php
-        $services_link_url = get_field('services_link_url', 'option');
+    $services_link = get_field('services_link_url', 'option');
+    $services_link_url = $services_link['url'] ?? '';
+    $services_link_target = $services_link['target'] ?? '_self';
+    $services_link_title = $services_link['title'] ?? '';
     ?>
     <section class="services-preview-section">
         <div class="container">
             <div class="services-preview-section__top">
                 <h2 class="title"><?php the_field('services_title', 'option'); ?></h2>
-                <?php
-                $text = get_field('services_link_text', 'option');
-                if ($services_link_url && $text) {
-                    echo "<a href='$services_link_url' class='btn yellow'>$text</a>";
-                }
-                ?>
+                <?php if ($services_link_url && $services_link_title) : ?>
+                    <a href="<?= esc_url($services_link_url); ?>" target="<?= esc_attr($services_link_target); ?>" class="btn yellow">
+                        <?= esc_html($services_link_title); ?>
+                    </a>
+                <?php endif; ?>
             </div>
             <div class="services-preview-section__items">
                 <?php
@@ -108,31 +110,32 @@ if (empty($ordered_category_ids)) {
                 foreach ($service_categories as $service) {
                     $name = $service->name;
                     $indexPretty = $index < 9 ? "0$index" : $index;
-                    echo "<a href='$services_link_url' class='item'>
-                            <span class='item__number'>/$indexPretty</span>
-                            <span class='item__title'>$name</span>
-                            <span class='item__arrow'></span>
-                        </a>";
+                    echo "<a href='" . esc_url($services_link_url) . "' target='" . esc_attr($services_link_target) . "' class='item'>
+                        <span class='item__number'>/$indexPretty</span>
+                        <span class='item__title'>" . esc_html($name) . "</span>
+                        <span class='item__arrow'></span>
+                    </a>";
                     $index++;
-                };
+                }
                 ?>
             </div>
         </div>
     </section>
+
     <?php
-        get_template_part("template-parts/sections/form");
-        get_template_part("template-parts/sections/team");
+    get_template_part("template-parts/sections/form");
+    get_template_part("template-parts/sections/team");
     ?>
     <section class="reviews-section">
         <div class="container">
             <div class="reviews-section__top">
                 <h2 class="title">What Our Clients Say</h2>
                 <?php
-                    $text = get_field('reviews_link_text', 'option');
-                    $link = get_field('reviews_link_url', 'option');
-                    if ($link && $text) {
-                        echo "<a target='_blank' rel='noopener noreferrer' href='$link' class='btn white'>$text</a>";
-                    }
+                $text = get_field('reviews_link_text', 'option');
+                $link = get_field('reviews_link_url', 'option');
+                if ($link && $text) {
+                    echo "<a target='_blank' rel='noopener noreferrer' href='$link' class='btn white'>$text</a>";
+                }
                 ?>
             </div>
             <div class="reviews-section__wrapper button-container">

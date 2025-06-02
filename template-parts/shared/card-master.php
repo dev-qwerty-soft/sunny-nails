@@ -30,7 +30,6 @@ $image = get_the_post_thumbnail_url($post->ID);
 $images = get_field('master_images_work', $post->ID);
 $name = isset($post->post_title) ? $post->post_title : '';
 $instagram = get_field('instagram_url', $post->ID);
-$link_team = get_field('team_link_url', 'option');
 ?>
 
 <div data-altegio-id='<?= esc_attr($id); ?>' class='team-card'>
@@ -86,8 +85,16 @@ $link_team = get_field('team_link_url', 'option');
 
   <div class='team-card__buttons page'>
     <button data-staff-id="<?= esc_attr($id); ?>" class='btn yellow book-tem'>Book an Appointment</button>
-    <?php if (!$isPage && $link_team && false): ?>
-      <a href='<?= esc_url($link_team); ?>' class='btn'>Learn More</a>
+    <?php
+    $link_team = get_field('team_link_url', 'option');
+    $url = $link_team['url'] ?? '';
+    $target = $link_team['target'] ?? '_self';
+    $title = $link_team['title'] ?? 'Learn More';
+    ?>
+
+    <?php if (!$isPage && $url): ?>
+      <a href="<?= esc_url($url); ?>" target="<?= esc_attr($target); ?>" class="btn"><?= esc_html($title); ?></a>
     <?php endif; ?>
+
   </div>
 </div>
