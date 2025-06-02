@@ -1,5 +1,4 @@
 import "./scss/main.min.scss";
-import "./js/index.js";
 import "./js/gsap.js";
 import "./js/services-validation.js";
 import "./js/services.js";
@@ -9,22 +8,15 @@ import "swiper/css/scrollbar";
 import Swiper from "swiper";
 import "./js/map.js";
 import { Navigation, Pagination, Scrollbar, FreeMode } from "swiper/modules";
-import { has, g, add, remove, toggle, respond, updateDisplay } from "./js/function.js";
+import { has, g, add, remove, toggle, updateDisplay } from "./js/function.js";
 
 const header = g(".site-header");
 const footer = g(".footer");
+const btn = g("#burger");
+const menu = g(".burger-menu");
+
 const headerHeight = header.offsetHeight;
 const height = headerHeight + footer.offsetHeight;
-const main = g("main");
-main.style.paddingTop = `${headerHeight}px`;
-header.style.position = "absolute";
-
-function resize() {
-  document.body.style.setProperty("--vh-min", `${window.innerHeight - height}px`);
-};
-
-resize();
-window.addEventListener("resize", resize);
 
 let gallerySwiper;
 let filterFn;
@@ -32,6 +24,27 @@ let tabFn;
 const modal = g(".gallery-modal");
 const filterSection = g(".gallery-section");
 const buttonsTabsWrapper = g(".sunny-friends-table-section__buttons");
+
+setTimeout(() => {
+  let lastScrollTop = 0;
+  let scrollingDown = false;
+  window.onscroll = () => {
+    let currentScrollTop = window.pageYOffset || document.documentElement.scrollTop;
+    scrollingDown = currentScrollTop > lastScrollTop
+    lastScrollTop = currentScrollTop <= 0 ? 0 : currentScrollTop;
+    scrollingDown ? add(header, "hidden") : remove(header, "hidden");
+    if(!scrollingDown) {
+      header.style.setProperty("--border-color", "#D5CCB5");
+    };
+  };
+}, 500)
+
+function resize() {
+  document.body.style.setProperty("--vh-min", `${window.innerHeight - height}px`);
+};
+
+resize();
+window.addEventListener("resize", resize);
 
 if (g(".counter-section")) {
   const timeContainer = g(".counter-section .time");
@@ -201,9 +214,6 @@ if (buttonsTabsWrapper) {
 
   tabFn(buttonsTabs[0]);
 }
-
-const btn = g("#burger");
-const menu = g(".burger-menu");
 
 document.onclick = (e) => {
   if (has(e.target, ".gallery-section__filters .filter")) {

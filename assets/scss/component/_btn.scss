@@ -369,7 +369,7 @@
   transition: opacity .5s, pointer-events .5s;
   display: grid;
   grid-template-columns: 1fr;
-  grid-template-rows: repeat(2, max-content) 1fr max-content;
+  grid-template-rows: repeat(2, max-content) 1fr repeat(2, max-content);
   align-items: start;
   overflow: auto;
   & .cross {
@@ -427,6 +427,9 @@
       }
     } 
     & .wpcf7-not-valid-tip {
+      position: absolute;
+      top: 100%;
+      left: 0;
       font-weight: 500;
       font-size: get-d(14px);
       line-height: get-d(16px);
@@ -472,6 +475,7 @@
         font-size: 12px;
         line-height: 14px;
         gap: 8px;
+        margin: 16px 0 0 0;
       }
       &::before {
         width: get-d(24px);
@@ -588,7 +592,7 @@
           border-radius: 0 0 get-lg(14px) get-lg(14px);
         }
         @include respond(md) {
-          padding: 0 24px 24px 24px;
+          padding: 0 24px 40px 24px;
           border-radius: 0 0 14px 14px;
         }
       }
@@ -644,9 +648,19 @@
         cursor: pointer;
       }
     }
+    & .wpcf7-form-control-wrap {
+      position: relative;
+    }
 
     & .btn {
       justify-self: center;
+      margin: get-d(16px) 0 0 0;
+      @include respond(lg) {
+        margin: get-lg(16px) 0 0 0;
+      }
+      @include respond(md) {
+        margin: 16px 0 0 0;
+      }
     }
   }
   & .title {
