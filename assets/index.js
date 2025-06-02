@@ -9,15 +9,30 @@ import "swiper/css/scrollbar";
 import Swiper from "swiper";
 import "./js/map.js";
 import { Navigation, Pagination, Scrollbar, FreeMode } from "swiper/modules";
-import { has, g, add, remove, toggle, respond, updateDisplay } from "./js/function.js";
+import { has, g, add, remove, toggle, updateDisplay } from "./js/function.js";
 
 const header = g(".site-header");
 const footer = g(".footer");
+const btn = g("#burger");
+const menu = g(".burger-menu");
 const headerHeight = header.offsetHeight;
 const height = headerHeight + footer.offsetHeight;
 const main = g("main");
 main.style.paddingTop = `${headerHeight}px`;
-header.style.position = "absolute";
+header.style.position = "fixed";
+
+let lastScrollTop = 0;
+let scrollingDown = false;
+
+const scroll = () => {
+  let currentScrollTop = window.pageYOffset || document.documentElement.scrollTop;
+  scrollingDown = currentScrollTop > lastScrollTop
+  lastScrollTop = currentScrollTop <= 0 ? 0 : currentScrollTop;
+  scrollingDown ? add(header, "hidden") : remove(header, "hidden");
+};
+
+scroll()
+window.addEventListener('scroll', scroll);
 
 function resize() {
   document.body.style.setProperty("--vh-min", `${window.innerHeight - height}px`);
@@ -201,9 +216,6 @@ if (buttonsTabsWrapper) {
 
   tabFn(buttonsTabs[0]);
 }
-
-const btn = g("#burger");
-const menu = g(".burger-menu");
 
 document.onclick = (e) => {
   if (has(e.target, ".gallery-section__filters .filter")) {
