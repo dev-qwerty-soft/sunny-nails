@@ -7,6 +7,8 @@
   z-index: 1;
   background: $bg-color;
   transition: transform 0.5s ease;
+  --border-color: transparent;
+  position: fixed;
   &.hidden {
     transform: translateY(-100%);
   }
@@ -19,12 +21,9 @@
     }
     
   }
-  // @include respond(lg) {
-  //   padding: get-lg(15px) get-lg(40px) 0 get-lg(40px);
-  // }
   @include respond(lg) {
     padding: 28px 25px 16px 25px;
-    border-bottom: 2px solid #D5CCB5;
+    border-bottom: 2px solid var(--border-color);
     
     & .buttons {
       display: none;
@@ -36,13 +35,8 @@
     grid-template-columns: max-content 1fr max-content;
     grid-gap: get-d(40px);
     align-items: center;
-    border-bottom: get-d(2px) solid #D5CCB5;
+    border-bottom: get-d(2px) solid var(--border-color);
     padding-bottom: get-d(15px);
-    // @include respond(lg) {
-    //   grid-gap: get-lg(40px);
-    //   padding-bottom: get-lg(15px);
-    //   border-bottom: get-lg(2px) solid #D5CCB5;
-    // }
     @include respond(lg) {
       grid-gap: 16px;
       padding-bottom: 0;
@@ -71,10 +65,6 @@
         text-transform: uppercase;
         padding: get-d(10px) get-d(14px);
         color: rgba($bg-grey, 90%);
-        // @include respond(lg) {
-        //   font-size: get-lg(12px);
-        //   padding: get-lg(10px) get-lg(14px);
-        // }
         @include respond(lg) {
           font-size: 20px;
           padding: 0;
@@ -91,10 +81,6 @@
       display: flex;
       align-items: center;
       gap: get-d(4px);
-      // @include respond(lg) {
-      //   font-size: get-lg(14px);
-      //   gap: get-lg(4px);
-      // }
       @include respond(lg) {
         font-size: 12px;
         gap: 4px;
@@ -105,11 +91,6 @@
         width: get-d(26px);
         height: get-d(26px);
         background: url("../svg/location.svg") center / cover no-repeat;
-        
-        // @include respond(lg) {
-        //   width: get-lg(26px);
-        //   height: get-lg(26px);
-        // }
         @include respond(lg) {
           width: 26px;
           height: 26px;
@@ -122,6 +103,10 @@
     grid-column: -2 / -1;
   }
 
+}
+
+main {
+  padding-top: get-d(70px);
 }
 
 body {
