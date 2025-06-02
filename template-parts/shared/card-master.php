@@ -93,7 +93,7 @@ $instagram = get_field('instagram_url', $post->ID);
     ?>
 
     <?php if (!$isPage && $url): ?>
-      <a href="<?= esc_url($url); ?>" target="<?= esc_attr($target); ?>" class="btn"><?= esc_html($title); ?></a>
+      <!-- <a href="<?= esc_url($url); ?>" target="<?= esc_attr($target); ?>" class="btn"><?= esc_html($title); ?></a> -->
     <?php endif; ?>
 
   </div>
