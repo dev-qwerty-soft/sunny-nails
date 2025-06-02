@@ -573,7 +573,6 @@ if (empty($ordered_category_ids)) {
                             <div class="summary-total-group">
                                 <div class="summary-item"><span>Master category (<span class="percent">0</span>%)</span> <span class="master-bonus">0 SGD</span></div>
                                 <div class="summary-item total"><span>Total</span> <span class="summary-total-amount">0.00 SGD</span></div>
-                                <div class="summary-item tax"> </div>
                                 <?php
                                 $price_notice = get_field('booking_price_note', 'option');
                                 if ($price_notice) : ?>
