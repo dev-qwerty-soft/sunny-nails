@@ -1,6 +1,6 @@
 <?php
-  $isPage = $args["page"] ?? false;
-  $array = getPosts("master");
+$isPage = $args["page"] ?? false;
+$array = getPosts("master");
 ?>
 
 <section class='team-section<?= $isPage ? ' page' : '' ?>'>
@@ -9,31 +9,35 @@
       <h2 class='title'><?php the_field('team_title', 'option'); ?></h2>
       <p class='paragraph'><?php the_field('team_description', 'option'); ?></p>
       <?php
-        $link_team = get_field('team_link_url', 'option');
-        $text = get_field('team_link_text', 'option');
-        if ($link_team && $text && !$isPage) {
-          echo "<a href='$link_team' class='btn yellow'>$text</a>";
-        }
+      $link_team = get_field('team_link_url', 'option');
+      $url = $link_team['url'] ?? '';
+      $target = $link_team['target'] ?? '_self';
+      $title = $link_team['title'] ?? '';
+
+      if ($url && $title && !$isPage) {
+        echo "<a href='" . esc_url($url) . "' target='" . esc_attr($target) . "' class='btn yellow'>" . esc_html($title) . "</a>";
+      }
       ?>
+
     </div>
     <?php if ($isPage): ?>
       <div class='team-section__grid'>
-        <?php 
-          foreach ($array as $post) {
-            get_template_part('template-parts/shared/card-master', null, ['post' => $post, 'isPage' => true]);
-          };
+        <?php
+        foreach ($array as $post) {
+          get_template_part('template-parts/shared/card-master', null, ['post' => $post, 'isPage' => true]);
+        };
         ?>
       </div>
     <?php else: ?>
       <div class='team-section__wrapper button-container black'>
         <div class='swiper team-swiper'>
           <div class='swiper-wrapper'>
-            <?php 
-              foreach ($array as $post) {
-                echo "<div class='swiper-slide'>";
-                get_template_part('template-parts/shared/card-master', null, ['post' => $post]);
-                echo "</div>";
-              }
+            <?php
+            foreach ($array as $post) {
+              echo "<div class='swiper-slide'>";
+              get_template_part('template-parts/shared/card-master', null, ['post' => $post]);
+              echo "</div>";
+            }
             ?>
           </div>
         </div>
