@@ -43,7 +43,7 @@
    * @returns {string} - HTML with star SVGs
    */
   const levelTitles = {
-    0: "Intern",
+    [-1]: "Intern",
     1: "Sunny Ray",
     2: "Sunny Shine",
     3: "Sunny Inferno",
@@ -52,7 +52,7 @@
   };
 
   const percentMap = {
-    0: -50,
+    [-1]: -50,
     1: 0,
     2: 10,
     3: 20,
@@ -61,7 +61,7 @@
   };
 
   const starsMap = {
-    0: 0,
+    [-1]: 0,
     1: 1,
     2: 2,
     3: 3,
@@ -1889,7 +1889,7 @@
     if (typeof percent === "undefined") {
       percent = 0;
     }
-    if (bookingData.staffLevel === 0) {
+    if (bookingData.staffLevel === -1) {
       percent = -50;
     }
 
@@ -1911,9 +1911,11 @@
           ${service.wearTime ? `<div class="meta"><strong>Wear time:</strong> ${service.wearTime}</div>` : ""}
           ${service.desc ? `<div class="meta service-description">${service.desc}</div>` : ""}
         </div>
-        <div class="service-price">
-          ${percent !== 0 ? `<strong>${adjustedPrice.toFixed(2)} ${service.currency || "SGD"}</strong>` : `<strong>${adjustedPrice.toFixed(2)} ${service.currency || "SGD"}</strong>`}
+       <div class="service-price">
+          <strong>${price.toFixed(2)} ${service.currency || "SGD"}</strong>
         </div>
+
+
       </div>
     `;
 

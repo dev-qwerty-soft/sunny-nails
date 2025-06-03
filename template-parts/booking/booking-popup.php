@@ -251,7 +251,7 @@ if (empty($ordered_category_ids)) {
                         ]);
 
                         $levelTitles = [
-                            0 => "Intern",
+                            -1 => "Intern",
                             1 => "Sunny Ray",
                             2 => "Sunny Shine",
                             3 => "Sunny Inferno",
@@ -260,7 +260,7 @@ if (empty($ordered_category_ids)) {
                         ];
 
                         $markupMap = [
-                            0 => '-50% to price',
+                            -1 => '-50% to price',
                             1 => '+0% to price',
                             2 => '+10% to price',
                             3 => '+20% to price',
@@ -277,7 +277,7 @@ if (empty($ordered_category_ids)) {
                                 $level = (int)get_field('master_level');
 
                                 $starsCount = match (true) {
-                                    $level === 0 => 0,
+                                    $level === -1 => 0,
                                     $level === 1 => 1,
                                     $level === 2 => 2,
                                     $level === 3 => 3,
