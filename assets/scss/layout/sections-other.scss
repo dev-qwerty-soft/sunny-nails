@@ -62,7 +62,7 @@
   & form {
     background: $bg-white;
     grid-column: 1 / -1;
-    padding: get-d(12px) get-d(24px);
+    padding: get-d(22px) get-d(24px);
     border-radius: get-d(20px);
     @include respond(lg) {
       padding: get-lg(12px) get-lg(24px);
@@ -107,6 +107,7 @@
     }
     & .wpcf7-response-output {
       margin-inline: 0 !important;
+      margin-bottom: 0 !important;
       padding: get-d(8px);
       width: 100%;
       border: none;
