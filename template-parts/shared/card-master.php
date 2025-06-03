@@ -5,8 +5,9 @@ if (!$post) {
   return;
 }
 
+// Уніфіковані рівні
 $levelTitles = [
-  0 => 'Intern',
+  -1 => 'Intern',
   1 => 'Sunny Ray',
   2 => 'Sunny Shine',
   3 => 'Sunny Inferno',
@@ -14,15 +15,17 @@ $levelTitles = [
   5 => 'Supervisor',
 ];
 
-$level = (int) get_field('master_level', $post->ID);
+$level = max((int) get_field('master_level', $post->ID), -1);
 $levelName = $levelTitles[$level] ?? '';
 
 $starsCount = match (true) {
-  $level === 1 => 1,
-  $level === 2 => 2,
-  $level === 3 => 3,
-  $level === 4, $level === 5 => 4,
-  default => 0,
+  $level === -1 => 0,
+  $level === 1  => 1,
+  $level === 2  => 2,
+  $level === 3  => 3,
+  $level === 4,
+  $level === 5  => 4,
+  default       => 0,
 };
 
 $id = get_field('altegio_id', $post->ID);
@@ -46,9 +49,9 @@ $instagram = get_field('instagram_url', $post->ID);
           <span>(<?= esc_html($levelName); ?>)</span>
         <?php endif; ?>
       </div>
-
     </div>
   </div>
+
   <div class='swiper mini-swiper'>
     <div class='swiper-wrapper'>
       <?php
@@ -73,8 +76,8 @@ $instagram = get_field('instagram_url', $post->ID);
 
           if ($url) {
             echo "<div class='swiper-slide'>
-                  <img src='" . esc_url($url) . "' alt='" . esc_attr($tagName) . "'>
-                </div>";
+                    <img src='" . esc_url($url) . "' alt='" . esc_attr($tagName) . "'>
+                  </div>";
           }
         }
       }
@@ -93,8 +96,7 @@ $instagram = get_field('instagram_url', $post->ID);
     ?>
 
     <?php if (!$isPage && $url): ?>
-      <a href="<?= esc_url($url); ?>" target="<?= esc_attr($target); ?>" class="btn"><?= esc_html($title); ?></a>
+      <!-- <a href="<?= esc_url($url); ?>" target="<?= esc_attr($target); ?>" class="btn"><?= esc_html($title); ?></a> -->
     <?php endif; ?>
-
   </div>
 </div>

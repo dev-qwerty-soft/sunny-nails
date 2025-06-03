@@ -13,38 +13,63 @@
 }
 
 .validation-alert {
-  background-color: #242436;
-  border-radius: 12px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  background-color: #fff;
+  border-radius: 20px;
   width: 90%;
   max-width: 400px;
-  padding: 20px;
+  padding: 25px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
   color: #ffffff;
+  svg {
+    width: 48px;
+    height: 48px;
+  }
 }
-
+.validation-alert-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-width: 286px;
+  width: 100%;
+}
 .validation-alert-title {
-  font-size: 14px;
-  color: #ffffff;
-  margin-bottom: 12px;
+  color: var(--black, #302f34);
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 120%; /* 19.2px */
 }
 
 .validation-alert-message {
-  font-size: 16px;
-  margin-bottom: 20px;
+  color: var(--gray, #9a9a9a);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 120%; /* 16.8px */
 }
 
 .validation-alert-button {
-  background-color: #d9d4ff;
+  display: flex;
+  width: 105px;
+  margin-top: 20px;
+  padding: 10px;
+  margin-left: auto;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  border-radius: 50px;
+  background: #fdc41f;
   color: #302f34;
-  border: none;
-  border-radius: 25px;
-  padding: 8px 24px;
   font-size: 14px;
+  font-weight: 500;
+  line-height: normal;
   cursor: pointer;
   float: right;
-  transition: background-color 0.2s;
+  transition: all 0.3s ease-in-out;
 }
 
 .validation-alert-button:hover {
-  background-color: #c5beff;
+  background: #eeb614;
+  transition: all 0.3s ease-in-out;
 }

@@ -8,10 +8,11 @@ $url = is_numeric($imageData)
 
 $master = $args["master"] ?? null;
 $name = $master ? get_the_title($master) : '';
-$level = $master ? (int) get_field('master_level', $master->ID) : 0;
+$level = $master ? max((int) get_field('master_level', $master->ID), -1) : -1;
+
 
 $levelTitles = [
-  0 => 'Intern',
+  -1 => 'Intern',
   1 => 'Sunny Ray',
   2 => 'Sunny Shine',
   3 => 'Sunny Inferno',
@@ -57,25 +58,25 @@ foreach ($service_ids as $service_id) {
 $service_titles_string = implode(', ', $service_titles);
 $service_ids_string = implode(',', $service_ids);
 
-// 🔢 Фінальна ціна з урахуванням рівня майстра
 $adjustmentPercents = [
-  0 => -50,
-  1 => 0,
-  2 => 10,
-  3 => 20,
-  4 => 30,
-  5 => 30,
+  -1 => -50,
+  1  => 0,
+  2  => 10,
+  3  => 20,
+  4  => 30,
+  5  => 30,
 ];
 $adjustment = $adjustmentPercents[$level] ?? 0;
 $final_price = $total_price + ($total_price * $adjustment / 100);
 
 $starsCount = match (true) {
-  $level === 0 => 0,
-  $level === 1 => 1,
-  $level === 2 => 2,
-  $level === 3 => 3,
-  $level === 4, $level === 5 => 4,
-  default => 0,
+  $level === -1 => 0,
+  $level === 1  => 1,
+  $level === 2  => 2,
+  $level === 3  => 3,
+  $level === 4,
+  $level === 5  => 4,
+  default       => 0,
 };
 
 $avatar_url = $master ? get_the_post_thumbnail_url($master->ID, 'medium') : '';
@@ -85,7 +86,7 @@ if (!$avatar_url) {
 $master_altegio_id = $master ? get_field('altegio_id', $master->ID) : 0;
 ?>
 
-<div data-index="<?= $index; ?>" data-slug='<?= esc_attr($slug); ?>' class="swiper-slide image">
+<div data-index="<?= $index; ?>" data-slug="<?= esc_attr($slug); ?>" class="swiper-slide image">
   <?php if ($url): ?>
     <img src="<?= esc_url($url); ?>" alt="<?= esc_attr($customTitle ?: $service_titles_string); ?>">
   <?php endif; ?>
