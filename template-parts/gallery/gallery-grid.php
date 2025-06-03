@@ -84,11 +84,15 @@ if (!empty($masters)) {
       ?>
     </div>
     <?php
-    $link = get_field('gallery_link_url', "option");
-    $text_btn = get_field('gallery_link_text', "option");
-    if (!$isFull && $link && $text_btn) {
-      echo "<a href='$link' class='btn yellow'>$text_btn</a>";
-    };
+    $link = get_field('gallery_link_url', 'option');
+    $url = $link['url'] ?? '';
+    $target = $link['target'] ?? '_self';
+    $title = $link['title'] ?? '';
+
+    if (!$isFull && $url && $title) {
+      echo "<a href='" . esc_url($url) . "' target='" . esc_attr($target) . "' class='btn yellow'>" . esc_html($title) . "</a>";
+    }
     ?>
+
   </div>
 </section>

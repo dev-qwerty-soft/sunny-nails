@@ -251,7 +251,7 @@ if (empty($ordered_category_ids)) {
                         ]);
 
                         $levelTitles = [
-                            0 => "Intern",
+                            -1 => "Intern",
                             1 => "Sunny Ray",
                             2 => "Sunny Shine",
                             3 => "Sunny Inferno",
@@ -260,7 +260,7 @@ if (empty($ordered_category_ids)) {
                         ];
 
                         $markupMap = [
-                            0 => '-50% to price',
+                            -1 => '-50% to price',
                             1 => '+0% to price',
                             2 => '+10% to price',
                             3 => '+20% to price',
@@ -277,7 +277,7 @@ if (empty($ordered_category_ids)) {
                                 $level = (int)get_field('master_level');
 
                                 $starsCount = match (true) {
-                                    $level === 0 => 0,
+                                    $level === -1 => 0,
                                     $level === 1 => 1,
                                     $level === 2 => 2,
                                     $level === 3 => 3,
@@ -452,6 +452,11 @@ if (empty($ordered_category_ids)) {
                             <div class="summary-total-group">
                                 <div class="summary-item"><span>Master category (<span class="percent">0</span>%)</span> <span class="master-bonus">0 SGD</span></div>
                                 <div class="summary-item total"><span>Total</span> <span class="summary-total-amount">0.00 SGD</span></div>
+                                <?php
+                                $price_notice = get_field('booking_price_note', 'option');
+                                if ($price_notice) : ?>
+                                    <div class="summary-item tax"><?= esc_html($price_notice); ?></div>
+                                <?php endif; ?>
                             </div>
                             <form id="booking-form" class="contact-form" novalidate>
                                 <h3>Personal Information</h3>

@@ -106,10 +106,12 @@
       }
     }
     & .wpcf7-response-output {
+      margin-inline: 0 !important;
       padding: get-d(8px);
       width: 100%;
       border: none;
       border-radius: get-d(10px);
+      border: none !important;
       font-weight: 500;
       font-size: get-d(14px);
       line-height: get-d(16px);
@@ -254,6 +256,8 @@
       & label:has(input) {
         display: flex;
         align-items: center;
+        gap: get-d(8px);
+        text-align: left;
         @include respond(lg) {
           gap: get-lg(8px);
         }
