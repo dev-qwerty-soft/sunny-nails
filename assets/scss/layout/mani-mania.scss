@@ -1,7 +1,7 @@
 .counter-section {
-  padding: get-d(160px) 0;
+  padding: get-d(160px) 0 get-d(75px) 0;
   @include respond(lg) {
-    padding: get-lg(160px) 0;
+    padding: get-lg(160px) 0 get-lg(75px) 0;
   }
   @include respond(md) {
     padding: 50px 25px;
