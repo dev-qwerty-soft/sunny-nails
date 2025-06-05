@@ -157,7 +157,7 @@
         },
         {
             "key": "field_681a2a184e2b5",
-            "label": "is_online",
+            "label": "is online",
             "name": "is_online",
             "aria-label": "",
             "type": "true_false",
@@ -171,7 +171,6 @@
             },
             "message": "",
             "default_value": 0,
-            "allow_in_bindings": 0,
             "ui_on_text": "",
             "ui_off_text": "",
             "ui": 1
@@ -302,5 +301,5 @@
     "active": true,
     "description": "",
     "show_in_rest": 0,
-    "modified": 1748330535
+    "modified": 1749115402
 }

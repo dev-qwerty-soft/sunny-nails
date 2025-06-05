@@ -101,7 +101,7 @@
         },
         {
             "key": "field_68271842837e5",
-            "label": "Is bookable",
+            "label": "Is Online booking",
             "name": "is_bookable",
             "aria-label": "",
             "type": "true_false",
@@ -293,5 +293,5 @@
     "active": true,
     "description": "",
     "show_in_rest": 0,
-    "modified": 1748256795
+    "modified": 1749115828
 }

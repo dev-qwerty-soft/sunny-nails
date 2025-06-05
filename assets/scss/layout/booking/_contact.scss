@@ -313,6 +313,14 @@
         font-style: normal;
         font-weight: 500;
         line-height: 120%; /* 14.4px */
+        a {
+          text-decoration: underline;
+          transition: all 0.3s ease-in-out;
+          &:hover {
+            transition: all 0.3s ease-in-out;
+            color: #85754f;
+          }
+        }
       }
     }
 
