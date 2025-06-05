@@ -142,7 +142,7 @@
     gap: get-lg(16px);
   }
   @include respond(md) {
-    gap: 10px;
+    gap: 0;
   }
   & img {
     width: get-d(51px);
@@ -154,6 +154,7 @@
     @include respond(md) {
       width: 40px;
       height: 40px;
+      margin-right: 10px;
     }
   }
   & a b {

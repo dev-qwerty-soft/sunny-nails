@@ -73,14 +73,14 @@
   position: fixed;
   inset: 0 0 auto 0;
   width: 100vw;
-  height: calc(var(--dvh, 1vh) * 100);
+  height: 100vh;
   background: $bg-yellow;
   z-index: 101;
   display: none;
   opacity: 0;
   pointer-events: none;
   transition: all 0.5s;
-  padding: min(get-md(165px), 145px) min(get-md(30px), 30px) min(get-md(52px), 52px) min(get-md(30px), 30px);
+  padding: min(get-md(165px), 145px) min(get-md(30px), 30px) min(get-md(152px), 152px) min(get-md(30px), 30px);
   grid-template-columns: 1fr;
   grid-template-rows: 1fr max-content max-content;
   gap: 33px;
