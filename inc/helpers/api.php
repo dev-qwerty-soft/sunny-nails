@@ -57,7 +57,7 @@ function displayIcon()
   if (is_array($arr)) {
     foreach ($arr as $icon) {
       $img = $icon['footer_icon']['url'];
-      $url = $icon['footer_link']['url'];
+      $url = $icon['footer_link'];
       $title = $icon['footer_icon']['title'] ?? '';
 
       if ($img && $url) {

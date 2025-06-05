@@ -54,7 +54,7 @@
   <?php
     $items = get_field('winner_list');
     $title = get_field('winner_list_title');
-    if($title && $items && count($items) && is_array($items)) {
+    if(get_field('is_show_section_winners')) {
       get_template_part('template-parts/sections/winners', null, ['items' => $items, 'title' => $title]);
     };
     if(get_field('is_show_section')) {

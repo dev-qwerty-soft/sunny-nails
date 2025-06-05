@@ -107,6 +107,12 @@
 
 }
 
+.page-template-mani-mania {
+  & main {
+    padding-top: 72px;
+  }
+}
+
 main {
   padding-top: get-d(72px);
   @include respond(lg) {

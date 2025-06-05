@@ -3,6 +3,26 @@
     "title": "Winners settings",
     "fields": [
         {
+            "key": "field_6841bf95223a9",
+            "label": "Is show section?",
+            "name": "is_show_section_winners",
+            "aria-label": "",
+            "type": "true_false",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "message": "",
+            "default_value": 0,
+            "ui": 0,
+            "ui_on_text": "",
+            "ui_off_text": ""
+        },
+        {
             "key": "field_6824be0c57804",
             "label": "Winner counter",
             "name": "winner_counter",
@@ -152,5 +172,5 @@
     "active": true,
     "description": "",
     "show_in_rest": 0,
-    "modified": 1748028701
+    "modified": 1749139378
 }
