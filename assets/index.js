@@ -1,3 +1,5 @@
+
+
 import "./scss/main.min.scss";
 import "./js/gsap.js";
 import "./js/services-validation.js";
@@ -24,8 +26,6 @@ let tabFn;
 const modal = g(".gallery-modal");
 const filterSection = g(".gallery-section");
 const buttonsTabsWrapper = g(".sunny-friends-table-section__buttons");
-
-// window.scrollTo(0, 0);
 
 setTimeout(() => {
   let lastScrollTop = 0;
@@ -191,9 +191,11 @@ if (filterSection) {
       return slugs.includes(slug);
     });
 
-    remove(images);
+    if(images) {
+      remove(images);
 
-    add(isFull ? filteredImages : filteredImages.slice(0, 8));
+      dd(isFull ? filteredImages : filteredImages.slice(0, 8));
+    }
   };
 
   filterFn(filters[0]);

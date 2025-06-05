@@ -20927,7 +20927,11 @@ __webpack_require__.r(__webpack_exports__);
 gsap__WEBPACK_IMPORTED_MODULE_0__["default"].registerPlugin(gsap_ScrollTrigger__WEBPACK_IMPORTED_MODULE_1__["default"]);
 
 
-(0,_function_js__WEBPACK_IMPORTED_MODULE_2__.g)("section", document, true)?.forEach((element) => {
+window.onload = () => {
+  window.scrollTo({ top: 0, behavior: 'auto' });
+}
+
+;(0,_function_js__WEBPACK_IMPORTED_MODULE_2__.g)("section", document, true)?.forEach((element) => {
   const tl = gsap__WEBPACK_IMPORTED_MODULE_0__["default"].timeline({
     defaults: { 
       ease: "sine.inOut",
@@ -20941,7 +20945,7 @@ gsap__WEBPACK_IMPORTED_MODULE_0__["default"].registerPlugin(gsap_ScrollTrigger__
     },
   });
 
-  tl.to(element, {
+  tl.to((0,_function_js__WEBPACK_IMPORTED_MODULE_2__.g)(".container", element), {
     opacity: 1,
     y: 0,
   })
@@ -21226,6 +21230,8 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+
+
 const header = (0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.g)(".site-header");
 const footer = (0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.g)(".footer");
 const btn = (0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.g)("#burger");
@@ -21240,8 +21246,6 @@ let tabFn;
 const modal = (0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.g)(".gallery-modal");
 const filterSection = (0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.g)(".gallery-section");
 const buttonsTabsWrapper = (0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.g)(".sunny-friends-table-section__buttons");
-
-// window.scrollTo(0, 0);
 
 setTimeout(() => {
   let lastScrollTop = 0;
@@ -21407,9 +21411,11 @@ if (filterSection) {
       return slugs.includes(slug);
     });
 
-    (0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.remove)(images);
+    if(images) {
+      (0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.remove)(images);
 
-    (0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.add)(isFull ? filteredImages : filteredImages.slice(0, 8));
+      dd(isFull ? filteredImages : filteredImages.slice(0, 8));
+    }
   };
 
   filterFn(filters[0]);

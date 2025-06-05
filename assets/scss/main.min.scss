@@ -13,6 +13,9 @@
 @import "./component/footer";
 
 section {
-  opacity: 0;
-  transform: translateY(75px);
+  overflow: hidden;
+  & .container {
+    opacity: 0;
+    transform: translateY(75px);
+  }
 }

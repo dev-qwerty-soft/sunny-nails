@@ -65,6 +65,7 @@ function displayIcon()
       echo "<a target='_blank' rel='noopener noreferrer' href='" . esc_url($url) . "'>
               <img src='" . esc_url($img) . "' alt='" . esc_attr($title) . "'>
             </a>";
+
     }
   }
 }
