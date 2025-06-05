@@ -53,20 +53,22 @@ function dump($var, $label = null, $echo = true)
 function displayIcon()
 {
   $arr = get_field('footer_icons', 'option');
+
   if (is_array($arr)) {
     foreach ($arr as $icon) {
-      $img = $icon['footer_icon']["url"];
-      $title = $icon['footer_icon']["title"];
-      $url = $icon['footer_link'];
+      $img = $icon['footer_icon']['url'];
+      $url = $icon['footer_link']['url'];
+      $title = $icon['footer_icon']['title'] ?? '';
 
       if ($img && $url) {
-        echo "<a target='_blank' rel='noopener noreferrer' href='$url'>
-          <img src='$img' alt='$title'>
-        </a>";
+        echo "<a target='_blank' rel='noopener noreferrer' href='" . esc_url($url) . "'>
+                <img src='" . esc_url($img) . "' alt='" . esc_attr($title) . "'>
+              </a>";
       }
-    };
+    }
   }
-};
+}
+
 
 function getPlaceReviews()
 {
