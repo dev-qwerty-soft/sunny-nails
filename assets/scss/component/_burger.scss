@@ -106,7 +106,7 @@
     // justify-content: space-between;
     list-style: none;
     // height: 100%;
-    gap: min(get-md(33px), 33px);
+    gap: max(get-md(33px), 33px);
     align-items: flex-end;
     & a {
       font-weight: 500;
