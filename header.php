@@ -9,18 +9,6 @@
     <link rel="icon" href="<?= getAssetUrlAcf('favicon_light_theme'); ?>" media="(prefers-color-scheme: light)">
     <title><?= wp_get_document_title(); ?></title>
     <?php wp_head(); ?>
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-5M2QXWJ68B"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-
-        function gtag() {
-            dataLayer.push(arguments);
-        }
-        gtag('js', new Date());
-
-        gtag('config', 'G-5M2QXWJ68B');
-    </script>
 </head>
 
 <body <?php body_class(); ?>>
