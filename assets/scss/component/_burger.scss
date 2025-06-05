@@ -103,11 +103,11 @@
   & ul {
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    // justify-content: space-between;
     list-style: none;
-    height: 100%;
+    // height: 100%;
+    gap: min(get-md(33px), 33px);
     align-items: flex-end;
-
     & a {
       font-weight: 500;
       font-size: 20px;
