@@ -20927,11 +20927,9 @@ __webpack_require__.r(__webpack_exports__);
 gsap__WEBPACK_IMPORTED_MODULE_0__["default"].registerPlugin(gsap_ScrollTrigger__WEBPACK_IMPORTED_MODULE_1__["default"]);
 
 
-window.onload = () => {
-  window.scrollTo({ top: 0, behavior: 'auto' });
-}
+window.scrollTo({ top: 0, behavior: 'auto' });
 
-;(0,_function_js__WEBPACK_IMPORTED_MODULE_2__.g)("section", document, true)?.forEach((element) => {
+(0,_function_js__WEBPACK_IMPORTED_MODULE_2__.g)("section", document, true)?.forEach((element) => {
   const tl = gsap__WEBPACK_IMPORTED_MODULE_0__["default"].timeline({
     defaults: { 
       ease: "sine.inOut",
