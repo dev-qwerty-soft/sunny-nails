@@ -7,6 +7,10 @@ $url = is_numeric($imageData)
   : (is_array($imageData) ? $imageData['url'] : $imageData);
 
 $master = $args["master"] ?? null;
+if (!$master || !get_field('is_bookable', $master->ID)) {
+  return;
+}
+
 $name = $master ? get_the_title($master) : '';
 $level = $master ? max((int) get_field('master_level', $master->ID), -1) : -1;
 

@@ -274,6 +274,11 @@ if (empty($ordered_category_ids)) {
 
                         if ($master_query->have_posts()) :
                             while ($master_query->have_posts()) : $master_query->the_post();
+
+                                $is_bookable = get_field('is_bookable');
+                                if (!$is_bookable) {
+                                    continue;
+                                }
                                 $level = (int)get_field('master_level');
 
                                 $starsCount = match (true) {
@@ -480,7 +485,13 @@ if (empty($ordered_category_ids)) {
                                 <div class="form-group checkbox">
                                     <label for="privacy-policy">
                                         <input type="checkbox" id="privacy-policy" required />
-                                        <span>I confirm that I have read and accepted the Privacy Policy and User Agreement</span>
+                                        <span>
+                                            I confirm that I have read and accepted the
+                                            <a href="<?= esc_url(get_privacy_policy_url()); ?>" target="_blank" rel="noopener noreferrer">
+                                                Privacy Policy
+                                            </a>.
+                                        </span>
+
                                     </label>
                                     <div class="input-error" data-for="privacy-policy"></div>
                                 </div>

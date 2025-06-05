@@ -24,8 +24,15 @@ $array = getPosts("master");
       <div class='team-section__grid'>
         <?php
         foreach ($array as $post) {
-          get_template_part('template-parts/shared/card-master', null, ['post' => $post, 'isPage' => true]);
-        };
+          if (!get_field('is_bookable', $post->ID)) {
+            continue;
+          }
+
+          if ($isPage) {
+            get_template_part('template-parts/shared/card-master', null, ['post' => $post, 'isPage' => true]);
+          }
+        }
+
         ?>
       </div>
     <?php else: ?>
@@ -34,6 +41,9 @@ $array = getPosts("master");
           <div class='swiper-wrapper'>
             <?php
             foreach ($array as $post) {
+              if (!get_field('is_bookable', $post->ID)) {
+                continue;
+              }
               echo "<div class='swiper-slide'>";
               get_template_part('template-parts/shared/card-master', null, ['post' => $post]);
               echo "</div>";
