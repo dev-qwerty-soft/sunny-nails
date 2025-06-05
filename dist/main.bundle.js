@@ -21255,10 +21255,17 @@ setTimeout(() => {
   };
 }, 500)
 
+function setDvh() {
+  const dvh = window.innerHeight * 0.01;
+  document.documentElement.style.setProperty('--dvh', `${dvh}px`);
+}
+
 function resize() {
   document.body.style.setProperty("--vh-min", `${window.innerHeight - height}px`);
+  setDvh()
 };
 
+setDvh();
 resize();
 window.addEventListener("resize", resize);
 
