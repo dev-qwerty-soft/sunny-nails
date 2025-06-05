@@ -24,7 +24,8 @@
       top: auto;
     }
     @include respond(sm) {
-      bottom: 35%;
+      bottom: 44%;
+      scale: 1.5;
     }
   }
   &::before {
@@ -108,7 +109,7 @@
     & .wpcf7-response-output {
       margin-inline: 0 !important;
       margin-bottom: 0 !important;
-      padding: get-d(8px);
+      padding: get-d(8px) !important;
       width: 100%;
       border: none;
       border-radius: get-d(10px);
@@ -231,7 +232,7 @@
       grid-gap: get-d(16px);
       margin: 0 0 0 get-d(16px);
       @include respond(lg) {
-        grid-gap: get-lg(16px);
+        grid-gap: get-lg(24px);
         margin: 0 0 0 get-lg(16px);
         grid-template-columns: 1fr;
       }
