@@ -194,7 +194,7 @@ if (filterSection) {
     if(images) {
       remove(images);
 
-      dd(isFull ? filteredImages : filteredImages.slice(0, 8));
+      add(isFull ? filteredImages : filteredImages.slice(0, 8));
     }
   };
 
