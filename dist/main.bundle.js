@@ -20943,7 +20943,7 @@ window.scrollTo({ top: 0, behavior: 'auto' });
     },
   });
 
-  tl.to(element.querySelector(".container"), {
+  tl.to([...element.children], {
     opacity: 1,
     y: 0,
   })

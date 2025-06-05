@@ -19,7 +19,7 @@ g("section", document, true)?.forEach((element) => {
     },
   });
 
-  tl.to(element.querySelector(".container"), {
+  tl.to([...element.children], {
     opacity: 1,
     y: 0,
   })
