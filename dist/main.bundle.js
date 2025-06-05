@@ -20930,6 +20930,8 @@ gsap__WEBPACK_IMPORTED_MODULE_0__["default"].registerPlugin(gsap_ScrollTrigger__
 window.scrollTo({ top: 0, behavior: 'auto' });
 
 (0,_function_js__WEBPACK_IMPORTED_MODULE_2__.g)("section", document, true)?.forEach((element) => {
+  window.scrollTo({ top: 0, behavior: 'auto' });
+  
   const tl = gsap__WEBPACK_IMPORTED_MODULE_0__["default"].timeline({
     defaults: { 
       ease: "sine.inOut",

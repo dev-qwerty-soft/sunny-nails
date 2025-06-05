@@ -6,6 +6,8 @@ import {g} from "./function.js";
 window.scrollTo({ top: 0, behavior: 'auto' });
 
 g("section", document, true)?.forEach((element) => {
+  window.scrollTo({ top: 0, behavior: 'auto' });
+  
   const tl = gsap.timeline({
     defaults: { 
       ease: "sine.inOut",
