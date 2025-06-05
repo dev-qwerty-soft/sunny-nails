@@ -8,10 +8,16 @@ body {
   font-style: normal;
   font-weight: normal;
   overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: auto;
+  min-height: 100vh;
   background: $bg-color;
   color: $bg-grey;
   --vh-min: 500px;
-  &:has(.burger-menu.active), &:has(.popup-join.active) {
+  &:has(.burger-menu.active),
+  &:has(.popup-join.active) {
     height: 100vh;
     overflow: hidden;
   }
@@ -28,7 +34,7 @@ body {
     backdrop-filter: blur(6px);
     pointer-events: none;
     opacity: 0;
-    transition: opacity .5s;
+    transition: opacity 0.5s;
   }
   &:has(.popup-join.active) {
     &::before {
