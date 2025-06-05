@@ -15,7 +15,7 @@
     height: 100%;
     inset: 0;
     object-fit: contain;
-    z-index: 1;
+    z-index: -1;
     transform: translateX(10%);
     @include respond(md) {
       transform: translateX(0);
