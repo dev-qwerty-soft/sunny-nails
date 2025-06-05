@@ -52,10 +52,8 @@
     </div>
   </section>
   <?php
-    $items = get_field('winner_list');
-    $title = get_field('winner_list_title');
     if(get_field('is_show_section_winners')) {
-      get_template_part('template-parts/sections/winners', null, ['items' => $items, 'title' => $title]);
+      get_template_part('template-parts/sections/winners');
     };
     if(get_field('is_show_section')) {
       get_template_part('template-parts/sections/soon');
