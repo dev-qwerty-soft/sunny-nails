@@ -80,10 +80,10 @@
   opacity: 0;
   pointer-events: none;
   transition: all 0.5s;
-  padding: min(get-md(145px), 145px) min(get-md(30px), 30px) min(get-md(52px), 52px) min(get-md(30px), 30px);
+  padding: min(get-md(165px), 145px) min(get-md(30px), 30px) min(get-md(52px), 52px) min(get-md(30px), 30px);
   grid-template-columns: 1fr;
   grid-template-rows: 1fr max-content max-content;
-  gap: min(get-md(33px), 33px);
+  gap: 33px;
   justify-items: end;
   align-items: end;
 
