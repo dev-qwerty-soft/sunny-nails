@@ -9,6 +9,7 @@
   transition: transform 0.5s ease;
   --border-color: transparent;
   position: fixed;
+  height: get-d(60px);
   &.hidden {
     transform: translateY(-100%);
   }
@@ -24,7 +25,7 @@
   @include respond(lg) {
     padding: 28px 25px 16px 25px;
     border-bottom: 2px solid var(--border-color);
-    
+    height: 72px;
     & .buttons {
       display: none;
     }
@@ -106,7 +107,10 @@
 }
 
 main {
-  padding-top: get-d(70px);
+  padding-top: get-d(60px);
+  @include respond(lg) {
+    padding-top: 72px;
+  }
 }
 
 body {
