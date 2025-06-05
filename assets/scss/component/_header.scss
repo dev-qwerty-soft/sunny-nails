@@ -37,10 +37,11 @@
     grid-gap: get-d(40px);
     align-items: center;
     border-bottom: get-d(2px) solid var(--border-color);
-    padding-bottom: get-d(15px);
+    // padding-bottom: get-d(15px);
+    height: 100%;
     @include respond(lg) {
       grid-gap: 16px;
-      padding-bottom: 0;
+      // padding-bottom: 0;
       border-bottom: 0;
     }
 
