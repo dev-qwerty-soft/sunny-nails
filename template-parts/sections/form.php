@@ -1,13 +1,13 @@
 <section class="promo-form-section">
-  <?php
-    $image_desktop = get_field('form_image', 'option');
-    $url_desktop = isset($image_desktop["url"]) ? $image_desktop["url"] : null;
-    $title_desktop = isset($image_desktop["title"]) ? $image_desktop["title"] : '';
-    if ($url_desktop) {
-      echo "<img class='promo-form-section__image' src='$url_desktop' alt='$title_desktop'>";
-    };
-  ?>
   <div class="container">
+    <?php
+      $image_desktop = get_field('form_image', 'option');
+      $url_desktop = isset($image_desktop["url"]) ? $image_desktop["url"] : null;
+      $title_desktop = isset($image_desktop["title"]) ? $image_desktop["title"] : '';
+      if ($url_desktop) {
+        echo "<img class='promo-form-section__image' src='$url_desktop' alt='$title_desktop'>";
+      };
+    ?>
     <?php
       $title = get_field('form_title', 'option');
       if($title) {
