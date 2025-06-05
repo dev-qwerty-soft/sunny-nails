@@ -25,7 +25,7 @@ class AltegioSyncServices extends AltegioSyncBase
     /**
      * @var string
      */
-    protected $meta_key = '_altegio_id'; // Changed from 'altegio_id' to match original code
+    protected $meta_key = '_altegio_id';
 
     /**
      * @var string
@@ -36,6 +36,11 @@ class AltegioSyncServices extends AltegioSyncBase
      * @var string
      */
     protected $category_meta_key = '_altegio_category_id';
+
+    /**
+     * @var array
+     */
+    protected $category_mapping = [];
 
     /**
      * Fetch data from API
@@ -147,7 +152,7 @@ class AltegioSyncServices extends AltegioSyncBase
             }
         }
 
-        // Process categories
+        // Process categories - IMPROVED VERSION
         $this->processServiceCategories($post_id, $item_data);
 
         // Process prices
@@ -174,33 +179,115 @@ class AltegioSyncServices extends AltegioSyncBase
     }
 
     /**
-     * Process service categories
+     * IMPROVED: Process service categories with better error handling
      * 
      * @param int $post_id Service post ID
      * @param array $item_data Service data
      */
     protected function processServiceCategories($post_id, $item_data)
     {
-        $category_id = isset($item_data['category_id']) ? sanitize_text_field($item_data['category_id']) : '';
+        // Extract category ID from API data
+        $altegio_category_id = null;
 
-        if (empty($category_id)) {
+        if (isset($item_data['category_id']) && !empty($item_data['category_id'])) {
+            $altegio_category_id = intval($item_data['category_id']);
+        }
+
+        if (!$altegio_category_id) {
+            $this->logger->log('No category ID found for service', AltegioLogger::DEBUG, [
+                'service_id' => $post_id,
+                'service_title' => get_the_title($post_id)
+            ]);
             return;
         }
 
-        // Save local category
-        update_post_meta($post_id, 'local_category', $category_id);
+        // Save local category ID for reference
+        update_post_meta($post_id, 'local_category', $altegio_category_id);
 
-        // Find term by Altegio ID
+        // Find the WordPress term that corresponds to this Altegio category ID
         $category_terms = get_terms([
             'taxonomy' => $this->taxonomy,
-            'meta_key' => $this->category_meta_key,
-            'meta_value' => $category_id,
             'hide_empty' => false,
+            'meta_query' => [
+                [
+                    'key' => $this->category_meta_key,
+                    'value' => $altegio_category_id,
+                    'compare' => '='
+                ]
+            ]
         ]);
 
         if (!empty($category_terms) && !is_wp_error($category_terms)) {
-            // Set terms for the post
-            wp_set_object_terms($post_id, $category_terms[0]->term_id, $this->taxonomy);
+            // Found matching category - assign it to the service
+            $term_id = $category_terms[0]->term_id;
+
+            $result = wp_set_object_terms($post_id, $term_id, $this->taxonomy);
+
+            if (!is_wp_error($result)) {
+                $this->logger->log('Service category assigned successfully', AltegioLogger::DEBUG, [
+                    'service_id' => $post_id,
+                    'category_term_id' => $term_id,
+                    'altegio_category_id' => $altegio_category_id
+                ]);
+            } else {
+                $this->logger->log('Error assigning category to service', AltegioLogger::WARNING, [
+                    'service_id' => $post_id,
+                    'error' => $result->get_error_message()
+                ]);
+            }
+        } else {
+            // Category not found - log this for debugging
+            $this->logger->log('Category term not found for Altegio category ID', AltegioLogger::WARNING, [
+                'service_id' => $post_id,
+                'altegio_category_id' => $altegio_category_id,
+                'service_title' => get_the_title($post_id)
+            ]);
+
+            // Try to find by category title if available
+            if (isset($item_data['category_title']) && !empty($item_data['category_title'])) {
+                $category_title = sanitize_text_field($item_data['category_title']);
+
+                $term_by_name = get_term_by('name', $category_title, $this->taxonomy);
+
+                if ($term_by_name && !is_wp_error($term_by_name)) {
+                    // Check if this term has an Altegio ID already
+                    $existing_altegio_id = get_term_meta($term_by_name->term_id, $this->category_meta_key, true);
+
+                    if (empty($existing_altegio_id)) {
+                        // Link this term to the Altegio category ID
+                        update_term_meta($term_by_name->term_id, $this->category_meta_key, $altegio_category_id);
+
+                        $this->logger->log('Linked existing category term to Altegio ID', AltegioLogger::INFO, [
+                            'term_id' => $term_by_name->term_id,
+                            'category_title' => $category_title,
+                            'altegio_category_id' => $altegio_category_id
+                        ]);
+                    }
+
+                    // Assign the category to the service
+                    wp_set_object_terms($post_id, $term_by_name->term_id, $this->taxonomy);
+                } else {
+                    // Create new category term if it doesn't exist
+                    $new_term = wp_insert_term($category_title, $this->taxonomy);
+
+                    if (!is_wp_error($new_term)) {
+                        $new_term_id = $new_term['term_id'];
+
+                        // Link to Altegio ID
+                        update_term_meta($new_term_id, $this->category_meta_key, $altegio_category_id);
+
+                        // Assign to service
+                        wp_set_object_terms($post_id, $new_term_id, $this->taxonomy);
+
+                        $this->logger->log('Created new category term and assigned to service', AltegioLogger::INFO, [
+                            'new_term_id' => $new_term_id,
+                            'category_title' => $category_title,
+                            'altegio_category_id' => $altegio_category_id,
+                            'service_id' => $post_id
+                        ]);
+                    }
+                }
+            }
         }
     }
 
@@ -235,8 +322,6 @@ class AltegioSyncServices extends AltegioSyncBase
      * @param int $post_id Service post ID
      * @param array $item_data Service data
      */
-
-
     protected function processServiceMasters($post_id, $item_data)
     {
         if (isset($item_data['staff']) && is_array($item_data['staff'])) {
@@ -273,7 +358,46 @@ class AltegioSyncServices extends AltegioSyncBase
         }
     }
 
+    /**
+     * Clean up old services that no longer exist in Altegio
+     * 
+     * @param array $current_altegio_ids Current service IDs from API
+     */
+    protected function cleanupOldServices($current_altegio_ids)
+    {
+        $existing_services = get_posts([
+            'post_type' => $this->post_type,
+            'posts_per_page' => -1,
+            'meta_query' => [
+                'relation' => 'OR',
+                [
+                    'key' => $this->meta_key,
+                    'compare' => 'EXISTS'
+                ],
+                [
+                    'key' => 'altegio_id',
+                    'compare' => 'EXISTS'
+                ]
+            ]
+        ]);
 
+        foreach ($existing_services as $service) {
+            $altegio_id = get_post_meta($service->ID, $this->meta_key, true);
+            if (empty($altegio_id)) {
+                $altegio_id = get_post_meta($service->ID, 'altegio_id', true);
+            }
+
+            if ($altegio_id && !in_array($altegio_id, $current_altegio_ids)) {
+                $result = wp_delete_post($service->ID, true);
+
+                if ($result) {
+                    $this->logger->log("Deleted obsolete service: ID {$service->ID}, Title: {$service->post_title}", AltegioLogger::INFO);
+                } else {
+                    $this->logger->log("Failed to delete service: ID {$service->ID}", AltegioLogger::ERROR);
+                }
+            }
+        }
+    }
 
     /**
      * Start service synchronization process
@@ -299,10 +423,17 @@ class AltegioSyncServices extends AltegioSyncBase
             return $this->stats;
         }
 
+        $current_altegio_ids = [];
+
         // Process each service
         foreach ($services as $service) {
-            $this->processItem($service);
+            if ($this->processItem($service)) {
+                $current_altegio_ids[] = $service['id'];
+            }
         }
+
+        // Clean up old services
+        $this->cleanupOldServices($current_altegio_ids);
 
         $this->logger->log('Service synchronization completed', AltegioLogger::INFO, $this->stats);
 

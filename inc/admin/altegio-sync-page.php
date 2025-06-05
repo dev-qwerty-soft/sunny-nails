@@ -447,78 +447,133 @@ function enhanced_force_sync_altegio_masters()
 /**
  * Enhanced categories sync with FORCED ACF field updates
  */
+/**
+ * FIXED Enhanced categories sync that handles name conflicts properly
+ */
 function enhanced_force_sync_altegio_categories()
 {
     if (!class_exists('AltegioClient')) {
-        return ['created' => 0, 'updated' => 0, 'errors' => 0];
+        return ['created' => 0, 'updated' => 0, 'deleted' => 0, 'errors' => 0];
     }
+
+    error_log('=== STARTING FIXED CATEGORIES SYNC ===');
 
     $categories = AltegioClient::getServiceCategories();
 
     if (!isset($categories['success']) || !$categories['success']) {
         error_log('Failed to fetch categories from Altegio API');
-        return ['created' => 0, 'updated' => 0, 'errors' => 0];
+        return ['created' => 0, 'updated' => 0, 'deleted' => 0, 'errors' => 1];
     }
 
-    $stats = ['created' => 0, 'updated' => 0, 'errors' => 0];
+    $stats = ['created' => 0, 'updated' => 0, 'deleted' => 0, 'errors' => 0];
     $altegio_category_ids = [];
 
     foreach ($categories['data'] as $category_data) {
         $altegio_id = $category_data['id'];
-        $altegio_category_ids[] = $altegio_id;
-        $title = $category_data['title'] ?? '';
+        $title = sanitize_text_field($category_data['title'] ?? '');
+        $weight = intval($category_data['weight'] ?? 0);
 
         if (empty($title)) continue;
 
-        // Find existing term
-        $existing_terms = get_terms([
+        $altegio_category_ids[] = $altegio_id;
+
+        error_log("Processing category: ID {$altegio_id}, Title: {$title}");
+
+        // STEP 1: Look for existing term by Altegio ID
+        $existing_by_altegio_id = get_terms([
             'taxonomy' => 'service_category',
-            'meta_key' => '_altegio_category_id',
-            'meta_value' => $altegio_id,
             'hide_empty' => false,
+            'meta_query' => [
+                [
+                    'key' => '_altegio_category_id',
+                    'value' => $altegio_id,
+                    'compare' => '='
+                ]
+            ]
         ]);
 
-        if (!empty($existing_terms) && !is_wp_error($existing_terms)) {
-            // UPDATE existing term
-            $term_id = $existing_terms[0]->term_id;
+        if (!empty($existing_by_altegio_id) && !is_wp_error($existing_by_altegio_id)) {
+            // Found by Altegio ID - UPDATE
+            $term_id = $existing_by_altegio_id[0]->term_id;
 
             $result = wp_update_term($term_id, 'service_category', [
-                'name' => sanitize_text_field($title),
-                'description' => sanitize_textarea_field($category_data['description'] ?? '')
+                'name' => $title,
+                'description' => "Weight: {$weight}, Altegio ID: {$altegio_id}"
             ]);
 
             if (!is_wp_error($result)) {
-                $stats['updated']++;
-
-                // FORCE UPDATE term meta
-                delete_term_meta($term_id, '_altegio_category_id');
                 update_term_meta($term_id, '_altegio_category_id', $altegio_id);
+                update_term_meta($term_id, 'weight', $weight);
 
-                error_log("Category FORCE UPDATED: ID {$term_id}, Title: {$title}");
+                $stats['updated']++;
+                error_log("UPDATED existing category by Altegio ID: {$title} (Term ID: {$term_id})");
             } else {
                 $stats['errors']++;
                 error_log("Failed to update category: " . $result->get_error_message());
             }
-        } else {
-            // CREATE new term
-            $result = wp_insert_term(sanitize_text_field($title), 'service_category', [
-                'description' => sanitize_textarea_field($category_data['description'] ?? '')
-            ]);
+            continue;
+        }
 
-            if (!is_wp_error($result)) {
-                $term_id = $result['term_id'];
-                update_term_meta($term_id, '_altegio_category_id', $altegio_id);
-                $stats['created']++;
-                error_log("Category CREATED: ID {$term_id}, Title: {$title}");
+        // STEP 2: Look for existing term by name
+        $existing_by_name = get_term_by('name', $title, 'service_category');
+
+        if ($existing_by_name && !is_wp_error($existing_by_name)) {
+            // Check if this term already has a different Altegio ID
+            $existing_altegio_id = get_term_meta($existing_by_name->term_id, '_altegio_category_id', true);
+
+            if (empty($existing_altegio_id)) {
+                // Term exists but has no Altegio ID - LINK IT
+                update_term_meta($existing_by_name->term_id, '_altegio_category_id', $altegio_id);
+                update_term_meta($existing_by_name->term_id, 'weight', $weight);
+
+                $stats['updated']++;
+                error_log("LINKED existing term by name: {$title} to Altegio ID {$altegio_id}");
+                continue;
+            } elseif ($existing_altegio_id != $altegio_id) {
+                // NAME CONFLICT - term with same name but different Altegio ID
+                $unique_title = $title . ' (ID: ' . $altegio_id . ')';
+                error_log("NAME CONFLICT DETECTED: '{$title}' exists with different Altegio ID. Creating as '{$unique_title}'");
+                $title = $unique_title; // Use unique title for creation
             } else {
-                $stats['errors']++;
-                error_log("Failed to create category: " . $result->get_error_message());
+                // Same title and same Altegio ID - should not happen, but update anyway
+                update_term_meta($existing_by_name->term_id, 'weight', $weight);
+                $stats['updated']++;
+                error_log("UPDATED existing category (same title & Altegio ID): {$title}");
+                continue;
             }
+        }
+
+        // STEP 3: CREATE new term (either completely new or with unique name due to conflict)
+        $slug = sanitize_title($title);
+
+        // Ensure slug is unique
+        $original_slug = $slug;
+        $counter = 1;
+        while (term_exists($slug, 'service_category')) {
+            $slug = $original_slug . '-' . $counter;
+            $counter++;
+        }
+
+        $result = wp_insert_term($title, 'service_category', [
+            'slug' => $slug,
+            'description' => "Weight: {$weight}, Altegio ID: {$altegio_id}"
+        ]);
+
+        if (!is_wp_error($result)) {
+            $term_id = $result['term_id'];
+            update_term_meta($term_id, '_altegio_category_id', $altegio_id);
+            update_term_meta($term_id, 'weight', $weight);
+
+            $stats['created']++;
+            error_log("CREATED new category: {$title} (Term ID: {$term_id})");
+        } else {
+            $stats['errors']++;
+            error_log("FAILED to create category '{$title}': " . $result->get_error_message());
         }
     }
 
-    // DELETE categories that no longer exist in Altegio
-    $wp_categories_with_altegio_id = get_terms([
+    // STEP 4: Delete obsolete categories (those with Altegio ID but not in current API response)
+    $all_synced_categories = get_terms([
         'taxonomy' => 'service_category',
         'hide_empty' => false,
         'meta_query' => [
@@ -529,14 +584,26 @@ function enhanced_force_sync_altegio_categories()
         ]
     ]);
 
-    foreach ($wp_categories_with_altegio_id as $wp_category) {
-        $wp_altegio_id = get_term_meta($wp_category->term_id, '_altegio_category_id', true);
+    foreach ($all_synced_categories as $category) {
+        $category_altegio_id = get_term_meta($category->term_id, '_altegio_category_id', true);
 
-        if ($wp_altegio_id && !in_array($wp_altegio_id, $altegio_category_ids)) {
-            wp_delete_term($wp_category->term_id, 'service_category');
-            error_log("Category DELETED: ID {$wp_category->term_id} (Altegio ID: {$wp_altegio_id}) - no longer exists in Altegio");
+        if ($category_altegio_id && !in_array($category_altegio_id, $altegio_category_ids)) {
+            $result = wp_delete_term($category->term_id, 'service_category');
+
+            if (!is_wp_error($result) && $result !== false) {
+                $stats['deleted']++;
+                error_log("DELETED obsolete category: {$category->name} (Term ID: {$category->term_id}, Altegio ID: {$category_altegio_id})");
+            } else {
+                error_log("FAILED to delete obsolete category: {$category->name}");
+            }
         }
     }
+
+    // Clear WordPress caches
+    wp_cache_flush();
+
+    error_log('=== FIXED CATEGORIES SYNC COMPLETED ===');
+    error_log('Final stats: ' . json_encode($stats));
 
     return $stats;
 }
