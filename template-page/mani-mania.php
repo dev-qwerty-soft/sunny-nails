@@ -57,6 +57,9 @@
     if($title && $items && count($items) && is_array($items)) {
       get_template_part('template-parts/sections/winners', null, ['items' => $items, 'title' => $title]);
     };
+    if(get_field('is_show_section')) {
+      get_template_part('template-parts/sections/soon');
+    };
   ?>
 </main>
 <?php get_footer(); ?>
