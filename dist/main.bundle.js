@@ -20945,7 +20945,7 @@ window.onload = () => {
     },
   });
 
-  tl.to((0,_function_js__WEBPACK_IMPORTED_MODULE_2__.g)(".container", element), {
+  tl.to(element.querySelector(".container"), {
     opacity: 1,
     y: 0,
   })
