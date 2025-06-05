@@ -124,18 +124,24 @@
 .icons {
   display: flex;
   align-items: center;
-  gap: get-d(8px);
-  @include respond(lg) {
-    gap: get-lg(8px);
-  }
-  @include respond(md) {
-    gap: 4px;
-  }
   & a {
     display: inline-block;
     transition: transform 0.5s;
+    margin: 0 get-d(8px);
+    @include respond(lg) {
+      margin: 0 get-lg(8px);
+    }
+    @include respond(md) {
+      margin: 0 4px;
+    }
     &:hover {
       transform: scale(1.2);
+    }
+    &:first-of-type {
+      margin-left: 0 !important;
+    }
+    &:last-of-type {
+      margin-right: 0 !important;
     }
   }
   & img {

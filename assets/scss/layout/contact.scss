@@ -36,7 +36,10 @@
       gap: get-lg(16px);
     }
     @include respond(md) {
-      gap: 10px;
+      gap: 0;
+      & .title {
+        margin-bottom: 10px;
+      }
     }
   }
   &__content {
