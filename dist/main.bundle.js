@@ -20943,9 +20943,12 @@ window.scrollTo({ top: 0, behavior: 'auto' });
     },
   });
 
-  tl.to([...element.children], {
+  tl.fromTo([...element.children], {
+    opacity: 0,
+    y: 75,
+  }, {
     opacity: 1,
-    y: 0,
+    y: 0
   })
 });
 
