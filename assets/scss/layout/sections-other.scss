@@ -254,7 +254,20 @@
           font-size: 14px;
         }
       }
-
+      .checkbox-label {
+        display: flex;
+        flex-wrap: wrap;
+        row-gap: 0;
+        a {
+          margin-left: 20px;
+          text-decoration: underline;
+          transition: all 0.3s ease-in-out;
+          &:hover {
+            transition: all 0.3s ease-in-out;
+            color: #85754f;
+          }
+        }
+      }
       & label:has(input) {
         display: flex;
         align-items: center;
@@ -365,7 +378,7 @@
       font-weight: 500;
       font-size: get-d(24px);
       line-height: 120%;
-      letter-spacing: -.03em;
+      letter-spacing: -0.03em;
       margin: get-d(60px) 0 get-d(14px) 0;
       @include respond(lg) {
         font-size: get-lg(24px);
@@ -381,7 +394,7 @@
       font-size: get-d(16px);
       line-height: 140%;
       width: get-d(420px);
-      color: #9A9A9A;
+      color: #9a9a9a;
       @include respond(lg) {
         font-size: get-lg(16px);
         width: get-lg(420px);
