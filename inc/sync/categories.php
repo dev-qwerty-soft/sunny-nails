@@ -59,6 +59,16 @@ class AltegioSyncCategories extends AltegioSyncBase
 
             $this->stats['updated']++;
         } else {
+
+            $term_check = term_exists($title, $this->taxonomy);
+            if ($term_check && is_array($term_check)) {
+                $term_id = $term_check['term_id'];
+                update_term_meta($term_id, $this->meta_key, $altegio_id);
+                $this->logger->log("Linked existing term '{$title}' with Altegio ID {$altegio_id}", AltegioLogger::INFO);
+                $this->stats['updated']++;
+                return true;
+            }
+
             $result = wp_insert_term($title, $this->taxonomy);
             if (is_wp_error($result)) {
                 $this->logger->log('Error creating term', AltegioLogger::ERROR, $result->get_error_message());
@@ -93,6 +103,27 @@ class AltegioSyncCategories extends AltegioSyncBase
 
         foreach ($categories as $category) {
             $this->processItem($category);
+        }
+
+        $existing_terms = get_terms([
+            'taxonomy'   => $this->taxonomy,
+            'hide_empty' => false,
+            'meta_query' => [
+                [
+                    'key'     => $this->meta_key,
+                    'compare' => 'EXISTS'
+                ]
+            ]
+        ]);
+
+        $altegio_ids = array_map(fn($cat) => $cat['id'], $categories);
+
+        foreach ($existing_terms as $term) {
+            $term_altegio_id = get_term_meta($term->term_id, $this->meta_key, true);
+            if (!in_array($term_altegio_id, $altegio_ids)) {
+                wp_delete_term($term->term_id, $this->taxonomy);
+                $this->logger->log("Deleted obsolete category: ID {$term->term_id}, Altegio ID {$term_altegio_id}", AltegioLogger::INFO);
+            }
         }
 
         $this->logger->log('Finished service category sync', AltegioLogger::INFO, $this->stats);
