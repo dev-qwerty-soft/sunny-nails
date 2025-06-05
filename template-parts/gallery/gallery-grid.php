@@ -4,6 +4,9 @@ $masters = getPosts("master");
 $usedTermsArray = [];
 if (!empty($masters)) {
   foreach ($masters as $master) {
+    if (!get_field('is_bookable', $master->ID)) {
+      continue;
+    }
     $images = get_field('master_images_work', $master->ID);
     if (is_array($images) && !empty($images)) {
       foreach ($images as $image) {
@@ -31,6 +34,7 @@ if (!empty($masters)) {
       <?php
       $index = 0;
       foreach ($masters as $master) {
+        if (!get_field('is_bookable', $master->ID)) continue;
         $images = get_field('master_images_work', $master->ID);
         if ($images && is_array($images) && !empty($images)) {
           foreach ($images as $image) {
@@ -69,6 +73,7 @@ if (!empty($masters)) {
       <?php
       $index = 0;
       foreach ($masters as $master) {
+        if (!get_field('is_bookable', $master->ID)) continue;
         $images = get_field('master_images_work', $master->ID);
         if ($images && is_array($images) && !empty($images)) {
           foreach ($images as $image) {
