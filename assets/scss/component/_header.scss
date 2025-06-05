@@ -9,7 +9,7 @@
   transition: transform 0.5s ease;
   --border-color: transparent;
   position: fixed;
-  height: get-d(60px);
+  height: get-d(72px);
   &.hidden {
     transform: translateY(-100%);
   }
@@ -108,7 +108,7 @@
 }
 
 main {
-  padding-top: get-d(60px);
+  padding-top: get-d(72px);
   @include respond(lg) {
     padding-top: 72px;
   }
