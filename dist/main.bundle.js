@@ -21414,7 +21414,7 @@ if (filterSection) {
     if(images) {
       (0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.remove)(images);
 
-      dd(isFull ? filteredImages : filteredImages.slice(0, 8));
+      (0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.add)(isFull ? filteredImages : filteredImages.slice(0, 8));
     }
   };
 
