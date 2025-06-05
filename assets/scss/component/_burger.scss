@@ -80,10 +80,10 @@
   opacity: 0;
   pointer-events: none;
   transition: all 0.5s;
-  padding: min(get-m(145px), 145px) min(get-m(30px), 30px) min(get-m(52px), 52px) min(get-m(30px), 30px);
+  padding: min(get-md(145px), 145px) min(get-md(30px), 30px) min(get-md(52px), 52px) min(get-md(30px), 30px);
   grid-template-columns: 1fr;
   grid-template-rows: 1fr max-content max-content;
-  gap: min(get-m(33px), 33px);
+  gap: min(get-md(33px), 33px);
   justify-items: end;
   align-items: end;
 
@@ -110,7 +110,7 @@
 
     & a {
       font-weight: 500;
-      font-size: min(get-m(20px), 20px);
+      font-size: min(get-md(20px), 20px);
       line-height: 100%;
     }
   }
