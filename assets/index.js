@@ -25,6 +25,8 @@ const modal = g(".gallery-modal");
 const filterSection = g(".gallery-section");
 const buttonsTabsWrapper = g(".sunny-friends-table-section__buttons");
 
+// window.scrollTo(0, 0);
+
 setTimeout(() => {
   let lastScrollTop = 0;
   let scrollingDown = false;

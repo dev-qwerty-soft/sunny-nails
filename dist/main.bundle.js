@@ -21241,6 +21241,8 @@ const modal = (0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.g)(".gallery-moda
 const filterSection = (0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.g)(".gallery-section");
 const buttonsTabsWrapper = (0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.g)(".sunny-friends-table-section__buttons");
 
+// window.scrollTo(0, 0);
+
 setTimeout(() => {
   let lastScrollTop = 0;
   let scrollingDown = false;
