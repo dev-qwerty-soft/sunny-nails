@@ -40,6 +40,7 @@ require_once get_template_directory() . '/inc/cpt/master.php';
 require_once get_template_directory() . '/inc/cpt/service.php';
 require_once get_template_directory() . '/inc/sync/sync-runner.php';
 require_once get_template_directory() . '/inc/admin/altegio-sync-page.php';
+require_once get_template_directory() . '/inc/admin/altegio-cron-sync.php';
 require_once get_template_directory() . '/inc/api/altegio-client.php';
 require_once get_template_directory() . '/inc/helpers/api.php';
 require_once get_template_directory() . '/inc/controllers/booking-controller.php';
@@ -62,6 +63,6 @@ add_action("login_enqueue_scripts", function () {
 });
 
 add_action('admin_head', function () {
-    echo '<link rel="icon" href="'.getAssetUrlAcf('favicon_black_theme').'" media="(prefers-color-scheme: dark)">';
-    echo '<link rel="icon" href="'.getAssetUrlAcf('favicon_light_theme').'" media="(prefers-color-scheme: light)">';
+    echo '<link rel="icon" href="' . getAssetUrlAcf('favicon_black_theme') . '" media="(prefers-color-scheme: dark)">';
+    echo '<link rel="icon" href="' . getAssetUrlAcf('favicon_light_theme') . '" media="(prefers-color-scheme: light)">';
 });
