@@ -235,7 +235,9 @@ function altegio_submit_booking()
                     'price_adjustment' => $price_adjustment,
                     'altegio_reference' => isset($result['data'][0]['record_id']) ? $result['data'][0]['record_id'] : '',
                 ]);
-
+                if (!empty($_POST['coupon_code'])) {
+                    increment_promo_usage(sanitize_text_field($_POST['coupon_code']));
+                }
                 wp_send_json_success([
                     'message' => 'Booking created successfully',
                     'booking' => [
@@ -874,8 +876,13 @@ add_action('wp_ajax_nopriv_check_promo_code', 'altegio_check_promo_code');
  */
 function increment_promo_usage($promo_code)
 {
-    if (!empty($promo_code)) {
-        $current_count = get_option('promo_usage_' . $promo_code, 0);
-        update_option('promo_usage_' . $promo_code, $current_count + 1);
+    $promo_code = trim($promo_code);
+
+    if (empty($promo_code)) {
+        return;
     }
+
+    $usage_count = get_option('promo_usage_' . $promo_code, 0);
+    $usage_count++;
+    update_option('promo_usage_' . $promo_code, $usage_count);
 }

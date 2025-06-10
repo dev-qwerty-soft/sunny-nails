@@ -2165,7 +2165,8 @@ ${couponInfo}`;
       adjusted_price: finalAdjustedPrice.toFixed(2),
       price_adjustment: priceAdjustment.toFixed(2),
       adjustment_percent: adjustmentPercent,
-      total_price: finalAdjustedPrice.toFixed(2), // фінальна ціна з урахуванням знижки
+      total_price: finalAdjustedPrice.toFixed(2),
+      coupon_code: bookingData.coupon ? bookingData.coupon.code : "",
     };
 
     $.ajax({
