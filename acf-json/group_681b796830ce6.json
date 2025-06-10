@@ -375,31 +375,11 @@
             "new_lines": ""
         },
         {
-            "key": "field_681ccb79a6f98",
-            "label": "Gallery link text",
-            "name": "gallery_link_text",
-            "aria-label": "",
-            "type": "text",
-            "instructions": "",
-            "required": 0,
-            "conditional_logic": 0,
-            "wrapper": {
-                "width": "",
-                "class": "",
-                "id": ""
-            },
-            "default_value": "",
-            "maxlength": "",
-            "placeholder": "",
-            "prepend": "",
-            "append": ""
-        },
-        {
             "key": "field_681ccb61a6f97",
             "label": "Gallery link url",
             "name": "gallery_link_url",
             "aria-label": "",
-            "type": "text",
+            "type": "link",
             "instructions": "",
             "required": 0,
             "conditional_logic": 0,
@@ -408,11 +388,7 @@
                 "class": "",
                 "id": ""
             },
-            "default_value": "",
-            "maxlength": "",
-            "placeholder": "",
-            "prepend": "",
-            "append": ""
+            "return_format": "array"
         },
         {
             "key": "field_681ccc0b25e83",
@@ -457,7 +433,7 @@
             "label": "Services link url",
             "name": "services_link_url",
             "aria-label": "",
-            "type": "text",
+            "type": "link",
             "instructions": "",
             "required": 0,
             "conditional_logic": 0,
@@ -466,31 +442,7 @@
                 "class": "",
                 "id": ""
             },
-            "default_value": "",
-            "maxlength": "",
-            "placeholder": "",
-            "prepend": "",
-            "append": ""
-        },
-        {
-            "key": "field_681ccc4725e86",
-            "label": "Services link text",
-            "name": "services_link_text",
-            "aria-label": "",
-            "type": "text",
-            "instructions": "",
-            "required": 0,
-            "conditional_logic": 0,
-            "wrapper": {
-                "width": "",
-                "class": "",
-                "id": ""
-            },
-            "default_value": "",
-            "maxlength": "",
-            "placeholder": "",
-            "prepend": "",
-            "append": ""
+            "return_format": "array"
         },
         {
             "key": "field_681dd0f32ab3d",
@@ -676,7 +628,7 @@
                     "label": "Footer icon link",
                     "name": "footer_link",
                     "aria-label": "",
-                    "type": "text",
+                    "type": "link",
                     "instructions": "",
                     "required": 0,
                     "conditional_logic": 0,
@@ -685,11 +637,7 @@
                         "class": "",
                         "id": ""
                     },
-                    "default_value": "",
-                    "maxlength": "",
-                    "placeholder": "",
-                    "prepend": "",
-                    "append": "",
+                    "return_format": "array",
                     "parent_repeater": "field_681dd2b5d6e7e"
                 }
             ]
@@ -925,7 +873,7 @@
             "label": "Team link url",
             "name": "team_link_url",
             "aria-label": "",
-            "type": "text",
+            "type": "link",
             "instructions": "",
             "required": 0,
             "conditional_logic": 0,
@@ -934,33 +882,7 @@
                 "class": "",
                 "id": ""
             },
-            "default_value": "",
-            "maxlength": "",
-            "allow_in_bindings": 0,
-            "placeholder": "",
-            "prepend": "",
-            "append": ""
-        },
-        {
-            "key": "field_68234807517e2",
-            "label": "Team link text",
-            "name": "team_link_text",
-            "aria-label": "",
-            "type": "text",
-            "instructions": "",
-            "required": 0,
-            "conditional_logic": 0,
-            "wrapper": {
-                "width": "",
-                "class": "",
-                "id": ""
-            },
-            "default_value": "",
-            "maxlength": "",
-            "allow_in_bindings": 0,
-            "placeholder": "",
-            "prepend": "",
-            "append": ""
+            "return_format": "array"
         },
         {
             "key": "field_68234c40193de",
@@ -1064,7 +986,7 @@
         },
         {
             "key": "field_6830d0e40a5c2",
-            "label": "Category selection",
+            "label": "Booking Popup",
             "name": "",
             "aria-label": "",
             "type": "tab",
@@ -1103,6 +1025,26 @@
             "bidirectional": 0,
             "multiple": 0,
             "bidirectional_target": []
+        },
+        {
+            "key": "field_683d6479466b5",
+            "label": "Booking price note",
+            "name": "booking_price_note",
+            "aria-label": "",
+            "type": "textarea",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "maxlength": "",
+            "rows": "",
+            "placeholder": "",
+            "new_lines": ""
         }
     ],
     "location": [
@@ -1123,5 +1065,5 @@
     "active": true,
     "description": "",
     "show_in_rest": 0,
-    "modified": 1748029685
+    "modified": 1749201898
 }
