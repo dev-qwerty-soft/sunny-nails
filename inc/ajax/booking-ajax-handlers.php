@@ -764,3 +764,118 @@ function get_services_by_staff($staff_id)
 
     return $services;
 }
+
+/**
+ * AJAX handler for checking promo codes
+ */
+
+function altegio_check_promo_code()
+{
+    check_ajax_referer('booking_nonce', 'nonce');
+
+    $promo_code = isset($_POST['promo_code']) ? sanitize_text_field($_POST['promo_code']) : '';
+
+    if (empty($promo_code)) {
+        wp_send_json_error(['message' => 'Promo code is required']);
+        return;
+    }
+
+    // Get promo codes from ACF options
+    $promo_codes = get_field('promo_codes', 'option');
+
+    if (!$promo_codes || !is_array($promo_codes)) {
+        wp_send_json_error(['message' => 'Invalid promo code']);
+        return;
+    }
+
+    $current_date = date('Y-m-d');
+    $found_promo = null;
+
+    $promo_input_code = trim($promo_code);
+
+    foreach ($promo_codes as $promo) {
+        $stored_code = isset($promo['promo_code']) ? trim($promo['promo_code']) : '';
+        if (strcasecmp($stored_code, $promo_input_code) !== 0) {
+            continue;
+        }
+
+        // Check if promo code is active
+        if (!isset($promo['is_active']) || !$promo['is_active']) {
+            continue;
+        }
+
+        // Check expiration date if set
+        if (!empty($promo['expiration_date'])) {
+            $expiry_date_raw = $promo['expiration_date'];
+
+            // Якщо масив, беремо .date
+            if (is_array($expiry_date_raw)) {
+                $expiry_date_raw = $expiry_date_raw['date'] ?? '';
+            }
+
+            try {
+                // Спробуємо розпарсити d/m/Y
+                $expiry_date_obj = DateTime::createFromFormat('d/m/Y', $expiry_date_raw);
+                if ($expiry_date_obj === false) {
+                    // Фолбек: спроба парсити будь-який інший формат
+                    $expiry_date_obj = new DateTime($expiry_date_raw);
+                }
+
+                $expiry_date = $expiry_date_obj->format('Y-m-d');
+
+                if ($current_date > $expiry_date) {
+                    continue; // Expired
+                }
+            } catch (Exception $e) {
+                continue; // Invalid date
+            }
+        }
+
+
+        // Check usage limit if set
+        if (!empty($promo['max_usages']) && $promo['max_usages'] > 0) {
+            $usage_count = get_option('promo_usage_' . $stored_code, 0);
+            if ($usage_count >= $promo['max_usages']) {
+                wp_send_json_error(['message' => 'Promo code usage limit exceeded']);
+                return;
+            }
+        }
+
+        $found_promo = $promo;
+        break;
+    }
+
+
+    if (!$found_promo) {
+        wp_send_json_error(['message' => 'Invalid or expired coupon']);
+        return;
+    }
+
+    // Get discount value
+    $discount_value = floatval($found_promo['discount_value'] ?? 0);
+
+    if ($discount_value <= 0) {
+        wp_send_json_error(['message' => 'Invalid discount value']);
+        return;
+    }
+
+    wp_send_json_success([
+        'promo_code' => $found_promo['promo_code'],
+        'discount_value' => $discount_value,
+        'message' => 'Your coupon has been successfully applied!'
+    ]);
+}
+
+add_action('wp_ajax_check_promo_code', 'altegio_check_promo_code');
+add_action('wp_ajax_nopriv_check_promo_code', 'altegio_check_promo_code');
+
+/**
+ * Increment promo code usage count after successful booking
+ */
+function increment_promo_usage($promo_code)
+{
+    if (!empty($promo_code)) {
+        $current_count = get_option('promo_usage_' . $promo_code, 0);
+        update_option('promo_usage_' . $promo_code, $current_count + 1);
+    }
+}

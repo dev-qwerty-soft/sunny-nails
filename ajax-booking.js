@@ -21,6 +21,7 @@
     staffLevel: 1, // Selected master level (stars) - default to 1
     date: null, // Selected date (YYYY-MM-DD)
     time: null, // Selected time (HH:MM)
+    coupon: null,
     contact: {}, // Customer contact information
     flowHistory: ["initial"], // Track step navigation history for back button
     initialOption: "services", // Default first step after initial
@@ -105,6 +106,7 @@
     initMasterHandling();
     initDateTimeHandling();
     initContactHandling();
+    initCouponHandling();
     initLocalStorageSupport();
     setupEditButtons();
     initBookingPopup();
@@ -162,7 +164,83 @@
       debug("Error saving booking session", e);
     }
   }
+  /**
+   * Initialize coupon handling
+   */
+  function initCouponHandling() {
+    // Apply coupon button
+    $(document).on("click", ".apply-coupon-btn", function () {
+      const couponCode = $("#coupon-code").val().trim();
 
+      if (!couponCode) {
+        showCouponFeedback("Please enter a coupon code", "error");
+        return;
+      }
+
+      // Disable button while checking
+      $(this).prop("disabled", true).text("Checking...");
+
+      $.ajax({
+        url: booking_params.ajax_url,
+        type: "POST",
+        data: {
+          action: "check_promo_code",
+          nonce: booking_params.nonce,
+          promo_code: couponCode,
+        },
+        success: function (response) {
+          $(".apply-coupon-btn").prop("disabled", false).text("Apply");
+
+          if (response.success) {
+            // Save coupon data
+            bookingData.coupon = {
+              code: response.data.promo_code,
+              value: parseFloat(response.data.discount_value),
+            };
+
+            // Show success message
+            showCouponFeedback(response.data.message, "success");
+
+            // Update summary
+            updateSummary();
+
+            // Show success in step 6 if we're there
+            $(".booking-step[data-step='confirm'] .coupon-feedback").show();
+          } else {
+            showCouponFeedback(response.data.message || "Invalid coupon", "error");
+          }
+        },
+        error: function () {
+          $(".apply-coupon-btn").prop("disabled", false).text("Apply");
+          showCouponFeedback("Error checking coupon. Please try again.", "error");
+        },
+      });
+    });
+
+    // Enter key in coupon field
+    $(document).on("keypress", "#coupon-code", function (e) {
+      if (e.which === 13) {
+        e.preventDefault();
+        $(".apply-coupon-btn").click();
+      }
+    });
+  }
+
+  /**
+   * Show coupon feedback message
+   */
+  function showCouponFeedback(message, type) {
+    const $feedback = $(".coupon-feedback");
+
+    $feedback.removeClass("success error").addClass(type).text(message).fadeIn();
+
+    // Hide after 5 seconds for success
+    if (type === "success") {
+      setTimeout(() => {
+        $feedback.fadeOut();
+      }, 5000);
+    }
+  }
   /**
    * Restore booking session from local storage
    */
@@ -990,11 +1068,14 @@
       staffLevel: 1,
       date: null,
       time: null,
+      coupon: null,
       contact: {},
       flowHistory: ["initial"],
       initialOption: "services",
     };
 
+    $("#coupon-code").val("");
+    $(".coupon-feedback").hide();
     // Reset UI - hide all steps and show initial step
     $(".booking-step").removeClass("active");
     $('.booking-step[data-step="initial"]').addClass("active");
@@ -1904,20 +1985,18 @@
       adjustedTotal = parseFloat((adjustedTotal + adjustedPrice).toFixed(2));
 
       const itemHTML = `
-      <div class="summary-service-item">
-        <div class="service-info">
-          <strong>${service.title}</strong>
-          ${service.duration ? `<div class="meta"><strong>Duration:</strong> ${service.duration} min</div>` : ""}
-          ${service.wearTime ? `<div class="meta"><strong>Wear time:</strong> ${service.wearTime}</div>` : ""}
-          ${service.desc ? `<div class="meta service-description">${service.desc}</div>` : ""}
-        </div>
-       <div class="service-price">
-          <strong>${price.toFixed(2)} ${service.currency || "SGD"}</strong>
-        </div>
-
-
-      </div>
-    `;
+            <div class="summary-service-item">
+                <div class="service-info">
+                    <strong>${service.title}</strong>
+                    ${service.duration ? `<div class="meta"><strong>Duration:</strong> ${service.duration} min</div>` : ""}
+                    ${service.wearTime ? `<div class="meta"><strong>Wear time:</strong> ${service.wearTime}</div>` : ""}
+                    ${service.desc ? `<div class="meta service-description">${service.desc}</div>` : ""}
+                </div>
+                <div class="service-price">
+                    <strong>${price.toFixed(2)} ${service.currency || "SGD"}</strong>
+                </div>
+            </div>
+        `;
 
       serviceHTML += itemHTML;
     });
@@ -1934,18 +2013,18 @@
         adjustedTotal = parseFloat((adjustedTotal + adjustedPrice).toFixed(2));
 
         const addonItemHTML = `
-        <div class="summary-service-item addon-service">
-          <div class="service-info">
-            <strong>Add-on: ${addon.title}</strong>
-            ${addon.duration ? `<div class="meta"><strong>Duration:</strong> ${addon.duration} min</div>` : ""}
-            ${addon.wearTime ? `<div class="meta"><strong>Wear time:</strong> ${addon.wearTime}</div>` : ""}
-            ${addon.desc ? `<div class="meta service-description">${addon.desc}</div>` : ""}
-          </div>
-          <div class="service-price">
-            ${percent !== 0 ? ` <strong>${adjustedPrice.toFixed(2)} ${addon.currency || "SGD"}</strong>` : `<strong>${adjustedPrice.toFixed(2)} ${addon.currency || "SGD"}</strong>`}
-          </div>
-        </div>
-      `;
+                <div class="summary-service-item addon-service">
+                    <div class="service-info">
+                        <strong>Add-on: ${addon.title}</strong>
+                        ${addon.duration ? `<div class="meta"><strong>Duration:</strong> ${addon.duration} min</div>` : ""}
+                        ${addon.wearTime ? `<div class="meta"><strong>Wear time:</strong> ${addon.wearTime}</div>` : ""}
+                        ${addon.desc ? `<div class="meta service-description">${addon.desc}</div>` : ""}
+                    </div>
+                    <div class="service-price">
+                        <strong>${adjustedPrice.toFixed(2)} ${addon.currency || "SGD"}</strong>
+                    </div>
+                </div>
+            `;
 
         addonHTML += addonItemHTML;
       });
@@ -1961,6 +2040,27 @@
 
     masterPercent.text(`${percent > 0 ? "+" : ""}${percent}`);
     masterBonusEl.text(`${priceAdjustment.toFixed(2)} SGD`);
+
+    // Apply coupon discount if exists
+    let discountAmount = 0;
+    if (bookingData.coupon && bookingData.coupon.value > 0) {
+      const discountPercent = bookingData.coupon.value;
+
+      discountAmount = adjustedTotal * (discountPercent / 100);
+      adjustedTotal = Math.max(0, adjustedTotal - discountAmount);
+
+      $(".summary-coupon").show();
+      $(".summary-coupon-group").show();
+      $(".coupon-discount-amount").text(`- ${discountAmount.toFixed(2)} SGD`);
+      $(".coupon-desc").text(`Applied coupon: ${bookingData.coupon.code} (-${discountPercent}% discount)`);
+      $(".coupon-discount").text(`- ${discountAmount.toFixed(2)} SGD`);
+    } else {
+      $(".summary-coupon").hide();
+      $(".summary-coupon-group").show();
+      $(".coupon-desc").text(`Do you have a coupon? Enter it here and get a discount on services.`);
+    }
+
+    // Update total amount only once
     totalAmountEl.text(`${adjustedTotal.toFixed(2)} SGD`);
 
     bookingData.totalWithTax = adjustedTotal;
@@ -1977,6 +2077,7 @@
       $("#client-comment").val(cleaned);
     }
   }
+
   function submitBooking() {
     $(".confirm-booking-btn").prop("disabled", true).text("Processing...");
     $(".loading-overlay").show();
@@ -1993,7 +2094,7 @@
 
     const adjustmentPercent = percentMap[staffLevel] || 0;
     const priceAdjustment = basePrice * (adjustmentPercent / 100);
-    const adjustedPrice = basePrice + priceAdjustment;
+    const adjustedPriceBeforeDiscount = basePrice + priceAdjustment;
 
     const formattedServices = [...bookingData.coreServices, ...bookingData.addons].map((service) => {
       const origPrice = parseFloat(service.price) || 0;
@@ -2019,14 +2120,33 @@
 
     const serviceDescriptions = bookingData.services.map((service) => `- ${service.title}: ${parseFloat(service.price).toFixed(2)} SGD`).join("\n");
 
+    // Якщо є купон — обчислимо discountAmount
+    let discountAmount = 0;
+    let finalAdjustedPrice = adjustedPriceBeforeDiscount;
+
+    let couponInfo = "";
+    if (bookingData.coupon && bookingData.coupon.value > 0) {
+      const discountPercent = bookingData.coupon.value;
+      discountAmount = (adjustedPriceBeforeDiscount * discountPercent) / 100;
+      finalAdjustedPrice = Math.max(0, adjustedPriceBeforeDiscount - discountAmount);
+
+      couponInfo = `
+Coupon applied: ${bookingData.coupon.code}
+Discount percent: ${discountPercent}%
+Discount amount: ${discountAmount.toFixed(2)} SGD
+Final price after discount: ${finalAdjustedPrice.toFixed(2)} SGD
+`;
+    }
+
     const fullComment =
       `${cleanComment ? "Comment from client: " + cleanComment + "\n\n" : ""}` +
       galleryInfo +
       `Price information:
-        ${serviceDescriptions}
-        Base price: ${basePrice.toFixed(2)} SGD
-        Master category: ${adjustmentPercent >= 0 ? "+" : ""}${adjustmentPercent}% (${priceAdjustment.toFixed(2)} SGD)
-        Final price: ${adjustedPrice.toFixed(2)} SGD`;
+${serviceDescriptions}
+Base price: ${basePrice.toFixed(2)} SGD
+Master category: ${adjustmentPercent >= 0 ? "+" : ""}${adjustmentPercent}% (${priceAdjustment.toFixed(2)} SGD)
+Final price before discount: ${adjustedPriceBeforeDiscount.toFixed(2)} SGD
+${couponInfo}`;
 
     const bookingRequest = {
       action: "submit_booking",
@@ -2042,10 +2162,10 @@
       client_comment: fullComment,
       staff_level: staffLevel,
       base_price: basePrice.toFixed(2),
-      adjusted_price: adjustedPrice.toFixed(2),
+      adjusted_price: finalAdjustedPrice.toFixed(2),
       price_adjustment: priceAdjustment.toFixed(2),
       adjustment_percent: adjustmentPercent,
-      total_price: adjustedPrice.toFixed(2),
+      total_price: finalAdjustedPrice.toFixed(2), // фінальна ціна з урахуванням знижки
     };
 
     $.ajax({
@@ -2069,6 +2189,7 @@
       },
     });
   }
+
   /**
    * Calculate base price (before adjustment)
    * @returns {number} Base price

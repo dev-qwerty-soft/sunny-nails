@@ -456,6 +456,16 @@ if (empty($ordered_category_ids)) {
 
                             <div class="summary-total-group">
                                 <div class="summary-item"><span>Master category (<span class="percent">0</span>%)</span> <span class="master-bonus">0 SGD</span></div>
+                                <div class="summary-item summary-coupon-group">
+                                    <label for="coupon-code" class="coupon-label">Coupon <span class="coupon-discount"></span></label>
+                                    <p class="coupon-desc">Do you have a coupon? Enter it here and get a discount on services.</p>
+                                    <div class="coupon-input-group">
+                                        <input type="text" id="coupon-code" class="coupon-code-input" placeholder="Coupon code">
+                                        <button type="button" class=" yellow apply-coupon-btn">Apply</button>
+                                    </div>
+                                    <div class="coupon-feedback" style="display: none;"></div>
+                                </div>
+
                                 <div class="summary-item total"><span>Total</span> <span class="summary-total-amount">0.00 SGD</span></div>
                                 <?php
                                 $price_notice = get_field('booking_price_note', 'option');
@@ -588,6 +598,11 @@ if (empty($ordered_category_ids)) {
 
                             <div class="summary-total-group">
                                 <div class="summary-item"><span>Master category (<span class="percent">0</span>%)</span> <span class="master-bonus">0 SGD</span></div>
+                                <div class="summary-item summary-coupon-group">
+                                    <label for="coupon-code" class="coupon-label">Coupon <span class="coupon-discount"></span></label>
+                                    <p class="coupon-desc">Do you have a coupon? Enter it here and get a discount on services.</p>
+                                </div>
+
                                 <div class="summary-item total"><span>Total</span> <span class="summary-total-amount">0.00 SGD</span></div>
                                 <?php
                                 $price_notice = get_field('booking_price_note', 'option');
