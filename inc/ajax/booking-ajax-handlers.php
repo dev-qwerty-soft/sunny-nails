@@ -469,6 +469,7 @@ function altegio_get_filtered_services()
         $services = get_posts([
             'post_type' => 'service',
             'post__in' => $related_services,
+            'posts_per_page' => -1,
             'tax_query' => [
                 [
                     'taxonomy' => 'service_category',
@@ -476,7 +477,9 @@ function altegio_get_filtered_services()
                     'terms' => $category->term_id,
                 ]
             ],
-            'posts_per_page' => -1,
+            'orderby' => 'menu_order',
+            'order'   => 'ASC'
+
         ]);
 
         $core_services = array_filter($services, function ($service) {

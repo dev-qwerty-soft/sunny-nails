@@ -61,9 +61,8 @@ if (empty($ordered_category_ids)) {
                                 'field' => 'term_id',
                                 'terms' => $category->term_id,
                             ]],
-                            'orderby' => 'meta_value_num',
-                            'meta_key' => 'price_min',
-                            'order' => 'ASC',
+                            'orderby' => 'menu_order',
+                            'order'   => 'ASC'
                         ]);
 
                         if (empty($services)) continue;
