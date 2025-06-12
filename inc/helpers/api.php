@@ -65,7 +65,6 @@ function displayIcon()
       echo "<a target='_blank' rel='noopener noreferrer' href='" . esc_url($url) . "'>
               <img src='" . esc_url($img) . "' alt='" . esc_attr($title) . "'>
             </a>";
-
     }
   }
 }
@@ -158,9 +157,8 @@ function get_services_by_category($category_id)
         'terms' => $category_id
       ]
     ],
-    'meta_key' => 'price_min',
-    'orderby' => 'meta_value_num',
-    'order' => 'ASC'
+    'orderby' => 'menu_order',
+    'order'   => 'ASC'
   ]);
 }
 

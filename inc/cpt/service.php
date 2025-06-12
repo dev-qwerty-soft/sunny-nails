@@ -10,12 +10,12 @@ add_action('init', function () {
         'show_ui' => true,
         'has_archive' => false,
         'rewrite' => false,
-        'supports' => ['title', 'editor'],
+        'supports' => ['title', 'editor', 'page-attributes'],
         'menu_position' => 21,
         'menu_icon' => 'dashicons-hammer',
         'show_in_rest' => false,
-        'publicly_queryable' => true, // ДОДАЙ ЦЕ
-        'exclude_from_search' => false, // ДОДАЙ ЦЕ
+        'publicly_queryable' => true,
+        'exclude_from_search' => false,
     ]);
 
     // Taxonomy "service_category"
