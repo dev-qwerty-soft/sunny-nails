@@ -12,7 +12,7 @@ $levelTitles = [
   2 => 'Sunny Shine',
   3 => 'Sunny Inferno',
   4 => 'Trainer',
-  5 => 'Supervisor',
+  5 => 'Sunny Inferno, Supervisor',
 ];
 
 $level = max((int) get_field('master_level', $post->ID), -1);

@@ -49,7 +49,7 @@
     2: "Sunny Shine",
     3: "Sunny Inferno",
     4: "Trainer",
-    5: "Supervisor",
+    5: "Sunny Inferno, Supervisor",
   };
 
   const percentMap = {
@@ -67,7 +67,7 @@
     2: 2,
     3: 3,
     4: 3,
-    5: 3,
+    5: 4,
   };
 
   function generateStarsHtml(level) {

@@ -256,7 +256,7 @@ if (empty($ordered_category_ids)) {
                             2 => "Sunny Shine",
                             3 => "Sunny Inferno",
                             4 => "Trainer",
-                            5 => "Supervisor",
+                            5 => "Sunny Inferno, Supervisor",
                         ];
 
                         $markupMap = [
