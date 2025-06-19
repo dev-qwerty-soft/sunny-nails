@@ -259,9 +259,10 @@
         flex-wrap: wrap;
         align-items: flex-end;
         row-gap: 0;
+        gap: 8px;
         @include respond(md) {
           align-items: baseline;
-          gap: 8px;
+          
           & .wpcf7-list-item-label {
             margin-left: 10px;
           }
