@@ -257,12 +257,28 @@
       .checkbox-label {
         display: flex;
         flex-wrap: wrap;
+        align-items: flex-end;
         row-gap: 0;
+        @include respond(md) {
+          align-items: baseline;
+          gap: 8px;
+          & .wpcf7-list-item-label {
+            margin-left: 10px;
+          }
+        }
         & .wpcf7-list-item-label, a {
-          transform: translateY(2px);
+          transform: translateY(-3px) translateX(10px);
+          display: inline-block;
+          @include respond(md) {
+            transform: translateY(-3px) translateX(0px);
+          }
         }
         & .margin {
           margin-left: 20px;
+          @include respond(md) {
+            margin-left: 0;
+            transform: translateY(-3px) translateX(0px);
+          }
         }
         a {
           text-decoration: underline;
@@ -274,16 +290,16 @@
         }
       }
       & label:has(input) {
-        display: flex-start;
-        align-items: center;
-        gap: get-d(8px);
-        text-align: left;
-        @include respond(lg) {
-          gap: get-lg(8px);
-        }
-        @include respond(md) {
-          gap: 8px;
-        }
+        // display: flex;
+        // align-items: flex-start;
+        // gap: get-d(8px);
+        // text-align: left;
+        // @include respond(lg) {
+        //   gap: get-lg(8px);
+        // }
+        // @include respond(md) {
+        //   gap: 8px;
+        // }
 
         & input {
           width: get-d(20px);
