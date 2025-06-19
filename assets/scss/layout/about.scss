@@ -1,6 +1,6 @@
 .about-section {
   padding: get-d(100px) get-d(60px);
-  min-height: var(--vh-min);
+  // min-height: var(--vh-min);
   display: flex;
   align-items: center;
   @include respond(lg) {

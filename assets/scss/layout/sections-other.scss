@@ -258,8 +258,13 @@
         display: flex;
         flex-wrap: wrap;
         row-gap: 0;
-        a {
+        & .wpcf7-list-item-label, a {
+          transform: translateY(2px);
+        }
+        & .margin {
           margin-left: 20px;
+        }
+        a {
           text-decoration: underline;
           transition: all 0.3s ease-in-out;
           &:hover {
@@ -269,7 +274,7 @@
         }
       }
       & label:has(input) {
-        display: flex;
+        display: flex-start;
         align-items: center;
         gap: get-d(8px);
         text-align: left;
