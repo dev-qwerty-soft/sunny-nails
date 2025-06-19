@@ -1,5 +1,3 @@
-
-
 import "./scss/main.min.scss";
 import "./js/gsap.js";
 import "./js/services-validation.js";
@@ -13,12 +11,12 @@ import { Navigation, Pagination, Scrollbar, FreeMode } from "swiper/modules";
 import { has, g, add, remove, toggle, updateDisplay } from "./js/function.js";
 
 const header = g(".site-header");
-const footer = g(".footer");
+// const footer = g(".footer");
 const btn = g("#burger");
 const menu = g(".burger-menu");
 
-const headerHeight = header.offsetHeight;
-const height = headerHeight + footer.offsetHeight;
+// const headerHeight = header.offsetHeight;
+// const height = headerHeight + footer.offsetHeight;
 
 let gallerySwiper;
 let filterFn;
@@ -41,12 +39,12 @@ setTimeout(() => {
   };
 }, 500)
 
-function resize() {
-  document.body.style.setProperty("--vh-min", `${window.innerHeight - height}px`);
-};
+// function resize() {
+//   document.body.style.setProperty("--vh-min", `${window.innerHeight - height}px`);
+// };
 
-resize();
-window.addEventListener("resize", resize);
+// resize();
+// window.addEventListener("resize", resize);
 
 if (g(".counter-section")) {
   const timeContainer = g(".counter-section .time");
