@@ -1,3 +1,7 @@
+$header-height: 72px;
+$footer-height: 194px;
+$footer-height-mobile: 146px;
+
 $bg-color: #f7f1e0;
 $bg-grey: #302f34;
 $bg-yellow: #fdc41f;
@@ -5,6 +9,7 @@ $bg-white: #fff;
 $red: #DC3232;
 $font-family: "Montserrat", sans-serif;
 $font-family-inter: "Inter", sans-serif;
+
 
 @mixin respond($breakpoint) {
   @if $breakpoint == xs {
@@ -43,7 +48,6 @@ $font-family-inter: "Inter", sans-serif;
     }
   }
 }
-
 @mixin textGradient($gradientColor) {
   background: $gradientColor;
   -webkit-background-clip: text;
@@ -52,7 +56,6 @@ $font-family-inter: "Inter", sans-serif;
   text-fill-color: transparent;
   color: transparent;
 }
-
 @function get-d($target) {
   $vw-context: calc((1536 * 0.01) * 1px);
   @return calc(($target / $vw-context) * 1vw);

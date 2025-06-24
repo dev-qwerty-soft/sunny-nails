@@ -21233,15 +21233,13 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-
-
 const header = (0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.g)(".site-header");
-const footer = (0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.g)(".footer");
+// const footer = g(".footer");
 const btn = (0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.g)("#burger");
 const menu = (0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.g)(".burger-menu");
 
-const headerHeight = header.offsetHeight;
-const height = headerHeight + footer.offsetHeight;
+// const headerHeight = header.offsetHeight;
+// const height = headerHeight + footer.offsetHeight;
 
 let gallerySwiper;
 let filterFn;
@@ -21264,12 +21262,12 @@ setTimeout(() => {
   };
 }, 500)
 
-function resize() {
-  document.body.style.setProperty("--vh-min", `${window.innerHeight - height}px`);
-};
+// function resize() {
+//   document.body.style.setProperty("--vh-min", `${window.innerHeight - height}px`);
+// };
 
-resize();
-window.addEventListener("resize", resize);
+// resize();
+// window.addEventListener("resize", resize);
 
 if ((0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.g)(".counter-section")) {
   const timeContainer = (0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.g)(".counter-section .time");

@@ -1,3 +1,5 @@
+
+
 .site-header {
   padding: get-d(15px) get-d(60px) 0 get-d(60px);
   position: static;
@@ -9,7 +11,7 @@
   transition: transform 0.5s ease;
   --border-color: transparent;
   position: fixed;
-  height: get-d(72px);
+  height: get-d($header-height);
   &.hidden {
     transform: translateY(-100%);
   }
@@ -25,7 +27,7 @@
   @include respond(lg) {
     padding: 28px 25px 16px 25px;
     border-bottom: 2px solid var(--border-color);
-    height: 72px;
+    height: $header-height;
     & .buttons {
       display: none;
     }
@@ -109,14 +111,14 @@
 
 .page-template-mani-mania {
   & main {
-    padding-top: 72px;
+    padding-top: $header-height;
   }
 }
 
 main {
-  padding-top: get-d(72px);
+  padding-top: get-d($header-height);
   @include respond(lg) {
-    padding-top: 88px;
+    padding-top: $header-height + 16px;
   }
 }
 

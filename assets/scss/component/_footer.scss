@@ -1,8 +1,13 @@
 .footer {
   margin-top: auto;
   background: $bg-yellow;
-  padding: get-d(50px) get-d(60px) get-d(15px) get-d(60px);
+  padding: 0 get-d(60px) get-d(15px) get-d(60px);
+  height: get-d($footer-height);
+  display: flex;
+  align-items: flex-end;
   & .container {
+    width: 100%;
+    // height: 100%;
     @include respond(md) {
       display: grid;
       grid-template-columns: repeat(2, max-content);
@@ -33,10 +38,12 @@
   }
 
   @include respond(lg) {
-    padding: get-lg(50px) get-lg(60px) get-lg(15px) get-lg(60px);
+    padding: 0 get-lg(60px) get-lg(15px) get-lg(60px);
+    height: get-lg($footer-height);
   }
   @include respond(md) {
-    padding: 25px;
+    padding: 0 25px 25px 25px;
+    height: $footer-height-mobile;
   }
   &__top {
     display: flex;
