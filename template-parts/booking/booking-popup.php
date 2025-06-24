@@ -111,6 +111,19 @@ if (empty($ordered_category_ids)) {
                                     <?php foreach ($services as $service):
                                         setup_postdata($service);
                                         $post_id = $service->ID;
+
+                                        // Get service categories
+                                        $service_categories = wp_get_post_terms($post_id, 'service_category', ['fields' => 'slugs']);
+                                        $category_slugs = is_array($service_categories) ? implode(' ', $service_categories) : '';
+
+                                        // Check if service is online
+                                        $is_online = get_post_meta($post_id, 'is_online', true);
+                                        if (!$is_online) continue;
+
+                                        // Check if category should exclude master markup
+                                        $should_exclude_markup = in_array('addons', $service_categories) ||
+                                            in_array('add-ons-nail-art', $service_categories);
+
                                         $price = get_post_meta($post_id, 'price_min', true);
                                         $currency = get_post_meta($post_id, 'currency', true) ?: 'SGD';
                                         $duration = get_post_meta($post_id, 'duration_minutes', true);
@@ -125,7 +138,10 @@ if (empty($ordered_category_ids)) {
                                         $is_addon = get_post_meta($post_id, 'addons', true) === 'yes';
                                         if ($is_addon) continue; // Skip add-ons for now
                                     ?>
-                                        <div class="service-item" data-service-id="<?php echo esc_attr($post_id); ?>">
+                                        <div class="service-item"
+                                            data-service-id="<?php echo esc_attr($post_id); ?>"
+                                            data-category-slugs="<?php echo esc_attr($category_slugs); ?>"
+                                            data-exclude-master-markup="<?php echo $should_exclude_markup ? 'true' : 'false'; ?>">
                                             <div class="service-info">
                                                 <div class="service-title">
                                                     <h4 class="service-name"><?php echo esc_html(get_the_title($post_id)); ?></h4>
@@ -163,6 +179,11 @@ if (empty($ordered_category_ids)) {
                                                     <?php foreach ($related_addons as $addon):
                                                         $addon_post = is_object($addon) ? $addon : get_post($addon);
                                                         $a_id = $addon_post->ID;
+
+                                                        // Check if addon is online
+                                                        $addon_is_online = get_post_meta($a_id, 'is_online', true);
+                                                        if (!$addon_is_online) continue; // Skip offline addons
+
                                                         $a_title = get_the_title($a_id);
                                                         $a_price = get_post_meta($a_id, 'price_min', true);
                                                         $a_currency = get_post_meta($a_id, 'currency', true) ?: 'SGD';
@@ -446,8 +467,6 @@ if (empty($ordered_category_ids)) {
                             <div class="summary-services-list">
 
 
-
-
                             </div>
                             <div class="summary-services-list summary-addons" style="display: none;">
                                 <!-- Add-ons will be populated dynamically via JavaScript -->
@@ -455,7 +474,7 @@ if (empty($ordered_category_ids)) {
 
 
                             <div class="summary-total-group">
-                                <div class="summary-item"><span>Master category (<span class="percent">0</span>%)</span> <span class="master-bonus">0 SGD</span></div>
+                                <div class="summary-item"><span>Master category (<span class="percent">0</span>%) <span class="master-category-note">Not applicable for Add-ons and Nail Art services.</span></span> <span class="master-bonus">0 SGD</span></div>
                                 <div class="summary-item summary-coupon-group">
                                     <label for="coupon-code" class="coupon-label">Coupon <span class="coupon-discount"></span></label>
                                     <p class="coupon-desc">Do you have a coupon? Enter it here and get a discount on services.</p>
@@ -597,7 +616,7 @@ if (empty($ordered_category_ids)) {
 
 
                             <div class="summary-total-group">
-                                <div class="summary-item"><span>Master category (<span class="percent">0</span>%)</span> <span class="master-bonus">0 SGD</span></div>
+                                <div class="summary-item"><span>Master category (<span class="percent">0</span>%)</span> <span class="master-category-note">Not applicable for Add-ons and Nail Art services.</span> <span class="master-bonus">0 SGD</span></div>
                                 <div class="summary-item summary-coupon-group">
                                     <label for="coupon-code" class="coupon-label">Coupon <span class="coupon-discount"></span></label>
                                     <p class="coupon-desc">Do you have a coupon? Enter it here and get a discount on services.</p>
@@ -617,7 +636,7 @@ if (empty($ordered_category_ids)) {
                         <div class="step-actions">
                             <button type="button" class="btn yellow new-booking-btn">Make another booking</button>
                             <!-- <button type="button" class="btn  outline edit-booking-btn">Edit Booking</button> -->
-                            <button type="button" class="btn  outline cancel-booking-btn">Cancel Booking</button>
+                            <button type="button" class="btn  outline cancel-booking-btn">Back to site</button>
                         </div>
                     </div>
                 </div>

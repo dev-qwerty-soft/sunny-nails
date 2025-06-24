@@ -61,6 +61,13 @@ if (empty($ordered_category_ids)) {
                                 'field' => 'term_id',
                                 'terms' => $category->term_id,
                             ]],
+                            'meta_query' => [
+                                [
+                                    'key' => 'is_online',
+                                    'value' => '1',
+                                    'compare' => '='
+                                ]
+                            ],
                             'orderby' => 'menu_order',
                             'order'   => 'ASC'
                         ]);

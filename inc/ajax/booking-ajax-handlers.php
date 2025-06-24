@@ -3,29 +3,41 @@ function altegio_get_services()
 {
     check_ajax_referer('booking_nonce', 'nonce');
 
-    // Get services from WordPress database with add-on flag
     $services_query = new WP_Query([
         'post_type' => 'service',
         'posts_per_page' => -1,
         'post_status' => 'publish',
+        'meta_query' => [
+            [
+                'key' => 'is_online',
+                'value' => '1',
+                'compare' => '='
+            ]
+        ]
     ]);
 
     $services = [];
-    $categories = [];
-
     if ($services_query->have_posts()) {
         while ($services_query->have_posts()) {
             $services_query->the_post();
             $post_id = get_the_ID();
-            $is_addon = get_post_meta($post_id, 'is_addon', true) === 'yes';
-            $service_categories = wp_get_post_terms($post_id, 'service_category', ['fields' => 'ids']);
+
+            // Get category information
+            $service_categories = wp_get_post_terms($post_id, 'service_category');
+            $category_slugs = array_map(function ($cat) {
+                return $cat->slug;
+            }, $service_categories);
+
+            // Check if category should exclude master markup
+            $exclude_master_markup = in_array('addons', $category_slugs);
 
             $services[] = [
                 'ID' => $post_id,
                 'post_title' => get_the_title(),
                 'price_min' => get_post_meta($post_id, 'price_min', true) ?: '0',
-                'price_max' => get_post_meta($post_id, 'price_max', true) ?: '0',
                 'currency' => get_post_meta($post_id, 'currency', true) ?: 'SGD',
+                'category_slugs' => $category_slugs,
+                'exclude_master_markup' => $exclude_master_markup,
                 'duration_minutes' => get_post_meta($post_id, 'duration_minutes', true) ?: '',
                 'wear_time' => get_post_meta($post_id, 'wear_time', true) ?: '',
                 'description' => get_post_meta($post_id, 'description', true) ?: '',
@@ -36,16 +48,9 @@ function altegio_get_services()
             ];
         }
         wp_reset_postdata();
-
-        // Get all categories
-        $categories = get_terms([
-            'taxonomy' => 'service_category',
-            'hide_empty' => true,
-        ]);
     }
 
     wp_send_json_success([
-        'categories' => $categories,
         'services' => $services
     ]);
 }
@@ -477,13 +482,22 @@ function altegio_get_filtered_services()
                     'terms' => $category->term_id,
                 ]
             ],
+            'meta_query' => [
+                [
+                    'key' => 'is_online',
+                    'value' => '1',
+                    'compare' => '='
+                ]
+            ],
             'orderby' => 'menu_order',
             'order'   => 'ASC'
 
         ]);
 
         $core_services = array_filter($services, function ($service) {
-            return get_post_meta($service->ID, 'is_addon', true) !== 'yes';
+            $is_addon = get_post_meta($service->ID, 'is_addon', true) !== 'yes';
+            $is_online = get_post_meta($service->ID, 'is_online', true);
+            return $is_addon && $is_online;
         });
 
         if (empty($core_services)) continue;
@@ -538,6 +552,11 @@ function altegio_get_filtered_services()
                                 if (!$addon_post) continue;
 
                                 $a_id = $addon_post->ID;
+
+                                // Check if addon is online
+                                $addon_is_online = get_post_meta($a_id, 'is_online', true);
+                                if (!$addon_is_online) continue;
+
                                 $a_title = get_the_title($a_id);
                                 $a_price = get_post_meta($a_id, 'price_min', true);
                                 $a_currency = get_post_meta($a_id, 'currency', true) ?: 'SGD';
@@ -751,7 +770,9 @@ function get_services_by_staff($staff_id)
 
     $services = [];
     foreach ($related_services as $service_id) {
-
+        // Check if service is online
+        $is_online = get_post_meta($service_id, 'is_online', true);
+        if (!$is_online) continue;
 
         $services[] = array(
             'id'         => $service_id,

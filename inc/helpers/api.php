@@ -157,6 +157,13 @@ function get_services_by_category($category_id)
         'terms' => $category_id
       ]
     ],
+    'meta_query' => [
+      [
+        'key' => 'is_online',
+        'value' => '1',
+        'compare' => '='
+      ]
+    ],
     'orderby' => 'menu_order',
     'order'   => 'ASC'
   ]);
