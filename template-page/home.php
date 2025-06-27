@@ -27,7 +27,8 @@ if (empty($ordered_category_ids)) {
     }
 };
 
-function reviews_item() {
+function reviews_item()
+{
     $rating = number_format(getPlaceReviews()["rating"], 1);
     $stars = str_repeat("<div class='star'></div>", $rating);
     $link = get_field('reviews_link_url', 'option');
@@ -77,25 +78,28 @@ function reviews_item() {
             </div>
         </div>
     </section>
-    <section class="reasons-section">
-        <div class="container">
-            <h2 class="title"><?php the_field('choose_title'); ?></h2>
-            <div class="reasons-section__items">
-                <?php
-                foreach (get_field('choose_cards') as $card) {
-                    $text = $card["card_text"];
-                    $image = $card["card_image"];
-                    $url = $image["url"];
-                    $title = $image["title"];
-                    echo "<div class='item'>
+    <?php $choose_section_active = get_field('choose_section_active'); ?>
+    <?php if ($choose_section_active) : ?>
+        <section class="reasons-section">
+            <div class="container">
+                <h2 class="title"><?php the_field('choose_title'); ?></h2>
+                <div class="reasons-section__items">
+                    <?php
+                    foreach (get_field('choose_cards') as $card) {
+                        $text = $card["card_text"];
+                        $image = $card["card_image"];
+                        $url = $image["url"];
+                        $title = $image["title"];
+                        echo "<div class='item'>
               <img src='$url' alt='$title'>
               <span>$text</span>
             </div>";
-                };
-                ?>
+                    };
+                    ?>
+                </div>
             </div>
-        </div>
-    </section>
+        </section>
+    <?php endif; ?>
     <?php
     get_template_part("template-parts/gallery/gallery-grid", null, [
         "full" => false
