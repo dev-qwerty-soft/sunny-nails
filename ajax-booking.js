@@ -2154,7 +2154,8 @@
     const fullComment =
       `${cleanComment ? "Comment from client: " + cleanComment + "\n\n" : ""}` +
       galleryInfo +
-      `Price information:
+      `WEB-SITE BOOKING 
+      Price information:
 ${serviceDescriptions}
 Base price: ${basePrice.toFixed(2)} SGD
 Master category: ${adjustmentPercent >= 0 ? "+" : ""}${adjustmentPercent}% (${masterMarkupAmount.toFixed(2)} SGD)
