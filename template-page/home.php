@@ -27,6 +27,19 @@ if (empty($ordered_category_ids)) {
     }
 };
 
+function reviews_item() {
+    $rating = number_format(getPlaceReviews()["rating"], 1);
+    $stars = str_repeat("<div class='star'></div>", $rating);
+    $link = get_field('reviews_link_url', 'option');
+    return "<a target='_blank' rel='noopener noreferrer' href='$link' class='rating-new-item'>
+        <span class='rating-new-item__title'>Average Referral Rating</span>
+        <div class='rating-new-item__bottom'>
+            <span class='rating-new-item__number'>$rating</span>
+            <div class='rating-new-item__stars'>$stars</div>
+        </div>
+    </a>";
+};
+
 ?>
 <main>
     <section class="hero-section">

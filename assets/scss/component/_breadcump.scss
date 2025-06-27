@@ -19,3 +19,86 @@
 //     line-height: 157.143%;
 //   }
 // }
+
+.rating-new-item {
+  padding: get-d(14px) get-d(28px);
+  background: #FFFFFF33;
+  backdrop-filter: blur(14px);
+  border-radius: 100px;
+  display: flex;
+  flex-direction: column;
+  gap: get-d(4px);
+  @include respond(lg) {
+    padding: get-lg(14px) get-lg(28px);
+    gap: get-lg(4px);
+  }
+  @include respond(md) {
+    padding: 14px 28px;
+    gap: 4px;
+  }
+  &__title {
+    font-weight: 400;
+    font-size: get-d(10px);
+    line-height: get-d(16px);
+    @include respond(lg) {
+      font-size: get-lg(10px);
+      line-height: get-lg(16px);
+    }
+    @include respond(md) {
+      font-size: 10px;
+      line-height: 16px;
+    }
+  }
+  &__number {
+    font-weight: 600;
+    font-size: get-d(14px);
+    line-height: 130%;
+    @include respond(lg) {
+      font-size: get-lg(14px);
+    }
+    @include respond(md) {
+      font-size: 14px;
+    }
+  }
+  &__stars {
+    display: flex;
+    align-items: center;
+    gap: get-d(4px);
+    @include respond(lg) {
+      gap: get-lg(4px);
+    }
+    @include respond(md) {
+      gap: 4px;
+    }
+    & .star {
+      width: get-d(14px);
+      height: get-d(14px);
+      min-width: get-d(14px);
+      min-height: get-d(14px);
+      background: url("../svg/star_new.svg") center / contain no-repeat;
+      @include respond(lg) {
+        width: get-lg(14px);
+        height: get-lg(14px);
+        min-width: get-lg(14px);
+        min-height: get-lg(14px);
+      }
+      @include respond(md) {
+        width: 14px;
+        height: 14px;
+        min-width: 14px;
+        min-height: 14px;
+      }
+    }
+  }
+  &__bottom {
+    display: flex;
+    align-items: center;
+    gap: get-d(4px);
+    @include respond(lg) {
+      gap: get-lg(4px);
+    }
+    @include respond(md) {
+      gap: 4px;
+    }
+  }
+}
