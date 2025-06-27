@@ -474,7 +474,12 @@ if (empty($ordered_category_ids)) {
 
 
                             <div class="summary-total-group">
-                                <div class="summary-item"><span>Master category (<span class="percent">0</span>%) <span class="master-category-note">Not applicable for Add-ons and Nail Art services.</span></span> <span class="master-bonus">0 SGD</span></div>
+                                <div class="summary-coupon-group summary-item master-category">
+                                    <div class="summary-item "><span>Master category (<span class="percent">0</span>%) </span> <span class="master-bonus">0 SGD</span></div>
+                                    <span class="master-category-note">Not applicable for Add-ons and Nail Art services.</span>
+
+                                </div>
+
                                 <div class="summary-item summary-coupon-group">
                                     <label for="coupon-code" class="coupon-label">Coupon <span class="coupon-discount"></span></label>
                                     <p class="coupon-desc">Do you have a coupon? Enter it here and get a discount on services.</p>
@@ -890,7 +895,11 @@ if (empty($ordered_category_ids)) {
 
 
                             <div class="summary-total-group">
-                                <div class="summary-item"><span>Master category (<span class="percent">0</span>%)</span> <span class="master-category-note">Not applicable for Add-ons and Nail Art services.</span> <span class="master-bonus">0 SGD</span></div>
+                                <div class="summary-coupon-group summary-item master-category">
+                                    <div class="summary-item "><span>Master category (<span class="percent">0</span>%) </span> <span class="master-bonus">0 SGD</span></div>
+                                    <span class="master-category-note">Not applicable for Add-ons and Nail Art services.</span>
+
+                                </div>
                                 <div class="summary-item summary-coupon-group">
                                     <label for="coupon-code" class="coupon-label">Coupon <span class="coupon-discount"></span></label>
                                     <p class="coupon-desc">Do you have a coupon? Enter it here and get a discount on services.</p>
