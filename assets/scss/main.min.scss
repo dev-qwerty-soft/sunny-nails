@@ -14,15 +14,18 @@
 
 section {
   overflow: hidden;
+  & .container {
+    opacity: 0;
+    transform: translateY(75px);
+  }
+}
+
+.about-section, .section-not-found {
   min-height: calc(100vh - get-d($header-height + $footer-height));
   @include respond(lg) {
     min-height: calc(100vh - $header-height - get-lg($footer-height));
   }
   @include respond(md) {
     min-height: calc(100vh - $header-height - $footer-height-mobile);
-  }
-  & .container {
-    opacity: 0;
-    transform: translateY(75px);
   }
 }
