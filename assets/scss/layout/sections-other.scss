@@ -262,12 +262,13 @@
         gap: 8px;
         @include respond(md) {
           align-items: baseline;
-          
+
           & .wpcf7-list-item-label {
             margin-left: 10px;
           }
         }
-        & .wpcf7-list-item-label, a {
+        & .wpcf7-list-item-label,
+        a {
           transform: translateY(-3px) translateX(10px);
           display: inline-block;
           @include respond(md) {
@@ -341,9 +342,6 @@
     }
     & .wpcf7-form-control-wrap {
       position: relative;
-      @include respond(md) {
-        margin-bottom: 14px;
-      }
     }
   }
   & .title,
