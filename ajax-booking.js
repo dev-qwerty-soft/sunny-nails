@@ -1963,8 +1963,7 @@
     let serviceHTML = "";
     let addonHTML = "";
     let basePrice = 0;
-    let adjustedTotal = 0;
-    let priceAdjustment = 0;
+    let masterMarkupAmount = 0; // Змінено: тільки для розрахунку націнки майстра
 
     let percent = percentMap[bookingData.staffLevel];
     if (typeof percent === "undefined") {
@@ -1974,15 +1973,14 @@
       percent = -50;
     }
 
+    // Core services - показуємо базову ціну, розраховуємо націнку окремо
     bookingData.coreServices.forEach((service) => {
       let price = parseFloat(service.price) || 0;
-      basePrice = parseFloat((basePrice + price).toFixed(2));
+      basePrice += price;
 
-      let adjustment = parseFloat((price * (percent / 100)).toFixed(2));
-      let adjustedPrice = parseFloat((price + adjustment).toFixed(2));
-
-      priceAdjustment = parseFloat((priceAdjustment + adjustment).toFixed(2));
-      adjustedTotal = parseFloat((adjustedTotal + adjustedPrice).toFixed(2));
+      // Розраховуємо націнку тільки для відображення в Master category
+      let serviceMarkup = price * (percent / 100);
+      masterMarkupAmount += serviceMarkup;
 
       const itemHTML = `
             <div class="summary-service-item">
@@ -2001,16 +1999,13 @@
       serviceHTML += itemHTML;
     });
 
+    // Add-ons - показуємо базову ціну, БЕЗ націнки
     if (bookingData.addons && bookingData.addons.length > 0) {
       bookingData.addons.forEach((addon) => {
         let price = parseFloat(addon.price) || 0;
-        basePrice = parseFloat((basePrice + price).toFixed(2));
+        basePrice += price;
 
-        let adjustment = parseFloat((price * (percent / 100)).toFixed(2));
-        let adjustedPrice = parseFloat((price + adjustment).toFixed(2));
-
-        priceAdjustment = parseFloat((priceAdjustment + adjustment).toFixed(2));
-        adjustedTotal = parseFloat((adjustedTotal + adjustedPrice).toFixed(2));
+        // БЕЗ націнки для add-on'ів
 
         const addonItemHTML = `
                 <div class="summary-service-item addon-service">
@@ -2021,7 +2016,7 @@
                         ${addon.desc ? `<div class="meta service-description">${addon.desc}</div>` : ""}
                     </div>
                     <div class="service-price">
-                        <strong>${adjustedPrice.toFixed(2)} ${addon.currency || "SGD"}</strong>
+                        <strong>${price.toFixed(2)} ${addon.currency || "SGD"}</strong>
                     </div>
                 </div>
             `;
@@ -2038,14 +2033,17 @@
       addonsList.empty().hide();
     }
 
+    // Показуємо націнку майстра окремо
     masterPercent.text(`${percent > 0 ? "+" : ""}${percent}`);
-    masterBonusEl.text(`${priceAdjustment.toFixed(2)} SGD`);
+    masterBonusEl.text(`${masterMarkupAmount.toFixed(2)} SGD`);
 
-    // Apply coupon discount if exists
+    // Розраховуємо загальну суму: базова ціна + націнка майстра
+    let adjustedTotal = basePrice + masterMarkupAmount;
+
+    // Застосовуємо знижку купону якщо є
     let discountAmount = 0;
     if (bookingData.coupon && bookingData.coupon.value > 0) {
       const discountPercent = bookingData.coupon.value;
-
       discountAmount = adjustedTotal * (discountPercent / 100);
       adjustedTotal = Math.max(0, adjustedTotal - discountAmount);
 
@@ -2060,13 +2058,12 @@
       $(".coupon-desc").text(`Do you have a coupon? Enter it here and get a discount on services.`);
     }
 
-    // Update total amount only once
     totalAmountEl.text(`${adjustedTotal.toFixed(2)} SGD`);
 
     bookingData.totalWithTax = adjustedTotal;
     bookingData.basePrice = basePrice;
     bookingData.adjustedPrice = adjustedTotal;
-    bookingData.priceAdjustment = priceAdjustment;
+    bookingData.priceAdjustment = masterMarkupAmount; // Змінено: тільки націнка майстра
     bookingData.adjustmentPercent = percent;
 
     if (bookingData.contact) {
@@ -2091,21 +2088,26 @@
 
     const basePrice = calculateBasePrice();
     const staffLevel = bookingData.staffLevel != null ? parseInt(bookingData.staffLevel) : 1;
-
     const adjustmentPercent = percentMap[staffLevel] || 0;
-    const priceAdjustment = basePrice * (adjustmentPercent / 100);
-    const adjustedPriceBeforeDiscount = basePrice + priceAdjustment;
 
-    const formattedServices = [...bookingData.coreServices, ...bookingData.addons].map((service) => {
-      const origPrice = parseFloat(service.price) || 0;
-      const serviceAdjustment = origPrice * (adjustmentPercent / 100);
-      const finalServicePrice = origPrice + serviceAdjustment;
-
-      return {
-        id: parseInt(service.id),
-        price: finalServicePrice.toFixed(2),
-      };
+    // Calculate master markup ONLY for core services (not add-ons)
+    let masterMarkupAmount = 0;
+    bookingData.coreServices.forEach((service) => {
+      const servicePrice = parseFloat(service.price);
+      masterMarkupAmount += servicePrice * (adjustmentPercent / 100);
     });
+
+    const adjustedPriceBeforeDiscount = basePrice + masterMarkupAmount;
+
+    const formattedServices = [...bookingData.coreServices, ...bookingData.addons].map((service) => ({
+      id: parseInt(service.id),
+      altegio_id: service.altegioId || service.id,
+      title: service.title,
+      price: parseFloat(service.price),
+      currency: service.currency || "SGD",
+      duration: service.duration || "",
+      is_addon: service.isAddon || false,
+    }));
 
     const cleanComment = $("#client-comment")
       .val()
@@ -2115,38 +2117,50 @@
 
     let galleryInfo = "";
     if (bookingData.initialOption === "master" && bookingData.galleryTitle) {
-      galleryInfo = `Gallery photo title: ${bookingData.galleryTitle}\n\n`;
+      galleryInfo = `Gallery selection: ${bookingData.galleryTitle}\n\n`;
     }
 
-    const serviceDescriptions = bookingData.services.map((service) => `- ${service.title}: ${parseFloat(service.price).toFixed(2)} SGD`).join("\n");
+    // Build service descriptions - separate core services and add-ons
+    const coreServiceDescriptions = bookingData.coreServices
+      .map((service) => {
+        const servicePrice = parseFloat(service.price);
+        return `- ${service.title}: ${servicePrice.toFixed(2)} SGD`;
+      })
+      .join("\n");
 
-    // Якщо є купон — обчислимо discountAmount
+    const addonServiceDescriptions = bookingData.addons
+      .map((addon) => {
+        const servicePrice = parseFloat(addon.price);
+        return `- ${addon.title}: ${servicePrice.toFixed(2)} SGD`;
+      })
+      .join("\n");
+
+    // Combine all service descriptions
+    let serviceDescriptions = coreServiceDescriptions;
+    if (addonServiceDescriptions) {
+      serviceDescriptions += "\n" + addonServiceDescriptions;
+    }
+
     let discountAmount = 0;
     let finalAdjustedPrice = adjustedPriceBeforeDiscount;
 
     let couponInfo = "";
     if (bookingData.coupon && bookingData.coupon.value > 0) {
-      const discountPercent = bookingData.coupon.value;
-      discountAmount = (adjustedPriceBeforeDiscount * discountPercent) / 100;
-      finalAdjustedPrice = Math.max(0, adjustedPriceBeforeDiscount - discountAmount);
-
-      couponInfo = `
-Coupon applied: ${bookingData.coupon.code}
-Discount percent: ${discountPercent}%
-Discount amount: ${discountAmount.toFixed(2)} SGD
-Final price after discount: ${finalAdjustedPrice.toFixed(2)} SGD
-`;
+      discountAmount = (adjustedPriceBeforeDiscount * bookingData.coupon.value) / 100;
+      finalAdjustedPrice = adjustedPriceBeforeDiscount - discountAmount;
+      couponInfo = `Coupon discount (${bookingData.coupon.code}): -${discountAmount.toFixed(2)} SGD\n`;
     }
 
     const fullComment =
       `${cleanComment ? "Comment from client: " + cleanComment + "\n\n" : ""}` +
       galleryInfo +
-      `Price information:
+      `WEB-SITE BOOKING 
+      Price information:
 ${serviceDescriptions}
 Base price: ${basePrice.toFixed(2)} SGD
-Master category: ${adjustmentPercent >= 0 ? "+" : ""}${adjustmentPercent}% (${priceAdjustment.toFixed(2)} SGD)
+Master category: ${adjustmentPercent >= 0 ? "+" : ""}${adjustmentPercent}% (${masterMarkupAmount.toFixed(2)} SGD)
 Final price before discount: ${adjustedPriceBeforeDiscount.toFixed(2)} SGD
-${couponInfo}`;
+${couponInfo}Note: Master markup applied only to core services, not to Add-on services.`;
 
     const bookingRequest = {
       action: "submit_booking",
@@ -2163,7 +2177,7 @@ ${couponInfo}`;
       staff_level: staffLevel,
       base_price: basePrice.toFixed(2),
       adjusted_price: finalAdjustedPrice.toFixed(2),
-      price_adjustment: priceAdjustment.toFixed(2),
+      price_adjustment: masterMarkupAmount.toFixed(2),
       adjustment_percent: adjustmentPercent,
       total_price: finalAdjustedPrice.toFixed(2),
       coupon_code: bookingData.coupon ? bookingData.coupon.code : "",
@@ -2174,23 +2188,23 @@ ${couponInfo}`;
       type: "POST",
       data: bookingRequest,
       success: function (response) {
-        $(".confirm-booking-btn").prop("disabled", false).text("Book an appointment");
         $(".loading-overlay").hide();
+        $(".confirm-booking-btn").prop("disabled", false).text("Book an appointment");
+
         if (response.success) {
           handleSuccessfulBooking(response.data);
         } else {
-          const errorMsg = response.data?.message || "Booking failed. Please try again.";
-          showValidationAlert(errorMsg);
+          showValidationAlert(response.data?.message || "Booking failed. Please try again.");
         }
       },
       error: function (xhr, status, error) {
         $(".loading-overlay").hide();
         $(".confirm-booking-btn").prop("disabled", false).text("Book an appointment");
-        showValidationAlert("Error communicating with server: " + (xhr.statusText || error));
+        console.error("Booking submission error:", { xhr, status, error });
+        showValidationAlert("Network error. Please check your connection and try again.");
       },
     });
   }
-
   /**
    * Calculate base price (before adjustment)
    * @returns {number} Base price
