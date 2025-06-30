@@ -1,4 +1,313 @@
 .hero-section {
+  position: relative;
+  background: #fdc41f;
+  display: flex;
+
+  .container {
+    width: 100%;
+    margin: 0 auto;
+    padding: 0 get-d(60px);
+    z-index: 2;
+    @include respond(lg) {
+      padding: 0 get-lg(60px);
+    }
+    @include respond(md) {
+      padding: 0 25px;
+    }
+  }
+
+  &__content {
+    position: relative;
+    width: 100%;
+    padding: get-d(44px) 0 get-d(98px);
+    @include respond(lg) {
+      padding: get-lg(40px) 0;
+    }
+    @include respond(md) {
+      padding: 40px 0;
+    }
+  }
+
+  &__main {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: get-d(40px);
+    align-items: center;
+    @include respond(lg) {
+      gap: get-lg(40px);
+    }
+    @include respond(md) {
+      grid-template-columns: 1fr;
+      gap: 40px;
+      text-align: center;
+    }
+  }
+
+  &__left {
+    display: flex;
+    flex-direction: column;
+    gap: get-d(24px);
+    @include respond(lg) {
+      gap: get-lg(24px);
+    }
+
+    .rating-new-item {
+      width: fit-content;
+    }
+
+    .hero-title {
+      color: white;
+      leading-trim: both;
+      text-edge: cap;
+      font-size: get-d(92px);
+      font-style: normal;
+      font-weight: 500;
+      line-height: 90%; /* 82.8px */
+      letter-spacing: -2.76px;
+      @include respond(lg) {
+        font-size: get-lg(48px);
+        margin-bottom: get-lg(24px);
+      }
+      @include respond(md) {
+        font-size: 32px;
+        line-height: 110%; /* 35.2px */
+        letter-spacing: -0.96px;
+        text-align: left;
+      }
+    }
+    .btn.white {
+      position: relative;
+      z-index: 2;
+      color: #302f34;
+      font-family: Inter;
+      font-size: 14px;
+      margin: 0;
+      font-style: normal;
+      font-weight: 400;
+      line-height: normal;
+    }
+  }
+
+  &__center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  &__right {
+    position: relative;
+    display: flex;
+    justify-content: flex-end;
+    z-index: 2;
+    @include respond(md) {
+      flex-direction: column;
+      justify-content: center;
+      gap: 40px;
+      &::after {
+        background: linear-gradient(180deg, rgba(247, 188, 53, 0), #f7bc35 30%);
+        bottom: -40px;
+        content: "";
+        display: block;
+        height: 650px;
+        left: -30%;
+        position: absolute;
+        width: 150%;
+        z-index: 0;
+      }
+    }
+    @media screen and (max-width: 425px) {
+      &::after {
+        background: linear-gradient(180deg, rgba(247, 188, 53, 0), #f7bc35 37%);
+      }
+    }
+
+    .rating-mobile {
+      display: none;
+      @include respond(md) {
+        display: block;
+        margin-top: 400px;
+        z-index: 3;
+      }
+      .rating-new-item__bottom {
+        justify-content: center;
+      }
+    }
+  }
+
+  &__buttons {
+    display: flex;
+  }
+
+  &__top {
+    display: grid;
+    grid-template-columns: 1fr max-content;
+    align-items: flex-end;
+    padding: get-d(40px) get-d(60px);
+    @include respond(lg) {
+      padding: get-lg(40px) get-lg(60px);
+    }
+    @include respond(md) {
+      padding: 0 25px 16px 25px;
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .rating-desktop {
+    @include respond(md) {
+      display: none;
+    }
+  }
+
+  .hero-big-title {
+    font-weight: 700;
+    color: white;
+    leading-trim: both;
+    text-edge: cap;
+    font-size: get-d(196px);
+    font-style: normal;
+    font-weight: 500;
+    line-height: 90%; /* 176.4px */
+    letter-spacing: -5.88px;
+    text-transform: uppercase;
+    color: white;
+    text-align: center;
+    margin-bottom: get-d(60px);
+    @include respond(lg) {
+      font-size: get-lg(64px);
+      margin-bottom: get-lg(60px);
+    }
+    @include respond(md) {
+      font-size: 48px;
+      letter-spacing: -1.44px;
+      margin-bottom: 24px;
+      text-align: left;
+    }
+  }
+
+  .hero-image {
+    width: 100%;
+    // max-width: get-d(400px);
+    aspect-ratio: 1;
+    overflow: hidden;
+    @include respond(lg) {
+      max-width: get-lg(400px);
+    }
+    @include respond(md) {
+      max-width: 300px;
+      margin: 0 auto;
+    }
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    &.girl {
+      position: absolute;
+      bottom: get-d(-98px);
+      left: 50%;
+      transform: translateX(-50%);
+      width: get-d(768px);
+      @include respond(lg) {
+        width: get-lg(768px);
+        bottom: -40px;
+      }
+      @include respond(md) {
+        // position: static;
+        // transform: translateX(0%);
+        // width: 100%;
+        top: 100px;
+        width: 600px;
+        max-width: 600px;
+        z-index: 0;
+      }
+    }
+    &.benefits {
+      position: relative;
+      z-index: 2;
+      max-width: get-d(350px);
+
+      @include respond(md) {
+        max-width: 400px;
+      }
+    }
+  }
+}
+
+.hero-benefits {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: get-d(24px);
+  max-width: get-d(300px);
+  @include respond(lg) {
+    gap: get-lg(24px);
+    max-width: get-lg(300px);
+  }
+  @include respond(md) {
+    gap: 16px;
+    max-width: 280px;
+    margin: 0 auto;
+  }
+}
+
+.benefit-circle {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  width: get-d(140px);
+  height: get-d(140px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: get-d(8px);
+  backdrop-filter: blur(10px);
+  transition: transform 0.3s ease;
+  @include respond(lg) {
+    width: get-lg(140px);
+    height: get-lg(140px);
+    gap: get-lg(8px);
+  }
+  @include respond(md) {
+    width: 120px;
+    height: 120px;
+    gap: 8px;
+  }
+
+  &:hover {
+    transform: scale(1.05);
+  }
+}
+
+.benefit-icon {
+  color: white;
+  margin-bottom: get-d(4px);
+  @include respond(lg) {
+    margin-bottom: get-lg(4px);
+  }
+  @include respond(md) {
+    margin-bottom: 4px;
+  }
+}
+
+.benefit-text {
+  text-align: center;
+  color: white;
+  font-size: get-d(14px);
+  font-weight: 500;
+  @include respond(lg) {
+    font-size: get-lg(14px);
+  }
+  @include respond(md) {
+    font-size: 12px;
+  }
+
+  span {
+    display: block;
+    line-height: 1.2;
+  }
+}
+
+.hero-section {
   &__top {
     display: grid;
     grid-template-columns: 1fr max-content;
@@ -71,7 +380,7 @@
     top: 50%;
     transform: translateY(-50%);
     background: url("../svg/arrows.svg") center / cover no-repeat;
-    z-index: 1;
+    z-index: 2;
     @include respond(lg) {
       width: get-lg(40px);
       height: get-lg(40px);

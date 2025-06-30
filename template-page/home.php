@@ -27,7 +27,8 @@ if (empty($ordered_category_ids)) {
     }
 };
 
-function reviews_item() {
+function reviews_item()
+{
     $rating = number_format(getPlaceReviews()["rating"], 1);
     $stars = str_repeat("<div class='star'></div>", $rating);
     $link = get_field('reviews_link_url', 'option');
@@ -41,61 +42,87 @@ function reviews_item() {
 };
 
 ?>
+
 <main>
     <section class="hero-section">
         <div class="container">
-            <div class="hero-section__top">
-                <h1 class="title">
-                    <?php the_field('hero_title'); ?>
-                </h1>
-                <div class="hero-section__buttons">
-                    <button type="button" class="btn yellow open-popup">Book an Appointment</button>
-                    <?php
-                    $link = get_field('hero_link');
-                    $text = get_field('hero_link_text');
-                    if ($link && $text) {
-                        echo "<a href='$link' class='btn'>$text</a>";
-                    }
-                    ?>
+            <div class="hero-section__content">
+                <!-- Big Title at the top -->
+                <?php if (get_field('hero_big_title')): ?>
+                    <h1 class="hero-big-title"><?php the_field('hero_big_title'); ?></h1>
+                <?php endif; ?>
+
+                <div class="hero-section__main">
+                    <div class="hero-section__left">
+                        <!-- Rating -->
+                        <div class="rating-desktop">
+                            <?php echo reviews_item(); ?>
+                        </div>
+                        <!-- Subtitle -->
+                        <?php if (get_field('hero_title')): ?>
+                            <h2 class="hero-title"><?php the_field('hero_title'); ?></h2>
+                        <?php endif; ?>
+
+                        <!-- Button -->
+                        <div class="hero-section__buttons">
+                            <button type="button" class="btn white open-popup">
+                                Book an Appointment
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Main Image -->
+                    <div class="hero-section__center">
+                        <?php
+                        $hero_image = get_field('hero_big_foto');
+                        if ($hero_image): ?>
+                            <div class="hero-image girl">
+                                <img src="<?php echo esc_url($hero_image['url']); ?>" alt="<?php echo esc_attr($hero_image['alt']); ?>">
+                            </div>
+                        <?php endif; ?>
+                    </div>
+
+                    <!-- Benefits circles -->
+                    <div class="hero-section__right">
+                        <div class="rating-mobile">
+                            <?php echo reviews_item(); ?>
+                        </div>
+                        <?php
+                        $hero_benefits = get_field('hero_benefits');
+                        if ($hero_benefits): ?>
+                            <div class="hero-image benefits">
+                                <img src="<?php echo esc_url($hero_benefits['url']); ?>" alt="<?php echo esc_attr($hero_benefits['alt']); ?>">
+                            </div>
+                        <?php endif; ?>
+                    </div>
+
+
                 </div>
-            </div>
-            <div class="swiper hero-swiper button-container">
-                <div class="swiper-wrapper">
-                    <?php
-                    foreach (get_field('hero_slides') as $slide) {
-                        $img = $slide["url"];
-                        $title = $slide["title"];
-                        echo "<div class='swiper-slide'>
-                            <img src='$img' alt='$title'>
-                        </div>";
-                    }
-                    ?>
-                </div>
-                <div class="swiper-pagination"></div>
-                <button type="button" aria-label="Next slide" class="button swiper-button-next"></button>
-                <button type="button" aria-label="Previous slide" class="button swiper-button-prev"></button>
             </div>
         </div>
     </section>
-    <section class="reasons-section">
-        <div class="container">
-            <h2 class="title"><?php the_field('choose_title'); ?></h2>
-            <div class="reasons-section__items">
-                <?php
-                foreach (get_field('choose_cards') as $card) {
-                    $text = $card["card_text"];
-                    $image = $card["card_image"];
-                    $url = $image["url"];
-                    $title = $image["title"];
-                    echo "<div class='item'>
+    <?php $choose_section_active = get_field('choose_section_active'); ?>
+    <?php if ($choose_section_active) : ?>
+        <section class=" reasons-section">
+            <div class="container">
+                <h2 class="title"><?php the_field('choose_title'); ?></h2>
+                <div class="reasons-section__items">
+                    <?php
+                    foreach (get_field('choose_cards') as $card) {
+                        $text = $card["card_text"];
+                        $image = $card["card_image"];
+                        $url = $image["url"];
+                        $title = $image["title"];
+                        echo "<div class='item'>
               <img src='$url' alt='$title'>
               <span>$text</span>
             </div>";
-                };
-                ?>
+                    };
+                    ?>
+                </div>
             </div>
-        </div>
-    </section>
+        </section>
+    <?php endif; ?>
     <?php
     get_template_part("template-parts/gallery/gallery-grid", null, [
         "full" => false
