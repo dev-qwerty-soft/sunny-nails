@@ -3,6 +3,26 @@
     "title": "Hero Section",
     "fields": [
         {
+            "key": "field_685ec0344706b",
+            "label": "Hero big title",
+            "name": "hero_big_title",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "50",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "maxlength": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": ""
+        },
+        {
             "key": "field_681b6e52b1cfd",
             "label": "Hero title",
             "name": "hero_title",
@@ -12,35 +32,32 @@
             "required": 0,
             "conditional_logic": 0,
             "wrapper": {
-                "width": "",
+                "width": "50",
                 "class": "",
                 "id": ""
             },
             "default_value": "",
             "maxlength": "",
-            "allow_in_bindings": 0,
             "placeholder": "",
             "prepend": "",
             "append": ""
         },
         {
-            "key": "field_681b72b5fe803",
-            "label": "Hero slides",
-            "name": "hero_slides",
+            "key": "field_685ec07d4706c",
+            "label": "Hero big foto",
+            "name": "hero_big_foto",
             "aria-label": "",
-            "type": "gallery",
+            "type": "image",
             "instructions": "",
             "required": 0,
             "conditional_logic": 0,
             "wrapper": {
-                "width": "",
+                "width": "50",
                 "class": "",
                 "id": ""
             },
             "return_format": "array",
             "library": "all",
-            "min": "",
-            "max": "",
             "min_width": "",
             "min_height": "",
             "min_size": "",
@@ -48,48 +65,32 @@
             "max_height": "",
             "max_size": "",
             "mime_types": "",
-            "insert": "append",
             "preview_size": "medium"
         },
         {
-            "key": "field_681c85141be66",
-            "label": "Hero link url",
-            "name": "hero_link",
+            "key": "field_685ec0a44706d",
+            "label": "Hero benefits",
+            "name": "hero_benefits",
             "aria-label": "",
-            "type": "text",
+            "type": "image",
             "instructions": "",
             "required": 0,
             "conditional_logic": 0,
             "wrapper": {
-                "width": "",
+                "width": "50",
                 "class": "",
                 "id": ""
             },
-            "default_value": "",
-            "maxlength": "",
-            "placeholder": "",
-            "prepend": "",
-            "append": ""
-        },
-        {
-            "key": "field_681c85281be67",
-            "label": "Hero link text",
-            "name": "hero_link_text",
-            "aria-label": "",
-            "type": "text",
-            "instructions": "",
-            "required": 0,
-            "conditional_logic": 0,
-            "wrapper": {
-                "width": "",
-                "class": "",
-                "id": ""
-            },
-            "default_value": "",
-            "maxlength": "",
-            "placeholder": "",
-            "prepend": "",
-            "append": ""
+            "return_format": "array",
+            "library": "all",
+            "min_width": "",
+            "min_height": "",
+            "min_size": "",
+            "max_width": "",
+            "max_height": "",
+            "max_size": "",
+            "mime_types": "",
+            "preview_size": "medium"
         }
     ],
     "location": [
@@ -110,5 +111,5 @@
     "active": true,
     "description": "",
     "show_in_rest": 0,
-    "modified": 1748028701
+    "modified": 1751272085
 }

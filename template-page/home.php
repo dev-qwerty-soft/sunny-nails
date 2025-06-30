@@ -45,36 +45,51 @@ function reviews_item()
 <main>
     <section class="hero-section">
         <div class="container">
-            <div class="hero-section__top">
-                <h1 class="title">
-                    <?php the_field('hero_title'); ?>
-                </h1>
-                <div class="hero-section__buttons">
-                    <button type="button" class="btn yellow open-popup">Book an Appointment</button>
-                    <?php
-                    $link = get_field('hero_link');
-                    $text = get_field('hero_link_text');
-                    if ($link && $text) {
-                        echo "<a href='$link' class='btn'>$text</a>";
-                    }
-                    ?>
+            <div class="hero-section__content">
+                <!-- Big Title at the top -->
+                <?php if (get_field('hero_big_title')): ?>
+                    <h1 class="hero-big-title"><?php the_field('hero_big_title'); ?></h1>
+                <?php endif; ?>
+
+                <div class="hero-section__main">
+                    <div class="hero-section__left">
+                        <!-- Rating -->
+                        <?php echo reviews_item(); ?>
+                        <!-- Subtitle -->
+                        <?php if (get_field('hero_title')): ?>
+                            <h2 class="hero-title"><?php the_field('hero_title'); ?></h2>
+                        <?php endif; ?>
+
+                        <!-- Button -->
+                        <div class="hero-section__buttons">
+                            <button type="button" class="btn yellow open-popup">
+                                Book an Appointment
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Main Image -->
+                    <div class="hero-section__center">
+                        <?php
+                        $hero_image = get_field('hero_big_foto');
+                        if ($hero_image): ?>
+                            <div class="hero-image girl">
+                                <img src="<?php echo esc_url($hero_image['url']); ?>" alt="<?php echo esc_attr($hero_image['alt']); ?>">
+                            </div>
+                        <?php endif; ?>
+                    </div>
+
+                    <!-- Benefits circles -->
+                    <div class="hero-section__right">
+                        <?php
+                        $hero_benefits = get_field('hero_benefits');
+                        if ($hero_benefits): ?>
+                            <div class="hero-image">
+                                <img src="<?php echo esc_url($hero_benefits['url']); ?>" alt="<?php echo esc_attr($hero_benefits['alt']); ?>">
+                            </div>
+                        <?php endif; ?>
+                    </div>
                 </div>
-            </div>
-            <div class="swiper hero-swiper button-container">
-                <div class="swiper-wrapper">
-                    <?php
-                    foreach (get_field('hero_slides') as $slide) {
-                        $img = $slide["url"];
-                        $title = $slide["title"];
-                        echo "<div class='swiper-slide'>
-                            <img src='$img' alt='$title'>
-                        </div>";
-                    }
-                    ?>
-                </div>
-                <div class="swiper-pagination"></div>
-                <button type="button" aria-label="Next slide" class="button swiper-button-next"></button>
-                <button type="button" aria-label="Previous slide" class="button swiper-button-prev"></button>
             </div>
         </div>
     </section>
