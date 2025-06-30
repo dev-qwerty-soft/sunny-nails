@@ -14,7 +14,6 @@ const header = g(".site-header");
 const btn = g("#burger");
 const menu = g(".burger-menu");
 
-
 let gallerySwiper;
 let filterFn;
 let tabFn;
@@ -27,14 +26,14 @@ setTimeout(() => {
   let scrollingDown = false;
   window.onscroll = () => {
     let currentScrollTop = window.pageYOffset || document.documentElement.scrollTop;
-    scrollingDown = currentScrollTop > lastScrollTop
+    scrollingDown = currentScrollTop > lastScrollTop;
     lastScrollTop = currentScrollTop <= 0 ? 0 : currentScrollTop;
     scrollingDown ? add(header, "hidden") : remove(header, "hidden");
-    if(!scrollingDown) {
+    if (!scrollingDown) {
       header.style.setProperty("--border-color", "#D5CCB5");
-    };
+    }
   };
-}, 500)
+}, 500);
 
 if (g(".counter-section")) {
   const timeContainer = g(".counter-section .time");
@@ -145,7 +144,7 @@ if (g(".mini-swiper")) {
   g(".mini-swiper", document, true).forEach((swiper) => {
     new Swiper(swiper, {
       modules: [FreeMode, Scrollbar],
-      slidesPerView: 4,
+      slidesPerView: 4.5,
       spaceBetween: 6,
       freeMode: true,
       scrollbar: {
@@ -179,7 +178,7 @@ if (filterSection) {
       return slugs.includes(slug);
     });
 
-    if(images) {
+    if (images) {
       remove(images);
 
       add(isFull ? filteredImages : filteredImages.slice(0, 8));
@@ -232,4 +231,3 @@ document.onclick = (e) => {
     tabFn?.(e.target);
   }
 };
-

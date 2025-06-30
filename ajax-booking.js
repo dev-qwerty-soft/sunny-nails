@@ -335,6 +335,7 @@
 
       // Show popup
       $(".booking-popup-overlay").addClass("active");
+      $("body").addClass("popup-open");
       $(".loading-overlay").hide();
       // Trigger custom event
       $(document).trigger("bookingPopupOpened");
@@ -343,6 +344,7 @@
     // Close popup
     $(document).on("click", ".booking-popup-close, .close-popup-btn", function () {
       $(".booking-popup-overlay").removeClass("active");
+      $("body").removeClass("popup-open");
       // Add a confirmation if there's unsaved data
       clearBookingSession();
     });
@@ -351,6 +353,7 @@
     $(document).on("click", ".booking-popup-overlay", function (e) {
       if ($(e.target).is(".booking-popup-overlay")) {
         $(".booking-popup-overlay").removeClass("active");
+        $("body").removeClass("popup-open");
         clearBookingSession();
       }
     });
@@ -437,6 +440,7 @@
     bookingData.flowHistory = ["initial", "master"];
     bookingData.galleryTitle = galleryTitle;
     $(".booking-popup-overlay").addClass("active");
+    $("body").addClass("popup-open");
 
     const $staffItem = $(`.staff-item[data-staff-id="${masterId}"]`);
     if ($staffItem.length) {
@@ -579,7 +583,7 @@
 
         if (!isAddon) {
           const coreId = $(this).data("service-id");
-          const $container = $(`.core-related-addons[data-core-id="${coreId}"]`);
+          const $container = $(`.core-related_addons[data-core-id="${coreId}"]`);
           $container.addClass("open");
           // Enable related add-ons
           $container.find(".service-checkbox").prop("disabled", false);
@@ -592,7 +596,7 @@
 
         if (!isAddon) {
           const coreId = $(this).data("service-id");
-          const $container = $(`.core-related-addons[data-core-id="${coreId}"]`);
+          const $container = $(`.core-related_addons[data-core-id="${coreId}"]`);
           $container.removeClass("open");
           // Disable and uncheck related add-ons
           $container.find("input[type=checkbox]").prop("checked", false).prop("disabled", true);
@@ -2358,6 +2362,7 @@ ${couponInfo}Note: Master markup applied only to core services, not to Add-on se
     e.preventDefault();
 
     $(".booking-popup-overlay").removeClass("active");
+    $("body").removeClass("popup-open");
     $(".booking-popup").hide();
     $(".loading-overlay").hide();
 

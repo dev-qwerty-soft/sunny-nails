@@ -1,4 +1,3 @@
-
 .burger {
   position: relative;
   width: 22px;
@@ -10,7 +9,7 @@
     display: block;
   }
   &::before {
-    content: '';
+    content: "";
     width: 36px;
     height: 36px;
     background: $bg-yellow;
@@ -20,41 +19,47 @@
     left: 50%;
     transform: translate(-50%, -50%);
   }
+  @media screen and (max-width: 768px) {
+    &.active {
+      width: 24px;
+      height: 24px;
+    }
+  }
 }
 
 .bar {
   position: absolute;
   left: 0;
   right: 0;
-  height: 2px;
+  height: 0.8px;
   background: #000;
   color: inherit;
   opacity: 1;
-  transition: none 0.35s cubic-bezier(.5,-0.35,.35,1.5) 0s;
+  transition: none 0.35s cubic-bezier(0.5, -0.35, 0.35, 1.5) 0s;
 }
 
 .bar--top {
-  bottom: calc(50% + 5px + 2px/ 2);
-  transition-property: bottom,transform;
-  transition-delay: calc(0s + 0.35s),0s;
+  bottom: calc(50% + 4px + 2px / 2);
+  transition-property: bottom, transform;
+  transition-delay: calc(0s + 0.35s), 0s;
 }
 
 .bar--middle {
-  top: calc(50% - 2px/ 2);
+  top: calc(50% - 1px / 2);
   transition-property: opacity;
   transition-delay: calc(0s + 0.35s);
 }
 
 .bar--bottom {
-  top: calc(50% + 5px + 2px/ 2);
-  transition-property: top,transform;
-  transition-delay: calc(0s + 0.35s),0s;
+  top: calc(50% + 4px + 2px / 2);
+  transition-property: top, transform;
+  transition-delay: calc(0s + 0.35s), 0s;
 }
 
 .burger.active .bar--top {
-  bottom: calc(50% - 2px/ 2);
+  bottom: calc(50% - 1px / 2);
   transform: rotate(135deg);
-  transition-delay: 0s,calc(0s + 0.35s);
+  transition-delay: 0s, calc(0s + 0.35s);
 }
 
 .burger.active .bar--middle {
@@ -64,9 +69,9 @@
 }
 
 .burger.active .bar--bottom {
-  top: calc(50% - 2px/ 2);
+  top: calc(50% - 1px / 2);
   transform: rotate(225deg);
-  transition-delay: 0s,calc(0s + 0.35s);
+  transition-delay: 0s, calc(0s + 0.35s);
 }
 
 .burger-menu {

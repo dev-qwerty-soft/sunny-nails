@@ -162,7 +162,6 @@
   .step-actions {
     display: flex;
     justify-content: center;
-    margin-top: 24px;
   }
 }
 
@@ -207,8 +206,6 @@
     }
 
     .step-actions {
-      padding-bottom: 16px;
-
       .next-btn {
         width: 100%;
         max-width: 360px;
