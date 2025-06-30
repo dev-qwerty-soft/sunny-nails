@@ -1406,6 +1406,8 @@
     });
   }
 
+  // ...existing code...
+
   function renderStaff(staffList) {
     if (!staffList || staffList.length === 0) {
       $(".staff-list").html('<p class="no-items-message">No specialists available for the selected services.</p>');
@@ -1413,11 +1415,11 @@
     }
 
     let html = "";
-    const isSelected = bookingData.staffId == "any" ? " selected" : "";
+    const isSelected = bookingData.staffId == "any" ? " selected" : " selected"; // Always selected by default
 
     html = `
     <label class="staff-item any-master first${isSelected}" data-staff-id="any" data-staff-level="1">
-      <input type="radio" name="staff">
+      <input type="radio" name="staff" checked>
       <div class="staff-radio-content">
         <div class="staff-avatar circle yellow-bg">
           <svg width="21" height="21" viewBox="0 0 21 21" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -1434,6 +1436,13 @@
       </div>
     </label>
   `;
+
+    // Set default selection if no staff is currently selected
+    if (!bookingData.staffId) {
+      bookingData.staffId = "any";
+      bookingData.staffName = "Any master";
+      bookingData.staffLevel = 1;
+    }
 
     staffList.forEach(function (staff) {
       const isSelected = bookingData.staffId == staff.id ? " selected" : "";
@@ -1473,9 +1482,8 @@
 
     $(".staff-list").html(html);
 
-    if (bookingData.staffId) {
-      $(`.staff-item[data-staff-id="${bookingData.staffId}"]`).addClass("selected");
-    }
+    // Ensure "Any master" is selected by default and enable next button
+    updateMasterNextButtonState();
   }
 
   function renderContactStepSummary() {
