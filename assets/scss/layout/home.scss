@@ -1,6 +1,6 @@
 .hero-section {
   position: relative;
-  background: linear-gradient(135deg, #f4a91a 0%, #e8961c 100%);
+  background: #fdc41f;
   display: flex;
 
   .container {
@@ -67,7 +67,7 @@
       letter-spacing: -2.76px;
       @include respond(lg) {
         font-size: get-lg(48px);
-        margin-bottom: get-lg(16px);
+        margin-bottom: get-lg(24px);
       }
       @include respond(md) {
         font-size: 32px;
@@ -82,6 +82,7 @@
       color: #302f34;
       font-family: Inter;
       font-size: 14px;
+      margin: 0;
       font-style: normal;
       font-weight: 400;
       line-height: normal;
@@ -104,15 +105,20 @@
       justify-content: center;
       gap: 40px;
       &::after {
-        background: linear-gradient(180deg, rgba(247, 188, 53, 0), #f7bc35 54.39% 54.39%);
+        background: linear-gradient(180deg, rgba(247, 188, 53, 0), #f7bc35 30%);
         bottom: -40px;
         content: "";
         display: block;
-        height: 800px;
+        height: 650px;
         left: -30%;
         position: absolute;
         width: 150%;
         z-index: 0;
+      }
+    }
+    @media screen and (max-width: 425px) {
+      &::after {
+        background: linear-gradient(180deg, rgba(247, 188, 53, 0), #f7bc35 37%);
       }
     }
 
@@ -120,7 +126,7 @@
       display: none;
       @include respond(md) {
         display: block;
-        margin-top: 460px;
+        margin-top: 400px;
         z-index: 3;
       }
       .rating-new-item__bottom {
@@ -131,12 +137,6 @@
 
   &__buttons {
     display: flex;
-    margin-top: get-d(16px);
-    @include respond(lg) {
-      margin-top: get-lg(16px);
-    }
-    @include respond(md) {
-    }
   }
 
   &__top {
@@ -216,7 +216,7 @@
         // position: static;
         // transform: translateX(0%);
         // width: 100%;
-        top: 155px;
+        top: 100px;
         width: 600px;
         max-width: 600px;
         z-index: 0;
@@ -225,6 +225,11 @@
     &.benefits {
       position: relative;
       z-index: 2;
+      max-width: get-d(350px);
+
+      @include respond(md) {
+        max-width: 400px;
+      }
     }
   }
 }
