@@ -763,8 +763,8 @@ if (empty($ordered_category_ids)) {
                                         <input type="checkbox" id="privacy-policy" required />
                                         <span>
                                             I confirm that I have read and accepted the
-                                            <a href="<?= esc_url(get_privacy_policy_url()); ?>" target="_blank" rel="noopener noreferrer">
-                                                Privacy Policy
+                                            <a href="<?= esc_url(home_url('/terms-of-services/')); ?>" target="_blank" rel="noopener noreferrer">
+                                                Terms of Services
                                             </a>.
                                         </span>
                                     </label>
