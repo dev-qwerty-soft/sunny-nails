@@ -1,5 +1,4 @@
 .hero-section {
-  position: relative;
   background: linear-gradient(135deg, #f4a91a 0%, #e8961c 100%);
   display: flex;
 
@@ -16,6 +15,7 @@
   }
 
   &__content {
+    position: relative;
     width: 100%;
     padding: get-d(44px) 0 get-d(98px);
     @include respond(lg) {
@@ -48,9 +48,6 @@
     @include respond(lg) {
       gap: get-lg(24px);
     }
-    @include respond(md) {
-      gap: 24px;
-    }
 
     .rating-new-item {
       width: fit-content;
@@ -71,10 +68,14 @@
       }
       @include respond(md) {
         font-size: 32px;
-        margin-bottom: 16px;
+        line-height: 110%; /* 35.2px */
+        letter-spacing: -0.96px;
+        text-align: left;
       }
     }
     .btn.yellow {
+      position: relative;
+      z-index: 1;
       color: #302f34;
       font-family: Inter;
       font-size: 14px;
@@ -94,7 +95,19 @@
     display: flex;
     justify-content: flex-end;
     @include respond(md) {
+      flex-direction: column;
       justify-content: center;
+      gap: 40px;
+    }
+    .rating-mobile {
+      display: none;
+      @include respond(md) {
+        display: block;
+        margin-top: 385px;
+      }
+      .rating-new-item__bottom {
+        justify-content: center;
+      }
     }
   }
 
@@ -105,8 +118,6 @@
       margin-top: get-lg(16px);
     }
     @include respond(md) {
-      margin-top: 16px;
-      justify-content: center;
     }
   }
 
@@ -123,55 +134,75 @@
       grid-template-columns: 1fr;
     }
   }
-}
 
-.hero-big-title {
-  font-weight: 700;
-  color: white;
-  leading-trim: both;
-  text-edge: cap;
-  font-size: get-d(196px);
-  font-style: normal;
-  font-weight: 500;
-  line-height: 90%; /* 176.4px */
-  letter-spacing: -5.88px;
-  text-transform: uppercase;
-  color: white;
-  text-align: center;
-  margin-bottom: get-d(60px);
-  @include respond(lg) {
-    font-size: get-lg(64px);
-    margin-bottom: get-lg(60px);
+  .rating-desktop {
+    @include respond(md) {
+      display: none;
+    }
   }
-  @include respond(md) {
-    font-size: 36px;
-    margin-bottom: 40px;
-  }
-}
 
-.hero-image {
-  width: 100%;
-  // max-width: get-d(400px);
-  aspect-ratio: 1;
-  overflow: hidden;
-  @include respond(lg) {
-    max-width: get-lg(400px);
+  .hero-big-title {
+    font-weight: 700;
+    color: white;
+    leading-trim: both;
+    text-edge: cap;
+    font-size: get-d(196px);
+    font-style: normal;
+    font-weight: 500;
+    line-height: 90%; /* 176.4px */
+    letter-spacing: -5.88px;
+    text-transform: uppercase;
+    color: white;
+    text-align: center;
+    margin-bottom: get-d(60px);
+    @include respond(lg) {
+      font-size: get-lg(64px);
+      margin-bottom: get-lg(60px);
+    }
+    @include respond(md) {
+      font-size: 48px;
+      letter-spacing: -1.44px;
+      margin-bottom: 24px;
+    }
   }
-  @include respond(md) {
-    max-width: 300px;
-    margin: 0 auto;
-  }
-  &.girl {
-    position: absolute;
-    bottom: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: get-d(768px);
-  }
-  img {
+
+  .hero-image {
     width: 100%;
-    height: 100%;
-    object-fit: cover;
+    // max-width: get-d(400px);
+    aspect-ratio: 1;
+    overflow: hidden;
+    @include respond(lg) {
+      max-width: get-lg(400px);
+    }
+    @include respond(md) {
+      max-width: 300px;
+      margin: 0 auto;
+    }
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    &.girl {
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: get-d(768px);
+      @include respond(lg) {
+        width: get-lg(768px);
+      }
+      @include respond(md) {
+        top: 155px;
+        width: 600px;
+        max-width: 600px;
+        z-index: 0;
+      }
+    }
+    &.benefits {
+      position: relative;
+      z-index: 1;
+    }
   }
 }
 
@@ -274,6 +305,10 @@
   &.yellow {
     background: white;
     color: #f4a91a;
+    @include respond(md) {
+      padding: 12px 24px;
+      padding-right: 47px;
+    }
 
     &:hover {
       transform: translateY(-2px);

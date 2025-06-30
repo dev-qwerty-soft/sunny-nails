@@ -42,6 +42,7 @@ function reviews_item()
 };
 
 ?>
+
 <main>
     <section class="hero-section">
         <div class="container">
@@ -54,7 +55,9 @@ function reviews_item()
                 <div class="hero-section__main">
                     <div class="hero-section__left">
                         <!-- Rating -->
-                        <?php echo reviews_item(); ?>
+                        <div class="rating-desktop">
+                            <?php echo reviews_item(); ?>
+                        </div>
                         <!-- Subtitle -->
                         <?php if (get_field('hero_title')): ?>
                             <h2 class="hero-title"><?php the_field('hero_title'); ?></h2>
@@ -81,10 +84,13 @@ function reviews_item()
 
                     <!-- Benefits circles -->
                     <div class="hero-section__right">
+                        <div class="rating-mobile">
+                            <?php echo reviews_item(); ?>
+                        </div>
                         <?php
                         $hero_benefits = get_field('hero_benefits');
                         if ($hero_benefits): ?>
-                            <div class="hero-image">
+                            <div class="hero-image benefits">
                                 <img src="<?php echo esc_url($hero_benefits['url']); ?>" alt="<?php echo esc_attr($hero_benefits['alt']); ?>">
                             </div>
                         <?php endif; ?>
