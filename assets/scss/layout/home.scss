@@ -7,6 +7,7 @@
     width: 100%;
     margin: 0 auto;
     padding: 0 get-d(60px);
+    z-index: 2;
     @include respond(lg) {
       padding: 0 get-lg(60px);
     }
@@ -28,6 +29,7 @@
   }
 
   &__main {
+    position: relative;
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
     gap: get-d(40px);
@@ -74,9 +76,9 @@
         text-align: left;
       }
     }
-    .btn.yellow {
+    .btn.white {
       position: relative;
-      z-index: 1;
+      z-index: 2;
       color: #302f34;
       font-family: Inter;
       font-size: 14px;
@@ -93,18 +95,33 @@
   }
 
   &__right {
+    position: relative;
     display: flex;
     justify-content: flex-end;
+    z-index: 2;
     @include respond(md) {
       flex-direction: column;
       justify-content: center;
       gap: 40px;
+      &::after {
+        background: linear-gradient(180deg, rgba(247, 188, 53, 0), #f7bc35 54.39% 54.39%);
+        bottom: -40px;
+        content: "";
+        display: block;
+        height: 800px;
+        left: -30%;
+        position: absolute;
+        width: 150%;
+        z-index: 0;
+      }
     }
+
     .rating-mobile {
       display: none;
       @include respond(md) {
         display: block;
-        margin-top: 385px;
+        margin-top: 460px;
+        z-index: 3;
       }
       .rating-new-item__bottom {
         justify-content: center;
@@ -187,14 +204,18 @@
     }
     &.girl {
       position: absolute;
-      bottom: 0;
+      bottom: get-d(-98px);
       left: 50%;
       transform: translateX(-50%);
       width: get-d(768px);
       @include respond(lg) {
         width: get-lg(768px);
+        bottom: -40px;
       }
       @include respond(md) {
+        // position: static;
+        // transform: translateX(0%);
+        // width: 100%;
         top: 155px;
         width: 600px;
         max-width: 600px;
@@ -203,7 +224,7 @@
     }
     &.benefits {
       position: relative;
-      z-index: 1;
+      z-index: 2;
     }
   }
 }
@@ -281,44 +302,6 @@
   }
 }
 
-.btn {
-  display: inline-flex;
-  align-items: center;
-  gap: get-d(12px);
-  padding: get-d(16px) get-d(32px);
-  border: none;
-  border-radius: 50px;
-  font-size: get-d(16px);
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  text-decoration: none;
-  @include respond(lg) {
-    gap: get-lg(12px);
-    padding: get-lg(16px) get-lg(32px);
-    font-size: get-lg(16px);
-  }
-  @include respond(md) {
-    gap: 12px;
-    padding: 16px 32px;
-    font-size: 16px;
-  }
-
-  &.yellow {
-    background: white;
-    color: #f4a91a;
-    @include respond(md) {
-      padding: 12px 24px;
-      padding-right: 47px;
-    }
-
-    &:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-    }
-  }
-}
-
 .hero-section {
   &__top {
     display: grid;
@@ -392,7 +375,7 @@
     top: 50%;
     transform: translateY(-50%);
     background: url("../svg/arrows.svg") center / cover no-repeat;
-    z-index: 1;
+    z-index: 2;
     @include respond(lg) {
       width: get-lg(40px);
       height: get-lg(40px);

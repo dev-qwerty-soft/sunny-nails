@@ -65,7 +65,7 @@ function reviews_item()
 
                         <!-- Button -->
                         <div class="hero-section__buttons">
-                            <button type="button" class="btn yellow open-popup">
+                            <button type="button" class="btn white open-popup">
                                 Book an Appointment
                             </button>
                         </div>
@@ -95,13 +95,15 @@ function reviews_item()
                             </div>
                         <?php endif; ?>
                     </div>
+
+
                 </div>
             </div>
         </div>
     </section>
     <?php $choose_section_active = get_field('choose_section_active'); ?>
     <?php if ($choose_section_active) : ?>
-        <section class="reasons-section">
+        <section class=" reasons-section">
             <div class="container">
                 <h2 class="title"><?php the_field('choose_title'); ?></h2>
                 <div class="reasons-section__items">
