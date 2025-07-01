@@ -190,8 +190,9 @@
             padding: get-lg(10px) get-lg(40px) get-lg(10px) get-lg(15px);
           }
           @include respond(md) {
-            padding: min(get-md(16px), 10px) min(get-md(60px), 40px) min(get-md(16px), 10px) min(get-md(15px), 15px);
-            font-size: min(get-md(24px), 12px);
+            padding: min(get-md(16px), 10px) min(get-md(60px), 40px) min(get-md(16px), 10px) min(get-md(25px), 15px);
+            font-size: min(get-md(24px), 14px);
+            font-size: 14px;
           }
         }
 
