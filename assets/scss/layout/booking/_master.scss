@@ -48,7 +48,7 @@
   }
   &.any-master {
     .staff-radio-content {
-      gap: 10px;
+      gap: 16px;
     }
     @media screen and (max-width: 768px) {
       .radio-indicator,
@@ -136,6 +136,13 @@
   }
   .staff-stars {
     display: flex;
+    align-items: center;
+    justify-content: center;
+    .star {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
   }
 }
 

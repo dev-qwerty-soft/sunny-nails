@@ -810,6 +810,7 @@ if (empty($ordered_category_ids)) {
                                 </div>
                                 <p class="confirmation-message">You have booked an appointment to Sunny Nails Studio!</p>
                             </div>
+                            <h3 class="summary-title">Booking details</h3>
                             <div class="summary-master-date">
                                 <div class="summary-master">
                                     <div class="master-info">

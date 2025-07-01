@@ -168,7 +168,26 @@
    * Initialize coupon handling
    */
   function initCouponHandling() {
-    // Apply coupon button
+    const couponInput = $("#coupon-code");
+    const applyBtn = $(".apply-coupon-btn");
+
+    applyBtn.prop("disabled", true);
+
+    couponInput.on("input", function () {
+      const inputValue = $(this).val().trim();
+
+      if (inputValue.length > 0) {
+        applyBtn.prop("disabled", false);
+      } else {
+        applyBtn.prop("disabled", true);
+      }
+    });
+
+    couponInput.on("focus", function () {
+      const inputValue = $(this).val().trim();
+      applyBtn.prop("disabled", inputValue.length === 0);
+    });
+
     $(document).on("click", ".apply-coupon-btn", function () {
       const couponCode = $("#coupon-code").val().trim();
 
@@ -177,7 +196,6 @@
         return;
       }
 
-      // Disable button while checking
       $(this).prop("disabled", true).text("Checking...");
 
       $.ajax({
@@ -192,19 +210,15 @@
           $(".apply-coupon-btn").prop("disabled", false).text("Apply");
 
           if (response.success) {
-            // Save coupon data
             bookingData.coupon = {
               code: response.data.promo_code,
               value: parseFloat(response.data.discount_value),
             };
 
-            // Show success message
             showCouponFeedback(response.data.message, "success");
 
-            // Update summary
             updateSummary();
 
-            // Show success in step 6 if we're there
             $(".booking-step[data-step='confirm'] .coupon-feedback").show();
           } else {
             showCouponFeedback(response.data.message || "Invalid coupon", "error");
@@ -217,7 +231,6 @@
       });
     });
 
-    // Enter key in coupon field
     $(document).on("keypress", "#coupon-code", function (e) {
       if (e.which === 13) {
         e.preventDefault();

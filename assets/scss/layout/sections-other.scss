@@ -367,7 +367,7 @@
     grid-column: 1 / 2;
   }
   & .paragraph {
-    margin: get-d(26px) auto get-d(45px) auto;
+    margin: get-d(32px) auto get-d(45px) auto;
     max-width: get-d(525px);
     @include respond(lg) {
       margin: get-lg(26px) auto get-lg(45px) auto;

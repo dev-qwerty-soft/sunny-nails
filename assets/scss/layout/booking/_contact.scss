@@ -64,16 +64,17 @@
         .name-stars {
           color: var(--black, #302f34);
           font-size: 16px;
-          font-weight: 600;
+          font-weight: 500;
           line-height: 120%; /* 19.2px */
           letter-spacing: -0.48px;
           .stars-container,
           .staff-stars {
             display: flex;
-            flex-direction: column;
-            align-items: start;
+            align-items: center;
             gap: 4px;
             @media screen and (max-width: 768px) {
+              flex-direction: column;
+              align-items: start;
               .stars-name {
                 font-size: 12px;
               }
@@ -658,7 +659,18 @@
   color: var(--black, #302f34);
   font-size: 14px;
   font-weight: 500;
-  line-height: 20px; /* 142.857% */
+  line-height: 20px;
+  border: none;
+  transition: all 0.3s ease;
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.4;
+  }
+
+  &:not(:disabled):hover {
+    background: darken(#fdc41f, 10%);
+  }
 }
 
 .coupon-feedback.success {
