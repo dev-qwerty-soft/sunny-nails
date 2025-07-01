@@ -3,6 +3,7 @@
   padding: 0;
   margin: 0;
 }
+
 body {
   font-family: $font-family !important;
   font-style: normal;
@@ -121,4 +122,10 @@ button {
 
 .wpcf7-spinner {
   display: none !important;
+}
+
+@include respond(md) {
+  #wpadminbar {
+    display: none !important;
+  }
 }

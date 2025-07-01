@@ -21331,7 +21331,6 @@ const header = (0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.g)(".site-header
 const btn = (0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.g)("#burger");
 const menu = (0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.g)(".burger-menu");
 
-
 let gallerySwiper;
 let filterFn;
 let tabFn;
@@ -21344,14 +21343,14 @@ setTimeout(() => {
   let scrollingDown = false;
   window.onscroll = () => {
     let currentScrollTop = window.pageYOffset || document.documentElement.scrollTop;
-    scrollingDown = currentScrollTop > lastScrollTop
+    scrollingDown = currentScrollTop > lastScrollTop;
     lastScrollTop = currentScrollTop <= 0 ? 0 : currentScrollTop;
     scrollingDown ? (0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.add)(header, "hidden") : (0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.remove)(header, "hidden");
-    if(!scrollingDown) {
+    if (!scrollingDown) {
       header.style.setProperty("--border-color", "#D5CCB5");
-    };
+    }
   };
-}, 500)
+}, 500);
 
 if ((0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.g)(".counter-section")) {
   const timeContainer = (0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.g)(".counter-section .time");
@@ -21462,7 +21461,7 @@ if ((0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.g)(".mini-swiper")) {
   (0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.g)(".mini-swiper", document, true).forEach((swiper) => {
     new swiper__WEBPACK_IMPORTED_MODULE_7__["default"](swiper, {
       modules: [swiper_modules__WEBPACK_IMPORTED_MODULE_9__.FreeMode, swiper_modules__WEBPACK_IMPORTED_MODULE_9__.Scrollbar],
-      slidesPerView: 4,
+      slidesPerView: 4.5,
       spaceBetween: 6,
       freeMode: true,
       scrollbar: {
@@ -21496,7 +21495,7 @@ if (filterSection) {
       return slugs.includes(slug);
     });
 
-    if(images) {
+    if (images) {
       (0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.remove)(images);
 
       (0,_js_function_js__WEBPACK_IMPORTED_MODULE_10__.add)(isFull ? filteredImages : filteredImages.slice(0, 8));
@@ -21549,7 +21548,6 @@ document.onclick = (e) => {
     tabFn?.(e.target);
   }
 };
-
 
 })();
 

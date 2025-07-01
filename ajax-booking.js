@@ -335,6 +335,7 @@
 
       // Show popup
       $(".booking-popup-overlay").addClass("active");
+      $("body").addClass("popup-open");
       $(".loading-overlay").hide();
       // Trigger custom event
       $(document).trigger("bookingPopupOpened");
@@ -343,6 +344,7 @@
     // Close popup
     $(document).on("click", ".booking-popup-close, .close-popup-btn", function () {
       $(".booking-popup-overlay").removeClass("active");
+      $("body").removeClass("popup-open");
       // Add a confirmation if there's unsaved data
       clearBookingSession();
     });
@@ -351,6 +353,7 @@
     $(document).on("click", ".booking-popup-overlay", function (e) {
       if ($(e.target).is(".booking-popup-overlay")) {
         $(".booking-popup-overlay").removeClass("active");
+        $("body").removeClass("popup-open");
         clearBookingSession();
       }
     });
@@ -437,6 +440,7 @@
     bookingData.flowHistory = ["initial", "master"];
     bookingData.galleryTitle = galleryTitle;
     $(".booking-popup-overlay").addClass("active");
+    $("body").addClass("popup-open");
 
     const $staffItem = $(`.staff-item[data-staff-id="${masterId}"]`);
     if ($staffItem.length) {
@@ -579,7 +583,7 @@
 
         if (!isAddon) {
           const coreId = $(this).data("service-id");
-          const $container = $(`.core-related-addons[data-core-id="${coreId}"]`);
+          const $container = $(`.core-related_addons[data-core-id="${coreId}"]`);
           $container.addClass("open");
           // Enable related add-ons
           $container.find(".service-checkbox").prop("disabled", false);
@@ -592,7 +596,7 @@
 
         if (!isAddon) {
           const coreId = $(this).data("service-id");
-          const $container = $(`.core-related-addons[data-core-id="${coreId}"]`);
+          const $container = $(`.core-related_addons[data-core-id="${coreId}"]`);
           $container.removeClass("open");
           // Disable and uncheck related add-ons
           $container.find("input[type=checkbox]").prop("checked", false).prop("disabled", true);
@@ -1402,6 +1406,8 @@
     });
   }
 
+  // ...existing code...
+
   function renderStaff(staffList) {
     if (!staffList || staffList.length === 0) {
       $(".staff-list").html('<p class="no-items-message">No specialists available for the selected services.</p>');
@@ -1409,11 +1415,11 @@
     }
 
     let html = "";
-    const isSelected = bookingData.staffId == "any" ? " selected" : "";
+    const isSelected = bookingData.staffId == "any" ? " selected" : " selected"; // Always selected by default
 
     html = `
     <label class="staff-item any-master first${isSelected}" data-staff-id="any" data-staff-level="1">
-      <input type="radio" name="staff">
+      <input type="radio" name="staff" checked>
       <div class="staff-radio-content">
         <div class="staff-avatar circle yellow-bg">
           <svg width="21" height="21" viewBox="0 0 21 21" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -1430,6 +1436,13 @@
       </div>
     </label>
   `;
+
+    // Set default selection if no staff is currently selected
+    if (!bookingData.staffId) {
+      bookingData.staffId = "any";
+      bookingData.staffName = "Any master";
+      bookingData.staffLevel = 1;
+    }
 
     staffList.forEach(function (staff) {
       const isSelected = bookingData.staffId == staff.id ? " selected" : "";
@@ -1469,9 +1482,8 @@
 
     $(".staff-list").html(html);
 
-    if (bookingData.staffId) {
-      $(`.staff-item[data-staff-id="${bookingData.staffId}"]`).addClass("selected");
-    }
+    // Ensure "Any master" is selected by default and enable next button
+    updateMasterNextButtonState();
   }
 
   function renderContactStepSummary() {
@@ -2358,6 +2370,7 @@ ${couponInfo}Note: Master markup applied only to core services, not to Add-on se
     e.preventDefault();
 
     $(".booking-popup-overlay").removeClass("active");
+    $("body").removeClass("popup-open");
     $(".booking-popup").hide();
     $(".loading-overlay").hide();
 

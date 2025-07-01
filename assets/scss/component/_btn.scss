@@ -18,7 +18,7 @@
   }
   @include respond(md) {
     padding: 14px 24px;
-    font-size: 12px;
+    font-size: 14px;
     border-width: 1px;
   }
   &:hover {
@@ -332,6 +332,9 @@
   &__rate {
     grid-column: 1 / -1;
     height: get-d(40px);
+    @media screen and (max-width: 768px) {
+      height: auto;
+    }
   }
   &__name {
     font-weight: 500;
