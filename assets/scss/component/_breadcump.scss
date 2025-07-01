@@ -22,7 +22,7 @@
 
 .rating-new-item {
   padding: get-d(14px) get-d(28px);
-  background: #FFFFFF33;
+  background: #ffffff33;
   backdrop-filter: blur(14px);
   border-radius: 100px;
   display: flex;
@@ -45,7 +45,7 @@
       line-height: get-lg(16px);
     }
     @include respond(md) {
-      font-size: 10px;
+      font-size: 12px;
       line-height: 16px;
     }
   }
@@ -57,7 +57,7 @@
       font-size: get-lg(14px);
     }
     @include respond(md) {
-      font-size: 14px;
+      font-size: 16px;
     }
   }
   &__stars {
