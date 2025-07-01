@@ -101,6 +101,29 @@
           cursor: not-allowed;
         }
 
+        &.no-slots {
+          background-color: #f5f5f5;
+          color: #999;
+          cursor: not-allowed;
+          position: relative;
+
+          &::after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 10%;
+            right: 10%;
+            height: 1px;
+            background-color: #ccc;
+            transform: translateY(-50%);
+          }
+
+          &:hover {
+            background-color: #f5f5f5;
+            transform: none;
+          }
+        }
+
         // &.empty {
         //   visibility: hidden;
         // }
