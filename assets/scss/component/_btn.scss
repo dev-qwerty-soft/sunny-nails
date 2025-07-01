@@ -184,7 +184,7 @@
       font-size: get-lg(14px);
     }
     @include respond(md) {
-      font-size: 12px;
+      font-size: 14px;
     }
   }
   &__item {
@@ -201,7 +201,7 @@
       padding-top: get-lg(12px);
     }
     @include respond(md) {
-      gap: 12px;
+      gap: 13px !important;
       padding-top: 8px;
     }
   }
