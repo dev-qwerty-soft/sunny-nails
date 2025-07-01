@@ -251,7 +251,17 @@
           font-size: get-lg(14px);
         }
         @include respond(md) {
+          font-size: 11px;
+        }
+      }
+      .btn p {
+        @include respond(md) {
           font-size: 14px;
+          text-align: center;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          padding-left: 20%;
         }
       }
       .checkbox-label {
@@ -266,6 +276,9 @@
           & .wpcf7-list-item-label {
             margin-left: 10px;
           }
+        }
+        .wpcf7-list-item {
+          margin: 0;
         }
         & .wpcf7-list-item-label,
         a {
@@ -342,6 +355,11 @@
     }
     & .wpcf7-form-control-wrap {
       position: relative;
+    }
+  }
+  & .title {
+    @include respond(md) {
+      margin-bottom: 20px;
     }
   }
   & .title,

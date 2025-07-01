@@ -26,7 +26,7 @@
 
 .time {
   display: flex;
-  align-items: center;
+  align-items: start;
   gap: get-d(38px);
   @include respond(lg) {
     gap: get-lg(38px);
@@ -50,6 +50,11 @@
     @include respond(md) {
       font-size: 30px;
       line-height: 30px;
+    }
+  }
+  > .time__number {
+    @include respond(md) {
+      margin-top: -2px;
     }
   }
   &__days {
@@ -162,7 +167,7 @@
     padding: get-lg(75px) get-lg(60px) get-lg(150px) get-lg(60px);
   }
   @include respond(md) {
-    padding: 50px 25px;
+    padding: 0 25px 50px;
   }
   & .container {
     padding: get-d(80px) get-d(60px);
