@@ -94,8 +94,11 @@ $master_altegio_id = $master ? get_field('altegio_id', $master->ID) : 0;
 
 <div data-index='<?= $index; ?>' data-slug='<?= esc_attr($slug); ?>' class='image active'>
   <div class='image__front'>
+
     <?php if ($url): ?>
       <img src='<?= esc_url($url); ?>' alt='<?= esc_attr($customTitle ?: $service_titles_string); ?>'>
+    <?php else: ?>
+      <img src='<?= esc_url(get_template_directory_uri() . '/assets/svg/photo-stub.jpg'); ?>' alt='<?= esc_attr($customTitle ?: $service_titles_string); ?>'>
     <?php endif; ?>
     <div class='wrapper'>
       <button type='button' aria-label='View' class='view'></button>

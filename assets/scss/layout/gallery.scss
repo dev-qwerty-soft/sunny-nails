@@ -350,13 +350,16 @@
     & img {
       width: 100%;
       height: auto;
+
       aspect-ratio: 1/1;
       object-fit: cover;
       max-width: 325px;
       margin: 0 auto;
+      margin-bottom: 14px;
       border-radius: 10px;
     }
     & .btn {
+      margin-top: 14px;
       text-align: center;
     }
     & .image__title {
@@ -375,16 +378,18 @@
     position: absolute;
     width: 20px !important;
     height: 20px !important;
-    top: clamp(32%, 10vw, 50%);
+    border: 10px solid transparent;
+    box-sizing: content-box;
+    top: clamp(32%, 10vw, 30%) !important;
     transform: translateY(-50%);
 
     z-index: 1;
     &.swiper-button-next {
-      right: 0 !important;
+      right: -5px !important;
       transform: translateY(-50%) rotate(180deg);
     }
     &.swiper-button-prev {
-      left: 0 !important;
+      left: -5px !important;
     }
   }
 }

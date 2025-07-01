@@ -799,19 +799,17 @@ if (empty($ordered_category_ids)) {
                 <div class="booking-step confirm" data-step="confirm">
 
                     <div class="confirmation-body">
-                        <div class="confirmation-success">
-                            <div class="confirmation-success-icon">
-                                <svg width="31" height="31" viewBox="0 0 31 31" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M26.4771 1.81641L12.2729 20.5436L3.875 12.1518L0 16.0268L12.9146 28.9414L31 5.69141L26.4771 1.81641Z" fill="#302F34" />
-                                </svg>
-                            </div>
-                            <p class="confirmation-message">You have booked an appointment to Sunny Nails Studio!</p>
-                        </div>
-
 
 
                         <div class="booking-summary-box">
-                            <h3 class="summary-title">Booking details</h3>
+                            <div class="confirmation-success">
+                                <div class="confirmation-success-icon">
+                                    <svg width="31" height="31" viewBox="0 0 31 31" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M26.4771 1.81641L12.2729 20.5436L3.875 12.1518L0 16.0268L12.9146 28.9414L31 5.69141L26.4771 1.81641Z" fill="#302F34" />
+                                    </svg>
+                                </div>
+                                <p class="confirmation-message">You have booked an appointment to Sunny Nails Studio!</p>
+                            </div>
                             <div class="summary-master-date">
                                 <div class="summary-master">
                                     <div class="master-info">
@@ -867,10 +865,7 @@ if (empty($ordered_category_ids)) {
                                     <span class="master-category-note">Not applicable for Add-ons and Nail Art services.</span>
 
                                 </div>
-                                <div class="summary-item summary-coupon-group">
-                                    <label for="coupon-code" class="coupon-label">Coupon <span class="coupon-discount"></span></label>
-                                    <p class="coupon-desc">Do you have a coupon? Enter it here and get a discount on services.</p>
-                                </div>
+
 
                                 <div class="summary-item total"><span>Total</span> <span class="summary-total-amount">0.00 SGD</span></div>
                                 <?php
