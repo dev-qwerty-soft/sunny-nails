@@ -6,10 +6,9 @@ $bg-color: #f7f1e0;
 $bg-grey: #302f34;
 $bg-yellow: #fdc41f;
 $bg-white: #fff;
-$red: #DC3232;
+$red: #dc3232;
 $font-family: "Montserrat", sans-serif;
 $font-family-inter: "Inter", sans-serif;
-
 
 @mixin respond($breakpoint) {
   @if $breakpoint == xs {
@@ -57,7 +56,7 @@ $font-family-inter: "Inter", sans-serif;
   color: transparent;
 }
 @function get-d($target) {
-  $vw-context: calc((1536 * 0.01) * 1px);
+  $vw-context: calc((1440 * 0.01) * 1px);
   @return calc(($target / $vw-context) * 1vw);
 }
 @function get-xl($target) {

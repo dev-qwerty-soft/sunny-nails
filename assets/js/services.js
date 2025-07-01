@@ -92,3 +92,21 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   });
 });
+jQuery(document).ready(function ($) {
+  $(document).on("click", ".review__expand-btn", function () {
+    const $btn = $(this);
+    const $container = $btn.closest(".review__text-container");
+    const $shortText = $container.find(".review__text--short");
+    const $fullText = $container.find(".review__text--full");
+
+    if ($btn.hasClass("expanded")) {
+      $fullText.slideUp(300);
+      $shortText.slideDown(300);
+      $btn.removeClass("expanded").text("Read more");
+    } else {
+      $shortText.slideUp(300);
+      $fullText.slideDown(300);
+      $btn.addClass("expanded").text("less less");
+    }
+  });
+});

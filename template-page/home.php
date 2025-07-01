@@ -190,21 +190,38 @@ function reviews_item()
                             $text = $slide["text"];
                             $rating = $slide["rating"];
                             $stars = str_repeat("<div class='star'></div>", $rating);
+
+                            $char_limit = 200;
+                            $short_text = strlen($text) > $char_limit ? substr($text, 0, $char_limit) : $text;
+                            $needs_expand = strlen($text) > $char_limit;
+
                             echo "<div class='swiper-slide'>
                                         <div class='review'>
                                             <div class='review__message'>
                                                 <div class='review__rate'>
                                                     $stars
-                                                </div>
-                                                <p>$text</p>
-                                            </div>
-                                            <div class='review__info'>
-                                                <img src='$image' alt='$name'>
+                                                </div>";
+
+                            if ($needs_expand) {
+                                echo "<div class='review__text-container'>
+                                        <p class='review__text review__text--short'>" . $short_text . "...</p>
+                                        <p class='review__text review__text--full' style='display: none;'>$text</p>
+                                        <button class='review__expand-btn' type='button'>Read more</button>
+                                      </div>";
+                            } else {
+                                echo "<p>$text</p>";
+                            }
+
+                            echo "</div>
+                                        <div class='review__info'>
+                                            <img src='$image' alt='$name'>
+                                            <div class='review__author'>
                                                 <span class='review__name'>$name</span>
                                                 <span class='review__date'>$date</span>
                                             </div>
                                         </div>
-                                    </div>";
+                                    </div>
+                                </div>";
                         };
                         ?>
                     </div>

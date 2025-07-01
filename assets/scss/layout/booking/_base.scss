@@ -32,6 +32,7 @@ body.popup-open {
   max-height: 90vh;
   background: #f7f1e0;
   overflow: hidden;
+  border-radius: 10px;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
   @media screen and (max-width: 768px) {
     display: flex;
@@ -93,7 +94,7 @@ body.popup-open {
   color: var(--black, #302f34);
   font-size: 14px;
   font-weight: 500;
-  position: relative;
+  position: absolute;
   cursor: pointer;
   transition: all 0.3s ease-in-out;
   &::before {
@@ -126,10 +127,12 @@ body.popup-open {
 
 .booking-popup-content {
   padding: 50px;
-
+  border-radius: 10px;
+  min-height: 50vh;
   @media (max-width: 768px) {
     padding: 20px;
     width: 100vw;
+    border-radius: 0px;
   }
 }
 
