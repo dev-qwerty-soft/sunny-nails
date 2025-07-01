@@ -28,9 +28,10 @@
     }
   }
   .booking-summary-box {
-    overflow-y: hidden !important;
-    max-height: 100% !important;
     gap: 16px;
+    @media screen and (max-width: 768px) {
+      max-height: calc(100vh - 200px) !important;
+    }
   }
 }
 
