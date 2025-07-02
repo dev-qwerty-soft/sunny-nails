@@ -41,7 +41,7 @@
       padding-top: get-lg(40px);
     }
     @include respond(md) {
-      padding-top: 0px;
+      padding: 0 25px 75px;
     }
   }
 
