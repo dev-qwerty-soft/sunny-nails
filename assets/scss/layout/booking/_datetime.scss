@@ -147,9 +147,11 @@
         display: flex;
         flex-direction: column;
         gap: 36px;
+        .error-message,
         .loading-message {
           padding: 0 !important;
           background: transparent !important;
+          border: 1px solid transparent;
         }
       }
       .time-group-title {
