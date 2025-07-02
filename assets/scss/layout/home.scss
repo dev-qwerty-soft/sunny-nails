@@ -80,12 +80,15 @@
       position: relative;
       z-index: 2;
       color: #302f34;
-      padding-right: get-lg(50px);
+      padding-right: 70px;
       font-size: 14px;
       margin: 0;
       font-style: normal;
       font-weight: 400;
       line-height: normal;
+      @media screen and (max-width: 768px) {
+        padding-right: 60px;
+      }
     }
   }
 
