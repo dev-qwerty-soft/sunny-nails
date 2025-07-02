@@ -31,6 +31,9 @@
     gap: 16px;
     @media screen and (max-width: 768px) {
       max-height: calc(100vh - 200px) !important;
+      @supports (-webkit-touch-callout: none) {
+        max-height: calc(100vh - 200px - env(safe-area-inset-bottom, 0px) - 50px);
+      }
     }
   }
 }
