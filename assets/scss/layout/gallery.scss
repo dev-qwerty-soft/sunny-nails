@@ -32,7 +32,7 @@
     padding: get-lg(75px) get-lg(60px);
   }
   @include respond(md) {
-    padding: 75px 25px;
+    padding: 75px 25px 0;
   }
 
   &.full {
