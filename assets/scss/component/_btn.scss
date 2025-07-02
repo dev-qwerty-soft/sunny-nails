@@ -1,5 +1,5 @@
 .btn {
-  padding: get-d(20px) get-d(25px);
+  padding: get-d(20px) get-d(24px);
   font-family: $font-family-inter;
   font-weight: 400;
   font-size: get-d(14px);
@@ -12,7 +12,7 @@
   cursor: pointer;
   white-space: nowrap;
   @include respond(lg) {
-    padding: get-lg(20px) get-lg(25px);
+    padding: get-lg(20px) get-lg(24px);
     font-size: get-lg(14px);
     border-width: get-lg(1px);
   }
@@ -75,7 +75,7 @@
   &.yellow {
     background: $bg-yellow;
     border-color: $bg-yellow;
-    padding-right: get-d(24px + 32px);
+    padding-right: get-d(24px + 44px);
     position: relative;
     overflow: hidden;
     @include respond(lg) {
@@ -333,11 +333,11 @@
     display: grid;
     grid-template-columns: 1fr max-content;
     grid-auto-rows: repeat(2, max-content);
-    grid-gap: get-d(4px);
+    grid-gap: get-d(6px);
   }
   &__rate {
     grid-column: 1 / -1;
-    height: 40px;
+    height: 24px;
     @media screen and (max-width: 768px) {
       height: auto;
     }

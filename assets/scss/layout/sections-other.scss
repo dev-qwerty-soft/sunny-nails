@@ -1,5 +1,5 @@
 .promo-form-section {
-  padding: get-d(45px) get-d(60px);
+  padding: get-d(80px) get-d(60px);
   position: relative;
   background: $bg-yellow;
   overflow: hidden;
@@ -15,8 +15,8 @@
     height: 100%;
     inset: 0;
     object-fit: contain;
-    z-index: -1;
-    transform: translateX(10%);
+    z-index: 0;
+    transform: translateX(19%);
     @include respond(md) {
       transform: translateX(0);
       height: auto;
@@ -24,7 +24,7 @@
       top: auto;
     }
     @include respond(sm) {
-      bottom: 44%;
+      bottom: 43%;
       scale: 1.5;
     }
   }
@@ -33,6 +33,7 @@
     background: url("../svg/bigArrow.svg") center / contain no-repeat;
     position: absolute;
     top: 50%;
+    left: 2%;
     transform: translateY(-50%);
     width: get-d(90px);
     height: get-d(100px);
@@ -40,10 +41,13 @@
     @include respond(lg) {
       width: get-lg(90px);
       height: get-lg(100px);
+      left: 0;
     }
     @include respond(md) {
       width: 62px;
       height: 72px;
+      left: 15px;
+      top: 55%;
     }
   }
   & .container {
@@ -169,6 +173,7 @@
     }
     & .promo-form {
       display: grid;
+      align-items: center;
       grid-template-columns: 3fr 2fr;
       @include respond(md) {
         grid-template-columns: 1fr;
@@ -197,15 +202,15 @@
         padding: get-d(11px) get-d(4px);
         border: none;
         background: none;
-        border-bottom: get-d(2px) solid $bg-grey;
+        border-bottom: 1px solid rgba(48, 47, 52, 0.5);
         border-radius: 0;
         @include respond(lg) {
           padding: get-lg(11px) get-lg(4px);
-          border-bottom: get-lg(2px) solid $bg-grey;
+          border-bottom: 1px solid rgba(48, 47, 52, 0.5);
         }
         @include respond(md) {
           padding: 11px 4px;
-          border-bottom: 2px solid $bg-grey;
+          border-bottom: 1px solid rgba(48, 47, 52, 0.5);
         }
         &,
         &::placeholder {
@@ -271,28 +276,27 @@
         row-gap: 0;
         gap: 8px;
         @include respond(md) {
-          align-items: baseline;
+          align-items: center;
 
           & .wpcf7-list-item-label {
             margin-left: 10px;
+            @include respond(md) {
+              margin-left: 10px;
+            }
           }
         }
         .wpcf7-list-item {
           margin: 0;
-        }
-        & .wpcf7-list-item-label,
-        a {
-          transform: translateY(-3px) translateX(10px);
-          display: inline-block;
-          @include respond(md) {
-            transform: translateY(-3px) translateX(0px);
+          label {
+            display: flex;
+            align-items: center;
           }
         }
+        & .wpcf7-list-item-label,
         & .margin {
           margin-left: 20px;
           @include respond(md) {
             margin-left: 0;
-            transform: translateY(-3px) translateX(0px);
           }
         }
         a {
@@ -317,6 +321,7 @@
         // }
 
         & input {
+          font-size: "Montserrat", sans-serif;
           width: get-d(20px);
           height: get-d(20px);
           min-width: get-d(20px);

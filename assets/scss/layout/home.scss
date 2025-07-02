@@ -487,7 +487,7 @@
 }
 
 .services-preview-section {
-  padding: get-d(75px) get-d(60px);
+  padding: get-d(75px) get-d(60px) get-d(150px);
   @include respond(lg) {
     padding: get-lg(75px) get-lg(60px);
   }
@@ -597,7 +597,7 @@
 }
 
 .reviews-section {
-  padding: get-d(160px) 0;
+  padding: get-d(150px) 0;
   background: $bg-yellow;
   @include respond(lg) {
     padding: get-lg(160px) 0;
@@ -800,13 +800,14 @@
   &__expand-btn {
     background: none;
     border: none;
-    color: $bg-yellow;
+    color: var(--gray, #9a9a9a);
     font-weight: 600;
-    font-size: get-d(14px);
+    font-size: get-d(16px);
     cursor: pointer;
     padding: 0;
-    margin-top: get-d(12px);
+    margin-top: get-d(18px);
     align-self: flex-start;
+    text-decoration: underline;
     transition: color 0.3s ease;
     @include respond(lg) {
       font-size: get-lg(14px);

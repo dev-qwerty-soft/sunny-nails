@@ -36,7 +36,8 @@
   &__grid {
     display: grid;
     grid-template-columns: repeat(3, calc(33% - get-d(12px)));
-    grid-gap: get-d(24px);
+    grid-gap: get-d(50px);
+    grid-column-gap: 24px;
     width: 100%;
     padding: 0 get-d(60px);
     @include respond(lg) {
