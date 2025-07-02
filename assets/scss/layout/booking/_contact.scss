@@ -20,7 +20,10 @@
     gap: 20px;
     @media screen and (max-width: 768px) {
       gap: 10px;
-      max-height: calc(100vh - 170px - env(safe-area-inset-bottom, 0px));
+      max-height: calc(100vh - 170px);
+      @supports (-webkit-touch-callout: none) {
+        max-height: calc(100vh - 170px - env(safe-area-inset-bottom, 0px) - 80px);
+      }
     }
     &::-webkit-scrollbar {
       width: 6px;
