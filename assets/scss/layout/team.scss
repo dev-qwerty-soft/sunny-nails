@@ -45,7 +45,7 @@
     }
     @include respond(md) {
       grid-template-columns: 100%;
-      grid-gap: 16px;
+      grid-gap: 40px;
     }
   }
   &__top {
