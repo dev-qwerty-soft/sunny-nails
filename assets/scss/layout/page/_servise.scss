@@ -85,17 +85,14 @@
   display: flex;
   flex-direction: column;
   width: 100%;
+  gap: 16px;
+  padding: 10px 0 0;
 }
 
 .service-card {
   display: flex;
   flex-direction: column;
   gap: 15px;
-  padding: 10px 0;
-  &:last-child {
-    padding: 20px 0 0 0;
-    border-bottom: none;
-  }
 }
 .category-overview-item {
   display: flex;
@@ -214,11 +211,7 @@
   .category-overview-item {
     gap: 10px;
   }
-  .service-card {
-    &:first-child {
-      padding: 10px 0 20px 0;
-    }
-  }
+
   .book-btn {
     margin: 10px auto 0;
   }

@@ -620,6 +620,7 @@
     }
     .title {
       letter-spacing: -1px;
+      margin-bottom: 6px;
     }
   }
   &__top {
@@ -758,7 +759,7 @@
       font-size: get-lg(16px);
     }
     @include respond(md) {
-      font-size: 12px;
+      font-size: 14px;
     }
   }
   &__rate {
