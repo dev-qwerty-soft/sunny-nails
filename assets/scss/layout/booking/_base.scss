@@ -181,6 +181,11 @@ body.popup-open {
   &::before {
     margin-left: 22px;
   }
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
   @media screen and (max-width: 768px) {
     font-size: 14px;
     height: 40px !important;
