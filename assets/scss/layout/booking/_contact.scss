@@ -22,7 +22,7 @@
       gap: 10px;
       max-height: calc(100vh - 170px);
       @supports (-webkit-touch-callout: none) {
-        max-height: calc(100vh - 170px - env(safe-area-inset-bottom, 0px) - 80px);
+        max-height: calc(100vh - 170px - env(safe-area-inset-bottom, 0px) - 50px);
       }
     }
     &::-webkit-scrollbar {
