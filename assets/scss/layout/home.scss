@@ -121,7 +121,7 @@
     }
     @media screen and (max-width: 425px) {
       &::after {
-        background: linear-gradient(180deg, rgba(247, 188, 53, 0), #f7bc35 37%);
+        background: linear-gradient(180deg, rgba(247, 188, 53, 0), #f7bc35 54%);
       }
     }
 
@@ -129,7 +129,7 @@
       display: none;
       @include respond(md) {
         display: block;
-        margin-top: 400px;
+        margin-top: 330px;
         z-index: 3;
       }
       .rating-new-item__bottom {
@@ -231,6 +231,7 @@
       max-width: get-d(350px);
 
       @include respond(md) {
+        width: 85%;
         max-width: 400px;
       }
     }
