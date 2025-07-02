@@ -191,7 +191,7 @@ function reviews_item()
                             $rating = $slide["rating"];
                             $stars = str_repeat("<div class='star'></div>", $rating);
 
-                            $char_limit = 200;
+                            $char_limit = 150;
                             $short_text = strlen($text) > $char_limit ? substr($text, 0, $char_limit) : $text;
                             $needs_expand = strlen($text) > $char_limit;
 

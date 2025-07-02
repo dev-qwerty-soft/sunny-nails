@@ -38,10 +38,10 @@
   }
   &__title {
     font-weight: 400;
-    font-size: get-d(10px);
+    font-size: get-d(12px);
     line-height: get-d(16px);
     @include respond(lg) {
-      font-size: get-lg(10px);
+      font-size: get-lg(12px);
       line-height: get-lg(16px);
     }
     @include respond(md) {
@@ -51,10 +51,10 @@
   }
   &__number {
     font-weight: 600;
-    font-size: get-d(14px);
+    font-size: get-d(16px);
     line-height: 130%;
     @include respond(lg) {
-      font-size: get-lg(14px);
+      font-size: get-lg(16px);
     }
     @include respond(md) {
       font-size: 16px;

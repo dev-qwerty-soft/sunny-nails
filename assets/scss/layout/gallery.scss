@@ -26,7 +26,7 @@
 // }
 
 .gallery-section {
-  padding: get-d(75px) get-d(60px);
+  padding: get-d(150px) get-d(60px) get-lg(75px) get-d(60px);
 
   @include respond(lg) {
     padding: get-lg(75px) get-lg(60px);
@@ -48,7 +48,7 @@
   & .container {
     display: flex;
     flex-direction: column;
-    gap: get-d(20px);
+    gap: get-d(30px);
     align-items: center;
     @include respond(lg) {
       gap: get-lg(20px);

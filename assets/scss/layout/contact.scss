@@ -18,6 +18,7 @@
   & .container {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
+    grid-gap: get-lg(20px);
     @include respond(lg) {
       grid-template-columns: 1fr;
       grid-gap: get-lg(32px);
