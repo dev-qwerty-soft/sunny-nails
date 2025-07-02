@@ -764,7 +764,7 @@ if (empty($ordered_category_ids)) {
                                         <span>
                                             I confirm that I have read and accepted the
                                             <a href="<?= esc_url(home_url('/terms-of-services/')); ?>" target="_blank" rel="noopener noreferrer">
-                                                Terms of Services
+                                                Privacy Policy & Terms of Services
                                             </a>.
                                         </span>
                                     </label>
