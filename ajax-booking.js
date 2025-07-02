@@ -1107,9 +1107,6 @@
     $(".service-checkbox").prop("checked", false);
     $(".service-item").removeClass("selected");
 
-    // Reset staff selection
-    $(".staff-item").removeClass("selected");
-
     // Reset calendar
     $(".calendar-day").removeClass("selected");
     $(".time-slot").removeClass("selected");

@@ -2,8 +2,8 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
-
-  max-height: 55vh;
+  height: 100%;
+  max-height: calc(90vh - 250px);
   overflow-y: auto;
 
   &::-webkit-scrollbar {
