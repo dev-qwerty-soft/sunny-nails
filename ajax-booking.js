@@ -2010,14 +2010,17 @@
       const itemHTML = `
             <div class="summary-service-item">
                 <div class="service-info">
-                    <strong>${service.title}</strong>
+                    <div class="service-title">
+                        <strong>${service.title}</strong>
+                           <strong class="service-price">
+                              ${price.toFixed(2)} ${service.currency || "SGD"}
+                        </strong>
+                    </div>
                     ${service.duration ? `<div class="meta"><strong>Duration:</strong> ${service.duration} min</div>` : ""}
                     ${service.wearTime ? `<div class="meta"><strong>Wear time:</strong> ${service.wearTime}</div>` : ""}
                     ${service.desc ? `<div class="meta service-description">${service.desc}</div>` : ""}
                 </div>
-                <div class="service-price">
-                    <strong>${price.toFixed(2)} ${service.currency || "SGD"}</strong>
-                </div>
+             
             </div>
         `;
 
