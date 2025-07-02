@@ -195,6 +195,7 @@
   &__item {
     display: flex;
     flex-direction: column;
+    gap: get-d(4px);
   }
   &__content {
     display: flex;
