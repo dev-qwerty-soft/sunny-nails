@@ -1,5 +1,5 @@
 .btn {
-  padding: get-d(20px) get-d(25px);
+  padding: get-d(20px) get-d(24px);
   font-family: $font-family-inter;
   font-weight: 400;
   font-size: get-d(14px);
@@ -12,13 +12,13 @@
   cursor: pointer;
   white-space: nowrap;
   @include respond(lg) {
-    padding: get-lg(20px) get-lg(25px);
+    padding: get-lg(20px) get-lg(24px);
     font-size: get-lg(14px);
     border-width: get-lg(1px);
   }
   @include respond(md) {
     padding: 14px 24px;
-    font-size: 12px;
+    font-size: 14px;
     border-width: 1px;
   }
   &:hover {
@@ -75,7 +75,7 @@
   &.yellow {
     background: $bg-yellow;
     border-color: $bg-yellow;
-    padding-right: get-d(24px + 32px);
+    padding-right: get-d(24px + 44px);
     position: relative;
     overflow: hidden;
     @include respond(lg) {
@@ -122,10 +122,10 @@
   }
   &.mini {
     padding: get-d(12px) get-d(20px);
-    font-size: get-d(12px);
+    font-size: get-d(14px);
     @include respond(lg) {
       padding: get-lg(12px) get-lg(20px);
-      font-size: get-lg(12px);
+      font-size: get-lg(14px);
     }
     @include respond(md) {
       padding: 10px 20px;
@@ -157,6 +157,11 @@
       margin-right: 10px;
     }
   }
+  a {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
   & a b {
     text-decoration: underline;
   }
@@ -184,12 +189,13 @@
       font-size: get-lg(14px);
     }
     @include respond(md) {
-      font-size: 12px;
+      font-size: 14px;
     }
   }
   &__item {
     display: flex;
     flex-direction: column;
+    gap: get-d(4px);
   }
   &__content {
     display: flex;
@@ -201,7 +207,7 @@
       padding-top: get-lg(12px);
     }
     @include respond(md) {
-      gap: 12px;
+      gap: 13px !important;
       padding-top: 8px;
     }
   }
@@ -290,7 +296,7 @@
         padding-bottom: get-lg(16px);
       }
       @include respond(md) {
-        padding-bottom: 10px;
+        padding-bottom: 20px;
       }
     }
     & .swiper-scrollbar {
@@ -328,10 +334,14 @@
     display: grid;
     grid-template-columns: 1fr max-content;
     grid-auto-rows: repeat(2, max-content);
+    grid-gap: get-d(6px);
   }
   &__rate {
     grid-column: 1 / -1;
-    height: get-d(40px);
+    height: 24px;
+    @media screen and (max-width: 768px) {
+      height: auto;
+    }
   }
   &__name {
     font-weight: 500;
@@ -716,7 +726,7 @@
     font-size: get-lg(14px);
   }
   @include respond(md) {
-    font-size: 12px;
+    font-size: 14px;
   }
 
   & span {

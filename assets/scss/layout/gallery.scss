@@ -26,13 +26,13 @@
 // }
 
 .gallery-section {
-  padding: get-d(75px) get-d(60px);
+  padding: get-d(150px) get-d(60px) get-lg(75px) get-d(60px);
 
   @include respond(lg) {
     padding: get-lg(75px) get-lg(60px);
   }
   @include respond(md) {
-    padding: 75px 25px;
+    padding: 75px 25px 0;
   }
 
   &.full {
@@ -41,14 +41,14 @@
       padding-top: get-lg(40px);
     }
     @include respond(md) {
-      padding-top: 0px;
+      padding: 0 25px 75px;
     }
   }
 
   & .container {
     display: flex;
     flex-direction: column;
-    gap: get-d(20px);
+    gap: get-d(30px);
     align-items: center;
     @include respond(lg) {
       gap: get-lg(20px);
@@ -97,6 +97,7 @@
     }
 
     & .filter {
+      font-family: "Montserrat", sans-serif;
       font-weight: 500;
       font-size: get-d(14px);
       line-height: 120%;
@@ -117,7 +118,7 @@
 
       @include respond(md) {
         padding: 9.5px 20px;
-        font-size: 12px;
+        font-size: 14px;
         border-width: 1px;
       }
 
@@ -190,8 +191,8 @@
             padding: get-lg(10px) get-lg(40px) get-lg(10px) get-lg(15px);
           }
           @include respond(md) {
-            padding: min(get-md(16px), 10px) min(get-md(60px), 40px) min(get-md(16px), 10px) min(get-md(15px), 15px);
-            font-size: min(get-md(24px), 12px);
+            padding: 5px 30px 5px 16px;
+            font-size: 14px;
           }
         }
 
@@ -350,13 +351,16 @@
     & img {
       width: 100%;
       height: auto;
+
       aspect-ratio: 1/1;
       object-fit: cover;
       max-width: 325px;
       margin: 0 auto;
+      margin-bottom: 14px;
       border-radius: 10px;
     }
     & .btn {
+      margin-top: 14px;
       text-align: center;
     }
     & .image__title {
@@ -375,16 +379,18 @@
     position: absolute;
     width: 20px !important;
     height: 20px !important;
-    top: clamp(32%, 10vw, 50%);
+    border: 10px solid transparent;
+    box-sizing: content-box;
+    top: clamp(32%, 10vw, 30%) !important;
     transform: translateY(-50%);
 
     z-index: 1;
     &.swiper-button-next {
-      right: 0 !important;
+      right: -5px !important;
       transform: translateY(-50%) rotate(180deg);
     }
     &.swiper-button-prev {
-      left: 0 !important;
+      left: -5px !important;
     }
   }
 }

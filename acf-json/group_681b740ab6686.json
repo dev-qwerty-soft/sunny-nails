@@ -3,6 +3,26 @@
     "title": "Choose section",
     "fields": [
         {
+            "key": "field_685eb8c33db33",
+            "label": "Choose section active",
+            "name": "choose_section_active",
+            "aria-label": "",
+            "type": "true_false",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "message": "",
+            "default_value": 0,
+            "ui_on_text": "",
+            "ui_off_text": "",
+            "ui": 1
+        },
+        {
             "key": "field_681b740ad358c",
             "label": "Choose title",
             "name": "choose_title",
@@ -112,5 +132,5 @@
     "active": true,
     "description": "",
     "show_in_rest": 0,
-    "modified": 1748028701
+    "modified": 1751038207
 }

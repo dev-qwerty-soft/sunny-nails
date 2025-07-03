@@ -36,15 +36,16 @@
                  <?php if ($acf_description) : ?>
                      <div class="service-description"><?php echo esc_html($acf_description); ?></div>
                  <?php endif; ?>
+                 <button type="button"
+                     class="btn yellow book-btn "
+                     data-popup-open="true"
+                     data-service-id="<?php echo esc_attr($post_id); ?>">
+
+                     Book this
+                 </button>
              </div>
 
-             <button type="button"
-                 class="btn yellow book-btn "
-                 data-popup-open="true"
-                 data-service-id="<?php echo esc_attr($post_id); ?>">
 
-                 Book this
-             </button>
          </div>
      <?php endforeach; ?>
  </div>

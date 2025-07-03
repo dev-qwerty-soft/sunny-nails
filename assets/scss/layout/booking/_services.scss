@@ -5,6 +5,7 @@
   overflow-x: auto;
   gap: 8px;
   margin-bottom: 20px;
+  min-height: 50px;
   padding-bottom: 10px;
 
   &::-webkit-scrollbar {
@@ -23,7 +24,7 @@
 }
 
 .booking-step .services-list {
-  max-height: 50vh;
+  max-height: calc(90vh - 335px);
   overflow-y: auto;
   max-width: 825px;
   padding: 30px;
@@ -33,7 +34,7 @@
 
   @media screen and (max-width: 768px) {
     padding: 10px;
-    max-height: 65vh;
+    max-height: calc(100vh - 200px);
   }
   &::-webkit-scrollbar {
     width: 5px;
@@ -51,13 +52,16 @@
 }
 .category-tab {
   display: flex;
-  align-content: JCC;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
   white-space: nowrap;
   padding: 10px 20px;
   border-radius: 50px;
   border: 1px solid var(--black, #302f34);
   color: #302f34;
   font-size: 16px;
+  font-family: "Montserrat", sans-serif;
   font-weight: 600;
   line-height: normal;
   letter-spacing: -0.32px;

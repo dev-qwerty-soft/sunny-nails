@@ -1,3 +1,7 @@
+body.popup-open {
+  overflow: hidden !important;
+  height: 100%;
+}
 .booking-popup-overlay {
   display: none;
   position: fixed;
@@ -28,6 +32,7 @@
   max-height: 90vh;
   background: #f7f1e0;
   overflow: hidden;
+  border-radius: 10px;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
   @media screen and (max-width: 768px) {
     display: flex;
@@ -36,6 +41,7 @@
     flex-direction: column;
     max-height: 100vh;
     height: 100%;
+    border-radius: 0px;
   }
 }
 
@@ -58,7 +64,7 @@
     transform: rotate(90deg);
   }
   @media screen and (max-width: 768px) {
-    top: 5px;
+    top: 3px;
     right: -5px;
     width: 24px;
     height: 24px;
@@ -89,7 +95,7 @@
   color: var(--black, #302f34);
   font-size: 14px;
   font-weight: 500;
-  position: relative;
+  position: absolute;
   cursor: pointer;
   transition: all 0.3s ease-in-out;
   &::before {
@@ -122,10 +128,13 @@
 
 .booking-popup-content {
   padding: 50px;
-
+  border-radius: 10px;
+  min-height: calc(100vh - 100px);
   @media (max-width: 768px) {
     padding: 20px;
     width: 100vw;
+    border-radius: 0px;
+    max-height: 100vh;
   }
 }
 
@@ -145,18 +154,30 @@
 
 .booking-steps-container {
   position: relative;
+  height: 100%;
 }
 
 .booking-step {
   display: none;
 
   &.active {
-    display: block;
+    display: flex;
+    flex-direction: column;
+    min-height: calc(90vh - 100px);
+    @media screen and (max-width: 768px) {
+      height: calc(100vh - 40px);
+      min-height: calc(100vh - 40px);
+
+      @supports (-webkit-touch-callout: none) {
+        height: calc(100vh - 40px - env(safe-area-inset-bottom, 0px) - 80px);
+        min-height: calc(100vh - 40px - env(safe-area-inset-bottom, 0px) - 80px);
+      }
+    }
   }
 }
 .next-btn {
   height: 55px;
-  padding: 4px 70px 4px 24px !important;
+  padding: 4px 55px 4px 24px !important;
   color: var(--black, #302f34);
   font-size: 16px;
   font-weight: 400;
@@ -164,8 +185,13 @@
   &::before {
     margin-left: 22px;
   }
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
   @media screen and (max-width: 768px) {
-    font-size: 12px;
+    font-size: 14px;
     height: 40px !important;
     width: max-content !important;
   }
@@ -174,7 +200,7 @@
 .booking-option-item {
   display: flex;
   align-items: center;
-  gap: 30px;
+  gap: 24px;
   padding: 24px 30px;
   margin-bottom: 10px;
   border-radius: 10px;
@@ -188,6 +214,7 @@
   @media screen and (max-width: 768px) {
     font-size: 16px;
     padding: 15px;
+    gap: 10px;
   }
 
   &:hover {
@@ -234,6 +261,7 @@
 }
 
 .status-indicator {
+  position: relative;
   display: block;
   width: 27px;
   height: 27px;
@@ -241,16 +269,53 @@
   border-radius: 50%;
   background: #fff;
 
+  &::before,
+  &::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+
+  &::before {
+    width: 18px;
+    height: 18px;
+    border: 3px solid #fdc41f;
+  }
+  &::after {
+    width: 18px;
+    height: 18px;
+    background: #ffffff;
+  }
+
   &.active {
-    border-color: #302f34;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    background: rgba(255, 255, 255, 0.3);
+    &::before,
+    &::after {
+      opacity: 1;
+    }
   }
 }
+
 .step-actions {
   display: flex;
   justify-content: center;
-  margin: 30px auto 0;
+  margin: auto auto 0;
+  padding-top: 30px;
   @media screen and (max-width: 768px) {
-    margin: 10px auto 0;
+    margin: auto auto 0;
+    padding-top: 20px;
+    padding-bottom: 20px;
+
+    @supports (-webkit-touch-callout: none) {
+      padding-bottom: calc(env(safe-area-inset-bottom, 20px) + 0px);
+    }
   }
 }
 

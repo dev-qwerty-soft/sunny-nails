@@ -168,7 +168,26 @@
    * Initialize coupon handling
    */
   function initCouponHandling() {
-    // Apply coupon button
+    const couponInput = $("#coupon-code");
+    const applyBtn = $(".apply-coupon-btn");
+
+    applyBtn.prop("disabled", true);
+
+    couponInput.on("input", function () {
+      const inputValue = $(this).val().trim();
+
+      if (inputValue.length > 0) {
+        applyBtn.prop("disabled", false);
+      } else {
+        applyBtn.prop("disabled", true);
+      }
+    });
+
+    couponInput.on("focus", function () {
+      const inputValue = $(this).val().trim();
+      applyBtn.prop("disabled", inputValue.length === 0);
+    });
+
     $(document).on("click", ".apply-coupon-btn", function () {
       const couponCode = $("#coupon-code").val().trim();
 
@@ -177,7 +196,6 @@
         return;
       }
 
-      // Disable button while checking
       $(this).prop("disabled", true).text("Checking...");
 
       $.ajax({
@@ -192,19 +210,15 @@
           $(".apply-coupon-btn").prop("disabled", false).text("Apply");
 
           if (response.success) {
-            // Save coupon data
             bookingData.coupon = {
               code: response.data.promo_code,
               value: parseFloat(response.data.discount_value),
             };
 
-            // Show success message
             showCouponFeedback(response.data.message, "success");
 
-            // Update summary
             updateSummary();
 
-            // Show success in step 6 if we're there
             $(".booking-step[data-step='confirm'] .coupon-feedback").show();
           } else {
             showCouponFeedback(response.data.message || "Invalid coupon", "error");
@@ -217,7 +231,6 @@
       });
     });
 
-    // Enter key in coupon field
     $(document).on("keypress", "#coupon-code", function (e) {
       if (e.which === 13) {
         e.preventDefault();
@@ -335,6 +348,7 @@
 
       // Show popup
       $(".booking-popup-overlay").addClass("active");
+      $("body").addClass("popup-open");
       $(".loading-overlay").hide();
       // Trigger custom event
       $(document).trigger("bookingPopupOpened");
@@ -343,6 +357,7 @@
     // Close popup
     $(document).on("click", ".booking-popup-close, .close-popup-btn", function () {
       $(".booking-popup-overlay").removeClass("active");
+      $("body").removeClass("popup-open");
       // Add a confirmation if there's unsaved data
       clearBookingSession();
     });
@@ -351,6 +366,7 @@
     $(document).on("click", ".booking-popup-overlay", function (e) {
       if ($(e.target).is(".booking-popup-overlay")) {
         $(".booking-popup-overlay").removeClass("active");
+        $("body").removeClass("popup-open");
         clearBookingSession();
       }
     });
@@ -437,6 +453,7 @@
     bookingData.flowHistory = ["initial", "master"];
     bookingData.galleryTitle = galleryTitle;
     $(".booking-popup-overlay").addClass("active");
+    $("body").addClass("popup-open");
 
     const $staffItem = $(`.staff-item[data-staff-id="${masterId}"]`);
     if ($staffItem.length) {
@@ -579,7 +596,7 @@
 
         if (!isAddon) {
           const coreId = $(this).data("service-id");
-          const $container = $(`.core-related-addons[data-core-id="${coreId}"]`);
+          const $container = $(`.core-related_addons[data-core-id="${coreId}"]`);
           $container.addClass("open");
           // Enable related add-ons
           $container.find(".service-checkbox").prop("disabled", false);
@@ -592,7 +609,7 @@
 
         if (!isAddon) {
           const coreId = $(this).data("service-id");
-          const $container = $(`.core-related-addons[data-core-id="${coreId}"]`);
+          const $container = $(`.core-related_addons[data-core-id="${coreId}"]`);
           $container.removeClass("open");
           // Disable and uncheck related add-ons
           $container.find("input[type=checkbox]").prop("checked", false).prop("disabled", true);
@@ -1090,9 +1107,6 @@
     $(".service-checkbox").prop("checked", false);
     $(".service-item").removeClass("selected");
 
-    // Reset staff selection
-    $(".staff-item").removeClass("selected");
-
     // Reset calendar
     $(".calendar-day").removeClass("selected");
     $(".time-slot").removeClass("selected");
@@ -1402,6 +1416,8 @@
     });
   }
 
+  // ...existing code...
+
   function renderStaff(staffList) {
     if (!staffList || staffList.length === 0) {
       $(".staff-list").html('<p class="no-items-message">No specialists available for the selected services.</p>');
@@ -1409,11 +1425,11 @@
     }
 
     let html = "";
-    const isSelected = bookingData.staffId == "any" ? " selected" : "";
+    const isSelected = bookingData.staffId == "any" ? " selected" : " selected"; // Always selected by default
 
     html = `
     <label class="staff-item any-master first${isSelected}" data-staff-id="any" data-staff-level="1">
-      <input type="radio" name="staff">
+      <input type="radio" name="staff" checked>
       <div class="staff-radio-content">
         <div class="staff-avatar circle yellow-bg">
           <svg width="21" height="21" viewBox="0 0 21 21" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -1430,6 +1446,13 @@
       </div>
     </label>
   `;
+
+    // Set default selection if no staff is currently selected
+    if (!bookingData.staffId) {
+      bookingData.staffId = "any";
+      bookingData.staffName = "Any master";
+      bookingData.staffLevel = 1;
+    }
 
     staffList.forEach(function (staff) {
       const isSelected = bookingData.staffId == staff.id ? " selected" : "";
@@ -1469,9 +1492,8 @@
 
     $(".staff-list").html(html);
 
-    if (bookingData.staffId) {
-      $(`.staff-item[data-staff-id="${bookingData.staffId}"]`).addClass("selected");
-    }
+    // Ensure "Any master" is selected by default and enable next button
+    updateMasterNextButtonState();
   }
 
   function renderContactStepSummary() {
@@ -1985,14 +2007,17 @@
       const itemHTML = `
             <div class="summary-service-item">
                 <div class="service-info">
-                    <strong>${service.title}</strong>
+                    <div class="service-title">
+                        <strong>${service.title}</strong>
+                           <strong class="service-price">
+                              ${price.toFixed(2)} ${service.currency || "SGD"}
+                        </strong>
+                    </div>
                     ${service.duration ? `<div class="meta"><strong>Duration:</strong> ${service.duration} min</div>` : ""}
                     ${service.wearTime ? `<div class="meta"><strong>Wear time:</strong> ${service.wearTime}</div>` : ""}
                     ${service.desc ? `<div class="meta service-description">${service.desc}</div>` : ""}
                 </div>
-                <div class="service-price">
-                    <strong>${price.toFixed(2)} ${service.currency || "SGD"}</strong>
-                </div>
+             
             </div>
         `;
 
@@ -2358,6 +2383,7 @@ ${couponInfo}Note: Master markup applied only to core services, not to Add-on se
     e.preventDefault();
 
     $(".booking-popup-overlay").removeClass("active");
+    $("body").removeClass("popup-open");
     $(".booking-popup").hide();
     $(".loading-overlay").hide();
 

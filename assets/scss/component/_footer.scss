@@ -42,8 +42,8 @@
     height: get-lg($footer-height);
   }
   @include respond(md) {
-    padding: 0 25px 25px 25px;
-    height: $footer-height-mobile;
+    padding: 25px 25px 25px;
+    height: fit-content;
   }
   &__top {
     display: flex;
@@ -55,8 +55,9 @@
   }
   &__bottom {
     margin-top: get-d(52px);
-    display: grid;
-    grid-template-columns: 1fr max-content 1fr;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     padding-top: get-d(20px);
     border-top: get-d(1px) solid #302f3466;
     @include respond(lg) {
@@ -116,15 +117,22 @@
   & .menu-aside-container {
     justify-self: flex-end;
   }
-  & .footer__menu__aside a {
-    font-size: get-d(14px);
-    text-transform: capitalize;
-    opacity: 0.7;
-    @include respond(lg) {
-      font-size: get-lg(14px);
-    }
+  & .footer__menu__aside {
     @include respond(md) {
-      font-size: 12px;
+      flex-direction: column-reverse;
+      align-items: flex-end;
+      gap: 10px;
+    }
+    a {
+      font-size: get-d(14px);
+      text-transform: none;
+      opacity: 0.7;
+      @include respond(lg) {
+        font-size: get-lg(14px);
+      }
+      @include respond(md) {
+        font-size: 12px;
+      }
     }
   }
 }

@@ -1,12 +1,12 @@
 <?php
 
 /**
- * Простий фікс для Altegio синхронізації
- * Додайте цей код в functions.php
+ * Simple fix for Altegio synchronization
+ * Add this code to functions.php
  */
 
 /**
- * Покращена синхронізація сервісів з примусовим оновленням
+ * Enhanced service synchronization with forced update
  */
 function enhanced_sync_altegio_services()
 {
@@ -22,13 +22,13 @@ function enhanced_sync_altegio_services()
     }
 
     $stats = ['created' => 0, 'updated' => 0, 'errors' => 0];
-    $altegio_service_ids = []; // Для відстеження існуючих в Altegio
+    $altegio_service_ids = []; // To track existing services in Altegio
 
     foreach ($services['data'] as $service_data) {
         $altegio_id = $service_data['id'];
         $altegio_service_ids[] = $altegio_id;
 
-        // Знайти існуючий пост
+        // Find existing post
         $existing_posts = get_posts([
             'post_type' => 'service',
             'meta_query' => [
@@ -47,7 +47,7 @@ function enhanced_sync_altegio_services()
             'posts_per_page' => 1
         ]);
 
-        // Підготувати дані поста
+        // Prepare post data
         $post_data = [
             'post_title' => sanitize_text_field($service_data['title'] ?? ''),
             'post_content' => wp_kses_post($service_data['comment'] ?? ''),
@@ -55,7 +55,7 @@ function enhanced_sync_altegio_services()
             'post_status' => 'publish'
         ];
 
-        // Витягнути wear time з контенту
+        // Extract wear time from content
         $wear_time = '';
         if (!empty($service_data['comment'])) {
             if (preg_match('/wear\s+time:?\s*([^\.]+)/i', $service_data['comment'], $matches)) {
@@ -66,7 +66,7 @@ function enhanced_sync_altegio_services()
         }
 
         if (!empty($existing_posts)) {
-            // ОНОВИТИ існуючий пост (ПРИМУСОВО)
+            // UPDATE existing post (FORCED)
             $post_id = $existing_posts[0]->ID;
             $post_data['ID'] = $post_id;
 
@@ -80,7 +80,7 @@ function enhanced_sync_altegio_services()
                 error_log("Failed to update service: " . $result->get_error_message());
             }
         } else {
-            // СТВОРИТИ новий пост
+            // CREATE new post
             $post_id = wp_insert_post($post_data, true);
 
             if (!is_wp_error($post_id)) {
@@ -93,7 +93,7 @@ function enhanced_sync_altegio_services()
         }
 
         if (!is_wp_error($post_id) && $post_id) {
-            // ПРИМУСОВО оновити всі мета поля
+            // FORCE update all meta fields
             update_post_meta($post_id, 'altegio_id', $altegio_id);
             update_post_meta($post_id, '_altegio_id', $altegio_id);
             update_post_meta($post_id, 'price_min', floatval($service_data['price_min'] ?? 0));
@@ -113,7 +113,7 @@ function enhanced_sync_altegio_services()
                 update_post_meta($post_id, '_duration', $duration_seconds);
             }
 
-            // Оновити через ACF якщо доступно
+            // Update via ACF if available
             if (function_exists('update_field')) {
                 update_field('price_min', floatval($service_data['price_min'] ?? 0), $post_id);
                 update_field('price_max', floatval($service_data['price_max'] ?? 0), $post_id);
@@ -128,7 +128,7 @@ function enhanced_sync_altegio_services()
         }
     }
 
-    // ВИДАЛИТИ сервіси, які більше не існують в Altegio
+    // DELETE services that no longer exist in Altegio
     $wp_services_with_altegio_id = get_posts([
         'post_type' => 'service',
         'posts_per_page' => -1,
@@ -158,7 +158,7 @@ function enhanced_sync_altegio_services()
 }
 
 /**
- * Покращена синхронізація майстрів з примусовим оновленням фото
+ * Enhanced masters synchronization with forced photo update
  */
 function enhanced_sync_altegio_masters()
 {
@@ -180,7 +180,7 @@ function enhanced_sync_altegio_masters()
         $altegio_id = $master_data['id'];
         $altegio_master_ids[] = $altegio_id;
 
-        // Знайти існуючий пост
+        // Find existing post
         $existing_posts = get_posts([
             'post_type' => 'master',
             'meta_query' => [
@@ -193,7 +193,7 @@ function enhanced_sync_altegio_masters()
             'posts_per_page' => 1
         ]);
 
-        // Підготувати дані поста
+        // Prepare post data
         $post_data = [
             'post_title' => sanitize_text_field($master_data['name'] ?? ''),
             'post_content' => wp_kses_post($master_data['information'] ?? ''),
@@ -202,7 +202,7 @@ function enhanced_sync_altegio_masters()
         ];
 
         if (!empty($existing_posts)) {
-            // ОНОВИТИ існуючий пост (ПРИМУСОВО)
+            // UPDATE existing post (FORCED)
             $post_id = $existing_posts[0]->ID;
             $post_data['ID'] = $post_id;
 
@@ -216,7 +216,7 @@ function enhanced_sync_altegio_masters()
                 error_log("Failed to update master: " . $result->get_error_message());
             }
         } else {
-            // СТВОРИТИ новий пост
+            // CREATE new post
             $post_id = wp_insert_post($post_data, true);
 
             if (!is_wp_error($post_id)) {
@@ -229,22 +229,22 @@ function enhanced_sync_altegio_masters()
         }
 
         if (!is_wp_error($post_id) && $post_id) {
-            // ПРИМУСОВО оновити всі мета поля
+            // FORCE update all meta fields
             update_post_meta($post_id, 'altegio_id', $altegio_id);
             update_post_meta($post_id, 'description', sanitize_textarea_field($master_data['information'] ?? ''));
             update_post_meta($post_id, 'master_level', sanitize_text_field($master_data['specialization'] ?? '1'));
             update_post_meta($post_id, 'is_bookable', !empty($master_data['is_bookable']));
 
-            // ПРИМУСОВО оновити фото навіть якщо воно вже є
+            // FORCE update photo even if it already exists
             $avatar_url = $master_data['avatar_big'] ?? '';
             if (!empty($avatar_url)) {
-                // Видалити старе фото
+                // Delete old photo
                 $existing_thumbnail_id = get_post_thumbnail_id($post_id);
                 if ($existing_thumbnail_id) {
                     wp_delete_attachment($existing_thumbnail_id, true);
                 }
 
-                // Завантажити нове фото
+                // Upload new photo
                 require_once(ABSPATH . 'wp-admin/includes/media.php');
                 require_once(ABSPATH . 'wp-admin/includes/file.php');
                 require_once(ABSPATH . 'wp-admin/includes/image.php');
@@ -259,7 +259,7 @@ function enhanced_sync_altegio_masters()
                 }
             }
 
-            // Оновити через ACF якщо доступно
+            // Update via ACF if available
             if (function_exists('update_field')) {
                 update_field('master_level', $master_data['specialization'] ?? '1', $post_id);
                 update_field('is_bookable', !empty($master_data['is_bookable']), $post_id);
@@ -267,7 +267,7 @@ function enhanced_sync_altegio_masters()
         }
     }
 
-    // ВИДАЛИТИ майстрів, які більше не існують в Altegio
+    // DELETE masters that no longer exist in Altegio
     $wp_masters_with_altegio_id = get_posts([
         'post_type' => 'master',
         'posts_per_page' => -1,
@@ -292,7 +292,7 @@ function enhanced_sync_altegio_masters()
 }
 
 /**
- * Покращена синхронізація категорій з видаленням
+ * Enhanced categories synchronization
  */
 function enhanced_sync_altegio_categories()
 {
@@ -317,7 +317,7 @@ function enhanced_sync_altegio_categories()
 
         if (empty($title)) continue;
 
-        // Знайти існуючий терм
+        // Find existing term
         $existing_terms = get_terms([
             'taxonomy' => 'service_category',
             'meta_key' => '_altegio_category_id',
@@ -326,7 +326,7 @@ function enhanced_sync_altegio_categories()
         ]);
 
         if (!empty($existing_terms) && !is_wp_error($existing_terms)) {
-            // ОНОВИТИ існуючий терм
+            // UPDATE existing term
             $term_id = $existing_terms[0]->term_id;
 
             $result = wp_update_term($term_id, 'service_category', [
@@ -342,7 +342,7 @@ function enhanced_sync_altegio_categories()
                 error_log("Failed to update category: " . $result->get_error_message());
             }
         } else {
-            // СТВОРИТИ новий терм
+            // CREATE new term
             $result = wp_insert_term(sanitize_text_field($title), 'service_category', [
                 'description' => sanitize_textarea_field($category_data['description'] ?? '')
             ]);
@@ -359,7 +359,7 @@ function enhanced_sync_altegio_categories()
         }
     }
 
-    // ВИДАЛИТИ категорії, які більше не існують в Altegio
+    // DELETE categories that no longer exist in Altegio
     $wp_categories_with_altegio_id = get_terms([
         'taxonomy' => 'service_category',
         'hide_empty' => false,
@@ -384,7 +384,7 @@ function enhanced_sync_altegio_categories()
 }
 
 /**
- * Замінити існуючі функції синхронізації
+ * Replace existing synchronization functions
  */
 function run_enhanced_complete_altegio_sync()
 {
@@ -399,7 +399,7 @@ function run_enhanced_complete_altegio_sync()
 }
 
 /**
- * Додати нову сторінку в адмін меню
+ * Add new page to admin menu
  */
 add_action('admin_menu', function () {
     add_submenu_page(
@@ -413,7 +413,7 @@ add_action('admin_menu', function () {
 });
 
 /**
- * Сторінка адміна для покращеної синхронізації
+ * Admin page for enhanced synchronization
  */
 function enhanced_altegio_sync_page()
 {
@@ -467,7 +467,7 @@ function enhanced_altegio_sync_page()
 }
 
 /**
- * Замінити функції у старій адмін-сторінці
+ * Replace functions in old admin page
  */
 add_action('wp_ajax_enhanced_altegio_sync_services', function () {
     if (!current_user_can('manage_options')) {
@@ -497,7 +497,7 @@ add_action('wp_ajax_enhanced_altegio_sync_categories', function () {
 });
 
 /**
- * Автоматична синхронізація раз на день
+ * Automatic synchronization once a day
  */
 if (!wp_next_scheduled('enhanced_altegio_daily_sync')) {
     wp_schedule_event(time(), 'daily', 'enhanced_altegio_daily_sync');
@@ -506,7 +506,7 @@ if (!wp_next_scheduled('enhanced_altegio_daily_sync')) {
 add_action('enhanced_altegio_daily_sync', 'run_enhanced_complete_altegio_sync');
 
 /**
- * Кнопка швидкої синхронізації в адмін барі
+ * Quick sync button in admin bar
  */
 add_action('admin_bar_menu', function ($wp_admin_bar) {
     if (!current_user_can('manage_options')) return;

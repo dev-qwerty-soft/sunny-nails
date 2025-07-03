@@ -2,8 +2,8 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
-
-  max-height: 55vh;
+  height: 100%;
+  max-height: calc(90vh - 260px);
   overflow-y: auto;
 
   &::-webkit-scrollbar {
@@ -47,6 +47,9 @@
     display: none;
   }
   &.any-master {
+    .staff-radio-content {
+      gap: 16px;
+    }
     @media screen and (max-width: 768px) {
       .radio-indicator,
       .staff-avatar {
@@ -106,7 +109,7 @@
   display: flex;
   flex-direction: column;
   @media screen and (max-width: 768px) {
-    padding: 0 30px 0 70px;
+    padding: 0 30px 0 65px;
   }
 }
 
@@ -133,6 +136,13 @@
   }
   .staff-stars {
     display: flex;
+    align-items: center;
+    justify-content: center;
+    .star {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
   }
 }
 
@@ -142,11 +152,17 @@
   color: #302f34;
   margin-left: auto;
   @media screen and (max-width: 768px) {
-    margin: 0 auto;
+    margin-left: 65px;
     padding-right: 40px;
   }
 }
-
+.studio-name {
+  color: var(--black, #302f34);
+  font-size: 14px;
+  font-weight: 500;
+  text-wrap: nowrap;
+  line-height: 120%; /* 16.8px */
+}
 .radio-indicator {
   width: 27px;
   height: 27px;

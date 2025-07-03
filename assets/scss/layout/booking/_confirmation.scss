@@ -24,20 +24,25 @@
     line-height: 120%; /* 28.8px */
     letter-spacing: -0.72px;
     @media screen and (max-width: 768px) {
-      display: none;
+      font-size: 16px;
     }
   }
   .booking-summary-box {
-    overflow-y: hidden !important;
-    max-height: 100% !important;
     gap: 16px;
+    max-height: calc(90vh - 190px);
+    @media screen and (max-width: 768px) {
+      max-height: calc(100vh - 200px) !important;
+      @supports (-webkit-touch-callout: none) {
+        max-height: calc(100vh - 200px - env(safe-area-inset-bottom, 0px) - 50px);
+      }
+    }
   }
 }
 
 .confirmation-success {
   display: flex;
   padding: 25px;
-  margin-bottom: 20px;
+
   flex-direction: column;
   align-items: center;
   justify-content: center;
@@ -45,9 +50,6 @@
   align-self: stretch;
   border-radius: 10px;
   background: rgba(255, 255, 255, 0.75);
-  @media screen and (max-width: 768px) {
-    margin: 0 0 10px 0;
-  }
 }
 .confirmation-success-icon {
   display: flex;
@@ -94,7 +96,7 @@
   .btn {
     font-size: 14px;
     font-weight: 500;
-    padding: 10px !important;
+    padding: 10px 24px !important;
     height: 50px !important;
     &::before {
       display: none;
