@@ -24,7 +24,7 @@
   }
   @include respond(lg) {
     padding: 28px 25px 16px 25px;
-    border-bottom: 2px solid var(--border-color);
+    // border-bottom: 2px solid var(--border-color);
     height: $header-height;
     & .buttons {
       display: none;
@@ -117,7 +117,9 @@ main {
     padding-top: $header-height;
   }
 }
-
+.home main {
+  padding: 72px 0 0;
+}
 body {
   &.page-template-sunny-friends,
   &.page-template-mani-mania {

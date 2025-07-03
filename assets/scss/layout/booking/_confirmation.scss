@@ -29,6 +29,7 @@
   }
   .booking-summary-box {
     gap: 16px;
+    max-height: calc(90vh - 190px);
     @media screen and (max-width: 768px) {
       max-height: calc(100vh - 200px) !important;
       @supports (-webkit-touch-callout: none) {

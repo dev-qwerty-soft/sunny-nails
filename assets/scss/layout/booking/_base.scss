@@ -154,6 +154,7 @@ body.popup-open {
 
 .booking-steps-container {
   position: relative;
+  height: 100%;
 }
 
 .booking-step {
@@ -162,6 +163,7 @@ body.popup-open {
   &.active {
     display: flex;
     flex-direction: column;
+    min-height: calc(90vh - 100px);
     @media screen and (max-width: 768px) {
       height: calc(100vh - 40px);
       min-height: calc(100vh - 40px);
@@ -304,7 +306,8 @@ body.popup-open {
 .step-actions {
   display: flex;
   justify-content: center;
-  margin: 30px auto 0;
+  margin: auto auto 0;
+  padding-top: 30px;
   @media screen and (max-width: 768px) {
     margin: auto auto 0;
     padding-top: 20px;
