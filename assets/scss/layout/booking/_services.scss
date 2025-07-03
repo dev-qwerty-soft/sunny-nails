@@ -24,7 +24,7 @@
 }
 
 .booking-step .services-list {
-  max-height: 50vh;
+  max-height: calc(90vh - 335px);
   overflow-y: auto;
   max-width: 825px;
   padding: 30px;

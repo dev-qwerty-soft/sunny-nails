@@ -3,17 +3,13 @@
   .booking-details-content {
     display: flex;
     flex-direction: column;
-    gap: 20px;
-    @media screen and (max-width: 768px) {
-      gap: 0px;
-    }
   }
 
   .booking-summary-box {
     display: flex;
     flex-direction: column;
     gap: 16px;
-    max-height: calc(70vh - 140px);
+    max-height: calc(90vh - 260px);
     overflow-y: auto;
     display: flex;
     flex-direction: column;
