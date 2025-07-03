@@ -17,7 +17,7 @@ get_header();
         };
       ?>
       <div class="about-section__text">
-        <h2 class="title"><?php the_field('about_us_title'); ?></h2>
+        <h1 class="title"><?php the_field('about_us_title'); ?></h1>
         <div class="paragraph">
           <?php the_field('about_us_text'); ?>
         </div>
