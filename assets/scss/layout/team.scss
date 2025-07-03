@@ -15,11 +15,11 @@
   @include respond(md) {
     padding: 75px 0;
     & .swiper-button-next {
-      right: 3px !important;
+      right: -3px !important;
       top: 30%;
     }
     & .swiper-button-prev {
-      left: 3px !important;
+      left: -3px !important;
       top: 30%;
     }
   }
@@ -67,6 +67,8 @@
     & .btn {
       grid-column: 2 / 3;
       grid-row: 2 / 3;
+      width: fit-content;
+      margin-left: auto;
       @include respond(md) {
         display: none;
       }
