@@ -1,3 +1,7 @@
+<?php
+$isPage = $args["page"] ?? false;
+?>
+
 <section class="promo-form-section">
   <?php
   $image_desktop = get_field('form_image', 'option');
@@ -8,11 +12,11 @@
   };
   ?>
   <div class="container">
-
     <?php
     $title = get_field('form_title', 'option');
     if ($title) {
-      echo "<h2 class='title'>$title</h2>";
+      $tag = $isPage ? 'h1' : 'h2';
+      echo "<$tag class='title'>$title</$tag>";
     };
     ?>
     <div class="paragraph">

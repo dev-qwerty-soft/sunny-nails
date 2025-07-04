@@ -6,7 +6,14 @@ $array = getPosts("master");
 <section class='team-section<?= $isPage ? ' page' : '' ?>'>
   <div class='container'>
     <div class='team-section__top'>
-      <h2 class='title'><?php the_field('team_title', 'option'); ?></h2>
+      <?php
+        $title = get_field('team_title', 'option');
+        if($isPage) {
+          echo "<h1 class='title'>$title</h1>";
+        } else {
+          echo "<h2 class='title'>$title</h2>";
+        };
+      ?>
       <p class='paragraph'><?php the_field('team_description', 'option'); ?></p>
       <?php
       $link_team = get_field('team_link_url', 'option');
