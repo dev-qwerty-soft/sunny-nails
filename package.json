@@ -37,6 +37,7 @@
   },
   "dependencies": {
     "@googlemaps/js-api-loader": "^1.16.8",
+    "g": "^2.0.1",
     "gsap": "^3.13.0",
     "swiper": "^11.2.6"
   }

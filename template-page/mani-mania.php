@@ -23,7 +23,7 @@
 ?>
 <main>
   <?php
-    get_template_part('template-parts/sections/form');
+    get_template_part('template-parts/sections/form', null, ["page" => true]);
   ?>
   <section class="counter-section">
     <div class="container">

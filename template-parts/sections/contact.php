@@ -6,7 +6,14 @@
   <div class="container">
     <div class="contact-section__content">
       <div class="contact-section__text">
-        <h2 class="title"><?php the_field('contact_title', 'option'); ?></h2>
+        <?php
+          $title = get_field('contact_title', 'option');
+          if($isPage) {
+            echo "<h1 class='title'>$title</h1>";
+          } else {
+            echo "<h2 class='title'>$title</h2>";
+          };
+        ?>
         <p class="paragraph"><?php the_field('contact_text', 'option'); ?></p>
       </div>
       <?php
