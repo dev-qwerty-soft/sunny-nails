@@ -106,7 +106,7 @@ jQuery(document).ready(function ($) {
     } else {
       $shortText.slideUp(300);
       $fullText.slideDown(300);
-      $btn.addClass("expanded").text("less less");
+      $btn.addClass("expanded").text("Read less");
     }
   });
 });
