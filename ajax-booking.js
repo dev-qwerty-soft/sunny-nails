@@ -839,8 +839,9 @@
       if (typeof bookingData !== "undefined") {
         bookingData.contact = bookingData.contact || {};
         bookingData.contact.phone = cleaned;
-        bookingData.contact.countryCode = window.getSelectedCountryCode ? window.getSelectedCountryCode() : "+65";
-        bookingData.contact.fullPhone = bookingData.contact.countryCode + cleaned;
+        const currentCountryCode = window.getSelectedCountryCode ? window.getSelectedCountryCode() : null;
+        bookingData.contact.countryCode = currentCountryCode;
+        bookingData.contact.fullPhone = currentCountryCode ? currentCountryCode + cleaned : cleaned;
       }
     });
 
@@ -881,7 +882,7 @@
 
       bookingData.contact = {
         name: $("#client-name").val().trim(),
-        phone: bookingData.contact.fullPhone || "+65" + $("#client-phone").val().trim().replace(/\D/g, ""),
+        phone: bookingData.contact.fullPhone || $("#client-phone").val().trim().replace(/\D/g, ""),
         email: $("#client-email").val().trim(),
         comment: $("#client-comment").val().trim(),
       };
@@ -2284,11 +2285,21 @@
       return;
     }
 
+    const currentCountryCode = window.getSelectedCountryCode ? window.getSelectedCountryCode() : null;
+    const phoneNumber = $("#client-phone").val().trim().replace(/\D/g, "");
+    const fullPhoneNumber = currentCountryCode ? currentCountryCode + phoneNumber : phoneNumber;
+
+    if (!currentCountryCode) {
+      showValidationAlert("Please select a country for your phone number.");
+      $(".confirm-booking-btn").prop("disabled", false).text("Book an appointment");
+      $(".loading-overlay").hide();
+      return;
+    }
+
     const basePrice = calculateBasePrice();
     const staffLevel = bookingData.staffLevel != null ? parseInt(bookingData.staffLevel) : 1;
     const adjustmentPercent = percentMap[staffLevel] || 0;
 
-    // Calculate master markup ONLY for core services (not add-ons)
     let masterMarkupAmount = 0;
     bookingData.coreServices.forEach((service) => {
       const servicePrice = parseFloat(service.price);
@@ -2369,7 +2380,7 @@ ${couponInfo}Note: Master markup applied only to core services, not to Add-on se
       core_services: JSON.stringify(formattedServices.filter((s) => bookingData.coreServices.find((cs) => parseInt(cs.id) === s.id))),
       addon_services: JSON.stringify(formattedServices.filter((s) => bookingData.addons.find((a) => parseInt(a.id) === s.id))),
       client_name: bookingData.contact.name,
-      client_phone: bookingData.contact.phone,
+      client_phone: fullPhoneNumber,
       client_email: bookingData.contact.email || "",
       client_comment: fullComment,
       staff_level: staffLevel,
