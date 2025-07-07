@@ -580,7 +580,6 @@
       const serviceDuration = $(this).data("service-duration") || "";
       const serviceWearTime = $(this).data("service-wear-time") || "";
 
-      // Check if it's an add-on more thoroughly
       const isAddon = $(this).data("is-addon") === true || $(this).data("is-addon") === "true" || $(this).closest(".service-item").hasClass("addon-item") || $(this).closest(".core-related-addons").length > 0;
 
       const altegioId = $(this).data("altegio-id") || serviceId;
@@ -596,9 +595,8 @@
 
         if (!isAddon) {
           const coreId = $(this).data("service-id");
-          const $container = $(`.core-related_addons[data-core-id="${coreId}"]`);
+          const $container = $(`.core-related-addons[data-core-id="${coreId}"]`);
           $container.addClass("open");
-          // Enable related add-ons
           $container.find(".service-checkbox").prop("disabled", false);
           $container.find(".addon-item").removeClass("disabled");
         }
@@ -609,13 +607,11 @@
 
         if (!isAddon) {
           const coreId = $(this).data("service-id");
-          const $container = $(`.core-related_addons[data-core-id="${coreId}"]`);
+          const $container = $(`.core-related-addons[data-core-id="${coreId}"]`);
           $container.removeClass("open");
-          // Disable and uncheck related add-ons
           $container.find("input[type=checkbox]").prop("checked", false).prop("disabled", true);
           $container.find(".addon-item").removeClass("selected").addClass("disabled");
 
-          // Remove related add-ons from bookingData
           $container.find(".service-checkbox").each(function () {
             const addonId = $(this).data("service-id");
             removeService(addonId);
