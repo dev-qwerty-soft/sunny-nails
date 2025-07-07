@@ -126,76 +126,88 @@ function altegio_generate_fallback_time_slots($date)
 }
 
 /**
- * AJAX handler для перевірки доступності місяця
+ * AJAX handler for checking month availability (Optimized version)
+ * Gets availability for the entire month in a single request with caching.
  */
-function handle_check_month_availability()
+function handle_get_month_availability()
 {
-    // Перевірка nonce
+    // Verify nonce
     if (!wp_verify_nonce($_POST['nonce'], 'booking_nonce')) {
         wp_send_json_error(['message' => 'Security check failed']);
         return;
     }
 
     $staff_id = isset($_POST['staff_id']) ? sanitize_text_field($_POST['staff_id']) : '';
-    $dates_json = isset($_POST['dates']) ? sanitize_text_field($_POST['dates']) : '';
-    $service_ids_json = isset($_POST['service_ids']) ? sanitize_text_field($_POST['service_ids']) : '';
+    $start_date_str = isset($_POST['start_date']) ? sanitize_text_field($_POST['start_date']) : '';
+    $service_ids_json = isset($_POST['service_ids']) ? stripslashes($_POST['service_ids']) : '';
 
-    if (empty($staff_id)) {
-        wp_send_json_error(['message' => 'Missing staff_id parameter']);
+    if (empty($staff_id) || empty($start_date_str)) {
+        wp_send_json_error(['message' => 'Missing required parameters']);
         return;
     }
 
-    $dates = json_decode($dates_json, true);
     $service_ids = json_decode($service_ids_json, true);
-
-    if (!is_array($dates) || !is_array($service_ids)) {
-        wp_send_json_error(['message' => 'Invalid JSON data format']);
+    if (!is_array($service_ids)) {
+        wp_send_json_error(['message' => 'Invalid service_ids format']);
         return;
     }
 
-    if (empty($dates)) {
-        wp_send_json_success([
-            'available_dates' => [],
-            'unavailable_dates' => [],
-            'total_checked' => 0,
-            'available_count' => 0,
-            'unavailable_count' => 0
-        ]);
+    try {
+        $start_date = new DateTime($start_date_str);
+    } catch (Exception $e) {
+        wp_send_json_error(['message' => 'Invalid start_date format']);
         return;
     }
+
+    // --- Caching Implementation ---
+    $month = $start_date->format('Y-m');
+    $transient_key = "altegio_availability_{$staff_id}_{$month}";
+    $cached_data = get_transient($transient_key);
+
+    if (false !== $cached_data) {
+        wp_send_json_success($cached_data);
+        return;
+    }
+    // --- End Caching ---
 
     $available_dates = [];
     $unavailable_dates = [];
 
-    // Простий алгоритм для демонстрації
-    foreach ($dates as $date_str) {
-        $date_obj = new DateTime($date_str);
-        $day_of_week = $date_obj->format('w'); // 0 = Sunday, 6 = Saturday
+    $days_in_month = (int)$start_date->format('t');
+    $current_date = clone $start_date;
+    $current_date->setDate((int)$start_date->format('Y'), (int)$start_date->format('m'), 1);
 
-        // Неділя недоступна
-        if ($day_of_week == 0) {
+    // This is the part that is likely slow.
+    // Replace this with your actual Altegio API call.
+    for ($i = 0; $i < $days_in_month; $i++) {
+        $date_str = $current_date->format('Y-m-d');
+        $day_of_week = (int)$current_date->format('w');
+
+        if ($day_of_week === 0) {
             $unavailable_dates[] = $date_str;
-        }
-        // Випадково робимо деякі дати недоступними (для демонстрації)
-        else if (rand(1, 10) <= 2) { // 20% шанс що дата недоступна
+        } else if (rand(1, 10) <= 2) {
             $unavailable_dates[] = $date_str;
         } else {
             $available_dates[] = $date_str;
         }
+        $current_date->modify('+1 day');
     }
 
-    wp_send_json_success([
+    $data_to_cache = [
         'available_dates' => $available_dates,
         'unavailable_dates' => $unavailable_dates,
-        'total_checked' => count($dates),
-        'available_count' => count($available_dates),
-        'unavailable_count' => count($unavailable_dates)
-    ]);
+    ];
+
+    // Cache the result for 1 hour
+    set_transient($transient_key, $data_to_cache, HOUR_IN_SECONDS);
+
+    wp_send_json_success($data_to_cache);
 }
 
-// Реєструємо AJAX обробники
-add_action('wp_ajax_check_month_availability', 'handle_check_month_availability');
-add_action('wp_ajax_nopriv_check_month_availability', 'handle_check_month_availability');
+// Register new AJAX handler
+add_action('wp_ajax_get_month_availability', 'handle_get_month_availability');
+add_action('wp_ajax_nopriv_get_month_availability', 'handle_get_month_availability');
+
 
 /**
  * AJAX handler for clearing availability cache
