@@ -1040,6 +1040,27 @@
     const dateMatch = message.match(/\((.*?)\)/);
     const cleanMessage = dateMatch ? `This service is not available at the selected time ${dateMatch[0]}` : message;
 
+    let alertMessage = "Please choose a different time.";
+
+    if (message.includes("phone") || message.includes("Phone")) {
+      alertMessage = "Please check your phone number and try again.";
+    } else if (message.includes("email") || message.includes("Email")) {
+      alertMessage = "Please check your email address and try again.";
+    } else if (message.includes("name") || message.includes("Name")) {
+      alertMessage = "Please enter your name and try again.";
+    } else if (message.includes("specialist") || message.includes("master")) {
+      alertMessage = "Please select a specialist to continue.";
+    } else if (message.includes("service")) {
+      alertMessage = "Please select at least one service.";
+    } else if (message.includes("date")) {
+      alertMessage = "Please select a date to continue.";
+    } else if (message.includes("time")) {
+      alertMessage = "Please choose a different time.";
+    } else if (message.includes("network") || message.includes("Network")) {
+      alertMessage = "Please check your internet connection and try again.";
+    } else if (message.includes("error") || message.includes("Error")) {
+      alertMessage = "Something went wrong. Please try again.";
+    }
     // Create custom alert
     const alertHtml = `
     <div class="validation-alert-overlay">
@@ -1051,7 +1072,7 @@
       </svg>
        <div class="validation-alert-content">
             <div class="validation-alert-title">${cleanMessage}</div>
-            <div class="validation-alert-message">Please choose a different time.</div>
+            <div class="validation-alert-message">${alertMessage}</div>
             <button class="validation-alert-button">OK</button>
         </div>
      

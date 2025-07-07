@@ -8,7 +8,13 @@ document.addEventListener("DOMContentLoaded", function () {
   if (!countrySelectButton || !countryDropdown || !phoneInput) return;
 
   let isOpen = false;
-  let selectedCountryCode = "+65";
+  let selectedCountryCode = null;
+
+  if (selectedCountrySpan) {
+    selectedCountrySpan.textContent = "Choose country";
+  }
+
+  countryOptions.forEach((opt) => opt.classList.remove("selected"));
 
   countrySelectButton.addEventListener("click", function () {
     toggleDropdown();
@@ -66,6 +72,16 @@ document.addEventListener("DOMContentLoaded", function () {
 
     selectedCountryCode = option.dataset.value;
 
+    if (typeof bookingData !== "undefined") {
+      bookingData.contact = bookingData.contact || {};
+      bookingData.contact.countryCode = selectedCountryCode;
+
+      const phoneNumber = phoneInput.value.trim();
+      if (phoneNumber) {
+        bookingData.contact.fullPhone = selectedCountryCode + phoneNumber;
+      }
+    }
+
     closeDropdown();
     phoneInput.focus();
   }
@@ -76,7 +92,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   window.getFullPhoneNumber = function () {
     const phoneNumber = phoneInput.value.trim();
-    return phoneNumber ? selectedCountryCode + " " + phoneNumber : "";
+    return phoneNumber && selectedCountryCode ? selectedCountryCode + phoneNumber : "";
   };
 });
 
