@@ -102,32 +102,27 @@
           cursor: not-allowed;
         }
 
-        &.no-slots {
-          background-color: #f5f5f5;
-          color: #999;
+        &.unavailable {
+          border: 1px solid #d5d4df;
+          background: #f1f1f1;
           cursor: not-allowed;
           position: relative;
 
-          &::after {
+          &::before {
             content: "";
             position: absolute;
             top: 50%;
-            left: 10%;
-            right: 10%;
-            height: 1px;
-            background-color: #ccc;
-            transform: translateY(-50%);
+            left: 50%;
+            width: 2px;
+            height: 100%;
+            background-color: #d5d4df;
+            transform: translate(-50%, -50%) rotate(45deg);
           }
 
           &:hover {
-            background-color: #f5f5f5;
             transform: none;
           }
         }
-
-        // &.empty {
-        //   visibility: hidden;
-        // }
       }
     }
 
