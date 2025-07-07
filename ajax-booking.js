@@ -815,51 +815,133 @@
    * @param {number} month - Month index (0-11)
    * @param {number} year - Year
    */
+  /**
+   * Check day availability based on actual time slots availability
+   * @param {number} month - Month index (0-11)
+   * @param {number} year - Year
+   */
+  /**
+   * Check day availability based on actual time slots availability
+   * @param {number} month - Month index (0-11)
+   * @param {number} year - Year
+   */
+  /**
+   * Check day availability using Promise.all for simultaneous requests
+   * @param {number} month - Month index (0-11)
+   * @param {number} year - Year
+   */
+  /**
+   * Check day availability with batch processing
+   * @param {number} month - Month index (0-11)
+   * @param {number} year - Year
+   */
+  /**
+   * Check day availability using single optimized API call
+   * @param {number} month - Month index (0-11)
+   * @param {number} year - Year
+   */
+  /**
+   * Check day availability - all requests simultaneously for maximum speed
+   * @param {number} month - Month index (0-11)
+   * @param {number} year - Year
+   */
   function checkDayAvailability(month, year) {
-    // Тимчасово відключаємо AJAX-запит
-    console.log("Availability check disabled - using mock data");
+    if (!bookingData.staffId || bookingData.services.length === 0) {
+      console.log("Skipping availability check - no staff or services selected");
+      return;
+    }
 
-    // Простий mock: робимо неділі недоступними
-    setTimeout(() => {
-      const daysInMonth = new Date(year, month + 1, 0).getDate();
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
+    const serviceIds = bookingData.services.map((s) => s.altegioId || s.id);
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
 
-      for (let day = 1; day <= daysInMonth; day++) {
-        const date = new Date(year, month, day);
-        const dateStr = formatDate(date);
+    // Collect all dates to check for the month
+    const datesToCheck = [];
+    for (let day = 1; day <= daysInMonth; day++) {
+      const date = new Date(year, month, day);
+      if (date >= today) {
+        datesToCheck.push(formatDate(date));
+      }
+    }
 
-        if (date >= today) {
-          const dayOfWeek = date.getDay(); // 0 = Sunday
+    if (datesToCheck.length === 0) return;
 
-          // Робимо неділі та деякі випадкові дати недоступними
-          if (dayOfWeek === 0 || Math.random() < 0.2) {
-            // Неділя або 20% випадкових дат
-            const $dayElement = $(`.calendar-day[data-date="${dateStr}"]`);
-            if ($dayElement.length && !$dayElement.hasClass("disabled")) {
-              $dayElement.addClass("unavailable");
+    console.log(`Checking availability for ${datesToCheck.length} dates simultaneously`);
 
-              // Якщо це була обрана дата, скидаємо вибір
-              if ($dayElement.hasClass("selected")) {
-                $dayElement.removeClass("selected");
-                bookingData.date = null;
-                bookingData.time = null;
-                $(".time-sections").html('<p class="error-message">Please select an available date.</p>');
-                updateDateTimeNextButtonState();
+    // Send ALL requests at once - no delays, no batches
+    const allPromises = datesToCheck.map((dateToCheck) => {
+      return new Promise((resolve) => {
+        $.ajax({
+          url: booking_params.ajax_url,
+          method: "POST",
+          data: {
+            action: "get_time_slots",
+            nonce: booking_params.nonce,
+            staff_id: bookingData.staffId,
+            date: dateToCheck,
+            service_ids: serviceIds,
+          },
+          success: function (response) {
+            let hasSlots = false;
+
+            if (response.success && response.data) {
+              if (Array.isArray(response.data) && response.data.length > 0) {
+                hasSlots = true;
+              } else if (response.data.slots && Array.isArray(response.data.slots) && response.data.slots.length > 0) {
+                hasSlots = true;
+              } else if (response.data.data && Array.isArray(response.data.data) && response.data.data.length > 0) {
+                hasSlots = true;
               }
             }
-          } else {
-            // Позначаємо як доступну
-            const $dayElement = $(`.calendar-day[data-date="${dateStr}"]`);
-            if ($dayElement.length && !$dayElement.hasClass("disabled")) {
-              $dayElement.addClass("available");
+
+            resolve({ date: dateToCheck, hasSlots });
+          },
+          error: function (xhr, status, error) {
+            console.warn(`Error checking availability for ${dateToCheck}:`, error);
+            resolve({ date: dateToCheck, hasSlots: false, error: true });
+          },
+        });
+      });
+    });
+
+    // Process ALL results when they all complete
+    Promise.all(allPromises).then((results) => {
+      console.log(`Availability check completed for all ${results.length} dates`);
+
+      // Process all results immediately
+      results.forEach((result) => {
+        const $dayElement = $(`.calendar-day[data-date="${result.date}"]`);
+
+        if (!result.hasSlots) {
+          // Mark as unavailable if no time slots
+          if ($dayElement.length && !$dayElement.hasClass("disabled")) {
+            $dayElement.addClass("unavailable");
+
+            // If this was the selected date, clear selection
+            if ($dayElement.hasClass("selected")) {
+              $dayElement.removeClass("selected");
+              bookingData.date = null;
+              bookingData.time = null;
+              $(".time-sections").html('<p class="error-message">Please select an available date.</p>');
+              updateDateTimeNextButtonState();
             }
           }
+        } else {
+          // Mark as available
+          if ($dayElement.length && !$dayElement.hasClass("disabled")) {
+            $dayElement.removeClass("unavailable").addClass("available");
+          }
         }
-      }
+      });
 
-      console.log("Mock availability check completed");
-    }, 100);
+      // Show summary statistics
+      const availableCount = results.filter((r) => r.hasSlots && !r.error).length;
+      const unavailableCount = results.filter((r) => !r.hasSlots && !r.error).length;
+      const errorCount = results.filter((r) => r.error).length;
+
+      console.log(`Summary: ${availableCount} available, ${unavailableCount} unavailable, ${errorCount} errors`);
+    });
   }
   function clearAvailabilityCache() {
     $.ajax({
@@ -1831,6 +1913,11 @@
    * @param {number} month - Month index (0-11)
    * @param {number} year - Year
    */
+  /**
+   * Render calendar for specified month and year
+   * @param {number} month - Month index (0-11)
+   * @param {number} year - Year
+   */
   function renderCalendar(month, year) {
     const firstDay = new Date(year, month, 1);
     const lastDay = new Date(year, month + 1, 0);
@@ -1864,7 +1951,7 @@
       if (isToday) classes += " today";
       if (isPast) classes += " disabled";
 
-      if (bookingData.date === dateStr) {
+      if (bookingData.date === dateStr && !isPast) {
         classes += " selected";
       }
 
