@@ -1551,35 +1551,35 @@
     }
 
     let html = "";
-    const isSelected = bookingData.staffId == "any" ? " selected" : " selected"; // Always selected by default
 
-    html = `
-    <label class="staff-item any-master first${isSelected}" data-staff-id="any" data-staff-level="1">
-      <input type="radio" name="staff" checked>
-      <div class="staff-radio-content">
-        <div class="staff-avatar circle yellow-bg">
-          <svg width="21" height="21" viewBox="0 0 21 21" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M16.4891 6.89062C16.3689 8.55873 15.1315 9.84375 13.7821 9.84375C12.4327 9.84375 11.1932 8.55914 11.0751 6.89062C10.952 5.15525 12.1566 3.9375 13.7821 3.9375C15.4075 3.9375 16.6122 5.18684 16.4891 6.89062Z" stroke="#302F34" stroke-linecap="round" stroke-linejoin="round" />
-            <path d="M13.7811 12.4688C11.1081 12.4688 8.53765 13.7964 7.8937 16.3821C7.80839 16.7241 8.0229 17.0625 8.37441 17.0625H19.1882C19.5397 17.0625 19.753 16.7241 19.6689 16.3821C19.0249 13.755 16.4545 12.4688 13.7811 12.4688Z" stroke="#302F34" stroke-miterlimit="10" />
-            <path d="M8.20211 7.62645C8.10614 8.95863 7.10618 10.0078 6.02828 10.0078C4.95039 10.0078 3.94879 8.95904 3.85446 7.62645C3.75643 6.24053 4.72973 5.25 6.02828 5.25C7.32684 5.25 8.30014 6.26596 8.20211 7.62645Z" stroke="#302F34" stroke-linecap="round" stroke-linejoin="round" />
-            <path d="M8.44962 12.5507C7.70929 12.2115 6.8939 12.0811 6.0297 12.0811C3.89689 12.0811 1.842 13.1413 1.32726 15.2065C1.25958 15.4796 1.43103 15.7499 1.71157 15.7499H6.31681" stroke="#302F34" stroke-miterlimit="10" stroke-linecap="round" />
-          </svg>
-        </div>
-        <div class="staff-info">
-          <h4 class="staff-name">Any master</h4>
-        </div>
-        <span class="radio-indicator"></span>
-      </div>
-    </label>
-  `;
+    // Show "Any master" only if no specific master is selected
+    const shouldShowAnyMaster = !bookingData.staffId || bookingData.staffId === "any";
 
-    // Set default selection if no staff is currently selected
-    if (!bookingData.staffId) {
-      bookingData.staffId = "any";
-      bookingData.staffName = "Any master";
-      bookingData.staffLevel = 1;
+    if (shouldShowAnyMaster) {
+      const isAnyMasterSelected = bookingData.staffId === "any" || !bookingData.staffId;
+
+      html = `
+      <label class="staff-item any-master first${isAnyMasterSelected ? " selected" : ""}" data-staff-id="any" data-staff-level="1">
+        <input type="radio" name="staff"${isAnyMasterSelected ? " checked" : ""}>
+        <div class="staff-radio-content">
+          <div class="staff-avatar circle yellow-bg">
+            <svg width="21" height="21" viewBox="0 0 21 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M16.4891 6.89062C16.3689 8.55873 15.1315 9.84375 13.7821 9.84375C12.4327 9.84375 11.1932 8.55914 11.0751 6.89062C10.952 5.15525 12.1566 3.9375 13.7821 3.9375C15.4075 3.9375 16.6122 5.18684 16.4891 6.89062Z" stroke="#302F34" stroke-linecap="round" stroke-linejoin="round" />
+              <path d="M13.7811 12.4688C11.1081 12.4688 8.53765 13.7964 7.8937 16.3821C7.80839 16.7241 8.0229 17.0625 8.37441 17.0625H19.1882C19.5397 17.0625 19.753 16.7241 19.6689 16.3821C19.0249 13.755 16.4545 12.4688 13.7811 12.4688Z" stroke="#302F34" stroke-miterlimit="10" />
+              <path d="M8.20211 7.62645C8.10614 8.95863 7.10618 10.0078 6.02828 10.0078C4.95039 10.0078 3.94879 8.95904 3.85446 7.62645C3.75643 6.24053 4.72973 5.25 6.02828 5.25C7.32684 5.25 8.30014 6.26596 8.20211 7.62645Z" stroke="#302F34" stroke-linecap="round" stroke-linejoin="round" />
+              <path d="M8.44962 12.5507C7.70929 12.2115 6.8939 12.0811 6.0297 12.0811C3.89689 12.0811 1.842 13.1413 1.32726 15.2065C1.25958 15.4796 1.43103 15.7499 1.71157 15.7499H6.31681" stroke="#302F34" stroke-miterlimit="10" stroke-linecap="round" />
+            </svg>
+          </div>
+          <div class="staff-info">
+            <h4 class="staff-name">Any master</h4>
+          </div>
+          <span class="radio-indicator"></span>
+        </div>
+      </label>
+    `;
     }
 
+    // Render all available masters
     staffList.forEach(function (staff) {
       const isSelected = bookingData.staffId == staff.id ? " selected" : "";
       const staffLevel = Number.isInteger(staff.level) ? staff.level : 1;
@@ -1594,50 +1594,32 @@
       }
 
       html += `
-      <label class="staff-item${isSelected}" data-staff-id="${staff.id}" data-staff-level="${staffLevel}">
-        <input type="radio" name="staff">
-        <div class="staff-radio-content">
-          <div class="staff-avatar">
-            ${staff.avatar ? `<img src="${staff.avatar}" alt="${staff.name}">` : ""}
-          </div>
-          <div class="staff-info">
-            <h4 class="staff-name">${staff.name}</h4>
-            <div class="staff-specialization">
-             <div class="staff-stars">
-                    ${generateStarsHtml(staffLevel)}
+        <label class="staff-item${isSelected}" data-staff-id="${staff.id}" data-staff-level="${staffLevel}">
+          <input type="radio" name="staff"${isSelected ? " checked" : ""}>
+          <div class="staff-radio-content">
+            <div class="staff-avatar">
+              ${staff.avatar ? `<img src="${staff.avatar}" alt="${staff.name}">` : ""}
             </div>
-              ${levelTitle ? `<span class="studio-name">(${levelTitle})</span>` : ""}
+            <div class="staff-info">
+              <h4 class="staff-name">${staff.name}</h4>
+              <div class="staff-specialization">
+               <div class="staff-stars">
+                      ${generateStarsHtml(staffLevel)}
+              </div>
+                ${levelTitle ? `<span class="studio-name">(${levelTitle})</span>` : ""}
+              </div>
             </div>
+            ${priceModifier}
+            <span class="radio-indicator"></span>
           </div>
-          ${priceModifier}
-          <span class="radio-indicator"></span>
-        </div>
-      </label>
-    `;
+        </label>
+      `;
     });
 
     $(".staff-list").html(html);
 
-    // Ensure "Any master" is selected by default and enable next button
+    // Update next button state
     updateMasterNextButtonState();
-  }
-
-  function renderContactStepSummary() {
-    const level = typeof bookingData.staffLevel !== "undefined" ? parseInt(bookingData.staffLevel) : 1;
-
-    $(".summary-master .name").text(bookingData.staffName || "N/A");
-
-    const stars = generateStarsHtml(level);
-    $(".summary-master .stars").html(stars);
-
-    const levelTitle = levelTitles[level];
-    $(".summary-master .stars-name")
-      .text(levelTitle ? `(${levelTitle})` : "")
-      .toggle(!!levelTitle);
-
-    if (bookingData.staffAvatar) {
-      $(".summary-master .avatar").attr("src", bookingData.staffAvatar);
-    }
   }
 
   /**
