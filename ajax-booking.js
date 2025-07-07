@@ -1284,6 +1284,10 @@
   const MAX_SERVICES_RETRIES = 2;
   const STAFF_RETRY_DELAY = 1000; // 1 second
   const SERVICES_RETRY_DELAY = 1000; // 1 second
+  // Add retry counter for time slots
+  let timeSlotsRetryCount = 0;
+  const MAX_TIMESLOTS_RETRIES = 2;
+  const TIMESLOTS_RETRY_DELAY = 1000; // 1 second
 
   /**
    * Load staff for selected services with loading overlay and retry mechanism
@@ -1424,6 +1428,113 @@
             responseText: xhr.responseText,
           });
           $(".booking-popup .services-list").html('<p class="no-items-message">Error loading services. Please try again.</p>');
+        }
+      },
+    });
+  }
+
+  /**
+   * Load time slots for selected date and staff with loading overlay and retry mechanism
+   * @param {string} date - Date in YYYY-MM-DD format
+   */
+  function loadTimeSlots(date) {
+    if (!bookingData.staffId || bookingData.services.length === 0) {
+      console.warn("Staff or service not selected");
+      $(".time-sections").html('<p class="error-message">Please select a staff and service first.</p>');
+      return;
+    }
+
+    if (!date) {
+      $(".time-sections").html('<p class="error-message">Please select a date.</p>');
+      return;
+    }
+
+    // Include ALL services (core services + addons) for time slot calculation
+    const serviceIds = bookingData.services.map((s) => s.altegioId || s.id);
+
+    if (!serviceIds.length) {
+      $(".time-sections").html('<p class="error-message">Please select at least one service.</p>');
+      return;
+    }
+
+    // Show loading overlay
+    $(".loading-overlay").show();
+    $(".time-sections").html('<p class="loading-message">Loading available time slots...</p>');
+
+    // Reset retry counter for new request
+    timeSlotsRetryCount = 0;
+
+    performLoadTimeSlotsRequest(date, serviceIds);
+  }
+
+  /**
+   * Perform the actual time slots loading request with retry logic
+   * @param {string} date - Date in YYYY-MM-DD format
+   * @param {Array} serviceIds - Array of service IDs
+   */
+  function performLoadTimeSlotsRequest(date, serviceIds) {
+    $.ajax({
+      url: booking_params.ajax_url,
+      method: "POST",
+      data: {
+        action: "get_time_slots",
+        nonce: booking_params.nonce,
+        staff_id: bookingData.staffId,
+        date: date,
+        service_ids: serviceIds,
+      },
+      success: function (response) {
+        // Hide loading overlay on success
+        $(".loading-overlay").hide();
+
+        if (response.success) {
+          let slots = [];
+
+          if (response.data && Array.isArray(response.data)) {
+            slots = response.data;
+          } else if (response.data && Array.isArray(response.data.slots)) {
+            slots = response.data.slots;
+          } else if (response.data && response.data.data && Array.isArray(response.data.data)) {
+            slots = response.data.data;
+          }
+
+          if (slots.length > 0) {
+            renderTimeSlots(slots);
+            // Reset retry counter on successful load
+            timeSlotsRetryCount = 0;
+          } else {
+            $(".time-sections").html('<p class="error-message">No available time slots for this day.</p>');
+          }
+        } else {
+          // Try to retry if request was not successful
+          if (timeSlotsRetryCount < MAX_TIMESLOTS_RETRIES) {
+            timeSlotsRetryCount++;
+            debug(`Retrying time slots load attempt ${timeSlotsRetryCount}/${MAX_TIMESLOTS_RETRIES} - unsuccessful response`);
+
+            setTimeout(() => {
+              performLoadTimeSlotsRequest(date, serviceIds);
+            }, TIMESLOTS_RETRY_DELAY);
+          } else {
+            $(".time-sections").html('<p class="error-message">Error loading time slots. Please try again later.</p>');
+          }
+        }
+      },
+      error: function (xhr, status, error) {
+        console.error("Error loading time slots:", error, xhr.responseText);
+
+        // Retry on error
+        if (timeSlotsRetryCount < MAX_TIMESLOTS_RETRIES) {
+          timeSlotsRetryCount++;
+          debug(`Retrying time slots load attempt ${timeSlotsRetryCount}/${MAX_TIMESLOTS_RETRIES} after error`);
+
+          // Keep loading overlay visible during retry
+          setTimeout(() => {
+            performLoadTimeSlotsRequest(date, serviceIds);
+          }, TIMESLOTS_RETRY_DELAY);
+        } else {
+          // Hide loading overlay after all retries failed
+          $(".loading-overlay").hide();
+          $(".time-sections").html('<p class="error-message">Error loading time slots. Please try again later.</p>');
         }
       },
     });
@@ -1712,8 +1823,22 @@
       return;
     }
 
+    // Show loading overlay
+    $(".loading-overlay").show();
     $(".time-sections").html('<p class="loading-message">Loading available time slots...</p>');
 
+    // Reset retry counter for new request
+    timeSlotsRetryCount = 0;
+
+    performLoadTimeSlotsRequest(date, serviceIds);
+  }
+
+  /**
+   * Perform the actual time slots loading request with retry logic
+   * @param {string} date - Date in YYYY-MM-DD format
+   * @param {Array} serviceIds - Array of service IDs
+   */
+  function performLoadTimeSlotsRequest(date, serviceIds) {
     $.ajax({
       url: booking_params.ajax_url,
       method: "POST",
@@ -1725,6 +1850,9 @@
         service_ids: serviceIds,
       },
       success: function (response) {
+        // Hide loading overlay on success
+        $(".loading-overlay").hide();
+
         if (response.success) {
           let slots = [];
 
@@ -1738,19 +1866,46 @@
 
           if (slots.length > 0) {
             renderTimeSlots(slots);
+            // Reset retry counter on successful load
+            timeSlotsRetryCount = 0;
           } else {
             $(".time-sections").html('<p class="error-message">No available time slots for this day.</p>');
           }
         } else {
-          $(".time-sections").html('<p class="error-message">Error loading time slots. Please try again later.</p>');
+          // Try to retry if request was not successful
+          if (timeSlotsRetryCount < MAX_TIMESLOTS_RETRIES) {
+            timeSlotsRetryCount++;
+            debug(`Retrying time slots load attempt ${timeSlotsRetryCount}/${MAX_TIMESLOTS_RETRIES} - unsuccessful response`);
+
+            setTimeout(() => {
+              performLoadTimeSlotsRequest(date, serviceIds);
+            }, TIMESLOTS_RETRY_DELAY);
+          } else {
+            $(".time-sections").html('<p class="error-message">Error loading time slots. Please try again later.</p>');
+          }
         }
       },
       error: function (xhr, status, error) {
         console.error("Error loading time slots:", error, xhr.responseText);
-        $(".time-sections").html('<p class="error-message">Error loading time slots. Please try again later.</p>');
+
+        // Retry on error
+        if (timeSlotsRetryCount < MAX_TIMESLOTS_RETRIES) {
+          timeSlotsRetryCount++;
+          debug(`Retrying time slots load attempt ${timeSlotsRetryCount}/${MAX_TIMESLOTS_RETRIES} after error`);
+
+          // Keep loading overlay visible during retry
+          setTimeout(() => {
+            performLoadTimeSlotsRequest(date, serviceIds);
+          }, TIMESLOTS_RETRY_DELAY);
+        } else {
+          // Hide loading overlay after all retries failed
+          $(".loading-overlay").hide();
+          $(".time-sections").html('<p class="error-message">Error loading time slots. Please try again later.</p>');
+        }
       },
     });
   }
+
   /**
    * Render time slots
    * @param {Array} slots - Array of time slot objects from API
