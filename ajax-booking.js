@@ -825,27 +825,22 @@
     // Phone number formatting
     $(document).on("input", "#client-phone", function () {
       const input = $(this);
-      let raw = input.val().replace(/\D/g, "");
+      let value = input.val();
 
-      let formatted = raw;
-      if (raw.length > 0) {
-        formatted = "+";
-        if (raw.length <= 3) {
-          formatted += raw;
-        } else if (raw.length <= 6) {
-          formatted += raw.slice(0, 3) + "-" + raw.slice(3);
-        } else if (raw.length <= 10) {
-          formatted += raw.slice(0, 3) + "-" + raw.slice(3, 6) + "-" + raw.slice(6);
-        } else {
-          formatted += raw.slice(0, 3) + "-" + raw.slice(3, 6) + "-" + raw.slice(6, 10);
-        }
+      let cleaned = value.replace(/\D/g, "");
+
+      let formatted = cleaned;
+      if (cleaned.length > 4) {
+        formatted = cleaned.substring(0, 4) + " " + cleaned.substring(4);
       }
 
       input.val(formatted);
 
       if (typeof bookingData !== "undefined") {
         bookingData.contact = bookingData.contact || {};
-        bookingData.contact.phone = raw;
+        bookingData.contact.phone = cleaned;
+        bookingData.contact.countryCode = window.getSelectedCountryCode ? window.getSelectedCountryCode() : "+65";
+        bookingData.contact.fullPhone = bookingData.contact.countryCode + cleaned;
       }
     });
 
@@ -886,7 +881,7 @@
 
       bookingData.contact = {
         name: $("#client-name").val().trim(),
-        phone: $("#client-phone").val().trim(),
+        phone: bookingData.contact.fullPhone || "+65" + $("#client-phone").val().trim().replace(/\D/g, ""),
         email: $("#client-email").val().trim(),
         comment: $("#client-comment").val().trim(),
       };
@@ -2088,7 +2083,7 @@
     bookingData.totalWithTax = adjustedTotal;
     bookingData.basePrice = basePrice;
     bookingData.adjustedPrice = adjustedTotal;
-    bookingData.priceAdjustment = masterMarkupAmount; // Змінено: тільки націнка майстра
+    bookingData.priceAdjustment = masterMarkupAmount;
     bookingData.adjustmentPercent = percent;
 
     if (bookingData.contact) {

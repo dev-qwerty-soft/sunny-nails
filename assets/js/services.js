@@ -8,6 +8,7 @@ document.addEventListener("DOMContentLoaded", function () {
   if (!countrySelectButton || !countryDropdown || !phoneInput) return;
 
   let isOpen = false;
+  let selectedCountryCode = "+65";
 
   countrySelectButton.addEventListener("click", function () {
     toggleDropdown();
@@ -63,35 +64,22 @@ document.addEventListener("DOMContentLoaded", function () {
     const countryText = option.textContent;
     selectedCountrySpan.textContent = countryText;
 
-    const countryCode = option.dataset.value;
-    const currentPhoneValue = phoneInput.value;
-    const phoneNumber = currentPhoneValue.replace(/^\+\d+\s*/, "").trim();
-    phoneInput.value = countryCode + " " + phoneNumber;
+    selectedCountryCode = option.dataset.value;
 
     closeDropdown();
     phoneInput.focus();
   }
 
-  phoneInput.addEventListener("focus", function () {
-    const selectedOption = countryDropdown.querySelector(".country-option.selected");
-    if (selectedOption && (!this.value || this.value.trim() === "")) {
-      this.value = selectedOption.dataset.value + " ";
-    }
-  });
+  window.getSelectedCountryCode = function () {
+    return selectedCountryCode;
+  };
 
-  phoneInput.addEventListener("input", function () {
-    const selectedOption = countryDropdown.querySelector(".country-option.selected");
-    if (selectedOption) {
-      const countryCode = selectedOption.dataset.value;
-      const currentValue = this.value;
-
-      if (!currentValue.startsWith(countryCode)) {
-        const phoneNumber = currentValue.replace(/^\+\d+\s*/, "").trim();
-        this.value = countryCode + " " + phoneNumber;
-      }
-    }
-  });
+  window.getFullPhoneNumber = function () {
+    const phoneNumber = phoneInput.value.trim();
+    return phoneNumber ? selectedCountryCode + " " + phoneNumber : "";
+  };
 });
+
 jQuery(document).ready(function ($) {
   $(document).on("click", ".review__expand-btn", function () {
     const $btn = $(this);

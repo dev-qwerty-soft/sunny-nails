@@ -750,7 +750,7 @@ if (empty($ordered_category_ids)) {
                                                 <div class="country-option" data-value="+263" data-country="Zimbabwe">Zimbabwe +263</div>
                                             </div>
                                         </div>
-                                        <input type="tel" id="client-phone" name="client[phone]" placeholder="Phone number*" value="+65 " required />
+                                        <input type="tel" id="client-phone" name="client[phone]" placeholder="Phone number*" required />
                                     </div>
                                 </div>
 
