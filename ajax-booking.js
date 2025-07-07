@@ -754,7 +754,6 @@
    * Initialize date and time selection handling
    */
   function initDateTimeHandling() {
-    // Previous/Next month buttons
     $(document).on("click", ".prev-month", function () {
       navigateCalendar(-1);
     });
@@ -763,34 +762,37 @@
       navigateCalendar(1);
     });
 
-    // Date selection
     $(document).on("click", ".calendar-day:not(.disabled, .empty)", function () {
-      const date = $(this).data("date");
+      const $day = $(this);
+      const date = $day.data("date");
+
+      // Check if day is marked as unavailable
+      if ($day.hasClass("unavailable")) {
+        showUnavailableDateDialog(date);
+        return;
+      }
+
+      // Proceed with normal date selection for available dates
       selectDate(date);
       $(".calendar-day").removeClass("selected");
-      $(this).addClass("selected");
+      $day.addClass("selected");
 
-      // This must be triggered:
+      // Load time slots for selected date
       loadTimeSlots(date);
     });
 
-    // Time slot selection
     $(document).on("click", ".time-slot:not(.disabled)", function () {
       const time = $(this).data("time");
       selectTime(time);
 
-      // Update UI
       $(".time-slot").removeClass("selected");
       $(this).addClass("selected");
 
-      // Enable next button when time is selected
       updateDateTimeNextButtonState();
     });
 
-    // Next button in datetime step
     $(document).on("click", '.booking-step[data-step="datetime"] .next-btn', function () {
       if (validateDateTimeStep()) {
-        // Add to flow history
         bookingData.flowHistory.push("contact");
 
         renderContactStepSummary();
@@ -798,7 +800,6 @@
 
         updateSummary();
 
-        // Trigger custom event
         $(document).trigger("bookingDateTimeSelected", [
           {
             date: bookingData.date,
@@ -809,6 +810,197 @@
     });
   }
 
+  /**
+   * Check day availability - simplified version without AJAX
+   * @param {number} month - Month index (0-11)
+   * @param {number} year - Year
+   */
+  /**
+   * Check day availability based on actual time slots availability
+   * @param {number} month - Month index (0-11)
+   * @param {number} year - Year
+   */
+  /**
+   * Check day availability based on actual time slots availability
+   * @param {number} month - Month index (0-11)
+   * @param {number} year - Year
+   */
+  /**
+   * Check day availability using Promise.all for simultaneous requests
+   * @param {number} month - Month index (0-11)
+   * @param {number} year - Year
+   */
+  /**
+   * Check day availability with batch processing
+   * @param {number} month - Month index (0-11)
+   * @param {number} year - Year
+   */
+  /**
+   * Check day availability using single optimized API call
+   * @param {number} month - Month index (0-11)
+   * @param {number} year - Year
+   */
+  /**
+   * Check day availability - all requests simultaneously for maximum speed
+   * @param {number} month - Month index (0-11)
+   * @param {number} year - Year
+   */
+  function checkDayAvailability(month, year) {
+    if (!bookingData.staffId || bookingData.services.length === 0) {
+      console.log("Skipping availability check - no staff or services selected");
+      return;
+    }
+
+    const serviceIds = bookingData.services.map((s) => s.altegioId || s.id);
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    // Collect all dates to check for the month
+    const datesToCheck = [];
+    for (let day = 1; day <= daysInMonth; day++) {
+      const date = new Date(year, month, day);
+      if (date >= today) {
+        datesToCheck.push(formatDate(date));
+      }
+    }
+
+    if (datesToCheck.length === 0) return;
+
+    console.log(`Checking availability for ${datesToCheck.length} dates simultaneously`);
+
+    // Send ALL requests at once - no delays, no batches
+    const allPromises = datesToCheck.map((dateToCheck) => {
+      return new Promise((resolve) => {
+        $.ajax({
+          url: booking_params.ajax_url,
+          method: "POST",
+          data: {
+            action: "get_time_slots",
+            nonce: booking_params.nonce,
+            staff_id: bookingData.staffId,
+            date: dateToCheck,
+            service_ids: serviceIds,
+          },
+          success: function (response) {
+            let hasSlots = false;
+
+            if (response.success && response.data) {
+              if (Array.isArray(response.data) && response.data.length > 0) {
+                hasSlots = true;
+              } else if (response.data.slots && Array.isArray(response.data.slots) && response.data.slots.length > 0) {
+                hasSlots = true;
+              } else if (response.data.data && Array.isArray(response.data.data) && response.data.data.length > 0) {
+                hasSlots = true;
+              }
+            }
+
+            resolve({ date: dateToCheck, hasSlots });
+          },
+          error: function (xhr, status, error) {
+            console.warn(`Error checking availability for ${dateToCheck}:`, error);
+            resolve({ date: dateToCheck, hasSlots: false, error: true });
+          },
+        });
+      });
+    });
+
+    // Process ALL results when they all complete
+    Promise.all(allPromises).then((results) => {
+      console.log(`Availability check completed for all ${results.length} dates`);
+
+      // Process all results immediately
+      results.forEach((result) => {
+        const $dayElement = $(`.calendar-day[data-date="${result.date}"]`);
+
+        if (!result.hasSlots) {
+          // Mark as unavailable if no time slots
+          if ($dayElement.length && !$dayElement.hasClass("disabled")) {
+            $dayElement.addClass("unavailable");
+
+            // If this was the selected date, clear selection
+            if ($dayElement.hasClass("selected")) {
+              $dayElement.removeClass("selected");
+              bookingData.date = null;
+              bookingData.time = null;
+              $(".time-sections").html('<p class="error-message">Please select an available date.</p>');
+              updateDateTimeNextButtonState();
+            }
+          }
+        } else {
+          // Mark as available
+          if ($dayElement.length && !$dayElement.hasClass("disabled")) {
+            $dayElement.removeClass("unavailable").addClass("available");
+          }
+        }
+      });
+
+      // Show summary statistics
+      const availableCount = results.filter((r) => r.hasSlots && !r.error).length;
+      const unavailableCount = results.filter((r) => !r.hasSlots && !r.error).length;
+      const errorCount = results.filter((r) => r.error).length;
+
+      console.log(`Summary: ${availableCount} available, ${unavailableCount} unavailable, ${errorCount} errors`);
+    });
+  }
+  function clearAvailabilityCache() {
+    $.ajax({
+      url: booking_params.ajax_url,
+      method: "POST",
+      data: {
+        action: "clear_availability_cache",
+        nonce: booking_params.nonce,
+      },
+      success: function (response) {
+        if (response.success) {
+          debug("Availability cache cleared");
+          // Refresh current month's availability
+          const monthHeader = $(".month-header span").text();
+          if (monthHeader) {
+            const [monthName, year] = monthHeader.split(" ");
+            const monthIndex = getMonthIndex(monthName);
+            checkDayAvailability(monthIndex, parseInt(year));
+          }
+        }
+      },
+      error: function (xhr, status, error) {
+        console.error("Failed to clear availability cache:", error);
+      },
+    });
+  }
+  function markUnavailableDatesFromTimeSlots() {
+    $(".calendar-day:not(.disabled, .empty)").each(function () {
+      const dateStr = $(this).data("date");
+      const $dayElement = $(this);
+
+      if (dateStr && !$dayElement.hasClass("unavailable")) {
+        $.ajax({
+          url: booking_params.ajax_url,
+          method: "POST",
+          data: {
+            action: "get_time_slots",
+            nonce: booking_params.nonce,
+            staff_id: bookingData.staffId,
+            date: dateStr,
+            service_ids: bookingData.services.map((s) => s.altegioId || s.id),
+          },
+          success: function (response) {
+            if (!response.success || !response.data || (Array.isArray(response.data) && response.data.length === 0) || (response.data.slots && Array.isArray(response.data.slots) && response.data.slots.length === 0)) {
+              $dayElement.addClass("unavailable");
+
+              if ($dayElement.hasClass("selected")) {
+                $dayElement.removeClass("selected");
+                bookingData.date = null;
+                bookingData.time = null;
+                $(".time-sections").html('<p class="error-message">Please select an available date.</p>');
+                updateDateTimeNextButtonState();
+              }
+            }
+          },
+        });
+      }
+    });
+  }
   /**
    * Initialize contact form handling
    */
@@ -1721,37 +1913,37 @@
    * @param {number} month - Month index (0-11)
    * @param {number} year - Year
    */
+  /**
+   * Render calendar for specified month and year
+   * @param {number} month - Month index (0-11)
+   * @param {number} year - Year
+   */
   function renderCalendar(month, year) {
     const firstDay = new Date(year, month, 1);
     const lastDay = new Date(year, month + 1, 0);
     const daysInMonth = lastDay.getDate();
 
-    // Adjust day of week for Monday as first day
-    // (0 = Monday, 6 = Sunday)
     let startDay = firstDay.getDay() - 1;
     if (startDay < 0) startDay = 6;
 
-    // Update month and year in header
     const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
     $(".month-header span").text(monthNames[month] + " " + year);
 
     let html = "";
 
-    // Add empty cells for days before first day of month
+    // Empty days at the beginning
     for (let i = 0; i < startDay; i++) {
       html += '<div class="calendar-day empty"></div>';
     }
 
-    // Get current date for comparison
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    // Add days of month
+    // Render all days of the month
     for (let i = 1; i <= daysInMonth; i++) {
       const date = new Date(year, month, i);
       const dateStr = formatDate(date);
 
-      // Check if date is today or in the past
       const isToday = date.getTime() === today.getTime();
       const isPast = date < today;
 
@@ -1759,8 +1951,7 @@
       if (isToday) classes += " today";
       if (isPast) classes += " disabled";
 
-      // Check if this date was previously selected
-      if (bookingData.date === dateStr) {
+      if (bookingData.date === dateStr && !isPast) {
         classes += " selected";
       }
 
@@ -1769,12 +1960,19 @@
 
     $(".calendar-grid").html(html);
 
-    // If a date was previously selected, reload time slots
+    // Check availability for all days in this month (if we have staff and services selected)
+    if (bookingData.staffId && bookingData.services.length > 0) {
+      // Small delay to ensure DOM is updated
+      setTimeout(() => {
+        checkDayAvailability(month, year);
+      }, 100);
+    }
+
+    // Load time slots for currently selected date if it's in this month
     if (bookingData.date) {
       const currentMonth = new Date(bookingData.date).getMonth();
       const currentYear = new Date(bookingData.date).getFullYear();
 
-      // Only reload if we're looking at the same month
       if (currentMonth === month && currentYear === year) {
         loadTimeSlots(bookingData.date);
       }
