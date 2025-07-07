@@ -11,10 +11,20 @@
     <link rel="icon" href="<?= getAssetUrlAcf('favicon_black_theme'); ?>" media="(prefers-color-scheme: dark)">
     <link rel="icon" href="<?= getAssetUrlAcf('favicon_light_theme'); ?>" media="(prefers-color-scheme: light)">
 
+    <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            "name": "Sunny Nails",
+            "url": "<?php echo esc_url(home_url()); ?>",
+            "logo": "<?php echo get_site_icon_url(); ?>"
+        }
+    </script>
 
     <title><?= wp_get_document_title(); ?></title>
     <?php wp_head(); ?>
 </head>
+
 
 <body <?php body_class(); ?>>
     <header id="masthead" class="site-header header-three">

@@ -1277,8 +1277,16 @@
     updateSummary();
   }
 
+  // Add retry counters for all loading functions
+  let staffLoadRetryCount = 0;
+  let servicesLoadRetryCount = 0;
+  const MAX_STAFF_RETRIES = 2;
+  const MAX_SERVICES_RETRIES = 2;
+  const STAFF_RETRY_DELAY = 1000; // 1 second
+  const SERVICES_RETRY_DELAY = 1000; // 1 second
+
   /**
-   * Load staff for selected services
+   * Load staff for selected services with loading overlay and retry mechanism
    * This calls the Altegio API to get available staff for the selected services
    */
   function loadStaffForServices() {
@@ -1288,8 +1296,21 @@
 
     debug("Loading staff for services", serviceIds);
 
+    // Show loading overlay
+    $(".loading-overlay").show();
     $(".staff-list").html('<p class="loading-message">Loading specialists...</p>');
 
+    // Reset retry counter for new request
+    staffLoadRetryCount = 0;
+
+    performStaffLoadRequest(serviceIds);
+  }
+
+  /**
+   * Perform the actual staff loading request with retry logic
+   * @param {string} serviceIds - Comma separated service IDs
+   */
+  function performStaffLoadRequest(serviceIds) {
     $.ajax({
       url: config.apiEndpoint,
       type: "POST",
@@ -1299,6 +1320,9 @@
         nonce: config.nonce,
       },
       success: function (response) {
+        // Hide loading overlay on success
+        $(".loading-overlay").hide();
+
         if (response.success && response.data && Array.isArray(response.data.data)) {
           renderStaff(response.data.data);
         } else {
@@ -1307,16 +1331,45 @@
         }
       },
       error: function (xhr, status, error) {
+        $(".loading-overlay").hide();
         debug("AJAX error loading staff", { status, error });
-        $(".staff-list").html('<p class="no-items-message">Error loading specialists.</p>');
+
+        // Retry logic
+        staffLoadRetryCount++;
+        if (staffLoadRetryCount <= MAX_STAFF_RETRIES) {
+          setTimeout(() => {
+            debug("Retrying staff load request", { attempt: staffLoadRetryCount });
+            performStaffLoadRequest(serviceIds);
+          }, STAFF_RETRY_DELAY);
+        } else {
+          $(".staff-list").html('<p class="no-items-message">Error loading specialists.</p>');
+        }
       },
     });
   }
+
+  /**
+   * Load services for a specific master with loading overlay and retry mechanism
+   * @param {string|number} masterId - Master ID to load services for
+   */
   function loadServicesForMaster(masterId) {
     debug("Loading services for master", masterId);
 
+    // Show loading overlay
+    $(".loading-overlay").show();
     $(".booking-popup .services-list").html('<p class="loading-message">Loading services...</p>');
 
+    // Reset retry counter for new request
+    servicesLoadRetryCount = 0;
+
+    performServicesLoadRequest(masterId);
+  }
+
+  /**
+   * Perform the actual services loading request with retry logic
+   * @param {string|number} masterId - Master ID
+   */
+  function performServicesLoadRequest(masterId) {
     $.ajax({
       url: booking_params.ajax_url,
       method: "POST",
@@ -1326,93 +1379,60 @@
         nonce: booking_params.nonce,
       },
       success: function (response) {
+        // Hide loading overlay on success
+        $(".loading-overlay").hide();
+
         if (response.success && response.data && response.data.html) {
           $(".booking-popup .services-list").html(response.data.html);
           updateAddonAvailability();
           updateNextButtonState();
+          // Reset retry counter on successful load
+          servicesLoadRetryCount = 0;
         } else {
-          console.error("Services response details:", response);
-          $(".booking-popup .services-list").html('<p class="no-items-message">No services available for this master. Details logged in console.</p>');
+          // Try to retry if data is empty but request was "successful"
+          if (servicesLoadRetryCount < MAX_SERVICES_RETRIES) {
+            servicesLoadRetryCount++;
+            debug(`Retrying services load attempt ${servicesLoadRetryCount}/${MAX_SERVICES_RETRIES} - empty data`);
+
+            setTimeout(() => {
+              performServicesLoadRequest(masterId);
+            }, SERVICES_RETRY_DELAY);
+          } else {
+            console.error("Services response details:", response);
+            $(".booking-popup .services-list").html('<p class="no-items-message">No services available for this master.</p>');
+          }
         }
       },
       error: function (xhr, status, error) {
-        console.error("AJAX Error:", {
-          status: status,
-          error: error,
-          responseText: xhr.responseText,
-        });
-        $(".booking-popup .services-list").html('<p class="no-items-message">Error loading services. Check console for details.</p>');
+        debug("AJAX error loading services", { status, error });
+
+        // Retry on error
+        if (servicesLoadRetryCount < MAX_SERVICES_RETRIES) {
+          servicesLoadRetryCount++;
+          debug(`Retrying services load attempt ${servicesLoadRetryCount}/${MAX_SERVICES_RETRIES} after error`);
+
+          // Keep loading overlay visible during retry
+          setTimeout(() => {
+            performServicesLoadRequest(masterId);
+          }, SERVICES_RETRY_DELAY);
+        } else {
+          // Hide loading overlay after all retries failed
+          $(".loading-overlay").hide();
+          console.error("AJAX Error:", {
+            status: status,
+            error: error,
+            responseText: xhr.responseText,
+          });
+          $(".booking-popup .services-list").html('<p class="no-items-message">Error loading services. Please try again.</p>');
+        }
       },
     });
   }
-  $(document).on("click", ".staff-item", function () {
-    const staffId = $(this).data("staff-id");
-    const staffName = $(this).find(".staff-name").text();
-    let staffAvatar = "";
-
-    const avatarImg = $(this).find(".staff-avatar img");
-    if (avatarImg.length) {
-      staffAvatar = avatarImg.attr("src") || "";
-    }
-    const specialization = $(this).data("staff-specialization");
-    const staffLevel = typeof $(this).data("staff-level") !== "undefined" ? parseInt($(this).data("staff-level")) : 1;
-
-    bookingData.staffLevel = staffLevel;
-    bookingData.staffSpecialization = specialization;
-    bookingData.staffId = staffId;
-    bookingData.staffName = staffName;
-    bookingData.staffAvatar = staffAvatar;
-
-    $(".staff-item").removeClass("selected");
-    $(this).addClass("selected");
-
-    if ($(".booking-step[data-step='contact']").hasClass("active")) {
-      updateSummary();
-    }
-
-    updateMasterNextButtonState();
-  });
 
   /**
-   * Load a specific staff member by ID
-   * @param {string|number} staffId - Staff ID to load
+   * Render staff list
+   * @param {Array} staffList - Array of staff objects from API
    */
-  function loadStaffById(staffId) {
-    debug("Loading staff by ID", staffId);
-
-    // Call AJAX to get specific staff details
-    $.ajax({
-      url: config.apiEndpoint,
-      type: "POST",
-      data: {
-        action: "get_staff_details",
-        staff_id: staffId,
-        nonce: config.nonce,
-      },
-      success: function (response) {
-        if (response.success && response.data) {
-          const staff = response.data;
-          selectStaff(staff.id, staff.name, staff.avatar, staff.level, staff.specialization);
-
-          // Update UI - mark staff as selected
-          $(".staff-item").removeClass("selected");
-          $(`.staff-item[data-staff-id="${staff.id}"]`).addClass("selected");
-
-          debug("Staff data loaded", staff);
-        } else {
-          debug("Failed to load staff details", response);
-          showValidationAlert("Failed to load master details. Please select another master.");
-        }
-      },
-      error: function (xhr, status, error) {
-        debug("AJAX error loading staff details", { status, error });
-        showValidationAlert("Failed to load master details. Please select another master.");
-      },
-    });
-  }
-
-  // ...existing code...
-
   function renderStaff(staffList) {
     if (!staffList || staffList.length === 0) {
       $(".staff-list").html('<p class="no-items-message">No specialists available for the selected services.</p>');
