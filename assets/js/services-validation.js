@@ -67,7 +67,7 @@
   /**
    * Show validation alert when no services selected
    */
-  function showValidationAlert(message) {
+  function showValidationAlert(message = "Please select at least one service.") {
     // Remove any existing alerts
     $(".validation-alert-overlay").remove();
     const dateMatch = message.match(/\((.*?)\)/);
