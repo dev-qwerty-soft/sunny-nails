@@ -1328,7 +1328,12 @@
     if (step === "master") {
       const nextButtonText = bookingData.initialOption === "master" ? "Select services" : "Select date and time";
       $(`.booking-step[data-step="master"] .next-btn`).text(nextButtonText);
-
+      bookingData.staffId = null;
+      bookingData.staffName = "";
+      bookingData.staffAvatar = "";
+      bookingData.staffLevel = 1;
+      loadStaffForServices();
+      updateMasterNextButtonState();
       // Update button state
       updateMasterNextButtonState();
     }
