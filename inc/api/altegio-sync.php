@@ -233,7 +233,18 @@ function enhanced_sync_altegio_masters()
             update_post_meta($post_id, 'altegio_id', $altegio_id);
             update_post_meta($post_id, 'description', sanitize_textarea_field($master_data['information'] ?? ''));
             update_post_meta($post_id, 'master_level', sanitize_text_field($master_data['specialization'] ?? '1'));
-            update_post_meta($post_id, 'is_bookable', !empty($master_data['is_bookable']));
+
+
+            delete_post_meta($post_id, 'is_bookable');
+            update_post_meta($post_id, 'is_bookable', !empty($master_data['is_bookable']) ? 1 : 0);
+
+            delete_post_meta($post_id, 'schedule_until');
+            update_post_meta($post_id, 'schedule_until', sanitize_text_field($master_data['schedule_till'] ?? ''));
+
+            if (function_exists('update_field')) {
+                update_field('is_bookable', !empty($master_data['is_bookable']) ? 1 : 0, $post_id);
+                update_field('schedule_until', $master_data['schedule_till'] ?? '', $post_id);
+            }
 
             // FORCE update photo even if it already exists
             $avatar_url = $master_data['avatar_big'] ?? '';
@@ -263,6 +274,7 @@ function enhanced_sync_altegio_masters()
             if (function_exists('update_field')) {
                 update_field('master_level', $master_data['specialization'] ?? '1', $post_id);
                 update_field('is_bookable', !empty($master_data['is_bookable']), $post_id);
+                update_field('schedule_until', $master_data['schedule_till'] ?? '', $post_id);
             }
         }
     }
