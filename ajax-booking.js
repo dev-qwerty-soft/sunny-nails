@@ -811,46 +811,19 @@
   }
 
   /**
-   * Check day availability - simplified version without AJAX
-   * @param {number} month - Month index (0-11)
-   * @param {number} year - Year
-   */
-  /**
-   * Check day availability based on actual time slots availability
-   * @param {number} month - Month index (0-11)
-   * @param {number} year - Year
-   */
-  /**
-   * Check day availability based on actual time slots availability
-   * @param {number} month - Month index (0-11)
-   * @param {number} year - Year
-   */
-  /**
-   * Check day availability using Promise.all for simultaneous requests
-   * @param {number} month - Month index (0-11)
-   * @param {number} year - Year
-   */
-  /**
-   * Check day availability with batch processing
-   * @param {number} month - Month index (0-11)
-   * @param {number} year - Year
-   */
-  /**
-   * Check day availability using single optimized API call
-   * @param {number} month - Month index (0-11)
-   * @param {number} year - Year
-   */
-  /**
    * Check day availability - all requests simultaneously for maximum speed
    * @param {number} month - Month index (0-11)
    * @param {number} year - Year
    */
+  function showDatePreloader(show = true) {
+    $(".date-preloader").toggle(show);
+  }
   function checkDayAvailability(month, year) {
     if (!bookingData.staffId || bookingData.services.length === 0) {
       console.log("Skipping availability check - no staff or services selected");
       return;
     }
-
+    showDatePreloader(true);
     const serviceIds = bookingData.services.map((s) => s.altegioId || s.id);
     const daysInMonth = new Date(year, month + 1, 0).getDate();
     const today = new Date();
@@ -908,7 +881,7 @@
     // Process ALL results when they all complete
     Promise.all(allPromises).then((results) => {
       console.log(`Availability check completed for all ${results.length} dates`);
-
+      showDatePreloader(false);
       // Process all results immediately
       results.forEach((result) => {
         const $dayElement = $(`.calendar-day[data-date="${result.date}"]`);
@@ -1668,7 +1641,7 @@
     }
 
     // Show loading overlay
-    $(".loading-overlay").show();
+    $(".time-preloader").show();
     $(".time-sections").html('<p class="loading-message">Loading available time slots...</p>');
 
     // Reset retry counter for new request
@@ -1695,7 +1668,7 @@
       },
       success: function (response) {
         // Hide loading overlay on success
-        $(".loading-overlay").hide();
+        $(".time-preloader").hide();
 
         if (response.success) {
           let slots = [];
@@ -1731,7 +1704,7 @@
       },
       error: function (xhr, status, error) {
         console.error("Error loading time slots:", error, xhr.responseText);
-
+        $(".time-preloader").hide();
         // Retry on error
         if (timeSlotsRetryCount < MAX_TIMESLOTS_RETRIES) {
           timeSlotsRetryCount++;
@@ -1743,7 +1716,7 @@
           }, TIMESLOTS_RETRY_DELAY);
         } else {
           // Hide loading overlay after all retries failed
-          $(".loading-overlay").hide();
+          $(".time-preloader").hide();
           $(".time-sections").html('<p class="error-message">Error loading time slots. Please try again later.</p>');
         }
       },
@@ -2022,7 +1995,7 @@
     }
 
     // Show loading overlay
-    $(".loading-overlay").show();
+    $(".time-preloader").show();
     $(".time-sections").html('<p class="loading-message">Loading available time slots...</p>');
 
     // Reset retry counter for new request
@@ -2048,8 +2021,7 @@
         service_ids: serviceIds,
       },
       success: function (response) {
-        // Hide loading overlay on success
-        $(".loading-overlay").hide();
+        $(".time-preloader").hide();
 
         if (response.success) {
           let slots = [];
@@ -2064,17 +2036,14 @@
 
           if (slots.length > 0) {
             renderTimeSlots(slots);
-            // Reset retry counter on successful load
             timeSlotsRetryCount = 0;
           } else {
             $(".time-sections").html('<p class="error-message">No available time slots for this day.</p>');
           }
         } else {
-          // Try to retry if request was not successful
           if (timeSlotsRetryCount < MAX_TIMESLOTS_RETRIES) {
             timeSlotsRetryCount++;
             debug(`Retrying time slots load attempt ${timeSlotsRetryCount}/${MAX_TIMESLOTS_RETRIES} - unsuccessful response`);
-
             setTimeout(() => {
               performLoadTimeSlotsRequest(date, serviceIds);
             }, TIMESLOTS_RETRY_DELAY);
@@ -2086,18 +2055,14 @@
       error: function (xhr, status, error) {
         console.error("Error loading time slots:", error, xhr.responseText);
 
-        // Retry on error
         if (timeSlotsRetryCount < MAX_TIMESLOTS_RETRIES) {
           timeSlotsRetryCount++;
           debug(`Retrying time slots load attempt ${timeSlotsRetryCount}/${MAX_TIMESLOTS_RETRIES} after error`);
-
-          // Keep loading overlay visible during retry
           setTimeout(() => {
             performLoadTimeSlotsRequest(date, serviceIds);
           }, TIMESLOTS_RETRY_DELAY);
         } else {
-          // Hide loading overlay after all retries failed
-          $(".loading-overlay").hide();
+          $(".time-preloader").hide();
           $(".time-sections").html('<p class="error-message">Error loading time slots. Please try again later.</p>');
         }
       },
