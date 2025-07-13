@@ -381,7 +381,6 @@
 
       bookingData.initialOption = $(this).data("option");
       debug("Initial option selected", bookingData.initialOption);
-
       // Update flow history
       bookingData.flowHistory = ["initial"];
     });
@@ -394,7 +393,6 @@
 
       // Initialize flow history
       bookingData.flowHistory = ["initial", nextStep];
-
       debug("Going to step", nextStep);
       goToStep(nextStep);
 
@@ -753,7 +751,13 @@
       $(".summary-master .avatar").attr("src", bookingData.staffAvatar);
     }
   }
-
+  /**
+   * Show dialog when date is unavailable
+   * @param {string} date - Date in YYYY-MM-DD format
+   */
+  function showUnavailableDateDialog(date) {
+    showValidationAlert(`This date (${date}) is unavailable for booking. Please choose another date.`);
+  }
   /**
    * Initialize date and time selection handling
    */
@@ -829,10 +833,34 @@
       if (!bookingData.date) {
         $(".time-sections").html('<p class="error-message">Please select an available date.</p>');
       } else {
-        $(".time-sections").html("");
+        $(".time-sections").html('<p class="error-message">Please select an available date.</p>');
       }
     }
   }
+  function getAvailabilityCacheKey(month, year, staffId, serviceIds) {
+    return `availability_${year}_${month}_${staffId}_${serviceIds.join("_")}`;
+  }
+
+  function setAvailabilityCache(key, data) {
+    const cacheData = {
+      timestamp: Date.now(),
+      data: data,
+    };
+    localStorage.setItem(key, JSON.stringify(cacheData));
+  }
+
+  function getAvailabilityCache(key, maxAgeMs = 60 * 60 * 1000) {
+    const cache = localStorage.getItem(key);
+    if (!cache) return null;
+    try {
+      const parsed = JSON.parse(cache);
+      if (Date.now() - parsed.timestamp < maxAgeMs) {
+        return parsed.data;
+      }
+    } catch (e) {}
+    return null;
+  }
+
   function checkDayAvailability(month, year) {
     if (!bookingData.staffId || bookingData.services.length === 0) {
       console.log("Skipping availability check - no staff or services selected");
@@ -840,11 +868,20 @@
     }
     showDatePreloader(true);
     const serviceIds = bookingData.services.map((s) => s.altegioId || s.id);
+    const cacheKey = getAvailabilityCacheKey(month, year, bookingData.staffId, serviceIds);
+
+    // Спроба взяти з кешу
+    const cached = getAvailabilityCache(cacheKey);
+    if (cached) {
+      applyAvailabilityResults(cached);
+      showDatePreloader(false);
+      return;
+    }
+
     const daysInMonth = new Date(year, month + 1, 0).getDate();
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    // Collect all dates to check for the month
     const datesToCheck = [];
     for (let day = 1; day <= daysInMonth; day++) {
       const date = new Date(year, month, day);
@@ -855,9 +892,6 @@
 
     if (datesToCheck.length === 0) return;
 
-    console.log(`Checking availability for ${datesToCheck.length} dates simultaneously`);
-
-    // Send ALL requests at once - no delays, no batches
     const allPromises = datesToCheck.map((dateToCheck) => {
       return new Promise((resolve) => {
         $.ajax({
@@ -872,7 +906,6 @@
           },
           success: function (response) {
             let hasSlots = false;
-
             if (response.success && response.data) {
               if (Array.isArray(response.data) && response.data.length > 0) {
                 hasSlots = true;
@@ -882,58 +915,56 @@
                 hasSlots = true;
               }
             }
-
             resolve({ date: dateToCheck, hasSlots });
           },
-          error: function (xhr, status, error) {
-            console.warn(`Error checking availability for ${dateToCheck}:`, error);
+          error: function () {
             resolve({ date: dateToCheck, hasSlots: false, error: true });
           },
         });
       });
     });
 
-    // Process ALL results when they all complete
     Promise.all(allPromises).then((results) => {
-      console.log(`Availability check completed for all ${results.length} dates`);
+      setAvailabilityCache(cacheKey, results); // Зберігаємо в кеш
+      applyAvailabilityResults(results);
       showDatePreloader(false);
-      // Process all results immediately
-      results.forEach((result) => {
-        const $dayElement = $(`.calendar-day[data-date="${result.date}"]`);
-
-        if (!result.hasSlots) {
-          // Mark as unavailable if no time slots
-          if ($dayElement.length && !$dayElement.hasClass("disabled")) {
-            $dayElement.addClass("unavailable");
-
-            // If this was the selected date, clear selection
-            if ($dayElement.hasClass("selected")) {
-              $dayElement.removeClass("selected");
-              bookingData.date = null;
-              bookingData.time = null;
-              $(".time-sections").html('<p class="error-message">Please select an available date.</p>');
-              updateDateTimeNextButtonState();
-            }
-          }
-        } else {
-          // Mark as available
-          if ($dayElement.length && !$dayElement.hasClass("disabled")) {
-            $dayElement.removeClass("unavailable").addClass("available");
-          }
-        }
-      });
-      const availableCount = results.filter((r) => r.hasSlots && !r.error).length;
-      if (availableCount === 0) {
-        $(".time-sections").html('<p class="error-message">Please select another month or a different specialist.</p>');
-      }
-      // Show summary statistics
-
-      const unavailableCount = results.filter((r) => !r.hasSlots && !r.error).length;
-      const errorCount = results.filter((r) => r.error).length;
-
-      console.log(`Summary: ${availableCount} available, ${unavailableCount} unavailable, ${errorCount} errors`);
     });
   }
+
+  function applyAvailabilityResults(results) {
+    results.forEach((result) => {
+      const $dayElement = $(`.calendar-day[data-date="${result.date}"]`);
+      if (!result.hasSlots) {
+        if ($dayElement.length && !$dayElement.hasClass("disabled")) {
+          $dayElement.addClass("unavailable");
+          if ($dayElement.hasClass("selected")) {
+            $dayElement.removeClass("selected");
+            bookingData.date = null;
+            bookingData.time = null;
+            $(".time-sections").html('<p class="error-message">Please select an available date.</p>');
+            updateDateTimeNextButtonState();
+          }
+        }
+      } else {
+        if ($dayElement.length && !$dayElement.hasClass("disabled")) {
+          $dayElement.removeClass("unavailable").addClass("available");
+        }
+      }
+    });
+    const availableCount = results.filter((r) => r.hasSlots && !r.error).length;
+    if (availableCount === 0) {
+      $(".time-sections").html('<p class="error-message">Please select another month or a different specialist.</p>');
+    }
+    // Show summary statistics
+
+    const unavailableCount = results.filter((r) => !r.hasSlots && !r.error).length;
+    const errorCount = results.filter((r) => r.error).length;
+
+    console.log(`Summary: ${availableCount} available, ${unavailableCount} unavailable, ${errorCount} errors`);
+  }
+  /**
+   * Clear availability cache
+   */
   function clearAvailabilityCache() {
     $.ajax({
       url: booking_params.ajax_url,
@@ -1331,6 +1362,10 @@
    * @param {string} step - Step name to navigate to
    */
   function goToStep(step) {
+    if (step === "initial") {
+      resetBookingForm();
+      return;
+    }
     $(".booking-step").removeClass("active");
     $(`.booking-step[data-step="${step}"]`).addClass("active");
 
@@ -1756,17 +1791,14 @@
       },
       error: function (xhr, status, error) {
         console.error("Error loading time slots:", error, xhr.responseText);
-        // Retry on error
+
         if (timeSlotsRetryCount < MAX_TIMESLOTS_RETRIES) {
           timeSlotsRetryCount++;
           debug(`Retrying time slots load attempt ${timeSlotsRetryCount}/${MAX_TIMESLOTS_RETRIES} after error`);
-
-          // Keep loading overlay visible during retry
           setTimeout(() => {
             performLoadTimeSlotsRequest(date, serviceIds);
           }, TIMESLOTS_RETRY_DELAY);
         } else {
-          // Hide loading overlay after all retries failed
           $(".time-preloader").hide();
           $(".time-sections").html('<p class="error-message">Error loading time slots. Please try again later.</p>');
         }
@@ -2773,7 +2805,7 @@ ${couponInfo}Note: Master markup applied only to core services, not to Add-on se
 
   $(document).on("click", ".cancel-booking-btn", function (e) {
     e.preventDefault();
-
+    resetBookingForm();
     $(".booking-popup-overlay").removeClass("active");
     $("body").removeClass("popup-open");
     $(".booking-popup-overlay").hide();
