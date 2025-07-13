@@ -817,6 +817,17 @@
    */
   function showDatePreloader(show = true) {
     $(".date-preloader").toggle(show);
+    if (show) {
+      // Show message in time section while checking dates
+      $(".time-sections").html('<p class="loading-message">Checking available dates, please wait...</p>');
+    } else {
+      // If no date selected, show message to select a date
+      if (!bookingData.date) {
+        $(".time-sections").html('<p class="error-message">Please select an available date.</p>');
+      } else {
+        $(".time-sections").html("");
+      }
+    }
   }
   function checkDayAvailability(month, year) {
     if (!bookingData.staffId || bookingData.services.length === 0) {
@@ -907,9 +918,12 @@
           }
         }
       });
-
-      // Show summary statistics
       const availableCount = results.filter((r) => r.hasSlots && !r.error).length;
+      if (availableCount === 0) {
+        $(".time-sections").html('<p class="error-message">Please select another month or a different specialist.</p>');
+      }
+      // Show summary statistics
+
       const unavailableCount = results.filter((r) => !r.hasSlots && !r.error).length;
       const errorCount = results.filter((r) => r.error).length;
 
