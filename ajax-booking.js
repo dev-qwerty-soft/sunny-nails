@@ -870,7 +870,6 @@
     const serviceIds = bookingData.services.map((s) => s.altegioId || s.id);
     const cacheKey = getAvailabilityCacheKey(month, year, bookingData.staffId, serviceIds);
 
-    // Спроба взяти з кешу
     const cached = getAvailabilityCache(cacheKey);
     if (cached) {
       applyAvailabilityResults(cached);
@@ -925,7 +924,7 @@
     });
 
     Promise.all(allPromises).then((results) => {
-      setAvailabilityCache(cacheKey, results); // Зберігаємо в кеш
+      setAvailabilityCache(cacheKey, results);
       applyAvailabilityResults(results);
       showDatePreloader(false);
     });
