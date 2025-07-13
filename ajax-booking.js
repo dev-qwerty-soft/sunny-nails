@@ -595,7 +595,7 @@
 
         if (!isAddon) {
           const coreId = $(this).data("service-id");
-          const $container = $(`.core-related-addons[data-core-id="${coreId}"]`);
+          const $container = $(`.core-related_addons[data-core-id="${coreId}"]`);
           $container.addClass("open");
           $container.find(".service-checkbox").prop("disabled", false);
           $container.find(".addon-item").removeClass("disabled");
@@ -607,7 +607,7 @@
 
         if (!isAddon) {
           const coreId = $(this).data("service-id");
-          const $container = $(`.core-related-addons[data-core-id="${coreId}"]`);
+          const $container = $(`.core-related_addons[data-core-id="${coreId}"]`);
           $container.removeClass("open");
           $container.find("input[type=checkbox]").prop("checked", false).prop("disabled", true);
           $container.find(".addon-item").removeClass("selected").addClass("disabled");
@@ -672,6 +672,12 @@
    */
   function initMasterHandling() {
     $(document).on("click", ".staff-item", function () {
+      $(".staff-item").removeClass("selected");
+      $(".staff-item input[type='radio']").prop("checked", false);
+
+      $(this).addClass("selected");
+      $(this).find("input[type='radio']").prop("checked", true);
+
       const staffId = $(this).data("staff-id");
       const staffName = $(this).find(".staff-name").text();
       let staffAvatar = "";
@@ -687,8 +693,6 @@
       bookingData.staffSpecialization = specialization;
       selectStaff(staffId, staffName, staffAvatar, staffLevel, specialization);
 
-      $(".staff-item").removeClass("selected");
-      $(this).addClass("selected");
       bookingData.staffId = staffId;
       updateMasterNextButtonState();
     });
@@ -1343,11 +1347,16 @@
       const nextButtonText = bookingData.initialOption === "master" ? "Select services" : "Select date and time";
       $(`.booking-step[data-step="master"] .next-btn`).text(nextButtonText);
 
-      if (!bookingData.staffId) {
+      // Якщо staffId не заданий або некоректний — вибираємо "Any master"
+      if (!bookingData.staffId || bookingData.staffId === "any") {
         bookingData.staffId = "any";
+        $(".staff-item").removeClass("selected");
+        $(".staff-item input[type='radio']").prop("checked", false);
+        $(".staff-item.any-master").addClass("selected");
+        $(".staff-item.any-master input[type='radio']").prop("checked", true);
       }
 
-      if (bookingData.services.length > 0) {
+      if (bookingData.initialOption !== "master") {
         loadStaffForServices();
       }
 
@@ -1725,7 +1734,6 @@
       },
       error: function (xhr, status, error) {
         console.error("Error loading time slots:", error, xhr.responseText);
-        $(".time-preloader").hide();
         // Retry on error
         if (timeSlotsRetryCount < MAX_TIMESLOTS_RETRIES) {
           timeSlotsRetryCount++;
@@ -1996,7 +2004,6 @@
    * Load time slots for selected date and staff
    * @param {string} date - Date in YYYY-MM-DD format
    */
-
   function loadTimeSlots(date) {
     if (!bookingData.staffId || bookingData.services.length === 0) {
       console.warn("Staff or service not selected");
