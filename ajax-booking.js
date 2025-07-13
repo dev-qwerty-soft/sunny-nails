@@ -689,7 +689,7 @@
 
       $(".staff-item").removeClass("selected");
       $(this).addClass("selected");
-
+      bookingData.staffId = staffId;
       updateMasterNextButtonState();
     });
 
@@ -1163,7 +1163,7 @@
    * Update next button state based on master selection
    */
   function updateMasterNextButtonState() {
-    const hasMasterSelected = bookingData.staffId !== null;
+    const hasMasterSelected = !!bookingData.staffId;
     $('.booking-step[data-step="master"] .next-btn').prop("disabled", !hasMasterSelected);
   }
 
@@ -1342,12 +1342,14 @@
     if (step === "master") {
       const nextButtonText = bookingData.initialOption === "master" ? "Select services" : "Select date and time";
       $(`.booking-step[data-step="master"] .next-btn`).text(nextButtonText);
-      bookingData.staffId = null;
-      bookingData.staffName = "";
-      bookingData.staffAvatar = "";
-      bookingData.staffLevel = 1;
+      if (!bookingData.staffId) {
+        bookingData.staffId = "any";
+      }
+      // bookingData.staffId = null;
+      // bookingData.staffName = "";
+      // bookingData.staffAvatar = "";
+      // bookingData.staffLevel = 1;
       loadStaffForServices();
-      updateMasterNextButtonState();
       // Update button state
       updateMasterNextButtonState();
     }
@@ -1753,7 +1755,9 @@
     }
 
     let html = "";
-
+    if (!bookingData.staffId || bookingData.staffId === "null" || bookingData.staffId === null) {
+      bookingData.staffId = "any";
+    }
     // Show "Any master" only if no specific master is selected
     const shouldShowAnyMaster = !bookingData.staffId || bookingData.staffId === "any";
 
