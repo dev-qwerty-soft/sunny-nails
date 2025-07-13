@@ -1339,7 +1339,18 @@
       const nextButtonText = bookingData.initialOption === "services" ? "Choose a master" : "Select date and time";
       $(`.booking-step[data-step="services"] .next-btn`).text(nextButtonText);
 
-      // Update button state
+      if (bookingData.services.length === 0) {
+        const saved = localStorage.getItem("sunnyBookingData");
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (parsed.services?.length) {
+            bookingData.services = parsed.services;
+            bookingData.coreServices = parsed.coreServices || [];
+            bookingData.addons = parsed.addons || [];
+          }
+        }
+      }
+
       updateNextButtonState();
     }
 
@@ -1347,7 +1358,18 @@
       const nextButtonText = bookingData.initialOption === "master" ? "Select services" : "Select date and time";
       $(`.booking-step[data-step="master"] .next-btn`).text(nextButtonText);
 
-      // Якщо staffId не заданий або некоректний — вибираємо "Any master"
+      if (bookingData.services.length === 0) {
+        const saved = localStorage.getItem("sunnyBookingData");
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (parsed.services?.length) {
+            bookingData.services = parsed.services;
+            bookingData.coreServices = parsed.coreServices || [];
+            bookingData.addons = parsed.addons || [];
+          }
+        }
+      }
+
       if (!bookingData.staffId || bookingData.staffId === "any") {
         bookingData.staffId = "any";
         $(".staff-item").removeClass("selected");
@@ -2748,15 +2770,13 @@ ${couponInfo}Note: Master markup applied only to core services, not to Add-on se
   $(document).on("click", ".new-booking-btn", function () {
     resetBookingForm();
   });
-  $(document).on("click", ".edit-booking-btn", function () {
-    goToStep("contact");
-    updateSummary();
-  });
+
   $(document).on("click", ".cancel-booking-btn", function (e) {
     e.preventDefault();
 
     $(".booking-popup-overlay").removeClass("active");
     $("body").removeClass("popup-open");
+    $(".booking-popup-overlay").hide();
     $(".booking-popup").hide();
     $(".loading-overlay").hide();
 
