@@ -1342,15 +1342,15 @@
     if (step === "master") {
       const nextButtonText = bookingData.initialOption === "master" ? "Select services" : "Select date and time";
       $(`.booking-step[data-step="master"] .next-btn`).text(nextButtonText);
+
       if (!bookingData.staffId) {
         bookingData.staffId = "any";
       }
-      // bookingData.staffId = null;
-      // bookingData.staffName = "";
-      // bookingData.staffAvatar = "";
-      // bookingData.staffLevel = 1;
-      loadStaffForServices();
-      // Update button state
+
+      if (bookingData.services.length > 0) {
+        loadStaffForServices();
+      }
+
       updateMasterNextButtonState();
     }
 
