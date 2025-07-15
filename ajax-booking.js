@@ -854,74 +854,74 @@
     return null;
   }
 
-  //   function checkDayAvailability(month, year) {
-  //     if (!bookingData.staffId || bookingData.services.length === 0) {
-  //       console.log("Skipping availability check - no staff or services selected");
-  //       return;
-  //     }
-  //     showDatePreloader(true);
-  //     const serviceIds = bookingData.services.map((s) => s.altegioId || s.id);
-  //     const cacheKey = getAvailabilityCacheKey(month, year, bookingData.staffId, serviceIds);
+  function checkDayAvailability(month, year) {
+    if (!bookingData.staffId || bookingData.services.length === 0) {
+      console.log("Skipping availability check - no staff or services selected");
+      return;
+    }
+    showDatePreloader(true);
+    const serviceIds = bookingData.services.map((s) => s.altegioId || s.id);
+    const cacheKey = getAvailabilityCacheKey(month, year, bookingData.staffId, serviceIds);
 
-  //     const cached = getAvailabilityCache(cacheKey);
-  //     if (cached) {
-  //       applyAvailabilityResults(cached);
-  //       showDatePreloader(false);
-  //       return;
-  //     }
+    const cached = getAvailabilityCache(cacheKey);
+    if (cached) {
+      applyAvailabilityResults(cached);
+      showDatePreloader(false);
+      return;
+    }
 
-  //     const daysInMonth = new Date(year, month + 1, 0).getDate();
-  //     const today = new Date();
-  //     today.setHours(0, 0, 0, 0);
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
 
-  //     const datesToCheck = [];
-  //     for (let day = 1; day <= daysInMonth; day++) {
-  //       const date = new Date(year, month, day);
-  //       if (date >= today) {
-  //         datesToCheck.push(formatDate(date));
-  //       }
-  //     }
+    const datesToCheck = [];
+    for (let day = 1; day <= daysInMonth; day++) {
+      const date = new Date(year, month, day);
+      if (date >= today) {
+        datesToCheck.push(formatDate(date));
+      }
+    }
 
-  //     if (datesToCheck.length === 0) return;
+    if (datesToCheck.length === 0) return;
 
-  //     const allPromises = datesToCheck.map((dateToCheck) => {
-  //       return new Promise((resolve) => {
-  //         $.ajax({
-  //           url: booking_params.ajax_url,
-  //           method: "POST",
-  //           data: {
-  //             action: "get_time_slots",
-  //             nonce: booking_params.nonce,
-  //             staff_id: bookingData.staffId,
-  //             date: dateToCheck,
-  //             service_ids: serviceIds,
-  //           },
-  //           success: function (response) {
-  //             let hasSlots = false;
-  //             if (response.success && response.data) {
-  //               if (Array.isArray(response.data) && response.data.length > 0) {
-  //                 hasSlots = true;
-  //               } else if (response.data.slots && Array.isArray(response.data.slots) && response.data.slots.length > 0) {
-  //                 hasSlots = true;
-  //               } else if (response.data.data && Array.isArray(response.data.data) && response.data.data.length > 0) {
-  //                 hasSlots = true;
-  //               }
-  //             }
-  //             resolve({ date: dateToCheck, hasSlots });
-  //           },
-  //           error: function () {
-  //             resolve({ date: dateToCheck, hasSlots: false, error: true });
-  //           },
-  //         });
-  //       });
-  //     });
+    const allPromises = datesToCheck.map((dateToCheck) => {
+      return new Promise((resolve) => {
+        $.ajax({
+          url: booking_params.ajax_url,
+          method: "POST",
+          data: {
+            action: "get_time_slots",
+            nonce: booking_params.nonce,
+            staff_id: bookingData.staffId,
+            date: dateToCheck,
+            service_ids: serviceIds,
+          },
+          success: function (response) {
+            let hasSlots = false;
+            if (response.success && response.data) {
+              if (Array.isArray(response.data) && response.data.length > 0) {
+                hasSlots = true;
+              } else if (response.data.slots && Array.isArray(response.data.slots) && response.data.slots.length > 0) {
+                hasSlots = true;
+              } else if (response.data.data && Array.isArray(response.data.data) && response.data.data.length > 0) {
+                hasSlots = true;
+              }
+            }
+            resolve({ date: dateToCheck, hasSlots });
+          },
+          error: function () {
+            resolve({ date: dateToCheck, hasSlots: false, error: true });
+          },
+        });
+      });
+    });
 
-  //     Promise.all(allPromises).then((results) => {
-  //       setAvailabilityCache(cacheKey, results);
-  //       applyAvailabilityResults(results);
-  //       showDatePreloader(false);
-  //     });
-  //   }
+    Promise.all(allPromises).then((results) => {
+      setAvailabilityCache(cacheKey, results);
+      applyAvailabilityResults(results);
+      showDatePreloader(false);
+    });
+  }
 
   function applyAvailabilityResults(results) {
     results.forEach((result) => {
@@ -1409,8 +1409,20 @@
         $(".staff-item.any-master input[type='radio']").prop("checked", true);
       }
 
-      if (bookingData.initialOption !== "master") {
-        loadStaffForServices();
+      const staffItemsCount = $(".staff-item").not(".any-master").length;
+
+      if (bookingData.services.length > 0) {
+        if (staffItemsCount === 0) {
+          setTimeout(() => {
+            loadStaffForServices();
+          }, 100);
+        }
+      } else {
+        if (staffItemsCount === 0) {
+          setTimeout(() => {
+            renderDefaultStaffList();
+          }, 100);
+        }
       }
 
       updateMasterNextButtonState();
@@ -1623,11 +1635,9 @@
 
     debug("Loading staff for services", serviceIds);
 
-    // Show loading overlay
     $(".loading-overlay").show();
     $(".staff-list").html('<p class="loading-message">Loading specialists...</p>');
 
-    // Reset retry counter for new request
     staffLoadRetryCount = 0;
 
     performStaffLoadRequest(serviceIds);
@@ -1870,35 +1880,356 @@
     }
 
     let html = "";
-    if (!bookingData.staffId || bookingData.staffId === "null" || bookingData.staffId === null) {
-      bookingData.staffId = "any";
-    }
-    // Show "Any master" only if no specific master is selected
-    const shouldShowAnyMaster = !bookingData.staffId || bookingData.staffId === "any";
-
-    if (shouldShowAnyMaster) {
-      const isAnyMasterSelected = bookingData.staffId === "any" || !bookingData.staffId;
-
-      html = `
-      <label class="staff-item any-master first${isAnyMasterSelected ? " selected" : ""}" data-staff-id="any" data-staff-level="1">
-        <input type="radio" name="staff"${isAnyMasterSelected ? " checked" : ""}>
-        <div class="staff-radio-content">
-          <div class="staff-avatar circle yellow-bg">
-            <svg width="21" height="21" viewBox="0 0 21 21" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M16.4891 6.89062C16.3689 8.55873 15.1315 9.84375 13.7821 9.84375C12.4327 9.84375 11.1932 8.55914 11.0751 6.89062C10.952 5.15525 12.1566 3.9375 13.7821 3.9375C15.4075 3.9375 16.6122 5.18684 16.4891 6.89062Z" stroke="#302F34" stroke-linecap="round" stroke-linejoin="round" />
-              <path d="M13.7811 12.4688C11.1081 12.4688 8.53765 13.7964 7.8937 16.3821C7.80839 16.7241 8.0229 17.0625 8.37441 17.0625H19.1882C19.5397 17.0625 19.753 16.7241 19.6689 16.3821C19.0249 13.755 16.4545 12.4688 13.7811 12.4688Z" stroke="#302F34" stroke-miterlimit="10" />
-              <path d="M8.20211 7.62645C8.10614 8.95863 7.10618 10.0078 6.02828 10.0078C4.95039 10.0078 3.94879 8.95904 3.85446 7.62645C3.75643 6.24053 4.72973 5.25 6.02828 5.25C7.32684 5.25 8.30014 6.26596 8.20211 7.62645Z" stroke="#302F34" stroke-linecap="round" stroke-linejoin="round" />
-              <path d="M8.44962 12.5507C7.70929 12.2115 6.8939 12.0811 6.0297 12.0811C3.89689 12.0811 1.842 13.1413 1.32726 15.2065C1.25958 15.4796 1.43103 15.7499 1.71157 15.7499H6.31681" stroke="#302F34" stroke-miterlimit="10" stroke-linecap="round" />
-            </svg>
-          </div>
-          <div class="staff-info">
-            <h4 class="staff-name">Any master</h4>
-          </div>
-          <span class="radio-indicator"></span>
+    // --- ALWAYS show "Any master" at the top ---
+    const isAnyMasterSelected = bookingData.staffId === "any" || !bookingData.staffId;
+    html += `
+    <label class="staff-item any-master first${isAnyMasterSelected ? " selected" : ""}" data-staff-id="any" data-staff-level="1">
+      <input type="radio" name="staff"${isAnyMasterSelected ? " checked" : ""}>
+      <div class="staff-radio-content">
+        <div class="staff-avatar circle yellow-bg">
+          <img src="${themeUrl}/assets/svg/any-master.svg" alt="Any master">
         </div>
-      </label>
-    `;
+        <div class="staff-info">
+          <h4 class="staff-name">Any master</h4>
+        </div>
+        <span class="radio-indicator"></span>
+      </div>
+    </label>
+  `;
+
+    // Render all available masters
+    staffList.forEach(function (staff) {
+      const isSelected = bookingData.staffId == staff.id ? " selected" : "";
+      const staffLevel = Number.isInteger(staff.level) ? staff.level : 1;
+      const levelTitle = levelTitles[staffLevel] || "";
+
+      let priceModifier = "";
+      const modifier = percentMap[staffLevel];
+
+      if (typeof modifier === "number") {
+        const sign = modifier > 0 ? "+" : "";
+        priceModifier = `<div class="staff-price-modifier">${sign}${modifier}% to price</div>`;
+      }
+
+      html += `
+        <label class="staff-item${isSelected}" data-staff-id="${staff.id}" data-staff-level="${staffLevel}">
+          <input type="radio" name="staff"${isSelected ? " checked" : ""}>
+          <div class="staff-radio-content">
+            <div class="staff-avatar">
+              ${staff.avatar ? `<img src="${staff.avatar}" alt="${staff.name}">` : ""}
+            </div>
+            <div class="staff-info">
+              <h4 class="staff-name">${staff.name}</h4>
+              <div class="staff-specialization">
+               <div class="staff-stars">
+                      ${generateStarsHtml(staffLevel)}
+              </div>
+                ${levelTitle ? `<span class="studio-name">(${levelTitle})</span>` : ""}
+              </div>
+            </div>
+            ${priceModifier}
+            <span class="radio-indicator"></span>
+          </div>
+        </label>
+      `;
+    });
+
+    $(".staff-list").html(html);
+
+    // Update next button state
+    updateMasterNextButtonState();
+  }
+
+  /**
+   * Select a date
+   * @param {string} date - Date in YYYY-MM-DD format
+   */
+  function selectDate(date) {
+    bookingData.date = date;
+    debug("Date selected", date);
+  }
+
+  /**
+   * Select a time
+   * @param {string} time - Time in HH:MM format
+   */
+  function selectTime(time) {
+    bookingData.time = time;
+    debug("Time selected", time);
+  }
+
+  /**
+   * Generate calendar for date selection
+   * This creates a month view calendar starting from current month
+   */
+  function generateCalendar() {
+    const today = new Date();
+    const currentMonth = today.getMonth();
+    const currentYear = today.getFullYear();
+
+    const todayFormatted = formatDate(today);
+
+    bookingData.date = todayFormatted;
+
+    renderCalendar(currentMonth, currentYear);
+
+    setTimeout(() => {
+      $(`.calendar-day[data-date="${todayFormatted}"]`).addClass("selected");
+
+      loadTimeSlots(todayFormatted);
+    }, 50);
+
+    debug("Calendar generated + today selected + time slots loaded", todayFormatted);
+  }
+
+  /**
+   * Navigate calendar to previous or next month
+   * @param {number} direction - Direction to navigate (-1 for prev, 1 for next)
+   */
+  function navigateCalendar(direction) {
+    const monthText = $(".month-header span").text();
+    const [month, year] = monthText.split(" ");
+
+    const monthIndex = getMonthIndex(month);
+    let newMonth = monthIndex + direction;
+    let newYear = parseInt(year, 10);
+
+    if (newMonth < 0) {
+      newMonth = 11;
+      newYear--;
+    } else if (newMonth > 11) {
+      newMonth = 0;
+      newYear++;
     }
+
+    renderCalendar(newMonth, newYear);
+    debug("Calendar navigated to", { month: newMonth, year: newYear });
+  }
+
+  /**
+   * Get month index from name
+   * @param {string} monthName - Month name
+   * @returns {number} - Month index (0-11)
+   */
+  function getMonthIndex(monthName) {
+    const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+    return months.indexOf(monthName);
+  }
+
+  /**
+   * Render calendar for specified month and year
+   * @param {number} month - Month index (0-11)
+   * @param {number} year - Year
+   */
+  /**
+   * Render calendar for specified month and year
+   * @param {number} month - Month index (0-11)
+   * @param {number} year - Year
+   */
+  function renderCalendar(month, year) {
+    const firstDay = new Date(year, month, 1);
+    const lastDay = new Date(year, month + 1, 0);
+    const daysInMonth = lastDay.getDate();
+
+    let startDay = firstDay.getDay() - 1;
+    if (startDay < 0) startDay = 6;
+
+    const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+    $(".month-header span").text(monthNames[month] + " " + year);
+
+    let html = "";
+
+    // Empty days at the beginning
+    for (let i = 0; i < startDay; i++) {
+      html += '<div class="calendar-day empty"></div>';
+    }
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    // Render all days of the month
+    for (let i = 1; i <= daysInMonth; i++) {
+      const date = new Date(year, month, i);
+      const dateStr = formatDate(date);
+
+      const isToday = date.getTime() === today.getTime();
+      const isPast = date < today;
+
+      let classes = "calendar-day";
+      if (isToday) classes += " today";
+      if (isPast) classes += " disabled";
+
+      if (bookingData.date === dateStr && !isPast) {
+        classes += " selected";
+      }
+
+      html += `<div class="${classes}" data-date="${dateStr}">${i}</div>`;
+    }
+
+    $(".calendar-grid").html(html);
+
+    // Check availability for all days in this month (if we have staff and services selected)
+    if (bookingData.staffId && bookingData.services.length > 0) {
+      // Small delay to ensure DOM is updated
+      setTimeout(() => {
+        checkDayAvailability(month, year);
+      }, 100);
+    }
+
+    // Load time slots for currently selected date if it's in this month
+    if (bookingData.date) {
+      const currentMonth = new Date(bookingData.date).getMonth();
+      const currentYear = new Date(bookingData.date).getFullYear();
+
+      if (currentMonth === month && currentYear === year) {
+        loadTimeSlots(bookingData.date);
+      }
+    }
+  }
+
+  /**
+   * Format date as YYYY-MM-DD
+   * @param {Date} date - Date object
+   * @returns {string} - Formatted date
+   */
+  function formatDate(date) {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return year + "-" + month + "-" + day;
+  }
+
+  /**
+   * Load time slots for selected date and staff
+   * @param {string} date - Date in YYYY-MM-DD format
+   */
+
+  /**
+   * Load time slots for selected date and staff
+   * @param {string} date - Date in YYYY-MM-DD format
+   */
+  function loadTimeSlots(date) {
+    if (!bookingData.staffId || bookingData.services.length === 0) {
+      console.warn("Staff or service not selected");
+      $(".time-sections").html('<p class="error-message">Please select a staff and service first.</p>');
+      return;
+    }
+
+    if (!date) {
+      $(".time-sections").html('<p class="error-message">Please select a date.</p>');
+      return;
+    }
+
+    // Include ALL services (core services + addons) for time slot calculation
+    const serviceIds = bookingData.services.map((s) => s.altegioId || s.id);
+
+    if (!serviceIds.length) {
+      $(".time-sections").html('<p class="error-message">Please select at least one service.</p>');
+      return;
+    }
+
+    // Show loading overlay
+    $(".time-preloader").show();
+    $(".time-sections").html('<p class="loading-message">Loading available time slots...</p>');
+
+    // Reset retry counter for new request
+    timeSlotsRetryCount = 0;
+
+    performLoadTimeSlotsRequest(date, serviceIds);
+  }
+
+  /**
+   * Perform the actual time slots loading request with retry logic
+   * @param {string} date - Date in YYYY-MM-DD format
+   * @param {Array} serviceIds - Array of service IDs
+   */
+  function performLoadTimeSlotsRequest(date, serviceIds) {
+    $.ajax({
+      url: booking_params.ajax_url,
+      method: "POST",
+      data: {
+        action: "get_time_slots",
+        nonce: booking_params.nonce,
+        staff_id: bookingData.staffId,
+        date: date,
+        service_ids: serviceIds,
+      },
+      success: function (response) {
+        $(".time-preloader").hide();
+
+        if (response.success) {
+          let slots = [];
+
+          if (response.data && Array.isArray(response.data)) {
+            slots = response.data;
+          } else if (response.data && Array.isArray(response.data.slots)) {
+            slots = response.data.slots;
+          } else if (response.data && response.data.data && Array.isArray(response.data.data)) {
+            slots = response.data.data;
+          }
+
+          if (slots.length > 0) {
+            renderTimeSlots(slots);
+            timeSlotsRetryCount = 0;
+          } else {
+            $(".time-sections").html('<p class="error-message">No available time slots for this day.</p>');
+          }
+        } else {
+          if (timeSlotsRetryCount < MAX_TIMESLOTS_RETRIES) {
+            timeSlotsRetryCount++;
+            debug(`Retrying time slots load attempt ${timeSlotsRetryCount}/${MAX_TIMESLOTS_RETRIES} - unsuccessful response`);
+            setTimeout(() => {
+              performLoadTimeSlotsRequest(date, serviceIds);
+            }, TIMESLOTS_RETRY_DELAY);
+          } else {
+            $(".time-sections").html('<p class="error-message">Error loading time slots. Please try again later.</p>');
+          }
+        }
+      },
+      error: function (xhr, status, error) {
+        console.error("Error loading time slots:", error, xhr.responseText);
+
+        if (timeSlotsRetryCount < MAX_TIMESLOTS_RETRIES) {
+          timeSlotsRetryCount++;
+          debug(`Retrying time slots load attempt ${timeSlotsRetryCount}/${MAX_TIMESLOTS_RETRIES} after error`);
+          setTimeout(() => {
+            performLoadTimeSlotsRequest(date, serviceIds);
+          }, TIMESLOTS_RETRY_DELAY);
+        } else {
+          $(".time-preloader").hide();
+          $(".time-sections").html('<p class="error-message">Error loading time slots. Please try again later.</p>');
+        }
+      },
+    });
+  }
+
+  /**
+   * Render staff list
+   * @param {Array} staffList - Array of staff objects from API
+   */
+  function renderStaff(staffList) {
+    if (!staffList || staffList.length === 0) {
+      $(".staff-list").html('<p class="no-items-message">No specialists available for the selected services.</p>');
+      return;
+    }
+
+    let html = "";
+    // --- ALWAYS show "Any master" at the top ---
+    const isAnyMasterSelected = bookingData.staffId === "any" || !bookingData.staffId;
+    html += `
+    <label class="staff-item any-master first${isAnyMasterSelected ? " selected" : ""}" data-staff-id="any" data-staff-level="1">
+      <input type="radio" name="staff"${isAnyMasterSelected ? " checked" : ""}>
+      <div class="staff-radio-content">
+        <div class="staff-avatar circle yellow-bg">
+          <img src="${themeUrl}/assets/svg/any-master.svg" alt="Any master">
+        </div>
+        <div class="staff-info">
+          <h4 class="staff-name">Any master</h4>
+        </div>
+        <span class="radio-indicator"></span>
+      </div>
+    </label>
+  `;
 
     // Render all available masters
     staffList.forEach(function (staff) {
@@ -2455,7 +2786,7 @@
     let serviceHTML = "";
     let addonHTML = "";
     let basePrice = 0;
-    let masterMarkupAmount = 0;
+    let masterMarkupAmount = 0; // Змінено: тільки для розрахунку націнки майстра
 
     let percent = percentMap[bookingData.staffLevel];
     if (typeof percent === "undefined") {
@@ -2465,10 +2796,12 @@
       percent = -50;
     }
 
+    // Core services - показуємо базову ціну, розраховуємо націнку окремо
     bookingData.coreServices.forEach((service) => {
       let price = parseFloat(service.price) || 0;
       basePrice += price;
 
+      // Розраховуємо націнку тільки для відображення в Master category
       let serviceMarkup = price * (percent / 100);
       masterMarkupAmount += serviceMarkup;
 
@@ -2492,10 +2825,13 @@
       serviceHTML += itemHTML;
     });
 
+    // Add-ons - показуємо базову ціну, БЕЗ націнки
     if (bookingData.addons && bookingData.addons.length > 0) {
       bookingData.addons.forEach((addon) => {
         let price = parseFloat(addon.price) || 0;
         basePrice += price;
+
+        // БЕЗ націнки для add-on'ів
 
         const addonItemHTML = `
                 <div class="summary-service-item addon-service">
@@ -2523,11 +2859,14 @@
       addonsList.empty().hide();
     }
 
+    // Показуємо націнку майстра окремо
     masterPercent.text(`${percent > 0 ? "+" : ""}${percent}`);
     masterBonusEl.text(`${masterMarkupAmount.toFixed(2)} SGD`);
 
+    // Розраховуємо загальну суму: базова ціна + націнка майстра
     let adjustedTotal = basePrice + masterMarkupAmount;
 
+    // Застосовуємо знижку купону якщо є
     let discountAmount = 0;
     if (bookingData.coupon && bookingData.coupon.value > 0) {
       const discountPercent = bookingData.coupon.value;
@@ -2853,8 +3192,8 @@ ${couponInfo}Note: Master markup applied only to core services, not to Add-on se
     resetBookingForm();
     $(".booking-popup-overlay").removeClass("active");
     $("body").removeClass("popup-open");
-    // $(".booking-popup-overlay").hide();
-    // $(".booking-popup").hide();
+    $(".booking-popup-overlay").hide();
+    $(".booking-popup").hide();
     $(".loading-overlay").hide();
 
     if (typeof resetBookingForm === "function") {
