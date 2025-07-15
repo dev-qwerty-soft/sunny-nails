@@ -368,6 +368,10 @@ if (empty($ordered_category_ids)) {
                     </div>
                     <div class="datetime-container">
                         <div class="date-selector">
+
+                            <div class="date-preloader" style="display:none;">
+                                <div class="loader"></div>
+                            </div>
                             <div class="month-header">
                                 <span class="current-month">May 2025</span>
                                 <div class="month-controls">
@@ -395,6 +399,10 @@ if (empty($ordered_category_ids)) {
                             <div class="calendar-grid"></div>
                         </div>
                         <div class="time-selector">
+
+                            <div class="time-preloader" style="display:none;">
+                                <div class="loader"></div>
+                            </div>
                             <div class="time-sections">
                                 <div class="time-slots"></div>
                             </div>
@@ -750,7 +758,7 @@ if (empty($ordered_category_ids)) {
                                                 <div class="country-option" data-value="+263" data-country="Zimbabwe">Zimbabwe +263</div>
                                             </div>
                                         </div>
-                                        <input type="tel" id="client-phone" name="client[phone]" placeholder="Phone number*" value="+65 " required />
+                                        <input type="tel" id="client-phone" name="client[phone]" placeholder="Phone number*" required />
                                     </div>
                                 </div>
 

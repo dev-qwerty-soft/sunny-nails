@@ -910,3 +910,193 @@ function increment_promo_usage($promo_code)
     $usage_count++;
     update_option('promo_usage_' . $promo_code, $usage_count);
 }
+
+function handle_get_month_availability()
+{
+    if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'booking_nonce')) {
+        error_log("Month availability: Nonce verification failed");
+        wp_send_json_error(['message' => 'Invalid security token']);
+        return;
+    }
+
+    $staff_id = isset($_POST['staff_id']) ? (int)$_POST['staff_id'] : 0;
+    $start_date_str = isset($_POST['start_date']) ? sanitize_text_field($_POST['start_date']) : '';
+
+    if (empty($staff_id) || empty($start_date_str)) {
+        error_log("Month availability: Missing parameters - staff_id={$staff_id}, start_date={$start_date_str}");
+        wp_send_json_error(['message' => 'Missing required parameters']);
+        return;
+    }
+
+    try {
+        $start_date = new DateTime($start_date_str);
+        $start_date->modify('first day of this month');
+    } catch (Exception $e) {
+        error_log("Month availability: Invalid date format - {$start_date_str}");
+        wp_send_json_error(['message' => 'Invalid date format']);
+        return;
+    }
+
+    if (!class_exists('AltegioClient')) {
+        error_log("Month availability: AltegioClient class not found");
+        wp_send_json_error(['message' => 'API client not available']);
+        return;
+    }
+
+    $month_key = $start_date->format('Y-m');
+    $transient_key = "altegio_month_availability_{$staff_id}_{$month_key}";
+    $cached_data = get_transient($transient_key);
+
+    if (false !== $cached_data) {
+        error_log("Month availability: Returning cached data for {$month_key}");
+        wp_send_json_success($cached_data);
+        return;
+    }
+
+    $end_date = clone $start_date;
+    $end_date->modify('last day of this month');
+
+    error_log("Month availability: Calling Altegio API for staff {$staff_id} from {$start_date->format('Y-m-d')} to {$end_date->format('Y-m-d')}");
+
+    $schedule_response = AltegioClient::getSchedule(
+        $staff_id,
+        $start_date->format('Y-m-d'),
+        $end_date->format('Y-m-d')
+    );
+
+    if (!$schedule_response['success']) {
+        $error_msg = $schedule_response['error'] ?? 'Unknown Altegio API error';
+        error_log("Month availability: Altegio API error - {$error_msg}");
+
+        $fallback_data = generate_fallback_month_availability($start_date);
+        wp_send_json_success($fallback_data);
+        return;
+    }
+
+    $working_days = [];
+    $schedule_data = $schedule_response['data'] ?? [];
+
+    if (!empty($schedule_data)) {
+        foreach ($schedule_data as $day_schedule) {
+            $is_working = false;
+
+            if (isset($day_schedule['is_working']) && $day_schedule['is_working'] == 1) {
+                $is_working = true;
+            } elseif (isset($day_schedule['is_working_day']) && $day_schedule['is_working_day'] == 1) {
+                $is_working = true;
+            } elseif (isset($day_schedule['working']) && $day_schedule['working'] == true) {
+                $is_working = true;
+            }
+
+            if ($is_working && isset($day_schedule['date'])) {
+                try {
+                    $api_date = $day_schedule['date'];
+
+                    if (is_array($api_date) && isset($api_date['date'])) {
+                        $api_date = $api_date['date'];
+                    }
+
+                    $date_obj = new DateTime($api_date);
+                    $working_days[] = $date_obj->format('Y-m-d');
+                } catch (Exception $e) {
+                    error_log("Month availability: Error parsing date - {$api_date}");
+                    continue;
+                }
+            }
+        }
+    }
+
+    $available_dates = array_unique($working_days);
+    $unavailable_dates = [];
+
+    $current_date = clone $start_date;
+    $days_in_month = (int)$start_date->format('t');
+    $today = new DateTime();
+    $today->setTime(0, 0, 0);
+
+    for ($i = 0; $i < $days_in_month; $i++) {
+        $date_str = $current_date->format('Y-m-d');
+
+        if ($current_date < $today) {
+            $unavailable_dates[] = $date_str;
+        } elseif (!in_array($date_str, $available_dates)) {
+            $unavailable_dates[] = $date_str;
+        }
+
+        $current_date->modify('+1 day');
+    }
+
+    $result_data = [
+        'available_dates' => $available_dates,
+        'unavailable_dates' => $unavailable_dates,
+        'staff_id' => $staff_id,
+        'month' => $month_key,
+        'total_days' => $days_in_month,
+        'working_days_count' => count($available_dates),
+        'generated_at' => current_time('mysql')
+    ];
+
+    $cache_duration = ($month_key === date('Y-m')) ? 2 * HOUR_IN_SECONDS : 24 * HOUR_IN_SECONDS;
+    set_transient($transient_key, $result_data, $cache_duration);
+
+    error_log("Month availability: Successfully processed {$days_in_month} days, {$result_data['working_days_count']} working days");
+
+    wp_send_json_success($result_data);
+}
+
+function generate_fallback_month_availability($start_date)
+{
+    $available_dates = [];
+    $unavailable_dates = [];
+
+    $current_date = clone $start_date;
+    $days_in_month = (int)$start_date->format('t');
+    $today = new DateTime();
+    $today->setTime(0, 0, 0);
+
+    for ($i = 0; $i < $days_in_month; $i++) {
+        $date_str = $current_date->format('Y-m-d');
+        $day_of_week = (int)$current_date->format('w');
+
+        if ($current_date < $today) {
+            $unavailable_dates[] = $date_str;
+        } elseif ($day_of_week === 0) {
+            $unavailable_dates[] = $date_str;
+        } elseif (mt_rand(1, 10) > 8) {
+            $unavailable_dates[] = $date_str;
+        } else {
+            $available_dates[] = $date_str;
+        }
+
+        $current_date->modify('+1 day');
+    }
+
+    return [
+        'available_dates' => $available_dates,
+        'unavailable_dates' => $unavailable_dates,
+        'fallback' => true,
+        'month' => $start_date->format('Y-m'),
+        'generated_at' => current_time('mysql')
+    ];
+}
+
+function handle_clear_month_availability_cache()
+{
+    check_ajax_referer('booking_nonce', 'nonce');
+
+    $staff_id = isset($_POST['staff_id']) ? (int)$_POST['staff_id'] : 0;
+    $month = isset($_POST['month']) ? sanitize_text_field($_POST['month']) : '';
+
+    if ($staff_id && $month) {
+        $transient_key = "altegio_month_availability_{$staff_id}_{$month}";
+        delete_transient($transient_key);
+
+        wp_send_json_success(['message' => "Cache cleared for staff {$staff_id}, month {$month}"]);
+    } else {
+        global $wpdb;
+        $wpdb->query("DELETE FROM {$wpdb->options} WHERE option_name LIKE '%altegio_month_availability_%'");
+        wp_send_json_success(['message' => 'Cache cleared for all months']);
+    }
+}
+add_action('wp_ajax_clear_month_availability_cache', 'handle_clear_month_availability_cache');
+add_action('wp_ajax_nopriv_clear_month_availability_cache', 'handle_clear_month_availability_cache');

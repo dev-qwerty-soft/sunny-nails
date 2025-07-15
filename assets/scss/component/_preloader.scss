@@ -53,15 +53,15 @@
 
 .loader {
   border: 10px solid #f3f3f3;
-  border-top: 10px solid #fdc41f; /* Жовтий колір для верхньої половини */
+  border-top: 10px solid #fdc41f;
   border-right: 10px solid #f3f3f3;
   border-bottom: 10px solid #fdc41f;
   border-radius: 50%;
-  width: 70px;
-  height: 70px;
+  width: 68px;
+  height: 68px;
   margin: auto;
   animation: spin 1.5s linear infinite;
-  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2); /* Тінь для ефекту об'єму */
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
 }
 
 @keyframes spin {
@@ -69,6 +69,6 @@
     transform: rotate(0deg);
   }
   100% {
-    transform: rotate(180deg); /* Поворот тільки на півкола */
+    transform: rotate(180deg);
   }
 }

@@ -24,7 +24,7 @@
 }
 
 .booking-step .services-list {
-  max-height: calc(90vh - 335px);
+  height: calc(90vh - 335px);
   overflow-y: auto;
   max-width: 825px;
   padding: 30px;
@@ -34,7 +34,7 @@
 
   @media screen and (max-width: 768px) {
     padding: 10px;
-    max-height: calc(100vh - 200px);
+    height: calc(100vh - 200px);
   }
   &::-webkit-scrollbar {
     width: 5px;
@@ -48,6 +48,13 @@
   &::-webkit-scrollbar-thumb {
     background: rgba(253, 196, 31, 0.7);
     border-radius: 10px;
+  }
+  .no-items-message,
+  .error-message,
+  .loading-message {
+    padding: 0 !important;
+    background: transparent !important;
+    border: 0px solid transparent;
   }
 }
 .category-tab {
@@ -181,6 +188,7 @@
   opacity: 0;
   transform: translateY(-10px);
   transition: all 0.3s ease;
+  width: 100%;
   &.open {
     display: flex;
     padding: 16px;

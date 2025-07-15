@@ -323,3 +323,65 @@ body.popup-open {
   display: flex;
   align-items: center;
 }
+
+.booking-steps-container {
+  .loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.9);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    transform: translate(0, 0);
+    &.active {
+      display: flex;
+    }
+  }
+
+  .staff-loading,
+  .calendar-loading {
+    text-align: center;
+    padding: 40px 20px;
+
+    .loading-overlay {
+      position: relative;
+      background: transparent;
+      display: flex;
+      margin-bottom: 20px;
+    }
+
+    p {
+      color: #666;
+      font-size: 14px;
+    }
+  }
+
+  .staff-error {
+    text-align: center;
+    padding: 40px 20px;
+
+    .error-message {
+      color: #dc3232;
+      margin-bottom: 20px;
+      font-size: 16px;
+    }
+
+    .retry-staff-btn {
+      background: #fdc41f;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      color: #302f34;
+      font-weight: 600;
+      cursor: pointer;
+
+      &:hover {
+        background: darken(#fdc41f, 10%);
+      }
+    }
+  }
+}

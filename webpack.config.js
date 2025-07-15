@@ -20,20 +20,21 @@ module.exports = {
       {
         test: /\.s[ac]ss$/i,
         exclude: /node_modules/,
-        use: [
-          MiniCssExtractPlugin.loader,
-          "css-loader",
-          "postcss-loader",
-          "sass-loader",
-        ],
+        use: [MiniCssExtractPlugin.loader, "css-loader", "postcss-loader", "sass-loader"],
+      },
+      {
+        test: /\.m?js$/,
+        exclude: /node_modules/,
+        use: {
+          loader: "babel-loader",
+          options: {
+            presets: ["@babel/preset-env"],
+          },
+        },
       },
       {
         test: /\.css$/i,
-        use: [
-          MiniCssExtractPlugin.loader,
-          "css-loader",
-          "postcss-loader",
-        ]
+        use: [MiniCssExtractPlugin.loader, "css-loader", "postcss-loader"],
       },
       {
         test: /\.(woff(2)?|eot|ttf|otf|)$/,
@@ -54,26 +55,26 @@ module.exports = {
   optimization: {
     minimize: isProd,
     minimizer: [
-        new TerserPlugin({
-            test: /\.[jt]sx?(\?.*)?$/i,
-            terserOptions: {
-            compress: {
-                drop_console: isProd,
-                unused: true,
-                dead_code: true,
-                arguments: true,
-                conditionals: true,
-                evaluate: true,
-            },
-            mangle: {
-                reserved: ['$', 'exports', 'require', 'module'],
-            },
-            format: {
-                comments: false,
-                beautify: false,
-            },
-            },
-        }),
+      new TerserPlugin({
+        test: /\.[jt]sx?(\?.*)?$/i,
+        terserOptions: {
+          compress: {
+            drop_console: isProd,
+            unused: true,
+            dead_code: true,
+            arguments: true,
+            conditionals: true,
+            evaluate: true,
+          },
+          mangle: {
+            reserved: ["$", "exports", "require", "module"],
+          },
+          format: {
+            comments: false,
+            beautify: false,
+          },
+        },
+      }),
     ],
   },
   plugins: [

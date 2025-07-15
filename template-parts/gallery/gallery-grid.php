@@ -56,7 +56,14 @@ if (!empty($masters)) {
 <section class="<?= $isFull ? "gallery-section full" : "gallery-section"; ?>">
   <div class="container">
     <div class="gallery-section__top">
-      <h2 class="title"><?php the_field('gallery_title', 'option'); ?></h2>
+      <?php
+        $title = get_field('gallery_title', 'option');
+        if($isFull) {
+          echo "<h1 class='title'>$title</h1>";
+        } else {
+          echo "<h2 class='title'>$title</h2>";
+        };
+      ?>
       <p class="paragraph"><?php the_field('gallery_text', 'option'); ?></p>
     </div>
     <div class="gallery-section__filters">
