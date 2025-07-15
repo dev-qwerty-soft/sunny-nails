@@ -593,7 +593,8 @@
 
         if (!isAddon) {
           const coreId = $(this).data("service-id");
-          const $container = $(`.core-related_addons[data-core-id="${coreId}"]`);
+
+          const $container = $(`.core-related-addons[data-core-id="${coreId}"]`);
           $container.addClass("open");
           $container.find(".service-checkbox").prop("disabled", false);
           $container.find(".addon-item").removeClass("disabled");
@@ -605,7 +606,8 @@
 
         if (!isAddon) {
           const coreId = $(this).data("service-id");
-          const $container = $(`.core-related_addons[data-core-id="${coreId}"]`);
+
+          const $container = $(`.core-related-addons[data-core-id="${coreId}"]`);
           $container.removeClass("open");
           $container.find("input[type=checkbox]").prop("checked", false).prop("disabled", true);
           $container.find(".addon-item").removeClass("selected").addClass("disabled");

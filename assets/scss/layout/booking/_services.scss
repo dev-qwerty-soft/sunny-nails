@@ -188,6 +188,7 @@
   opacity: 0;
   transform: translateY(-10px);
   transition: all 0.3s ease;
+  width: 100%;
   &.open {
     display: flex;
     padding: 16px;
