@@ -18,6 +18,10 @@
     </div>
   </div>
 </footer>
+
+<script>
+  const themeUrl = "<?= get_template_directory_uri(); ?>";
+</script>
 <?php wp_footer(); ?>
 </body>
 

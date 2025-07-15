@@ -49,6 +49,7 @@
     background: rgba(253, 196, 31, 0.7);
     border-radius: 10px;
   }
+  .no-items-message,
   .error-message,
   .loading-message {
     padding: 0 !important;
@@ -187,6 +188,7 @@
   opacity: 0;
   transform: translateY(-10px);
   transition: all 0.3s ease;
+  width: 100%;
   &.open {
     display: flex;
     padding: 16px;
