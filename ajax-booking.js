@@ -624,37 +624,28 @@
     // Next button in services step
     $(document).on("click", '.booking-step[data-step="services"] .next-btn', function () {
       try {
-        // Validate that at least one core service is selected
-
-        // Determine next step based on initial option
         let nextStep;
         if (bookingData.initialOption === "services") {
           nextStep = "master";
         } else {
-          // If we started with master, then we go to datetime
           nextStep = "datetime";
         }
 
-        // Add to flow history
         bookingData.flowHistory.push(nextStep);
 
         debug("Services selected, proceeding to", nextStep);
 
         if (nextStep === "master") {
-          loadStaffForServices();
+          goToStep(nextStep);
         } else if (nextStep === "datetime") {
-          // If skipping master step, ensure master is selected
           if (!bookingData.staffId) {
             showValidationAlert("Please go back and select a master first");
             return false;
           }
+          goToStep(nextStep);
           generateCalendar();
         }
 
-        // Navigate to the next step
-        goToStep(nextStep);
-
-        // Trigger custom event
         $(document).trigger("bookingServicesCompleted", [bookingData.services]);
 
         return true;
@@ -1319,39 +1310,44 @@
 
     $("#coupon-code").val("");
     $(".coupon-feedback").hide();
-    // Reset UI - hide all steps and show initial step
+
     $(".booking-step").removeClass("active");
     $('.booking-step[data-step="initial"]').addClass("active");
 
-    // Reset option selection
     $(".booking-option-item").removeClass("active");
     $('.booking-option-item[data-option="services"]').addClass("active");
     $(".status-indicator").removeClass("active");
     $('.booking-option-item[data-option="services"] .status-indicator').addClass("active");
 
-    // Reset service checkboxes
     $(".service-checkbox").prop("checked", false);
     $(".service-item").removeClass("selected");
 
-    // Reset calendar
     $(".calendar-day").removeClass("selected");
     $(".time-slot").removeClass("selected");
 
-    // Reset form fields
     $("#client-name, #client-phone, #client-email, #client-comment").val("");
     $(".field-error").remove();
     $(".contact-form input").removeClass("error");
 
-    // Reset summary
     $(".selected-master-info").empty();
     $(".summary-services-list").empty();
     $(".summary-total-amount").text("0.00");
 
-    // Hide addons initially
     $(".addon-title").hide();
     $(".addon-services-container").hide();
     $(".service-item.addon-item").addClass("disabled");
     $(".service-checkbox[data-is-addon='true']").prop("disabled", true);
+
+    $(".staff-item").removeClass("selected");
+    $(".staff-item input[type='radio']").prop("checked", false);
+    $(".staff-item.any-master").addClass("selected");
+    $(".staff-item.any-master input[type='radio']").prop("checked", true);
+
+    $(".time-sections").empty();
+
+    staffLoadRetryCount = 0;
+    servicesLoadRetryCount = 0;
+    timeSlotsRetryCount = 0;
 
     debug("Booking form reset");
   }
@@ -1368,7 +1364,6 @@
     $(".booking-step").removeClass("active");
     $(`.booking-step[data-step="${step}"]`).addClass("active");
 
-    // Update next buttons based on initial flow
     if (step === "services") {
       const nextButtonText = bookingData.initialOption === "services" ? "Choose a master" : "Select date and time";
       $(`.booking-step[data-step="services"] .next-btn`).text(nextButtonText);
@@ -1412,24 +1407,111 @@
         $(".staff-item.any-master input[type='radio']").prop("checked", true);
       }
 
-      if (bookingData.initialOption !== "master") {
-        loadStaffForServices();
+      const staffItemsCount = $(".staff-item").not(".any-master").length;
+
+      if (bookingData.services.length > 0) {
+        if (staffItemsCount === 0) {
+          setTimeout(() => {
+            loadStaffForServices();
+          }, 100);
+        }
+      } else {
+        if (staffItemsCount === 0) {
+          setTimeout(() => {
+            renderDefaultStaffList();
+          }, 100);
+        }
       }
 
       updateMasterNextButtonState();
     }
 
     if (step === "datetime") {
-      // Update button state
       updateDateTimeNextButtonState();
     }
 
     debug("Navigated to step", step);
 
-    // Trigger custom event
     $(document).trigger("bookingStepChanged", [step]);
   }
+  function renderDefaultStaffList() {
+    let html = "";
+    const isAnyMasterSelected = bookingData.staffId === "any" || !bookingData.staffId;
+    html += `
+    <label class="staff-item any-master first${isAnyMasterSelected ? " selected" : ""}" data-staff-id="any" data-staff-level="1">
+      <input type="radio" name="staff"${isAnyMasterSelected ? " checked" : ""}>
+      <div class="staff-radio-content">
+        <div class="staff-avatar circle yellow-bg">
+          <svg width="21" height="21" viewBox="0 0 21 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M16.4891 6.89062C16.3689 8.55873 15.1315 9.84375 13.7821 9.84375C12.4327 9.84375 11.1932 8.55914 11.0751 6.89062C10.952 5.15525 12.1566 3.9375 13.7821 3.9375C15.4075 3.9375 16.6122 5.18684 16.4891 6.89062Z" stroke="#302F34" stroke-linecap="round" stroke-linejoin="round" />
+            <path d="M13.7811 12.4688C11.1081 12.4688 8.53765 13.7964 7.8937 16.3821C7.80839 16.7241 8.0229 17.0625 8.37441 17.0625H19.1882C19.5397 17.0625 19.753 16.7241 19.6689 16.3821C19.0249 13.755 16.4545 12.4688 13.7811 12.4688Z" stroke="#302F34" stroke-miterlimit="10" />
+            <path d="M8.20211 7.62645C8.10614 8.95863 7.10618 10.0078 6.02828 10.0078C4.95039 10.0078 3.94879 8.95904 3.85446 7.62645C3.75643 6.24053 4.72973 5.25 6.02828 5.25C7.32684 5.25 8.30014 6.26596 8.20211 7.62645Z" stroke="#302F34" stroke-linecap="round" stroke-linejoin="round" />
+            <path d="M8.44962 12.5507C7.70929 12.2115 6.8939 12.0811 6.0297 12.0811C3.89689 12.0811 1.842 13.1413 1.32726 15.2065C1.25958 15.4796 1.43103 15.7499 1.71157 15.7499H6.31681" stroke="#302F34" stroke-miterlimit="10" stroke-linecap="round" />
+          </svg>
+        </div>
+        <div class="staff-info">
+          <h4 class="staff-name">Any master</h4>
+        </div>
+        <span class="radio-indicator"></span>
+      </div>
+    </label>
+  `;
 
+    $.ajax({
+      url: config.apiEndpoint,
+      type: "POST",
+      data: {
+        action: "get_masters",
+        nonce: config.nonce,
+      },
+      success: function (response) {
+        if (response.success && response.data && Array.isArray(response.data.data)) {
+          response.data.data.forEach(function (staff) {
+            const isSelected = bookingData.staffId == staff.id ? " selected" : "";
+            const staffLevel = Number.isInteger(staff.level) ? staff.level : 1;
+            const levelTitle = levelTitles[staffLevel] || "";
+
+            let priceModifier = "";
+            const modifier = percentMap[staffLevel];
+
+            if (typeof modifier === "number") {
+              const sign = modifier > 0 ? "+" : "";
+              priceModifier = `<div class="staff-price-modifier">${sign}${modifier}% to price</div>`;
+            }
+
+            html += `
+              <label class="staff-item${isSelected}" data-staff-id="${staff.id}" data-staff-level="${staffLevel}">
+                <input type="radio" name="staff"${isSelected ? " checked" : ""}>
+                <div class="staff-radio-content">
+                  <div class="staff-avatar">
+                    ${staff.avatar ? `<img src="${staff.avatar}" alt="${staff.name}">` : ""}
+                  </div>
+                  <div class="staff-info">
+                    <h4 class="staff-name">${staff.name}</h4>
+                    <div class="staff-specialization">
+                     <div class="staff-stars">
+                            ${generateStarsHtml(staffLevel)}
+                    </div>
+                      ${levelTitle ? `<span class="studio-name">(${levelTitle})</span>` : ""}
+                    </div>
+                  </div>
+                  ${priceModifier}
+                  <span class="radio-indicator"></span>
+                </div>
+              </label>
+            `;
+          });
+        }
+
+        $(".staff-list").html(html);
+        updateMasterNextButtonState();
+      },
+      error: function () {
+        $(".staff-list").html(html + '<p class="no-items-message">All specialists available.</p>');
+        updateMasterNextButtonState();
+      },
+    });
+  }
   /**
    * Add a service to the booking
    * @param {string|number} id - Service ID
@@ -1542,17 +1624,18 @@
    * This calls the Altegio API to get available staff for the selected services
    */
   function loadStaffForServices() {
-    if (bookingData.services.length === 0) return;
+    if (!bookingData.services || bookingData.services.length === 0) {
+      console.warn("No services selected for staff loading");
+      return;
+    }
 
     const serviceIds = bookingData.services.map((service) => service.altegioId || service.id).join(",");
 
     debug("Loading staff for services", serviceIds);
 
-    // Show loading overlay
     $(".loading-overlay").show();
     $(".staff-list").html('<p class="loading-message">Loading specialists...</p>');
 
-    // Reset retry counter for new request
     staffLoadRetryCount = 0;
 
     performStaffLoadRequest(serviceIds);
