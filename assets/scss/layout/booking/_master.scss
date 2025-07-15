@@ -89,6 +89,13 @@
     height: 100%;
     object-fit: cover;
   }
+  &.yellow-bg {
+    img {
+      width: get-d(21px);
+      height: get-d(21px);
+      object-fit: cover;
+    }
+  }
   @media screen and (max-width: 768px) {
     position: absolute;
     top: 50%;
