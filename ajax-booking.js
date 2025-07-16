@@ -1452,7 +1452,7 @@
           </svg>
         </div>
         <div class="staff-info">
-          <h4 class="staff-name">Any master</h4>
+          <h4 class="staff-name">Random master</h4>
         </div>
         <span class="radio-indicator"></span>
       </div>
@@ -1880,17 +1880,17 @@
     }
 
     let html = "";
-    // --- ALWAYS show "Any master" at the top ---
+    // --- ALWAYS show "Random master" at the top ---
     const isAnyMasterSelected = bookingData.staffId === "any" || !bookingData.staffId;
     html += `
     <label class="staff-item any-master first${isAnyMasterSelected ? " selected" : ""}" data-staff-id="any" data-staff-level="1">
       <input type="radio" name="staff"${isAnyMasterSelected ? " checked" : ""}>
       <div class="staff-radio-content">
         <div class="staff-avatar circle yellow-bg">
-          <img src="${themeUrl}/assets/svg/any-master.svg" alt="Any master">
+          <img src="${themeUrl}/assets/svg/any-master.svg" alt="Random master">
         </div>
         <div class="staff-info">
-          <h4 class="staff-name">Any master</h4>
+          <h4 class="staff-name">Random master</h4>
         </div>
         <span class="radio-indicator"></span>
       </div>
@@ -2214,17 +2214,17 @@
     }
 
     let html = "";
-    // --- ALWAYS show "Any master" at the top ---
+    // --- ALWAYS show "Random master" at the top ---
     const isAnyMasterSelected = bookingData.staffId === "any" || !bookingData.staffId;
     html += `
     <label class="staff-item any-master first${isAnyMasterSelected ? " selected" : ""}" data-staff-id="any" data-staff-level="1">
       <input type="radio" name="staff"${isAnyMasterSelected ? " checked" : ""}>
       <div class="staff-radio-content">
         <div class="staff-avatar circle yellow-bg">
-          <img src="${themeUrl}/assets/svg/any-master.svg" alt="Any master">
+          <img src="${themeUrl}/assets/svg/any-master.svg" alt="Random master">
         </div>
         <div class="staff-info">
-          <h4 class="staff-name">Any master</h4>
+          <h4 class="staff-name">Random master</h4>
         </div>
         <span class="radio-indicator"></span>
       </div>
@@ -2770,7 +2770,7 @@
       masterBox.find(".avatar").attr("src", "https://be.cdn.alteg.io/images/no-master-sm.png");
     }
 
-    masterBox.find(".name").text(bookingData.staffName || "Any Master");
+    masterBox.find(".name").text(bookingData.staffName || "Random master");
 
     const stars = generateStarsHtml(bookingData.staffLevel);
     masterBox.find(".stars").html(stars);

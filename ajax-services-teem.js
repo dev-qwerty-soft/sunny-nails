@@ -169,11 +169,11 @@
   });
 
   $(document).on("click", ".staff-item.any-master", function () {
-    debug("Any master selected");
+    debug("Random master selected");
 
     if (window.bookingData) {
       window.bookingData.staffId = "any";
-      window.bookingData.staffName = "Any master";
+      window.bookingData.staffName = "Random master";
       window.bookingData.staffLevel = 1;
     }
 

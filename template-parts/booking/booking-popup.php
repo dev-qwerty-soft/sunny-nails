@@ -258,7 +258,7 @@ if (empty($ordered_category_ids)) {
                                     </svg>
                                 </div>
                                 <div class="staff-info">
-                                    <h4 class="staff-name">Any master</h4>
+                                    <h4 class="staff-name">Random master</h4>
                                 </div>
                                 <span class="radio-indicator"></span>
                             </div>
