@@ -29,7 +29,7 @@
 
   // Configuration
   const config = {
-    debug: true, // Enable debug logging
+    debug: false, // Enable debug logging
     priceAdjustmentPerLevel: 10, // Price increase percentage per master level above 1
     apiEndpoint: booking_params.ajax_url, // API endpoint from localized WP
     nonce: booking_params.nonce, // Security nonce from WP
@@ -90,12 +90,12 @@
    * @param {*} data - Optional data to log
    */
   function debug(message, data) {
-    // if (!config.debug) return;
-    // if (data !== undefined) {
-    //   console.log(message, data);
-    // } else {
-    //   console.log(message);
-    // }
+    if (!config.debug) return;
+    if (data !== undefined) {
+      console.log(message, data);
+    } else {
+      console.log(message);
+    }
   }
 
   /**
@@ -870,89 +870,74 @@
       return;
     }
 
-    const daysInMonth = new Date(year, month + 1, 0).getDate();
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    $.ajax({
+      url: booking_params.ajax_url,
+      method: "POST",
+      data: {
+        action: "get_month_availability",
+        nonce: booking_params.nonce,
+        staff_id: bookingData.staffId,
+        service_ids: serviceIds,
+        month: month + 1,
+        year: year,
+      },
+      success: function (response) {
+        if (response.success && response.data && response.data.booking_days) {
+          const daysArr = response.data.booking_days[String(month + 1)] || [];
 
-    const datesToCheck = [];
-    for (let day = 1; day <= daysInMonth; day++) {
-      const date = new Date(year, month, day);
-      if (date >= today) {
-        datesToCheck.push(formatDate(date));
-      }
-    }
+          const results = [];
+          daysArr.forEach((day) => {
+            const dateStr = `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+            results.push({ date: dateStr, hasSlots: true });
+          });
 
-    if (datesToCheck.length === 0) return;
-
-    const allPromises = datesToCheck.map((dateToCheck) => {
-      return new Promise((resolve) => {
-        $.ajax({
-          url: booking_params.ajax_url,
-          method: "POST",
-          data: {
-            action: "get_time_slots",
-            nonce: booking_params.nonce,
-            staff_id: bookingData.staffId,
-            date: dateToCheck,
-            service_ids: serviceIds,
-          },
-          success: function (response) {
-            let hasSlots = false;
-            if (response.success && response.data) {
-              if (Array.isArray(response.data) && response.data.length > 0) {
-                hasSlots = true;
-              } else if (response.data.slots && Array.isArray(response.data.slots) && response.data.slots.length > 0) {
-                hasSlots = true;
-              } else if (response.data.data && Array.isArray(response.data.data) && response.data.data.length > 0) {
-                hasSlots = true;
-              }
+          const daysInMonth = new Date(year, month + 1, 0).getDate();
+          for (let d = 1; d <= daysInMonth; d++) {
+            const dateStr = `${year}-${String(month + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
+            if (!daysArr.includes(String(d))) {
+              results.push({ date: dateStr, hasSlots: false });
             }
-            resolve({ date: dateToCheck, hasSlots });
-          },
-          error: function () {
-            resolve({ date: dateToCheck, hasSlots: false, error: true });
-          },
-        });
-      });
-    });
+          }
 
-    Promise.all(allPromises).then((results) => {
-      setAvailabilityCache(cacheKey, results);
-      applyAvailabilityResults(results);
-      showDatePreloader(false);
+          setAvailabilityCache(cacheKey, results);
+          applyAvailabilityResults(results);
+        } else {
+          const daysInMonth = new Date(year, month + 1, 0).getDate();
+          const results = [];
+          for (let d = 1; d <= daysInMonth; d++) {
+            const dateStr = `${year}-${String(month + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
+            results.push({ date: dateStr, hasSlots: false });
+          }
+          setAvailabilityCache(cacheKey, results);
+          applyAvailabilityResults(results);
+        }
+        showDatePreloader(false);
+      },
+      error: function () {
+        showDatePreloader(false);
+        $(".time-sections").html('<p class="error-message">Error loading available dates. Please try again later.</p>');
+      },
     });
   }
 
-  function applyAvailabilityResults(results) {
-    results.forEach((result) => {
-      const $dayElement = $(`.calendar-day[data-date="${result.date}"]`);
-      if (!result.hasSlots) {
-        if ($dayElement.length && !$dayElement.hasClass("disabled")) {
-          $dayElement.addClass("unavailable");
-          if ($dayElement.hasClass("selected")) {
-            $dayElement.removeClass("selected");
-            bookingData.date = null;
-            bookingData.time = null;
-            $(".time-sections").html('<p class="error-message">Please select an available date.</p>');
-            updateDateTimeNextButtonState();
-          }
-        }
+  function applyAvailabilityResults(bookingDays) {
+    // bookingDays: [{date: "2025-07-21", hasSlots: true}, ...]
+    // Створюємо мапу для швидкого пошуку
+    const availableMap = {};
+    bookingDays.forEach((obj) => {
+      if (obj.hasSlots) availableMap[obj.date] = true;
+    });
+
+    $(".calendar-day").each(function () {
+      const $day = $(this);
+      if ($day.hasClass("empty") || $day.hasClass("disabled")) return;
+      const dateStr = $day.data("date");
+      if (availableMap[dateStr]) {
+        $day.removeClass("unavailable").addClass("available");
       } else {
-        if ($dayElement.length && !$dayElement.hasClass("disabled")) {
-          $dayElement.removeClass("unavailable").addClass("available");
-        }
+        $day.removeClass("available").addClass("unavailable");
       }
     });
-    const availableCount = results.filter((r) => r.hasSlots && !r.error).length;
-    if (availableCount === 0) {
-      $(".time-sections").html('<p class="error-message">Please select another month or a different specialist.</p>');
-    }
-    // Show summary statistics
-
-    const unavailableCount = results.filter((r) => !r.hasSlots && !r.error).length;
-    const errorCount = results.filter((r) => r.error).length;
-
-    console.log(`Summary: ${availableCount} available, ${unavailableCount} unavailable, ${errorCount} errors`);
   }
   /**
    * Clear availability cache

@@ -1100,3 +1100,50 @@ function handle_clear_month_availability_cache()
 }
 add_action('wp_ajax_clear_month_availability_cache', 'handle_clear_month_availability_cache');
 add_action('wp_ajax_nopriv_clear_month_availability_cache', 'handle_clear_month_availability_cache');
+
+add_action('wp_ajax_get_month_availability', 'sunny_get_month_availability');
+add_action('wp_ajax_nopriv_get_month_availability', 'sunny_get_month_availability');
+
+function sunny_get_month_availability()
+{
+    $staff_id = intval($_POST['staff_id']);
+    $service_ids = isset($_POST['service_ids']) ? (array)$_POST['service_ids'] : [];
+    $month = intval($_POST['month']);
+    $year = intval($_POST['year']);
+
+    $altegio_service_ids = [];
+    foreach ($service_ids as $sid) {
+        if (intval($sid) > 1000000) {
+            $altegio_service_ids[] = intval($sid);
+        } else {
+            $aid = get_post_meta($sid, 'altegio_id', true);
+            if ($aid) $altegio_service_ids[] = intval($aid);
+        }
+    }
+
+    $date_from = sprintf('%04d-%02d-01', $year, $month);
+    $date_to = date('Y-m-t', strtotime($date_from));
+
+    $params = [
+        'staff_id' => $staff_id,
+        'service_ids' => $altegio_service_ids,
+        'date_from' => $date_from,
+        'date_to' => $date_to,
+    ];
+
+    $result = AltegioClient::getBookingDates(AltegioClient::COMPANY_ID, $params);
+
+    $days = [];
+    if (!empty($result['success']) && !empty($result['data']['booking_dates'])) {
+        foreach ($result['data']['booking_dates'] as $date) {
+            $dt = DateTime::createFromFormat('Y-m-d', $date);
+            if ($dt && intval($dt->format('n')) === $month) {
+                $days[] = intval($dt->format('j'));
+            }
+        }
+    }
+
+    wp_send_json_success([
+        'booking_days' => [$month => $days]
+    ]);
+}
