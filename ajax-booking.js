@@ -1762,8 +1762,11 @@
    */
   // ...existing code...
   function loadTimeSlotsForAllMasters(date) {
-    // bookingData.services — масив вибраних сервісів
-    const serviceIds = bookingData.services.map((s) => s.id); // тільки WP ID!
+    const serviceIds = bookingData.services.map((s) => s.id);
+
+    // Показати preloader
+    $(".time-preloader").show();
+    $(".time-sections").html('<div class="loading">Loading available time slots...</div>');
 
     $.ajax({
       url: booking_params.ajax_url,
@@ -1775,20 +1778,17 @@
         date: date,
         service_ids: serviceIds,
       },
-      beforeSend: function () {
-        // Можна показати лоадер
-        $(".calendar-slots").html('<div class="loading">Завантаження...</div>');
-      },
       success: function (response) {
+        $(".time-preloader").hide(); // Сховати preloader після завантаження
         if (response.success && response.data) {
-          // Тут твоя логіка рендера слотів для всіх майстрів
           renderAllMastersSlots(response.data);
         } else {
-          $(".calendar-slots").html('<div class="error">Слоти не знайдено</div>');
+          $(".calendar-slots").html('<div class="error">No slots found</div>');
         }
       },
       error: function (xhr, status, error) {
-        $(".calendar-slots").html('<div class="error">Помилка завантаження слотів</div>');
+        $(".time-preloader").hide(); // Сховати preloader при помилці
+        $(".calendar-slots").html('<div class="error">Error loading slots</div>');
         console.error("AJAX error:", error, xhr.responseText);
       },
     });
@@ -3287,6 +3287,36 @@ ${couponInfo}Note: Master markup applied only to core services, not to Add-on se
       localStorage.removeItem("bookingData");
     }
   });
+  $(document).on("mouseenter", ".calendar-day.unavailable", function (e) {
+    $(".calendar-tooltip").remove();
 
+    const $day = $(this);
+    const offset = $day.offset();
+    const tooltip = $(`
+    <div class="calendar-tooltip" style="
+      position: absolute;
+      z-index: 9999;
+      left: ${offset.left + $day.outerWidth() / 2}px;
+      top: ${offset.top + $day.outerHeight() + 8}px;
+      transform: translateX(-50%);
+      background: #302f34;
+      color: #fff;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 15px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      pointer-events: none;
+      white-space: nowrap;
+    ">
+      No available time slots
+    </div>
+  `);
+
+    $("body").append(tooltip);
+  });
+
+  $(document).on("mouseleave", ".calendar-day.unavailable", function () {
+    $(".calendar-tooltip").remove();
+  });
   // Initialize styles when document is ready
 })(jQuery);

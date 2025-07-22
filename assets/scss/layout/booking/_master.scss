@@ -128,7 +128,12 @@
   line-height: 1.2;
   text-wrap: nowrap;
 }
-
+.staff-description {
+  color: var(--black, #302f34);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 120%; /* 16.8px */
+}
 .staff-specialization {
   display: flex;
   align-items: center;
