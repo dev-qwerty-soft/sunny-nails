@@ -258,7 +258,8 @@ if (empty($ordered_category_ids)) {
                                     </svg>
                                 </div>
                                 <div class="staff-info">
-                                    <h4 class="staff-name">Any master</h4>
+                                    <h4 class="staff-name">All masters</h4>
+                                    <p class="staff-description">Can’t choose a specific master? Pick a time — we’ll assign one of our top pros.</p>
                                 </div>
                                 <span class="radio-indicator"></span>
                             </div>

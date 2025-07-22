@@ -1100,3 +1100,141 @@ function handle_clear_month_availability_cache()
 }
 add_action('wp_ajax_clear_month_availability_cache', 'handle_clear_month_availability_cache');
 add_action('wp_ajax_nopriv_clear_month_availability_cache', 'handle_clear_month_availability_cache');
+
+add_action('wp_ajax_get_month_availability', 'sunny_get_month_availability');
+add_action('wp_ajax_nopriv_get_month_availability', 'sunny_get_month_availability');
+
+function sunny_get_month_availability()
+{
+    $staff_id = intval($_POST['staff_id']);
+    $service_ids = isset($_POST['service_ids']) ? (array)$_POST['service_ids'] : [];
+    $month = intval($_POST['month']);
+    $year = intval($_POST['year']);
+
+    $altegio_service_ids = [];
+    foreach ($service_ids as $sid) {
+        if (intval($sid) > 1000000) {
+            $altegio_service_ids[] = intval($sid);
+        } else {
+            $aid = get_post_meta($sid, 'altegio_id', true);
+            if ($aid) $altegio_service_ids[] = intval($aid);
+        }
+    }
+
+    $date_from = sprintf('%04d-%02d-01', $year, $month);
+    $date_to = date('Y-m-t', strtotime($date_from));
+
+    $params = [
+        'staff_id' => $staff_id,
+        'service_ids' => $altegio_service_ids,
+        'date_from' => $date_from,
+        'date_to' => $date_to,
+    ];
+
+    $result = AltegioClient::getBookingDates(AltegioClient::COMPANY_ID, $params);
+
+    $days = [];
+    if (!empty($result['success']) && !empty($result['data']['booking_dates'])) {
+        foreach ($result['data']['booking_dates'] as $date) {
+            $dt = DateTime::createFromFormat('Y-m-d', $date);
+            if ($dt && intval($dt->format('n')) === $month) {
+                $days[] = intval($dt->format('j'));
+            }
+        }
+    }
+
+    wp_send_json_success([
+        'booking_days' => [$month => $days]
+    ]);
+}
+
+/**
+ * AJAX handler for getting nearest sessions
+ */
+function altegio_get_nearest_sessions()
+{
+    check_ajax_referer('booking_nonce', 'nonce');
+
+    $staff_id = isset($_POST['staff_id']) ? intval($_POST['staff_id']) : 0;
+    $service_ids = isset($_POST['service_ids']) ? (array)$_POST['service_ids'] : [];
+
+    if (!$staff_id || empty($service_ids)) {
+        wp_send_json_error(['message' => 'Missing staff_id or service_ids']);
+        return;
+    }
+
+    if (class_exists('AltegioClient')) {
+        $result = AltegioClient::request(
+            "book_staff_seances/" . AltegioClient::COMPANY_ID . "/$staff_id/",
+            ['service_ids' => implode(',', $service_ids)]
+        );
+        if ($result['success'] && !empty($result['data'])) {
+            wp_send_json_success($result['data']);
+        } else {
+            wp_send_json_error(['message' => $result['error'] ?? 'API error']);
+        }
+    } else {
+        wp_send_json_error(['message' => 'API client not available']);
+    }
+}
+add_action('wp_ajax_get_nearest_sessions', 'altegio_get_nearest_sessions');
+add_action('wp_ajax_nopriv_get_nearest_sessions', 'altegio_get_nearest_sessions');
+
+add_action('wp_ajax_get_time_slots_for_all_masters', 'ajax_get_time_slots_for_all_masters');
+add_action('wp_ajax_nopriv_get_time_slots_for_all_masters', 'ajax_get_time_slots_for_all_masters');
+
+function ajax_get_time_slots_for_all_masters()
+{
+    check_ajax_referer('booking_nonce', 'nonce');
+    $date = sanitize_text_field($_POST['date'] ?? '');
+    $service_ids = isset($_POST['service_ids']) ? array_map('intval', (array)$_POST['service_ids']) : [];
+
+    // Get all masters
+    $masters = get_posts([
+        'post_type' => 'master',
+        'posts_per_page' => -1,
+        'post_status' => 'publish',
+    ]);
+
+    $results = [];
+    foreach ($masters as $master) {
+        $staff_id = get_post_meta($master->ID, 'altegio_id', true);
+        if (!$staff_id) continue;
+
+        // Get only those services that this master provides
+        $related_services = get_field('related_services', $master->ID, false);
+        if (empty($related_services)) continue;
+
+        // Find intersection between selected services and master's services
+        $services_for_master = array_intersect($service_ids, $related_services);
+        if (empty($services_for_master)) continue;
+
+        // Convert to altegio_id
+        $altegio_service_ids = [];
+        foreach ($services_for_master as $sid) {
+            $aid = get_post_meta($sid, 'altegio_id', true);
+            if ($aid) $altegio_service_ids[] = intval($aid);
+        }
+        if (empty($altegio_service_ids)) continue;
+
+        // Get slots for this master
+        try {
+            $response = AltegioClient::getBookTimes($staff_id, $date, $altegio_service_ids);
+            if (!empty($response['data'])) {
+                $results[] = [
+                    'staff' => [
+                        'id' => $staff_id,
+                        'name' => get_the_title($master->ID),
+                        'avatar' => get_the_post_thumbnail_url($master->ID, 'thumbnail'),
+                        'level' => (int)get_post_meta($master->ID, 'master_level', true),
+                    ],
+                    'slots' => $response['data'],
+                ];
+            }
+        } catch (Exception $e) {
+            continue;
+        }
+    }
+
+    wp_send_json_success($results);
+}

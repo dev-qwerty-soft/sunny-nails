@@ -831,4 +831,39 @@ class AltegioClient
             ]
         ];
     }
+
+    public static function getAvailableBookingDays($companyId, $staffId = null, $serviceIds = [])
+    {
+        $params = [];
+        if ($staffId) $params['staff_id'] = $staffId;
+        if (!empty($serviceIds)) $params['service_ids'] = $serviceIds;
+        return self::request("book_services/{$companyId}", $params);
+    }
+
+    // Пример метода для AltegioClient
+    public static function getBookDates($company_id, $staff_id, $service_ids, $date_from, $date_to)
+    {
+        $url = "https://api.alteg.io/api/v1/book_dates/{$company_id}";
+        $params = [
+            'staff_id' => $staff_id,
+            'service_ids' => implode(',', $service_ids),
+            'date_from' => $date_from,
+            'date_to' => $date_to,
+        ];
+        $query = http_build_query($params);
+        $response = wp_remote_get($url . '?' . $query, [
+            'headers' => [
+                'Authorization' => 'Bearer ' . self::getToken(),
+                'Content-Type' => 'application/json',
+            ]
+        ]);
+        if (is_wp_error($response)) {
+            return ['success' => false, 'error' => $response->get_error_message()];
+        }
+        $body = json_decode(wp_remote_retrieve_body($response), true);
+        return [
+            'success' => isset($body['success']) ? $body['success'] : true,
+            'data' => $body,
+        ];
+    }
 }
