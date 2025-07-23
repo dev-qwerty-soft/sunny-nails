@@ -202,14 +202,18 @@ function reviews_item()
                                                     $stars
                                                 </div>";
 
+
                             if ($needs_expand) {
                                 echo "<div class='review__text-container'>
                                         <p class='review__text review__text--short'>" . $short_text . "...</p>
                                         <p class='review__text review__text--full' style='display: none;'>$text</p>
                                         <button class='review__expand-btn' type='button'>Read more</button>
-                                      </div>";
+                                    </div>";
                             } else {
-                                echo "<p>$text</p>";
+                                echo "<div class='review__text-container'>
+                                        <p class='review__text review__text--short'>$text</p>
+                                        <button class='review__expand-btn' type='button' disabled style='opacity:0;pointer-events:none;'>Read more</button>
+                                    </div>";
                             }
 
                             echo "</div>

@@ -290,6 +290,9 @@
     }
   }
   & .mini-swiper {
+    touch-action: pan-x;
+    touch-action: pan-x !important;
+    -ms-touch-action: pan-x !important;
     & .swiper-wrapper {
       padding-bottom: get-d(16px);
       @include respond(lg) {

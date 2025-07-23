@@ -109,26 +109,9 @@ if (g(".team-swiper")) {
       nextEl: ".team-section__wrapper .swiper-button-next",
       prevEl: ".team-section__wrapper .swiper-button-prev",
     },
-    breakpoints: {
-      768: {
-        slidesPerView: 2,
-      },
-      1024: {
-        slidesPerView: 3,
-      },
-    },
-  });
-}
-
-if (g(".winners-swiper")) {
-  new Swiper(".winners-swiper", {
-    modules: [Navigation],
-    slidesPerView: 1,
-    spaceBetween: 20,
-    navigation: {
-      nextEl: ".winners-section__wrapper .swiper-button-next",
-      prevEl: ".winners-section__wrapper .swiper-button-prev",
-    },
+    nested: true,
+    simulateTouch: true,
+    allowTouchMove: true,
     breakpoints: {
       768: {
         slidesPerView: 2,
@@ -152,12 +135,50 @@ if (g(".mini-swiper")) {
         draggable: true,
         dragSize: 32,
       },
+      nested: true,
+      touchStartPreventDefault: false,
+      allowTouchMove: true,
+      simulateTouch: true,
+      grabCursor: true,
+      cssMode: false,
       breakpoints: {
         1024: {
           slidesPerView: 6,
         },
       },
     });
+  });
+}
+
+document.querySelectorAll(".mini-swiper").forEach((swiper) => {
+  swiper.addEventListener(
+    "touchstart",
+    (e) => {
+      e.stopPropagation();
+    },
+    { passive: true }
+  );
+  swiper.addEventListener("pointerdown", (e) => {
+    e.stopPropagation();
+  });
+});
+if (g(".winners-swiper")) {
+  new Swiper(".winners-swiper", {
+    modules: [Navigation],
+    slidesPerView: 1,
+    spaceBetween: 20,
+    navigation: {
+      nextEl: ".winners-section__wrapper .swiper-button-next",
+      prevEl: ".winners-section__wrapper .swiper-button-prev",
+    },
+    breakpoints: {
+      768: {
+        slidesPerView: 2,
+      },
+      1024: {
+        slidesPerView: 3,
+      },
+    },
   });
 }
 

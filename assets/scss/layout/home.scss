@@ -801,6 +801,7 @@
     color: var(--gray, #9a9a9a);
     font-weight: 600;
     font-size: get-d(16px);
+    font-family: "Montserrat", sans-serif;
     cursor: pointer;
     padding: 0;
     margin-top: get-d(18px);
@@ -812,7 +813,7 @@
       margin-top: get-lg(12px);
     }
     @include respond(md) {
-      font-size: 12px;
+      font-size: 14px;
       margin-top: 10px;
     }
 
