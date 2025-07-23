@@ -90,12 +90,12 @@
    * @param {*} data - Optional data to log
    */
   function debug(message, data) {
-    // if (!config.debug) return;
-    // if (data !== undefined) {
-    //   console.log(message, data);
-    // } else {
-    //   console.log(message);
-    // }
+    if (!config.debug) return;
+    if (data !== undefined) {
+      console.log(message, data);
+    } else {
+      console.log(message);
+    }
   }
 
   /**
@@ -763,6 +763,8 @@
       navigateCalendar(1);
     });
 
+    // Додай у initDateTimeHandling() перед викликом loadTimeSlots(date):
+
     $(document).on("click", ".calendar-day:not(.disabled, .empty)", function () {
       const $day = $(this);
       const date = $day.data("date");
@@ -772,6 +774,9 @@
         showUnavailableDateDialog(date);
         return;
       }
+
+      // Показати лоадер у time-sections (або .calendar-slots, якщо треба)
+      $(".time-sections").html('<div class="loading">Loading available time slots...</div>');
 
       // Proceed with normal date selection for available dates
       selectDate(date);
@@ -870,89 +875,74 @@
       return;
     }
 
-    const daysInMonth = new Date(year, month + 1, 0).getDate();
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    $.ajax({
+      url: booking_params.ajax_url,
+      method: "POST",
+      data: {
+        action: "get_month_availability",
+        nonce: booking_params.nonce,
+        staff_id: bookingData.staffId,
+        service_ids: serviceIds,
+        month: month + 1,
+        year: year,
+      },
+      success: function (response) {
+        if (response.success && response.data && response.data.booking_days) {
+          const daysArr = response.data.booking_days[String(month + 1)] || [];
 
-    const datesToCheck = [];
-    for (let day = 1; day <= daysInMonth; day++) {
-      const date = new Date(year, month, day);
-      if (date >= today) {
-        datesToCheck.push(formatDate(date));
-      }
-    }
+          const results = [];
+          daysArr.forEach((day) => {
+            const dateStr = `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+            results.push({ date: dateStr, hasSlots: true });
+          });
 
-    if (datesToCheck.length === 0) return;
-
-    const allPromises = datesToCheck.map((dateToCheck) => {
-      return new Promise((resolve) => {
-        $.ajax({
-          url: booking_params.ajax_url,
-          method: "POST",
-          data: {
-            action: "get_time_slots",
-            nonce: booking_params.nonce,
-            staff_id: bookingData.staffId,
-            date: dateToCheck,
-            service_ids: serviceIds,
-          },
-          success: function (response) {
-            let hasSlots = false;
-            if (response.success && response.data) {
-              if (Array.isArray(response.data) && response.data.length > 0) {
-                hasSlots = true;
-              } else if (response.data.slots && Array.isArray(response.data.slots) && response.data.slots.length > 0) {
-                hasSlots = true;
-              } else if (response.data.data && Array.isArray(response.data.data) && response.data.data.length > 0) {
-                hasSlots = true;
-              }
+          const daysInMonth = new Date(year, month + 1, 0).getDate();
+          for (let d = 1; d <= daysInMonth; d++) {
+            const dateStr = `${year}-${String(month + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
+            if (!daysArr.includes(String(d))) {
+              results.push({ date: dateStr, hasSlots: false });
             }
-            resolve({ date: dateToCheck, hasSlots });
-          },
-          error: function () {
-            resolve({ date: dateToCheck, hasSlots: false, error: true });
-          },
-        });
-      });
-    });
+          }
 
-    Promise.all(allPromises).then((results) => {
-      setAvailabilityCache(cacheKey, results);
-      applyAvailabilityResults(results);
-      showDatePreloader(false);
+          setAvailabilityCache(cacheKey, results);
+          applyAvailabilityResults(results);
+        } else {
+          const daysInMonth = new Date(year, month + 1, 0).getDate();
+          const results = [];
+          for (let d = 1; d <= daysInMonth; d++) {
+            const dateStr = `${year}-${String(month + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
+            results.push({ date: dateStr, hasSlots: false });
+          }
+          setAvailabilityCache(cacheKey, results);
+          applyAvailabilityResults(results);
+        }
+        showDatePreloader(false);
+      },
+      error: function () {
+        showDatePreloader(false);
+        $(".time-sections").html('<p class="error-message">Error loading available dates. Please try again later.</p>');
+      },
     });
   }
 
-  function applyAvailabilityResults(results) {
-    results.forEach((result) => {
-      const $dayElement = $(`.calendar-day[data-date="${result.date}"]`);
-      if (!result.hasSlots) {
-        if ($dayElement.length && !$dayElement.hasClass("disabled")) {
-          $dayElement.addClass("unavailable");
-          if ($dayElement.hasClass("selected")) {
-            $dayElement.removeClass("selected");
-            bookingData.date = null;
-            bookingData.time = null;
-            $(".time-sections").html('<p class="error-message">Please select an available date.</p>');
-            updateDateTimeNextButtonState();
-          }
-        }
+  function applyAvailabilityResults(bookingDays) {
+    // bookingDays: [{date: "2025-07-21", hasSlots: true}, ...]
+    // Створюємо мапу для швидкого пошуку
+    const availableMap = {};
+    bookingDays.forEach((obj) => {
+      if (obj.hasSlots) availableMap[obj.date] = true;
+    });
+
+    $(".calendar-day").each(function () {
+      const $day = $(this);
+      if ($day.hasClass("empty") || $day.hasClass("disabled")) return;
+      const dateStr = $day.data("date");
+      if (availableMap[dateStr]) {
+        $day.removeClass("unavailable").addClass("available");
       } else {
-        if ($dayElement.length && !$dayElement.hasClass("disabled")) {
-          $dayElement.removeClass("unavailable").addClass("available");
-        }
+        $day.removeClass("available").addClass("unavailable");
       }
     });
-    const availableCount = results.filter((r) => r.hasSlots && !r.error).length;
-    if (availableCount === 0) {
-      $(".time-sections").html('<p class="error-message">Please select another month or a different specialist.</p>');
-    }
-    // Show summary statistics
-
-    const unavailableCount = results.filter((r) => !r.hasSlots && !r.error).length;
-    const errorCount = results.filter((r) => r.error).length;
-
-    console.log(`Summary: ${availableCount} available, ${unavailableCount} unavailable, ${errorCount} errors`);
   }
   /**
    * Clear availability cache
@@ -1452,7 +1442,7 @@
           </svg>
         </div>
         <div class="staff-info">
-          <h4 class="staff-name">Any master</h4>
+          <h4 class="staff-name">Random master</h4>
         </div>
         <span class="radio-indicator"></span>
       </div>
@@ -1690,16 +1680,60 @@
    * @param {string|number} masterId - Master ID to load services for
    */
   function loadServicesForMaster(masterId) {
-    debug("Loading services for master", masterId);
-
-    // Show loading overlay
     $(".loading-overlay").show();
-    $(".booking-popup .services-list").html('<p class="loading-message">Loading services...</p>');
+    $(".services-list").html('<p class="loading-message">Loading services...</p>');
 
-    // Reset retry counter for new request
-    servicesLoadRetryCount = 0;
+    // Якщо вибрано All masters — підтягуємо всі сервіси (PHP-розмітка)
+    if (masterId === "any") {
+      $.ajax({
+        url: booking_params.ajax_url,
+        method: "POST",
+        data: {
+          action: "get_services",
+          nonce: booking_params.nonce,
+        },
+        success: function (response) {
+          $(".loading-overlay").hide();
+          if (response.success && response.data && response.data.html) {
+            $(".services-list").html(response.data.html);
+            updateAddonAvailability && updateAddonAvailability();
+            updateNextButtonState && updateNextButtonState();
+          } else {
+            $(".services-list").html('<p class="no-items-message">No services available.</p>');
+          }
+        },
+        error: function () {
+          $(".loading-overlay").hide();
+          $(".services-list").html('<p class="no-items-message">Error loading services. Please try again.</p>');
+        },
+      });
+      return;
+    }
 
-    performServicesLoadRequest(masterId);
+    // Якщо вибрано конкретного майстра — підтягуємо тільки його сервіси
+    $.ajax({
+      url: booking_params.ajax_url,
+      method: "POST",
+      data: {
+        action: "get_filtered_services",
+        staff_id: masterId,
+        nonce: booking_params.nonce,
+      },
+      success: function (response) {
+        $(".loading-overlay").hide();
+        if (response.success && response.data && response.data.html) {
+          $(".services-list").html(response.data.html);
+          updateAddonAvailability && updateAddonAvailability();
+          updateNextButtonState && updateNextButtonState();
+        } else {
+          $(".services-list").html('<p class="no-items-message">No services available for this master.</p>');
+        }
+      },
+      error: function () {
+        $(".loading-overlay").hide();
+        $(".services-list").html('<p class="no-items-message">Error loading services. Please try again.</p>');
+      },
+    });
   }
 
   /**
@@ -1765,6 +1799,131 @@
       },
     });
   }
+
+  /**
+   * Load time slots for all masters for a given date (when "All masters" is selected)
+   * @param {string} date - Date in YYYY-MM-DD format
+   */
+  // ...existing code...
+  function loadTimeSlotsForAllMasters(date) {
+    const serviceIds = bookingData.services.map((s) => s.id);
+
+    // Показати preloader
+    $(".time-preloader").show();
+    $(".time-sections").html('<div class="loading">Loading available time slots...</div>');
+
+    $.ajax({
+      url: booking_params.ajax_url,
+      method: "POST",
+      dataType: "json",
+      data: {
+        action: "get_time_slots_for_all_masters",
+        nonce: booking_params.nonce,
+        date: date,
+        service_ids: serviceIds,
+      },
+      success: function (response) {
+        $(".time-preloader").hide(); // Сховати preloader після завантаження
+        if (response.success && response.data) {
+          renderAllMastersSlots(response.data);
+        } else {
+          $(".calendar-slots").html('<div class="error">No slots found</div>');
+        }
+      },
+      error: function (xhr, status, error) {
+        $(".time-preloader").hide(); // Сховати preloader при помилці
+        $(".calendar-slots").html('<div class="error">Error loading slots</div>');
+        console.error("AJAX error:", error, xhr.responseText);
+      },
+    });
+  }
+  function renderAllMastersSlots(data) {
+    const $target = $(".time-sections");
+    if (!data || Object.keys(data).length === 0) {
+      $target.html('<div class="no-slots-message">No available slots for any master on this date.</div>');
+      return;
+    }
+
+    let html = "";
+    Object.values(data).forEach((entry) => {
+      if (!entry.slots || entry.slots.length === 0) return;
+
+      const staff = entry.staff || {};
+      const name = staff.name || "Master";
+      const avatar = staff.avatar ? `<img src="${staff.avatar}" alt="${name}">` : "";
+      const level = staff.level || 1;
+
+      // Build slots HTML
+      let slotsHtml = "";
+      entry.slots.forEach((slot) => {
+        let time = typeof slot === "object" && slot.time ? slot.time : typeof slot === "string" ? slot.split(" ")[1]?.slice(0, 5) : "";
+        if (!time) return;
+        slotsHtml += `<div class="time-slot"
+        data-time="${time}"
+        data-staff-id="${staff.id}"
+        data-staff-name="${name}"
+        data-staff-level="${level}"
+        data-staff-avatar="${staff.avatar || ""}"
+      >${time}</div>`;
+      });
+
+      html += `
+      <div class="master-slots-group" data-staff-id="${staff.id}" data-staff-name="${name}" data-staff-level="${level}">
+        <div class="staff-radio-content">
+          <div class="staff-avatar">${avatar}</div>
+          <div class="staff-info">
+            <h4 class="staff-name">${name}</h4>
+            <div class="staff-specialization">
+              <div class="staff-stars">${generateStarsHtml(level)}</div>
+              ${levelTitles[level] ? `<span class="studio-name">(${levelTitles[level]})</span>` : ""}
+              ${percentMap[level] > 0 ? `<div class="staff-price-modifier">+${percentMap[level]}% to price</div>` : ""}
+            </div>
+          </div>
+        </div>
+        <div class="master-slots-list">${slotsHtml}</div>
+      </div>
+    `;
+    });
+
+    if (!html) {
+      $target.html('<div class="no-slots-message">No available slots for any master on this date.</div>');
+    } else {
+      $target.html(html);
+    }
+  }
+
+  // Patch loadTimeSlots to support "All masters" logic
+  const originalLoadTimeSlots = loadTimeSlots;
+  loadTimeSlots = function (date) {
+    if (bookingData.staffId === "any") {
+      loadTimeSlotsForAllMasters(date);
+      return;
+    }
+    originalLoadTimeSlots(date);
+  };
+
+  // Handle slot click for "All masters"
+  $(document).on("click", ".time-sections .time-slot", function () {
+    if (bookingData.staffId === "any") {
+      const $slot = $(this);
+      bookingData.staffId = $slot.data("staff-id");
+      bookingData.staffName = $slot.data("staff-name");
+      bookingData.staffLevel = parseInt($slot.data("staff-level")) || 1;
+      bookingData.staffAvatar = $slot.data("staff-avatar") || "";
+      bookingData.time = $slot.data("time");
+      $(".time-slot").removeClass("selected");
+      $slot.addClass("selected");
+      updateDateTimeNextButtonState();
+      updateSummary();
+      return;
+    }
+    // Default logic for single master
+    const time = $(this).data("time");
+    selectTime(time);
+    $(".time-slot").removeClass("selected");
+    $(this).addClass("selected");
+    updateDateTimeNextButtonState();
+  });
 
   /**
    * Load time slots for selected date and staff with loading overlay and retry mechanism
@@ -1880,17 +2039,17 @@
     }
 
     let html = "";
-    // --- ALWAYS show "Any master" at the top ---
+    // --- ALWAYS show "Random master" at the top ---
     const isAnyMasterSelected = bookingData.staffId === "any" || !bookingData.staffId;
     html += `
     <label class="staff-item any-master first${isAnyMasterSelected ? " selected" : ""}" data-staff-id="any" data-staff-level="1">
       <input type="radio" name="staff"${isAnyMasterSelected ? " checked" : ""}>
       <div class="staff-radio-content">
         <div class="staff-avatar circle yellow-bg">
-          <img src="${themeUrl}/assets/svg/any-master.svg" alt="Any master">
+          <img src="${themeUrl}/assets/svg/any-master.svg" alt="Random master">
         </div>
         <div class="staff-info">
-          <h4 class="staff-name">Any master</h4>
+          <h4 class="staff-name">Random master</h4>
         </div>
         <span class="radio-indicator"></span>
       </div>
@@ -2214,17 +2373,17 @@
     }
 
     let html = "";
-    // --- ALWAYS show "Any master" at the top ---
+    // --- ALWAYS show "Random master" at the top ---
     const isAnyMasterSelected = bookingData.staffId === "any" || !bookingData.staffId;
     html += `
     <label class="staff-item any-master first${isAnyMasterSelected ? " selected" : ""}" data-staff-id="any" data-staff-level="1">
       <input type="radio" name="staff"${isAnyMasterSelected ? " checked" : ""}>
       <div class="staff-radio-content">
         <div class="staff-avatar circle yellow-bg">
-          <img src="${themeUrl}/assets/svg/any-master.svg" alt="Any master">
+          <img src="${themeUrl}/assets/svg/any-master.svg" alt="Random master">
         </div>
         <div class="staff-info">
-          <h4 class="staff-name">Any master</h4>
+          <h4 class="staff-name">Random master</h4>
         </div>
         <span class="radio-indicator"></span>
       </div>
@@ -2713,40 +2872,8 @@
     // Return just the time if we can't calculate a range
     return timeStr;
   }
-  function selectRandomMaster() {
-    const $availableStaff = $(".staff-item").not(".any-master");
-
-    if ($availableStaff.length === 0) return;
-
-    const randomIndex = Math.floor(Math.random() * $availableStaff.length);
-    const $randomStaff = $availableStaff.eq(randomIndex);
-
-    $randomStaff.find('input[type="radio"]').prop("checked", true).trigger("change").trigger("click");
-    $randomStaff.addClass("selected");
-
-    const staffId = $randomStaff.data("staff-id");
-    const staffName = $randomStaff.find(".staff-name").text().trim();
-    const staffLevel = typeof bookingData.staffLevel === "number" ? bookingData.staffLevel : 1;
-
-    const specialization = $randomStaff.find(".stars span").text().trim().replace(/[()]/g, "");
-
-    bookingData.staffId = staffId;
-    bookingData.staffName = staffName;
-    bookingData.staffLevel = staffLevel;
-    bookingData.staffSpecialization = specialization;
-
-    return staffId;
-  }
 
   $(document).on("click", ".booking-step[data-step='master'] .next-btn", function () {
-    if (bookingData.staffId === "any") {
-      const selectedId = selectRandomMaster();
-      if (!selectedId) {
-        showValidationAlert("No available masters.");
-        return;
-      }
-    }
-
     goToStep("datetime");
     generateCalendar();
     updateSummary();
@@ -2770,7 +2897,7 @@
       masterBox.find(".avatar").attr("src", "https://be.cdn.alteg.io/images/no-master-sm.png");
     }
 
-    masterBox.find(".name").text(bookingData.staffName || "Any Master");
+    masterBox.find(".name").text(bookingData.staffName || "Random master");
 
     const stars = generateStarsHtml(bookingData.staffLevel);
     masterBox.find(".stars").html(stars);
@@ -3204,6 +3331,36 @@ ${couponInfo}Note: Master markup applied only to core services, not to Add-on se
       localStorage.removeItem("bookingData");
     }
   });
+  $(document).on("mouseenter", ".calendar-day.unavailable", function (e) {
+    $(".calendar-tooltip").remove();
 
+    const $day = $(this);
+    const offset = $day.offset();
+    const tooltip = $(`
+    <div class="calendar-tooltip" style="
+      position: absolute;
+      z-index: 9999;
+      left: ${offset.left + $day.outerWidth() / 2}px;
+      top: ${offset.top + $day.outerHeight() + 8}px;
+      transform: translateX(-50%);
+      background: #302f34;
+      color: #fff;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 15px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      pointer-events: none;
+      white-space: nowrap;
+    ">
+      No available time slots
+    </div>
+  `);
+
+    $("body").append(tooltip);
+  });
+
+  $(document).on("mouseleave", ".calendar-day.unavailable", function () {
+    $(".calendar-tooltip").remove();
+  });
   // Initialize styles when document is ready
 })(jQuery);
