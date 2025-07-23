@@ -133,6 +133,7 @@
       border-radius: 10px;
       background: rgba(255, 255, 255, 0.75);
       overflow-y: auto;
+      overflow-x: hidden;
       aspect-ratio: 1;
       @media screen and (max-width: 1024px) {
         max-height: 469px;
@@ -331,6 +332,9 @@
     justify-content: flex-start;
     .staff-price-modifier {
       margin: 0;
+      span {
+        margin-left: 5px;
+      }
     }
   }
   .master-slots-list {

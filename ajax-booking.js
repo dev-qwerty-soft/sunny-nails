@@ -1474,7 +1474,7 @@
 
             if (typeof modifier === "number") {
               const sign = modifier > 0 ? "+" : "";
-              priceModifier = `<div class="staff-price-modifier">${sign}${modifier}% to price</div>`;
+              priceModifier = `<div class="staff-price-modifier">${sign}${modifier}%    <span>to price</span></div>`;
             }
 
             html += `
@@ -1882,7 +1882,7 @@
             <div class="staff-specialization">
               <div class="staff-stars">${generateStarsHtml(level)}</div>
               ${levelTitles[level] ? `<span class="studio-name">(${levelTitles[level]})</span>` : ""}
-              ${percentMap[level] > 0 ? `<div class="staff-price-modifier">+${percentMap[level]}% to price</div>` : ""}
+              ${percentMap[level] > 0 ? `<div class="staff-price-modifier">+${percentMap[level]}%    <span>to price</span></div>` : ""}
             </div>
           </div>
         </div>
@@ -2073,7 +2073,7 @@
 
       if (typeof modifier === "number") {
         const sign = modifier > 0 ? "+" : "";
-        priceModifier = `<div class="staff-price-modifier">${sign}${modifier}% to price</div>`;
+        priceModifier = `<div class="staff-price-modifier">${sign}${modifier}%    <span>to price</span></div>`;
       }
 
       html += `
@@ -2407,7 +2407,7 @@
 
       if (typeof modifier === "number") {
         const sign = modifier > 0 ? "+" : "";
-        priceModifier = `<div class="staff-price-modifier">${sign}${modifier}% to price</div>`;
+        priceModifier = `<div class="staff-price-modifier">${sign}${modifier}%    <span>to price</span></div>`;
       }
 
       html += `
