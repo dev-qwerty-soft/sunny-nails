@@ -1019,7 +1019,14 @@
       const input = $(this);
       let value = input.val();
 
+      const countryCode = window.getSelectedCountryCode ? window.getSelectedCountryCode() : "";
+      const codeDigits = countryCode.replace(/\D/g, "");
+
+      const maxTotalDigits = 12;
+
       let cleaned = value.replace(/\D/g, "");
+
+      cleaned = cleaned.slice(0, maxTotalDigits - codeDigits.length);
 
       let formatted = cleaned;
       if (cleaned.length > 4) {
@@ -1031,9 +1038,8 @@
       if (typeof bookingData !== "undefined") {
         bookingData.contact = bookingData.contact || {};
         bookingData.contact.phone = cleaned;
-        const currentCountryCode = window.getSelectedCountryCode ? window.getSelectedCountryCode() : null;
-        bookingData.contact.countryCode = currentCountryCode;
-        bookingData.contact.fullPhone = currentCountryCode ? currentCountryCode + cleaned : cleaned;
+        bookingData.contact.countryCode = countryCode;
+        bookingData.contact.fullPhone = countryCode + cleaned;
       }
     });
 
