@@ -3,6 +3,38 @@ function altegio_get_services()
 {
     check_ajax_referer('booking_nonce', 'nonce');
 
+    $staff_id = isset($_POST['staff_id']) ? sanitize_text_field($_POST['staff_id']) : 'any';
+    if ($staff_id === 'any' || empty($staff_id)) {
+        // Додаємо формування $service_categories_popup
+        $ordered_category_ids = function_exists('get_field') ? get_field('category_selection', 'option') : [];
+        if (empty($ordered_category_ids)) {
+            $service_categories_popup = get_terms([
+                'taxonomy' => 'service_category',
+                'hide_empty' => true,
+                'orderby' => 'name',
+            ]);
+        } else {
+            $service_categories_popup = [];
+            foreach ($ordered_category_ids as $cat_id) {
+                $term = get_term($cat_id, 'service_category');
+                if (!is_wp_error($term) && $term !== null) {
+                    $service_categories_popup[] = $term;
+                }
+            }
+        }
+
+        $template_path = locate_template('template-parts/booking/services-list.php');
+        if ($template_path && file_exists($template_path)) {
+            ob_start();
+            include $template_path;
+            $html = ob_get_clean();
+            wp_send_json_success(['html' => $html]);
+        } else {
+            wp_send_json_error(['message' => 'Template not found']);
+        }
+        return;
+    }
+
     $services_query = new WP_Query([
         'post_type' => 'service',
         'posts_per_page' => -1,
