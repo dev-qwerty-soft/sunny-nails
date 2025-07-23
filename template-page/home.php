@@ -161,15 +161,35 @@ function reviews_item()
             </div>
         </div>
     </section>
-
     <?php
     get_template_part("template-parts/sections/form");
     get_template_part("template-parts/sections/team");
     ?>
+    <section class="place-section">
+        <div class="container">
+            <div class="place-section__top">
+                <h2 class="title">The atmosphere of space</h2>
+                <p class="paragraph">Our space blends modern elegance with yellow accents and cozy tones to lift your mood. Enjoy a complimentary drink and unwind in our lounge or during your treatment.</p>
+                <?php
+                $text = get_field('place_link_text', 'option');
+                $link = get_field('place_link_url', 'option');
+                if ($link && $text) {
+                    echo "<a rel='noopener noreferrer' href='$link' class='btn yellow'>Show more</a>";
+                }
+                ?>
+            </div>
+            <div class="place-section__images">
+                <div class="image"></div>
+                <div class="image"></div>
+                <div class="image"></div>
+                <div class="image"></div>
+            </div>
+        </div>
+    </section>
     <section class="reviews-section">
         <div class="container">
             <div class="reviews-section__top">
-                <h2 class="title">What Our Clients Say</h2>
+                <h2 class="title"><?php the_field('reviews_title', 'option'); ?></h2>
                 <?php
                 $text = get_field('reviews_link_text', 'option');
                 $link = get_field('reviews_link_url', 'option');

@@ -903,6 +903,26 @@
             "selected": 0
         },
         {
+            "key": "field_687f52bb3ab26",
+            "label": "Reviews Title",
+            "name": "reviews_title",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "maxlength": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": ""
+        },
+        {
             "key": "field_68234c53193df",
             "label": "Reviews api token",
             "name": "reviews_api_token",
@@ -1213,5 +1233,5 @@
     "active": true,
     "description": "",
     "show_in_rest": 0,
-    "modified": 1749561955
+    "modified": 1753174806
 }
