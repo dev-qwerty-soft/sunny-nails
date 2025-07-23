@@ -1,25 +1,26 @@
-import "./scss/main.min.scss";
-import "./js/gsap.js";
-import "./js/services-validation.js";
-import "./js/services.js";
-import "swiper/css";
-import "swiper/css/pagination";
-import "swiper/css/scrollbar";
-import Swiper from "swiper";
-import "./js/map.js";
-import { Navigation, Pagination, Scrollbar, FreeMode } from "swiper/modules";
-import { has, g, add, remove, toggle, updateDisplay } from "./js/function.js";
+import './scss/main.min.scss';
+import './js/gsap.js';
+import './js/services-validation.js';
+import './js/services.js';
+import 'swiper/css';
+import 'swiper/css/pagination';
+import 'swiper/css/scrollbar';
+import Swiper from 'swiper';
+import './js/map.js';
+import { Navigation, Pagination, Scrollbar, FreeMode, Thumbs } from 'swiper/modules';
+import { has, g, add, remove, toggle, updateDisplay } from './js/function.js';
+import 'swiper/css/thumbs';
 
-const header = g(".site-header");
-const btn = g("#burger");
-const menu = g(".burger-menu");
+const header = g('.site-header');
+const btn = g('#burger');
+const menu = g('.burger-menu');
 
 let gallerySwiper;
 let filterFn;
 let tabFn;
-const modal = g(".gallery-modal");
-const filterSection = g(".gallery-section");
-const buttonsTabsWrapper = g(".sunny-friends-table-section__buttons");
+const modal = g('.gallery-modal');
+const filterSection = g('.gallery-section');
+const buttonsTabsWrapper = g('.sunny-friends-table-section__buttons');
 
 setTimeout(() => {
   let lastScrollTop = 0;
@@ -28,15 +29,15 @@ setTimeout(() => {
     let currentScrollTop = window.pageYOffset || document.documentElement.scrollTop;
     scrollingDown = currentScrollTop > lastScrollTop;
     lastScrollTop = currentScrollTop <= 0 ? 0 : currentScrollTop;
-    scrollingDown ? add(header, "hidden") : remove(header, "hidden");
+    scrollingDown ? add(header, 'hidden') : remove(header, 'hidden');
     if (!scrollingDown) {
-      header.style.setProperty("--border-color", "#D5CCB5");
+      header.style.setProperty('--border-color', '#D5CCB5');
     }
   };
 }, 500);
 
-if (g(".counter-section")) {
-  const timeContainer = g(".counter-section .time");
+if (g('.counter-section')) {
+  const timeContainer = g('.counter-section .time');
   let timeLeftMs = parseInt(timeContainer.dataset.timeMs);
   if (timeLeftMs) {
     function tick() {
@@ -53,41 +54,76 @@ if (g(".counter-section")) {
   }
 }
 
-if (g(".hero-swiper")) {
-  new Swiper(".hero-swiper", {
+if (g('.single-swiper-thumbs')) {
+  const swiperThumbs = new Swiper('.single-swiper-thumbs', {
+    modules: [Navigation],
+    navigation: {
+      nextEl: '.single-swiper-thumbs--arrows .next',
+      prevEl: '.single-swiper-thumbs--arrows .prev',
+    },
+    spaceBetween: 6,
+    slidesPerView: 'auto',
+    watchOverflow: true,
+    watchSlidesVisibility: true,
+    watchSlidesProgress: true,
+    direction: 'horizontal',
+    breakpoints: {
+      [768]: {
+        direction: 'vertical',
+        slidesPerView: 'auto',
+        spaceBetween: 10,
+      },
+    },
+  });
+
+  new Swiper('.single-swiper', {
+    modules: [Thumbs, Pagination],
+    spaceBetween: 0,
+    watchOverflow: true,
+    watchSlidesVisibility: true,
+    watchSlidesProgress: true,
+    preventInteractionOnTransition: true,
+    thumbs: {
+      swiper: swiperThumbs,
+    },
+  });
+}
+
+if (g('.hero-swiper')) {
+  new Swiper('.hero-swiper', {
     modules: [Navigation, Pagination],
     slidesPerView: 1,
     loop: true,
     pagination: {
-      el: ".hero-swiper .swiper-pagination",
+      el: '.hero-swiper .swiper-pagination',
       clickable: true,
     },
     navigation: {
-      nextEl: ".hero-swiper .swiper-button-next",
-      prevEl: ".hero-swiper .swiper-button-prev",
+      nextEl: '.hero-swiper .swiper-button-next',
+      prevEl: '.hero-swiper .swiper-button-prev',
     },
   });
 }
 
-if (g(".gallery-swiper")) {
-  gallerySwiper = new Swiper(".gallery-swiper", {
+if (g('.gallery-swiper')) {
+  gallerySwiper = new Swiper('.gallery-swiper', {
     modules: [Navigation],
     slidesPerView: 1,
     navigation: {
-      nextEl: ".gallery-swiper .swiper-button-next",
-      prevEl: ".gallery-swiper .swiper-button-prev",
+      nextEl: '.gallery-swiper .swiper-button-next',
+      prevEl: '.gallery-swiper .swiper-button-prev',
     },
   });
 }
 
-if (g(".reviews-swiper")) {
-  new Swiper(".reviews-swiper", {
+if (g('.reviews-swiper')) {
+  new Swiper('.reviews-swiper', {
     modules: [Navigation],
     slidesPerView: 1,
     spaceBetween: 20,
     navigation: {
-      nextEl: ".reviews-section .swiper-button-next",
-      prevEl: ".reviews-section .swiper-button-prev",
+      nextEl: '.reviews-section .swiper-button-next',
+      prevEl: '.reviews-section .swiper-button-prev',
     },
     breakpoints: {
       768: {
@@ -100,14 +136,14 @@ if (g(".reviews-swiper")) {
   });
 }
 
-if (g(".team-swiper")) {
-  new Swiper(".team-swiper", {
+if (g('.team-swiper')) {
+  new Swiper('.team-swiper', {
     modules: [Navigation],
     slidesPerView: 1,
     spaceBetween: 20,
     navigation: {
-      nextEl: ".team-section__wrapper .swiper-button-next",
-      prevEl: ".team-section__wrapper .swiper-button-prev",
+      nextEl: '.team-section__wrapper .swiper-button-next',
+      prevEl: '.team-section__wrapper .swiper-button-prev',
     },
     breakpoints: {
       768: {
@@ -120,14 +156,14 @@ if (g(".team-swiper")) {
   });
 }
 
-if (g(".winners-swiper")) {
-  new Swiper(".winners-swiper", {
+if (g('.winners-swiper')) {
+  new Swiper('.winners-swiper', {
     modules: [Navigation],
     slidesPerView: 1,
     spaceBetween: 20,
     navigation: {
-      nextEl: ".winners-section__wrapper .swiper-button-next",
-      prevEl: ".winners-section__wrapper .swiper-button-prev",
+      nextEl: '.winners-section__wrapper .swiper-button-next',
+      prevEl: '.winners-section__wrapper .swiper-button-prev',
     },
     breakpoints: {
       768: {
@@ -140,15 +176,15 @@ if (g(".winners-swiper")) {
   });
 }
 
-if (g(".mini-swiper")) {
-  g(".mini-swiper", document, true).forEach((swiper) => {
+if (g('.mini-swiper')) {
+  g('.mini-swiper', document, true).forEach((swiper) => {
     new Swiper(swiper, {
       modules: [FreeMode, Scrollbar],
       slidesPerView: 4.5,
       spaceBetween: 6,
       freeMode: true,
       scrollbar: {
-        el: swiper.querySelector(".swiper-scrollbar"),
+        el: swiper.querySelector('.swiper-scrollbar'),
         draggable: true,
         dragSize: 32,
       },
@@ -162,19 +198,19 @@ if (g(".mini-swiper")) {
 }
 
 if (filterSection) {
-  const filters = g(".gallery-section__filters .filter", document, true);
-  const images = g(".gallery-section__images .image", document, true);
-  const isFull = has(filterSection, ".full");
+  const filters = g('.gallery-section__filters .filter', document, true);
+  const images = g('.gallery-section__images .image', document, true);
+  const isFull = has(filterSection, '.full');
 
   filterFn = (filter) => {
     if (!filters) return;
-    const slug = filter.getAttribute("data-slug");
+    const slug = filter.getAttribute('data-slug');
     remove(filters);
     add(filter);
 
     const filteredImages = images?.filter((image) => {
-      if (slug === "all") return true;
-      const slugs = image.getAttribute("data-slug")?.split(" ") || [];
+      if (slug === 'all') return true;
+      const slugs = image.getAttribute('data-slug')?.split(' ') || [];
       return slugs.includes(slug);
     });
 
@@ -189,45 +225,45 @@ if (filterSection) {
 }
 
 if (buttonsTabsWrapper) {
-  const buttonsTabs = g(".sunny-friends-table-section__button", document, true);
-  const tabsWrapper = g(".sunny-friends-table-section__tabs");
-  const tabs = g(".sunny-friends-table-section__tab", document, true);
+  const buttonsTabs = g('.sunny-friends-table-section__button', document, true);
+  const tabsWrapper = g('.sunny-friends-table-section__tabs');
+  const tabs = g('.sunny-friends-table-section__tab', document, true);
   tabsWrapper.style.height = `${tabsWrapper.offsetHeight}px`;
 
   tabFn = (target) => {
-    const btn = target.closest(".sunny-friends-table-section__button");
-    const index = Number(btn.getAttribute("data-index"));
+    const btn = target.closest('.sunny-friends-table-section__button');
+    const index = Number(btn.getAttribute('data-index'));
     remove([...buttonsTabs, ...tabs]);
     add([btn, tabs[index]]);
     const offsetLeft = btn.offsetLeft;
-    buttonsTabsWrapper.style.setProperty("--offset-left", `${offsetLeft}px`);
+    buttonsTabsWrapper.style.setProperty('--offset-left', `${offsetLeft}px`);
   };
 
   tabFn(buttonsTabs[0]);
 }
 
 document.onclick = (e) => {
-  if (has(e.target, ".gallery-section__filters .filter")) {
+  if (has(e.target, '.gallery-section__filters .filter')) {
     filterFn?.(e.target);
-  } else if (has(e.target, "#burger")) {
+  } else if (has(e.target, '#burger')) {
     window.scrollTo(0, 0);
     toggle([btn, menu, header]);
-  } else if (has(e.target, ".gallery-section__images .image")) {
-    const image = e.target.closest(".image");
-    const index = Number(image.getAttribute("data-index"));
+  } else if (has(e.target, '.gallery-section__images .image')) {
+    const image = e.target.closest('.image');
+    const index = Number(image.getAttribute('data-index'));
     gallerySwiper?.slideTo(index);
     add(modal);
-  } else if (has(e.target, ".gallery-modal .cross")) {
+  } else if (has(e.target, '.gallery-modal .cross')) {
     remove(modal);
     gallerySwiper?.slideTo(0);
-  } else if (has(e.target, "[data-popup]")) {
+  } else if (has(e.target, '[data-popup]')) {
     e.preventDefault();
-    const popup = e.target.closest("[data-popup]");
-    const id = popup.getAttribute("data-popup");
+    const popup = e.target.closest('[data-popup]');
+    const id = popup.getAttribute('data-popup');
     add(g(id));
-  } else if (has(e.target, ".popup-join .cross")) {
-    remove(g(".popup-join"));
-  } else if (has(e.target, ".sunny-friends-table-section__button")) {
+  } else if (has(e.target, '.popup-join .cross')) {
+    remove(g('.popup-join'));
+  } else if (has(e.target, '.sunny-friends-table-section__button')) {
     tabFn?.(e.target);
   }
 };

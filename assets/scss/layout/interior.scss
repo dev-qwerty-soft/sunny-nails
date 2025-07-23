@@ -1,0 +1,282 @@
+@mixin swiperSize {
+  height: get-d(600px);
+  width: 100%;
+  max-height: 100%;
+  max-width: 100%;
+  @include respond(lg) {
+    height: get-lg(500px);
+  }
+}
+
+.single-swiper-thumbs,
+.single-swiper {
+  & img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+.single-swiper-thumbs {
+  height: 100%;
+  & .swiper-slide {
+    border-radius: get-d(8px);
+    overflow: hidden;
+    aspect-ratio: 1 / 1;
+    height: auto;
+    cursor: pointer;
+    border: get-d(3px) solid transparent;
+    transition: border-color 0.25s;
+    &:hover {
+      border-color: rgba($bg-yellow, 50%);
+    }
+    &.swiper-slide-thumb-active {
+      border-color: $bg-yellow;
+    }
+    @include respond(lg) {
+      border-radius: get-lg(8px);
+      border: get-lg(3px) solid transparent;
+    }
+    @include respond(md) {
+      border-radius: 8px;
+      border: 3px solid transparent;
+      width: 66px;
+    }
+  }
+}
+
+.single-swiper-thumbs--arrows {
+  padding: get-d(54px) 0;
+  position: relative;
+  @include respond(lg) {
+    padding: get-lg(54px) 0;
+  }
+  @include respond(md) {
+    padding: 0;
+    height: 66px;
+    grid-row: 2 / 3;
+  }
+  & .button {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 2;
+    width: get-d(40px);
+    height: get-d(40px);
+    background: url('../svg/arrows-thumb.svg') center / cover no-repeat;
+    @include respond(lg) {
+      width: get-lg(40px);
+      height: get-lg(40px);
+    }
+    @include respond(md) {
+      display: none;
+    }
+    &.next {
+      bottom: 0;
+      transform: translateX(-50%) rotate(180deg);
+      &:active {
+        transform: translateX(-50%) rotate(180deg) scale(0.6);
+      }
+    }
+    &.prev {
+      top: 0;
+    }
+    &.swiper-button-disabled {
+      opacity: 0.5;
+      pointer-events: none;
+    }
+    &:active {
+      transform: translateX(-50%) scale(0.6);
+    }
+  }
+  @include swiperSize();
+}
+
+.single-swiper {
+  @include swiperSize();
+  border-radius: get-d(10px);
+  overflow: hidden;
+  @include respond(lg) {
+    border-radius: get-lg(10px);
+  }
+  @include respond(md) {
+    height: 365px;
+    border-radius: 10px;
+  }
+}
+
+.interior-hero-section {
+  &__content {
+    padding: get-d(60px) get-d(60px) 0 get-d(60px);
+    display: grid;
+    grid-template-columns: 100%;
+    grid-template-rows: max-content max-content 1fr max-content;
+    justify-items: start;
+    align-items: start;
+    @include respond(lg) {
+      padding: get-lg(60px) get-lg(60px) 0 get-lg(60px);
+    }
+    @include respond(md) {
+      padding: 50px 25px 25px 25px;
+    }
+    & .btn {
+      margin: get-d(40px) 0 get-d(78px) 0;
+      @include respond(lg) {
+        margin: get-lg(40px) 0 get-lg(78px) 0;
+      }
+      @include respond(md) {
+        margin: 25px 0 60px 0;
+      }
+    }
+    & .title {
+      margin-bottom: get-d(24px);
+      @include respond(lg) {
+        margin-bottom: get-lg(24px);
+      }
+      @include respond(md) {
+        margin-bottom: 10px;
+      }
+    }
+    & .mini-img {
+      width: 100%;
+      border-radius: 100vw;
+      overflow: hidden;
+      height: get-d(200px);
+      @include respond(lg) {
+        height: get-lg(160px);
+      }
+      @include respond(md) {
+        height: 112px;
+      }
+      & img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+    }
+  }
+  & .container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-gap: get-d(20px);
+    @include respond(lg) {
+      grid-gap: get-lg(20px);
+    }
+    @include respond(md) {
+      grid-template-columns: 1fr;
+      grid-template-rows: repeat(2, 1fr);
+      grid-gap: 0;
+    }
+  }
+  &__image {
+    width: 100%;
+    height: 100%;
+    @include respond(md) {
+      max-height: 460px;
+    }
+    & img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+}
+
+.interior-slider-section {
+  padding: get-d(150px) get-d(60px) get-d(75px) get-d(60px);
+  @include respond(lg) {
+    padding: get-lg(150px) get-lg(60px) get-lg(75px) get-lg(60px);
+  }
+  @include respond(md) {
+    padding: 75px 25px;
+  }
+  & .container {
+    display: grid;
+    grid-template-columns: repeat(2, calc(50% - get-d(20px)));
+    grid-gap: get-d(40px);
+    align-items: center;
+    @include respond(lg) {
+      grid-gap: get-lg(40px);
+      grid-template-columns: repeat(2, calc(50% - get-lg(20px)));
+    }
+    @include respond(md) {
+      grid-gap: 20px;
+      grid-template-columns: 100%;
+      grid-auto-rows: auto;
+    }
+  }
+  & .title {
+    margin-bottom: get-d(14px);
+    @include respond(lg) {
+      margin-bottom: get-lg(14px);
+    }
+    @include respond(md) {
+      margin-bottom: 10px;
+    }
+  }
+  &__slider {
+    @include swiperSize();
+    display: grid;
+    grid-template-columns: get-d(80px) calc(100% - get-d(80px) - get-d(24px));
+    grid-gap: get-d(24px);
+    @include respond(lg) {
+      grid-gap: get-lg(24px);
+      grid-template-columns: get-lg(80px) calc(100% - get-lg(80px) - get-lg(24px));
+    }
+    @include respond(md) {
+      grid-template-columns: 100%;
+      grid-gap: 12px;
+      height: auto;
+    }
+  }
+}
+
+.interior-cta-section {
+  padding: get-d(75px) get-d(60px) get-d(150px) get-d(60px);
+  @include respond(lg) {
+    padding: get-lg(75px) get-lg(60px) get-lg(150px) get-lg(60px);
+  }
+  @include respond(md) {
+    padding: 0 25px 75px 25px;
+  }
+  & .container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: get-d(40px);
+    background-color: rgba($bg-white, 70%);
+    padding: get-d(80px) get-d(60px);
+    border-radius: get-d(20px);
+    background-image: url('../svg/interior-cta-section.png');
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    @include respond(lg) {
+      gap: get-lg(40px);
+      padding: get-lg(80px) get-lg(60px);
+      border-radius: get-lg(20px);
+    }
+    @include respond(md) {
+      gap: 20px;
+      padding: 155px 28px;
+      border-radius: 20px;
+      background-image: url('../svg/interior-cta-section-mob.png');
+    }
+    & h2 {
+      font-weight: 400;
+      font-size: get-d(45px);
+      line-height: 100%;
+      text-align: center;
+      padding: 0 get-d(32px);
+      @include respond(lg) {
+        font-size: get-lg(32px);
+        padding: 0 get-lg(16px);
+      }
+      @include respond(md) {
+        font-size: 20px;
+        padding: 0;
+      }
+    }
+  }
+}

@@ -97,7 +97,7 @@
     }
 
     & .filter {
-      font-family: "Montserrat", sans-serif;
+      font-family: 'Montserrat', sans-serif;
       font-weight: 500;
       font-size: get-d(14px);
       line-height: 120%;
@@ -105,7 +105,9 @@
       padding: get-d(9.5px) get-d(20px);
       border-radius: 100px;
       border: get-d(1px) solid $bg-grey;
-      transition: background 0.5s, border-color 0.5s;
+      transition:
+        background 0.5s,
+        border-color 0.5s;
       background: none;
       text-transform: capitalize;
       color: $bg-grey;
@@ -199,7 +201,7 @@
         & .view {
           aspect-ratio: 1 / 1;
           height: 100%;
-          background: url("../svg/view.svg") center / cover no-repeat;
+          background: url('../svg/view.svg') center / cover no-repeat;
           display: none;
           @include respond(md) {
             display: block;
@@ -332,7 +334,7 @@
     right: 24px;
     width: 20px;
     height: 20px;
-    background: url("../svg/cross.svg") center / cover no-repeat;
+    background: url('../svg/cross.svg') center / cover no-repeat;
   }
   &.active {
     opacity: 1;

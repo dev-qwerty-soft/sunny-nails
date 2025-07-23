@@ -109,7 +109,7 @@
       &::after {
         background: linear-gradient(180deg, rgba(247, 188, 53, 0), #f7bc35 30%);
         bottom: -40px;
-        content: "";
+        content: '';
         display: block;
         height: 650px;
         left: -30%;
@@ -370,7 +370,7 @@
   position: relative;
   &.black {
     & .button {
-      background: url("../svg/arrow-black.svg") center / contain no-repeat;
+      background: url('../svg/arrow-black.svg') center / contain no-repeat;
     }
   }
   & .button {
@@ -379,7 +379,7 @@
     height: get-d(40px);
     top: 50%;
     transform: translateY(-50%);
-    background: url("../svg/arrows.svg") center / cover no-repeat;
+    background: url('../svg/arrows.svg') center / cover no-repeat;
     z-index: 2;
     @include respond(lg) {
       width: get-lg(40px);
@@ -578,7 +578,7 @@
       &__arrow {
         width: get-d(48px);
         height: get-d(48px);
-        background: url("../svg/arrow-down-outline.svg") center / contain no-repeat;
+        background: url('../svg/arrow-down-outline.svg') center / contain no-repeat;
         transition: transform 0.5s;
         @include respond(lg) {
           width: get-lg(48px);
@@ -676,13 +676,13 @@
       border-radius: 20px;
     }
     &::before {
-      content: "";
+      content: '';
       position: absolute;
       width: get-d(13px);
       height: get-d(15px);
       top: 100%;
       left: get-d(25px);
-      background: url("../svg/Vector\ 2.svg") center / contain no-repeat;
+      background: url('../svg/Vector\ 2.svg') center / contain no-repeat;
       @include respond(lg) {
         left: get-lg(25px);
         width: get-lg(13px);
@@ -766,7 +766,7 @@
     & .star {
       width: get-d(26px);
       height: get-d(26px);
-      background: url("../svg/gold-star.svg") center / contain no-repeat;
+      background: url('../svg/gold-star.svg') center / contain no-repeat;
       @include respond(lg) {
         width: get-lg(26px);
         height: get-lg(26px);
@@ -899,7 +899,11 @@
       height: 100%;
       border-radius: get-d(10px);
       overflow: hidden;
-      background: red;
+      & img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
       &:nth-of-type(1) {
         grid-row: 1 / 3;
         @include respond(md) {

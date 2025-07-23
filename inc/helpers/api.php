@@ -1,12 +1,10 @@
 <?php
 
-function getUrl($str)
-{
+function getUrl($str) {
   return get_template_directory_uri() . "/$str";
 }
 
-function dump($var, $label = null, $echo = true)
-{
+function dump($var, $label = null, $echo = true) {
   $style = '<style>
   .pretty-dump {
     font-family: monospace;
@@ -47,14 +45,15 @@ function dump($var, $label = null, $echo = true)
     echo $output;
   } else {
     return $output;
-  };
+  }
 }
 
-function displayIcon()
-{
+function displayIcon() {
   $arr = get_field('footer_icons', 'option');
 
-  if (!is_array($arr)) return;
+  if (!is_array($arr)) {
+    return;
+  }
 
   foreach ($arr as $icon) {
     $img = $icon['footer_icon']['url'] ?? null;
@@ -62,17 +61,20 @@ function displayIcon()
     $title = $icon['footer_icon']['title'] ?? '';
 
     if (is_string($img) && is_string($url)) {
-      echo "<a target='_blank' rel='noopener noreferrer' href='" . esc_url($url) . "'>
-              <img src='" . esc_url($img) . "' alt='" . esc_attr($title) . "'>
+      echo "<a target='_blank' rel='noopener noreferrer' href='" .
+        esc_url($url) .
+        "'>
+              <img src='" .
+        esc_url($img) .
+        "' alt='" .
+        esc_attr($title) .
+        "'>
             </a>";
     }
   }
 }
 
-
-
-function getPlaceReviews()
-{
+function getPlaceReviews() {
   $apiKey = get_field('reviews_api_token', 'option');
   $placeId = get_field('reviews_api_place_id', 'option');
   $url = "https://maps.googleapis.com/maps/api/place/details/json?place_id={$placeId}&fields=name,rating,reviews&language=en&key={$apiKey}";
@@ -109,44 +111,47 @@ function getPlaceReviews()
   ];
 }
 
-function getPosts($slug)
-{
+function getPosts($slug) {
   $query = new WP_Query([
     'post_type' => $slug,
-    'posts_per_page' => -1
+    'posts_per_page' => -1,
   ]);
   wp_reset_postdata();
   return $query->posts;
 }
 
-function logo($str)
-{
+function logo($str) {
   $logo_data = get_field($str, 'option');
-  if (!$logo_data || !isset($logo_data['url'])) return '';
+  if (!$logo_data || !isset($logo_data['url'])) {
+    return '';
+  }
 
   $url = $logo_data['url'];
   $alt = $logo_data['title'] ?? '';
   $width = $logo_data['width'] ?? '215';
   $height = $logo_data['height'] ?? '40';
 
-  return "<a href='" . esc_url(home_url('/')) . "' class='logo'>
-    <img src='" . esc_url($url) . "'
-         alt='" . esc_attr($alt) . "'
+  return "<a href='" .
+    esc_url(home_url('/')) .
+    "' class='logo'>
+    <img src='" .
+    esc_url($url) .
+    "'
+         alt='" .
+    esc_attr($alt) .
+    "'
          width='{$width}' height='{$height}'
          fetchpriority='high'
          decoding='async'>
   </a>";
 }
 
-
-function console($data)
-{
+function console($data) {
   echo '<script>console.log(' . json_encode($data) . ');</script>';
 }
 
 // Function to get services for a specific category
-function get_services_by_category($category_id)
-{
+function get_services_by_category($category_id) {
   return get_posts([
     'post_type' => 'service',
     'posts_per_page' => -1,
@@ -154,24 +159,41 @@ function get_services_by_category($category_id)
       [
         'taxonomy' => 'service_category',
         'field' => 'term_id',
-        'terms' => $category_id
-      ]
+        'terms' => $category_id,
+      ],
     ],
     'meta_query' => [
       [
         'key' => 'is_online',
         'value' => '1',
-        'compare' => '='
-      ]
+        'compare' => '=',
+      ],
     ],
     'orderby' => 'menu_order',
-    'order'   => 'ASC'
+    'order' => 'ASC',
   ]);
 }
 
-function getAssetUrlAcf($str)
-{
+function getAssetUrlAcf($str) {
   $image = get_field($str, 'option');
   $url = isset($image['url']) ? $image['url'] : null;
   return $url;
+}
+
+function get_pages_by_template($template_name) {
+  $pages = get_posts([
+    'post_type' => 'page',
+    'numberposts' => -1,
+    'post_status' => 'publish',
+    'meta_query' => [
+      [
+        'key' => '_wp_page_template',
+        'value' => $template_name,
+        'compare' => '=',
+      ],
+    ],
+    'fields' => 'ids',
+  ]);
+
+  return $pages;
 }

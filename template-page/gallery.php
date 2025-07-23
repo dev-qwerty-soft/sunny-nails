@@ -3,13 +3,10 @@
 /**
  * Template Name: Gallery
  */
-get_header();
-?>
+get_header(); ?>
 <main>
-  <?php
-    get_template_part("template-parts/gallery/gallery-grid", null, [
-      "full" => true
-    ]);
-  ?>
+  <?php get_template_part('template-parts/gallery/gallery-grid', null, [
+    'full' => true,
+  ]); ?>
 </main>
 <?php get_footer(); ?>

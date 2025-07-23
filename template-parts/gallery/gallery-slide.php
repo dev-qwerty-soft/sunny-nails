@@ -1,19 +1,20 @@
 <?php
-$index = $args["index"] ?? 0;
+$index = $args['index'] ?? 0;
 
 $imageData = $args['image']['image'] ?? '';
 $url = is_numeric($imageData)
   ? wp_get_attachment_image_url($imageData, 'large')
-  : (is_array($imageData) ? $imageData['url'] : $imageData);
+  : (is_array($imageData)
+    ? $imageData['url']
+    : $imageData);
 
-$master = $args["master"] ?? null;
+$master = $args['master'] ?? null;
 if (!$master || !get_field('is_bookable', $master->ID)) {
   return;
 }
 
 $name = $master ? get_the_title($master) : '';
 $level = $master ? max((int) get_field('master_level', $master->ID), -1) : -1;
-
 
 $levelTitles = [
   -1 => 'Intern',
@@ -64,23 +65,22 @@ $service_ids_string = implode(',', $service_ids);
 
 $adjustmentPercents = [
   -1 => -50,
-  1  => 0,
-  2  => 10,
-  3  => 20,
-  4  => 30,
-  5  => 30,
+  1 => 0,
+  2 => 10,
+  3 => 20,
+  4 => 30,
+  5 => 30,
 ];
 $adjustment = $adjustmentPercents[$level] ?? 0;
-$final_price = $total_price + ($total_price * $adjustment / 100);
+$final_price = $total_price + ($total_price * $adjustment) / 100;
 
 $starsCount = match (true) {
   $level === -1 => 0,
-  $level === 1  => 1,
-  $level === 2  => 2,
-  $level === 3  => 3,
-  $level === 4,
-  $level === 5  => 4,
-  default       => 0,
+  $level === 1 => 1,
+  $level === 2 => 2,
+  $level === 3 => 3,
+  $level === 4, $level === 5 => 4,
+  default => 0,
 };
 
 $avatar_url = $master ? get_the_post_thumbnail_url($master->ID, 'medium') : '';
@@ -90,32 +90,32 @@ if (!$avatar_url) {
 $master_altegio_id = $master ? get_field('altegio_id', $master->ID) : 0;
 ?>
 
-<div data-index="<?= $index; ?>" data-slug="<?= esc_attr($slug); ?>" class="swiper-slide image">
+<div data-index="<?= $index ?>" data-slug="<?= esc_attr($slug) ?>" class="swiper-slide image">
   <?php if ($url): ?>
-    <img src="<?= esc_url($url); ?>" alt="<?= esc_attr($customTitle ?: $service_titles_string); ?>">
+    <img src="<?= esc_url($url) ?>" alt="<?= esc_attr($customTitle ?: $service_titles_string) ?>">
   <?php endif; ?>
 
-  <span class="image__title"><?= esc_html($customTitle ?: $service_titles_string); ?></span>
+  <span class="image__title"><?= esc_html($customTitle ?: $service_titles_string) ?></span>
 
   <span class="image__price">
-    Price: <?= esc_html(number_format($final_price, 2)); ?> <?= esc_html($currency); ?>
+    Price: <?= esc_html(number_format($final_price, 2)) ?> <?= esc_html($currency) ?>
   </span>
 
-  <span class="image__master">Master: <?= esc_html($name); ?></span>
+  <span class="image__master">Master: <?= esc_html($name) ?></span>
 
   <div class="stars">
-    <?= str_repeat("<div class='star'></div>", $starsCount); ?>
+    <?= str_repeat("<div class='star'></div>", $starsCount) ?>
     <?php if ($levelName): ?>
-      <span>(<?= esc_html($levelName); ?>)</span>
+      <span>(<?= esc_html($levelName) ?>)</span>
     <?php endif; ?>
   </div>
 
   <button type="button"
     class="btn white want-this-btn"
-    data-gallery-title="<?= esc_attr($customTitle ?: $service_titles_string); ?>"
-    data-staff-avatar="<?= esc_url($avatar_url); ?>"
-    data-master-id="<?= esc_attr($master_altegio_id); ?>"
-    data-service-ids="<?= esc_attr($service_ids_string); ?>">
+    data-gallery-title="<?= esc_attr($customTitle ?: $service_titles_string) ?>"
+    data-staff-avatar="<?= esc_url($avatar_url) ?>"
+    data-master-id="<?= esc_attr($master_altegio_id) ?>"
+    data-service-ids="<?= esc_attr($service_ids_string) ?>">
     I want this
   </button>
 </div>

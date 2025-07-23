@@ -75,7 +75,7 @@
       height: get-d(14px);
       min-width: get-d(14px);
       min-height: get-d(14px);
-      background: url("../svg/star_new.svg") center / contain no-repeat;
+      background: url('../svg/star_new.svg') center / contain no-repeat;
       @include respond(lg) {
         width: get-lg(14px);
         height: get-lg(14px);
