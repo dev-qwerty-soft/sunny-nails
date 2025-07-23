@@ -1680,16 +1680,60 @@
    * @param {string|number} masterId - Master ID to load services for
    */
   function loadServicesForMaster(masterId) {
-    debug("Loading services for master", masterId);
-
-    // Show loading overlay
     $(".loading-overlay").show();
-    $(".booking-popup .services-list").html('<p class="loading-message">Loading services...</p>');
+    $(".services-list").html('<p class="loading-message">Loading services...</p>');
 
-    // Reset retry counter for new request
-    servicesLoadRetryCount = 0;
+    // Якщо вибрано All masters — підтягуємо всі сервіси (PHP-розмітка)
+    if (masterId === "any") {
+      $.ajax({
+        url: booking_params.ajax_url,
+        method: "POST",
+        data: {
+          action: "get_services",
+          nonce: booking_params.nonce,
+        },
+        success: function (response) {
+          $(".loading-overlay").hide();
+          if (response.success && response.data && response.data.html) {
+            $(".services-list").html(response.data.html);
+            updateAddonAvailability && updateAddonAvailability();
+            updateNextButtonState && updateNextButtonState();
+          } else {
+            $(".services-list").html('<p class="no-items-message">No services available.</p>');
+          }
+        },
+        error: function () {
+          $(".loading-overlay").hide();
+          $(".services-list").html('<p class="no-items-message">Error loading services. Please try again.</p>');
+        },
+      });
+      return;
+    }
 
-    performServicesLoadRequest(masterId);
+    // Якщо вибрано конкретного майстра — підтягуємо тільки його сервіси
+    $.ajax({
+      url: booking_params.ajax_url,
+      method: "POST",
+      data: {
+        action: "get_filtered_services",
+        staff_id: masterId,
+        nonce: booking_params.nonce,
+      },
+      success: function (response) {
+        $(".loading-overlay").hide();
+        if (response.success && response.data && response.data.html) {
+          $(".services-list").html(response.data.html);
+          updateAddonAvailability && updateAddonAvailability();
+          updateNextButtonState && updateNextButtonState();
+        } else {
+          $(".services-list").html('<p class="no-items-message">No services available for this master.</p>');
+        }
+      },
+      error: function () {
+        $(".loading-overlay").hide();
+        $(".services-list").html('<p class="no-items-message">Error loading services. Please try again.</p>');
+      },
+    });
   }
 
   /**
