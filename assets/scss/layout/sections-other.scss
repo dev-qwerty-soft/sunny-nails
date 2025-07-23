@@ -29,8 +29,8 @@
     }
   }
   &::before {
-    content: "";
-    background: url("../svg/bigArrow.svg") center / contain no-repeat;
+    content: '';
+    background: url('../svg/bigArrow.svg') center / contain no-repeat;
     position: absolute;
     top: 50%;
     left: 2%;
@@ -85,7 +85,7 @@
         background: rgba(#06b569, 10%);
         color: #06b569;
         &::before {
-          background-image: url("../svg/check icon.svg");
+          background-image: url('../svg/check icon.svg');
         }
       }
     }
@@ -146,9 +146,9 @@
       &::before {
         width: get-d(24px);
         height: get-d(24px);
-        background: $bg-white url("../svg/error icon.svg") center / 75% no-repeat;
+        background: $bg-white url('../svg/error icon.svg') center / 75% no-repeat;
         display: block;
-        content: "";
+        content: '';
         border-radius: get-d(6px);
         min-width: get-d(24px);
         min-height: get-d(24px);
@@ -322,7 +322,7 @@
         // }
 
         & input {
-          font-size: "Montserrat", sans-serif;
+          font-size: 'Montserrat', sans-serif;
           width: get-d(20px);
           height: get-d(20px);
           min-width: get-d(20px);
@@ -347,12 +347,12 @@
             border-radius: 5px;
           }
           &:checked {
-            background: url("../svg/mark.svg") center / contain no-repeat;
+            background: url('../svg/mark.svg') center / contain no-repeat;
           }
         }
       }
 
-      & input[type="submit"] {
+      & input[type='submit'] {
         position: absolute;
         inset: 0;
         opacity: 0;
@@ -453,7 +453,7 @@
     display: inline-block;
     width: get-d(390px);
     height: get-d(144px);
-    background: url("../svg/404.svg") center / contain no-repeat;
+    background: url('../svg/404.svg') center / contain no-repeat;
     @include respond(lg) {
       width: get-lg(390px);
       height: get-lg(144px);

@@ -107,7 +107,7 @@
       border-bottom: 1px solid $bg-grey;
     }
     &::before {
-      content: "";
+      content: '';
       position: absolute;
       left: var(--offset-left);
       top: 100%;
@@ -115,7 +115,9 @@
       height: get-d(3px);
       width: var(--offset-width);
       background: $bg-yellow;
-      transition: left 0.25s, width 0.25s;
+      transition:
+        left 0.25s,
+        width 0.25s;
       @include respond(lg) {
         height: get-lg(3px);
       }
@@ -154,7 +156,9 @@
     opacity: 0;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    transition: opacity 0.5s, transform 0.5s;
+    transition:
+      opacity 0.5s,
+      transform 0.5s;
     transform: translateY(100%);
     @include respond(md) {
       grid-gap: 16px;
@@ -249,14 +253,14 @@
       &.check {
         position: relative;
         &::after {
-          content: "";
+          content: '';
           position: absolute;
           top: 50%;
           left: 50%;
           transform: translate(-50%, -50%);
           width: get-d(24px);
           height: get-d(24px);
-          background: url("../svg/check.svg") center / contain no-repeat;
+          background: url('../svg/check.svg') center / contain no-repeat;
           @include respond(lg) {
             width: get-lg(24px);
             height: get-lg(24px);

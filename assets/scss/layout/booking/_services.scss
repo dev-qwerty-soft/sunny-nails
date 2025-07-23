@@ -68,7 +68,7 @@
   border: 1px solid var(--black, #302f34);
   color: #302f34;
   font-size: 16px;
-  font-family: "Montserrat", sans-serif;
+  font-family: 'Montserrat', sans-serif;
   font-weight: 600;
   line-height: normal;
   letter-spacing: -0.32px;
@@ -166,7 +166,7 @@
     border-color: #fdc41f;
 
     &:after {
-      content: "✓";
+      content: '✓';
       position: absolute;
       color: #fff;
       font-size: 16px;
