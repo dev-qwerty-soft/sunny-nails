@@ -165,7 +165,7 @@ function reviews_item()
     get_template_part("template-parts/sections/form");
     get_template_part("template-parts/sections/team");
     ?>
-    <section class="place-section">
+    <!-- <section class="place-section">
         <div class="container">
             <div class="place-section__top">
                 <h2 class="title">The atmosphere of space</h2>
@@ -185,7 +185,7 @@ function reviews_item()
                 <div class="image"></div>
             </div>
         </div>
-    </section>
+    </section> -->
     <section class="reviews-section">
         <div class="container">
             <div class="reviews-section__top">
