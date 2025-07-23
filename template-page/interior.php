@@ -47,7 +47,7 @@ get_header();
       </div>
       <div class="interior-hero-section__image">
         <?php
-        $interior_image = get_field('interior_hero_section_mini_image');
+        $interior_image = get_field('interior_hero_section_main_image');
         $url = isset($interior_image['url']) ? $interior_image['url'] : null;
         $title = isset($interior_image['title']) ? $interior_image['title'] : null;
         $w = isset($interior_image['width']) ? $interior_image['width'] : null;
