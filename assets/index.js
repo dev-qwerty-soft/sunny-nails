@@ -186,26 +186,26 @@ if (g('.mini-swiper')) {
   });
 }
 
-document.querySelectorAll(".mini-swiper").forEach((swiper) => {
+document.querySelectorAll('.mini-swiper').forEach((swiper) => {
   swiper.addEventListener(
-    "touchstart",
+    'touchstart',
     (e) => {
       e.stopPropagation();
     },
-    { passive: true }
+    { passive: true },
   );
-  swiper.addEventListener("pointerdown", (e) => {
+  swiper.addEventListener('pointerdown', (e) => {
     e.stopPropagation();
   });
 });
-if (g(".winners-swiper")) {
-  new Swiper(".winners-swiper", {
+if (g('.winners-swiper')) {
+  new Swiper('.winners-swiper', {
     modules: [Navigation],
     slidesPerView: 1,
     spaceBetween: 20,
     navigation: {
-      nextEl: ".winners-section__wrapper .swiper-button-next",
-      prevEl: ".winners-section__wrapper .swiper-button-prev",
+      nextEl: '.winners-section__wrapper .swiper-button-next',
+      prevEl: '.winners-section__wrapper .swiper-button-prev',
     },
     breakpoints: {
       768: {

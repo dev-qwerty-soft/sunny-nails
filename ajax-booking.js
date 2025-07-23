@@ -1065,12 +1065,12 @@
       const input = $(this);
       let value = input.val();
 
-      const countryCode = window.getSelectedCountryCode ? window.getSelectedCountryCode() : "";
-      const codeDigits = countryCode.replace(/\D/g, "");
+      const countryCode = window.getSelectedCountryCode ? window.getSelectedCountryCode() : '';
+      const codeDigits = countryCode.replace(/\D/g, '');
 
       const maxTotalDigits = 12;
 
-      let cleaned = value.replace(/\D/g, "");
+      let cleaned = value.replace(/\D/g, '');
 
       cleaned = cleaned.slice(0, maxTotalDigits - codeDigits.length);
 
@@ -1529,8 +1529,8 @@
             let priceModifier = '';
             const modifier = percentMap[staffLevel];
 
-            if (typeof modifier === "number") {
-              const sign = modifier > 0 ? "+" : "";
+            if (typeof modifier === 'number') {
+              const sign = modifier > 0 ? '+' : '';
               priceModifier = `<div class="staff-price-modifier">${sign}${modifier}%    <span>to price</span></div>`;
             }
 
@@ -1973,8 +1973,8 @@
             <h4 class="staff-name">${name}</h4>
             <div class="staff-specialization">
               <div class="staff-stars">${generateStarsHtml(level)}</div>
-              ${levelTitles[level] ? `<span class="studio-name">(${levelTitles[level]})</span>` : ""}
-              ${percentMap[level] > 0 ? `<div class="staff-price-modifier">+${percentMap[level]}%    <span>to price</span></div>` : ""}
+              ${levelTitles[level] ? `<span class="studio-name">(${levelTitles[level]})</span>` : ''}
+              ${percentMap[level] > 0 ? `<div class="staff-price-modifier">+${percentMap[level]}%    <span>to price</span></div>` : ''}
             </div>
           </div>
         </div>
@@ -2179,8 +2179,8 @@
       let priceModifier = '';
       const modifier = percentMap[staffLevel];
 
-      if (typeof modifier === "number") {
-        const sign = modifier > 0 ? "+" : "";
+      if (typeof modifier === 'number') {
+        const sign = modifier > 0 ? '+' : '';
         priceModifier = `<div class="staff-price-modifier">${sign}${modifier}%    <span>to price</span></div>`;
       }
 
@@ -2553,8 +2553,8 @@
       let priceModifier = '';
       const modifier = percentMap[staffLevel];
 
-      if (typeof modifier === "number") {
-        const sign = modifier > 0 ? "+" : "";
+      if (typeof modifier === 'number') {
+        const sign = modifier > 0 ? '+' : '';
         priceModifier = `<div class="staff-price-modifier">${sign}${modifier}%    <span>to price</span></div>`;
       }
 

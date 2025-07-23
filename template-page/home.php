@@ -214,7 +214,7 @@ function reviews_item() {
     <section class="reviews-section">
         <div class="container">
             <div class="reviews-section__top">
-                <h2 class="title"><?php the_field('reviews_title', 'option'); ?></h2>
+                <h2 class="title">What Our Clients Say</h2>
                 <?php
                 $text = get_field('reviews_link_text', 'option');
                 $link = get_field('reviews_link_url', 'option');
@@ -235,6 +235,7 @@ function reviews_item() {
                           $text = $slide['text'];
                           $rating = $slide['rating'];
                           $stars = str_repeat("<div class='star'></div>", $rating);
+
                           $char_limit = 150;
                           $short_text =
                             strlen($text) > $char_limit ? substr($text, 0, $char_limit) : $text;
@@ -246,27 +247,23 @@ function reviews_item() {
                                                 <div class='review__rate'>
                                                     $stars
                                                 </div>";
+
                           if ($needs_expand) {
                             echo "<div class='review__text-container'>
                                         <p class='review__text review__text--short'>" .
                               $short_text .
                               "...</p>
-
-
-                            if ($needs_expand) {
-                                echo "<div class='review__text-container'>
-                                        <p class='review__text review__text--short'>" . $short_text . "...</p>
                                         <p class='review__text review__text--full' style='display: none;'>$text</p>
                                         <button class='review__expand-btn' type='button'>Read more</button>
                                     </div>";
-                            } else {
-                                echo "<div class='review__text-container'>
+                          } else {
+                            echo "<div class='review__text-container'>
                                         <p class='review__text review__text--short'>$text</p>
                                         <button class='review__expand-btn' type='button' disabled style='opacity:0;pointer-events:none;'>Read more</button>
                                     </div>";
-                            }
+                          }
 
-                            echo "</div>
+                          echo "</div>
                                         <div class='review__info'>
                                             <img src='$image' alt='$name'>
                                             <div class='review__author'>
@@ -276,7 +273,7 @@ function reviews_item() {
                                         </div>
                                     </div>
                                 </div>";
-                        };
+                        }
                         ?>
                     </div>
                 </div>
