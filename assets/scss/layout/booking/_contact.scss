@@ -230,7 +230,7 @@
         border-radius: 10px;
         background: rgba(154, 154, 154, 0.14);
         color: var(--black, #302f34);
-        font-family: "Montserrat", sans-serif;
+        font-family: 'Montserrat', sans-serif;
         font-size: 12px;
         font-style: italic;
         font-weight: 500;
@@ -267,9 +267,9 @@
       margin-bottom: 16px;
     }
 
-    input[type="text"],
-    input[type="email"],
-    input[type="tel"],
+    input[type='text'],
+    input[type='email'],
+    input[type='tel'],
     textarea {
       width: 100%;
       border: none;
@@ -350,7 +350,7 @@
       border-bottom: 1px solid rgba(48, 47, 52, 0.5);
       background: transparent;
       color: #302f34;
-      font-family: "Montserrat", sans-serif;
+      font-family: 'Montserrat', sans-serif;
       font-size: 14px;
       font-weight: 500;
       cursor: pointer;
@@ -462,7 +462,7 @@
       border-bottom: 1px solid rgba(48, 47, 52, 0.5);
       background: transparent;
       color: #302f34;
-      font-family: "Montserrat", sans-serif;
+      font-family: 'Montserrat', sans-serif;
       font-size: 14px;
       font-weight: 500;
       padding: 20px 4px 6px;
@@ -522,7 +522,7 @@
       height: 20px;
     }
 
-    .form-group.checkbox input[type="checkbox"] {
+    .form-group.checkbox input[type='checkbox'] {
       width: get-d(20px);
       height: get-d(20px);
       min-width: get-d(20px);
@@ -547,7 +547,7 @@
         border-radius: 5px;
       }
       &:checked {
-        background: url("../svg/mark.svg") center / contain no-repeat;
+        background: url('../svg/mark.svg') center / contain no-repeat;
       }
     }
   }

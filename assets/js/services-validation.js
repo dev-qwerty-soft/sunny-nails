@@ -1,5 +1,5 @@
 (function ($) {
-  "use strict";
+  'use strict';
 
   $(document).ready(function () {
     initServicesStep();
@@ -7,27 +7,27 @@
 
   function initServicesStep() {
     // Category tabs functionality
-    $(document).on("click", ".category-tab", function () {
-      const categoryId = $(this).data("category-id");
+    $(document).on('click', '.category-tab', function () {
+      const categoryId = $(this).data('category-id');
 
       // Update active tab
-      $(".category-tab").removeClass("active");
-      $(this).addClass("active");
+      $('.category-tab').removeClass('active');
+      $(this).addClass('active');
 
       // Show only services from selected category
-      $(".category-services").hide();
+      $('.category-services').hide();
       $('.category-services[data-category-id="' + categoryId + '"]').show();
     });
 
     // Service checkbox selection
-    $(document).on("change", ".service-checkbox", function () {
-      const isChecked = $(this).is(":checked");
-      const serviceItem = $(this).closest(".service-item");
+    $(document).on('change', '.service-checkbox', function () {
+      const isChecked = $(this).is(':checked');
+      const serviceItem = $(this).closest('.service-item');
 
       if (isChecked) {
-        serviceItem.addClass("selected");
+        serviceItem.addClass('selected');
       } else {
-        serviceItem.removeClass("selected");
+        serviceItem.removeClass('selected');
       }
 
       // Update next button state
@@ -35,18 +35,18 @@
     });
 
     // Make the entire service item clickable to toggle checkbox
-    $(document).on("click", ".service-item", function (e) {
+    $(document).on('click', '.service-item', function (e) {
       // Prevent clicking on checkbox from triggering this handler
-      if ($(e.target).is(".service-checkbox")) {
+      if ($(e.target).is('.service-checkbox')) {
         return;
       }
 
-      const checkbox = $(this).find(".service-checkbox");
-      checkbox.prop("checked", !checkbox.prop("checked")).trigger("change");
+      const checkbox = $(this).find('.service-checkbox');
+      checkbox.prop('checked', !checkbox.prop('checked')).trigger('change');
     });
 
     // Validate services selection when clicking Next
-    $(document).on("click", '.booking-step[data-step="services"] .next-btn', function (e) {
+    $(document).on('click', '.booking-step[data-step="services"] .next-btn', function (e) {
       if (!validateServicesSelection()) {
         e.preventDefault();
         showValidationAlert();
@@ -56,43 +56,45 @@
   }
 
   function updateNextButtonState() {
-    const hasSelectedServices = $(".service-checkbox:checked").length > 0;
-    $('.booking-step[data-step="services"] .next-btn').prop("disabled", !hasSelectedServices);
+    const hasSelectedServices = $('.service-checkbox:checked').length > 0;
+    $('.booking-step[data-step="services"] .next-btn').prop('disabled', !hasSelectedServices);
   }
 
   function validateServicesSelection() {
-    return $(".service-checkbox:checked").length > 0;
+    return $('.service-checkbox:checked').length > 0;
   }
 
   /**
    * Show validation alert when no services selected
    */
-  function showValidationAlert(message = "Please select at least one service.") {
+  function showValidationAlert(message = 'Please select at least one service.') {
     // Remove any existing alerts
-    $(".validation-alert-overlay").remove();
+    $('.validation-alert-overlay').remove();
     const dateMatch = message.match(/\((.*?)\)/);
-    const cleanMessage = dateMatch ? `This service is not available at the selected time ${dateMatch[0]}` : message;
+    const cleanMessage = dateMatch
+      ? `This service is not available at the selected time ${dateMatch[0]}`
+      : message;
 
-    let alertMessage = "Please choose a different time.";
+    let alertMessage = 'Please choose a different time.';
 
-    if (message.includes("phone") || message.includes("Phone")) {
-      alertMessage = "Please check your phone number and try again.";
-    } else if (message.includes("email") || message.includes("Email")) {
-      alertMessage = "Please check your email address and try again.";
-    } else if (message.includes("name") || message.includes("Name")) {
-      alertMessage = "Please enter your name and try again.";
-    } else if (message.includes("specialist") || message.includes("master")) {
-      alertMessage = "Please select a specialist to continue.";
-    } else if (message.includes("service")) {
-      alertMessage = "Please select at least one service.";
-    } else if (message.includes("date")) {
-      alertMessage = "Please select a date to continue.";
-    } else if (message.includes("time")) {
-      alertMessage = "Please choose a different time.";
-    } else if (message.includes("network") || message.includes("Network")) {
-      alertMessage = "Please check your internet connection and try again.";
-    } else if (message.includes("error") || message.includes("Error")) {
-      alertMessage = "Something went wrong. Please try again.";
+    if (message.includes('phone') || message.includes('Phone')) {
+      alertMessage = 'Please check your phone number and try again.';
+    } else if (message.includes('email') || message.includes('Email')) {
+      alertMessage = 'Please check your email address and try again.';
+    } else if (message.includes('name') || message.includes('Name')) {
+      alertMessage = 'Please enter your name and try again.';
+    } else if (message.includes('specialist') || message.includes('master')) {
+      alertMessage = 'Please select a specialist to continue.';
+    } else if (message.includes('service')) {
+      alertMessage = 'Please select at least one service.';
+    } else if (message.includes('date')) {
+      alertMessage = 'Please select a date to continue.';
+    } else if (message.includes('time')) {
+      alertMessage = 'Please choose a different time.';
+    } else if (message.includes('network') || message.includes('Network')) {
+      alertMessage = 'Please check your internet connection and try again.';
+    } else if (message.includes('error') || message.includes('Error')) {
+      alertMessage = 'Something went wrong. Please try again.';
     }
     // Create custom alert
     const alertHtml = `
@@ -113,11 +115,11 @@
     </div>
   `;
 
-    $("body").append(alertHtml);
+    $('body').append(alertHtml);
 
     // Bind click event to the button
-    $(document).on("click", ".validation-alert-button", function () {
-      $(".validation-alert-overlay").remove();
+    $(document).on('click', '.validation-alert-button', function () {
+      $('.validation-alert-overlay').remove();
     });
   }
 })(jQuery);

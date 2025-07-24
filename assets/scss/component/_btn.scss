@@ -7,7 +7,10 @@
   color: $bg-grey;
   border: get-d(1px) solid $bg-grey;
   border-radius: 100px;
-  transition: background 0.3s, border-color 0.3s, color 0.3s;
+  transition:
+    background 0.3s,
+    border-color 0.3s,
+    color 0.3s;
   text-align: center;
   cursor: pointer;
   white-space: nowrap;
@@ -48,8 +51,8 @@
     &::before {
       position: absolute;
       height: calc(100% - get-d(8px));
-      background: url("../svg/circle.svg") center / cover no-repeat;
-      content: "";
+      background: url('../svg/circle.svg') center / cover no-repeat;
+      content: '';
       aspect-ratio: 1 / 1;
       right: get-d(4px);
       top: 50%;
@@ -96,8 +99,8 @@
     &::before {
       position: absolute;
       height: calc(100% - get-d(8px));
-      background: url("../svg/circle.svg") center / cover no-repeat;
-      content: "";
+      background: url('../svg/circle.svg') center / cover no-repeat;
+      content: '';
       aspect-ratio: 1 / 1;
       right: get-d(4px);
       top: 50%;
@@ -227,7 +230,9 @@
   align-items: center;
   gap: get-d(4px);
   padding: get-d(14px) get-d(20px);
-  transition: background 0.5s, transform 0.5s;
+  transition:
+    background 0.5s,
+    transform 0.5s;
   &:hover {
     background: #f1e3be;
     transform: scale(1.1);
@@ -247,8 +252,8 @@
     padding: 14px 20px;
   }
   &::before {
-    background: url("../svg/fluent_chat-12-filled.svg") center / contain no-repeat;
-    content: "";
+    background: url('../svg/fluent_chat-12-filled.svg') center / contain no-repeat;
+    content: '';
     width: get-d(22px);
     height: get-d(22px);
     display: inline-block;
@@ -323,7 +328,7 @@
   &__instagram {
     width: get-d(30px);
     height: get-d(30px);
-    background: url("../svg/inst.svg") center / contain no-repeat;
+    background: url('../svg/inst.svg') center / contain no-repeat;
     @include respond(lg) {
       width: get-lg(30px);
       height: get-lg(30px);
@@ -381,7 +386,9 @@
   z-index: 110;
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.5s, pointer-events 0.5s;
+  transition:
+    opacity 0.5s,
+    pointer-events 0.5s;
   display: grid;
   grid-template-columns: 1fr;
   grid-template-rows: repeat(2, max-content) 1fr repeat(2, max-content);
@@ -393,7 +400,7 @@
     right: get-d(24px);
     width: get-d(20px);
     height: get-d(20px);
-    background: url("../svg/cross.svg") center / cover no-repeat;
+    background: url('../svg/cross.svg') center / cover no-repeat;
     // cursor: pointer;
     @include respond(lg) {
       top: get-lg(24px);
@@ -437,7 +444,7 @@
         background: rgba(#06b569, 10%);
         color: #06b569;
         &::before {
-          background-image: url("../svg/check icon.svg");
+          background-image: url('../svg/check icon.svg');
         }
       }
     }
@@ -495,9 +502,9 @@
       &::before {
         width: get-d(24px);
         height: get-d(24px);
-        background: $bg-white url("../svg/error icon.svg") center / 75% no-repeat;
+        background: $bg-white url('../svg/error icon.svg') center / 75% no-repeat;
         display: block;
-        content: "";
+        content: '';
         border-radius: get-d(6px);
         min-width: get-d(24px);
         min-height: get-d(24px);
@@ -653,12 +660,12 @@
             border-radius: 5px;
           }
           &:checked {
-            background: url("../svg/mark.svg") center / contain no-repeat;
+            background: url('../svg/mark.svg') center / contain no-repeat;
           }
         }
       }
 
-      & input[type="submit"] {
+      & input[type='submit'] {
         position: absolute;
         inset: 0;
         opacity: 0;
@@ -721,7 +728,7 @@
 
   &.yellow {
     & .star {
-      background-image: url("../svg/material-symbols-light_star-shine copy.svg");
+      background-image: url('../svg/material-symbols-light_star-shine copy.svg');
     }
   }
 
@@ -745,7 +752,7 @@
   & .star {
     width: get-d(24px);
     height: get-d(24px);
-    background: url("../svg/material-symbols-light_star-shine.svg") center / cover no-repeat;
+    background: url('../svg/material-symbols-light_star-shine.svg') center / cover no-repeat;
 
     @include respond(lg) {
       width: get-lg(24px);

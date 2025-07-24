@@ -8,7 +8,7 @@
  * - Smooth booking flow with proper validation
  */
 (function ($) {
-  "use strict";
+  'use strict';
 
   // Booking data object to store all selected information
   let bookingData = {
@@ -16,15 +16,15 @@
     coreServices: [], // Only core services (not add-ons)
     addons: [], // Only add-on services
     staffId: null, // Selected master ID
-    staffName: "", // Selected master name
-    staffAvatar: "", // Selected master avatar URL
+    staffName: '', // Selected master name
+    staffAvatar: '', // Selected master avatar URL
     staffLevel: 1, // Selected master level (stars) - default to 1
     date: null, // Selected date (YYYY-MM-DD)
     time: null, // Selected time (HH:MM)
     coupon: null,
     contact: {}, // Customer contact information
-    flowHistory: ["initial"], // Track step navigation history for back button
-    initialOption: "services", // Default first step after initial
+    flowHistory: ['initial'], // Track step navigation history for back button
+    initialOption: 'services', // Default first step after initial
   };
 
   // Configuration
@@ -44,12 +44,12 @@
    * @returns {string} - HTML with star SVGs
    */
   const levelTitles = {
-    [-1]: "Intern",
-    1: "Sunny Ray",
-    2: "Sunny Shine",
-    3: "Sunny Inferno",
-    4: "Trainer",
-    5: "Sunny Inferno, Supervisor",
+    [-1]: 'Intern',
+    1: 'Sunny Ray',
+    2: 'Sunny Shine',
+    3: 'Sunny Inferno',
+    4: 'Trainer',
+    5: 'Sunny Inferno, Supervisor',
   };
 
   const percentMap = {
@@ -71,11 +71,11 @@
   };
 
   function generateStarsHtml(level) {
-    if (typeof level === "undefined" || level === null) return "";
+    if (typeof level === 'undefined' || level === null) return '';
 
     const starsCount = starsMap[level];
 
-    if (typeof starsCount === "undefined" || starsCount === 0) return "";
+    if (typeof starsCount === 'undefined' || starsCount === 0) return '';
 
     const starSvg = `<div class='star'><svg width='24' height='24' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'>
     <path d='M20.8965 18.008L18.6085 15.7L19.2965 15.012L21.6045 17.3L20.8965 18.008ZM17.7005 6.373L17.0125 5.685L19.3005 3.396L20.0085 4.085L17.7005 6.373ZM6.30048 6.393L4.01148 4.084L4.70048 3.395L7.00848 5.684L6.30048 6.393ZM3.08548 18.007L2.39648 17.299L4.68548 15.01L5.39248 15.699L3.08548 18.007ZM6.44048 20L7.91048 13.725L3.00048 9.481L9.47048 8.933L12.0005 3L14.5505 8.933L21.0205 9.481L16.1085 13.725L17.5785 20L12.0005 16.66L6.44048 20Z' fill='#FDC41F'/>
@@ -115,7 +115,7 @@
       restoreBookingSession();
     }
 
-    debug("Booking system initialized");
+    debug('Booking system initialized');
   });
 
   /**
@@ -125,26 +125,26 @@
     if (!config.useLocalStorage) return;
 
     // Save booking data on each step change
-    $(document).on("bookingStepChanged", function (e, step) {
+    $(document).on('bookingStepChanged', function (e, step) {
       saveBookingSession();
     });
 
     // Save on form field changes with debounce
     let debounceTimer;
-    $(document).on("change keyup", ".contact-form input, .contact-form textarea", function () {
+    $(document).on('change keyup', '.contact-form input, .contact-form textarea', function () {
       clearTimeout(debounceTimer);
       debounceTimer = setTimeout(function () {
         // Save contact info before saving session
-        let name = $("#client-name").val();
-        let phone = $("#client-phone").val();
-        let email = $("#client-email").val();
-        let comment = $("#client-comment").val();
+        let name = $('#client-name').val();
+        let phone = $('#client-phone').val();
+        let email = $('#client-email').val();
+        let comment = $('#client-comment').val();
 
         bookingData.contact = {
-          name: name || "",
-          phone: phone || "",
-          email: email || "",
-          comment: comment || "",
+          name: name || '',
+          phone: phone || '',
+          email: email || '',
+          comment: comment || '',
         };
 
         saveBookingSession();
@@ -158,56 +158,56 @@
   function saveBookingSession() {
     if (!config.useLocalStorage) return;
     try {
-      localStorage.setItem("altegio_booking_data", JSON.stringify(bookingData));
-      debug("Booking session saved to local storage");
+      localStorage.setItem('altegio_booking_data', JSON.stringify(bookingData));
+      debug('Booking session saved to local storage');
     } catch (e) {
-      debug("Error saving booking session", e);
+      debug('Error saving booking session', e);
     }
   }
   /**
    * Initialize coupon handling
    */
   function initCouponHandling() {
-    const couponInput = $("#coupon-code");
-    const applyBtn = $(".apply-coupon-btn");
+    const couponInput = $('#coupon-code');
+    const applyBtn = $('.apply-coupon-btn');
 
-    applyBtn.prop("disabled", true);
+    applyBtn.prop('disabled', true);
 
-    couponInput.on("input", function () {
+    couponInput.on('input', function () {
       const inputValue = $(this).val().trim();
 
       if (inputValue.length > 0) {
-        applyBtn.prop("disabled", false);
+        applyBtn.prop('disabled', false);
       } else {
-        applyBtn.prop("disabled", true);
+        applyBtn.prop('disabled', true);
       }
     });
 
-    couponInput.on("focus", function () {
+    couponInput.on('focus', function () {
       const inputValue = $(this).val().trim();
-      applyBtn.prop("disabled", inputValue.length === 0);
+      applyBtn.prop('disabled', inputValue.length === 0);
     });
 
-    $(document).on("click", ".apply-coupon-btn", function () {
-      const couponCode = $("#coupon-code").val().trim();
+    $(document).on('click', '.apply-coupon-btn', function () {
+      const couponCode = $('#coupon-code').val().trim();
 
       if (!couponCode) {
-        showCouponFeedback("Please enter a coupon code", "error");
+        showCouponFeedback('Please enter a coupon code', 'error');
         return;
       }
 
-      $(this).prop("disabled", true).text("Checking...");
+      $(this).prop('disabled', true).text('Checking...');
 
       $.ajax({
         url: booking_params.ajax_url,
-        type: "POST",
+        type: 'POST',
         data: {
-          action: "check_promo_code",
+          action: 'check_promo_code',
           nonce: booking_params.nonce,
           promo_code: couponCode,
         },
         success: function (response) {
-          $(".apply-coupon-btn").prop("disabled", false).text("Apply");
+          $('.apply-coupon-btn').prop('disabled', false).text('Apply');
 
           if (response.success) {
             bookingData.coupon = {
@@ -215,26 +215,26 @@
               value: parseFloat(response.data.discount_value),
             };
 
-            showCouponFeedback(response.data.message, "success");
+            showCouponFeedback(response.data.message, 'success');
 
             updateSummary();
 
             $(".booking-step[data-step='confirm'] .coupon-feedback").show();
           } else {
-            showCouponFeedback(response.data.message || "Invalid coupon", "error");
+            showCouponFeedback(response.data.message || 'Invalid coupon', 'error');
           }
         },
         error: function () {
-          $(".apply-coupon-btn").prop("disabled", false).text("Apply");
-          showCouponFeedback("Error checking coupon. Please try again.", "error");
+          $('.apply-coupon-btn').prop('disabled', false).text('Apply');
+          showCouponFeedback('Error checking coupon. Please try again.', 'error');
         },
       });
     });
 
-    $(document).on("keypress", "#coupon-code", function (e) {
+    $(document).on('keypress', '#coupon-code', function (e) {
       if (e.which === 13) {
         e.preventDefault();
-        $(".apply-coupon-btn").click();
+        $('.apply-coupon-btn').click();
       }
     });
   }
@@ -243,12 +243,12 @@
    * Show coupon feedback message
    */
   function showCouponFeedback(message, type) {
-    const $feedback = $(".coupon-feedback");
+    const $feedback = $('.coupon-feedback');
 
-    $feedback.removeClass("success error").addClass(type).text(message).fadeIn();
+    $feedback.removeClass('success error').addClass(type).text(message).fadeIn();
 
     // Hide after 5 seconds for success
-    if (type === "success") {
+    if (type === 'success') {
       setTimeout(() => {
         $feedback.fadeOut();
       }, 5000);
@@ -260,14 +260,14 @@
   function restoreBookingSession() {
     if (!config.useLocalStorage) return;
     try {
-      const savedData = localStorage.getItem("altegio_booking_data");
+      const savedData = localStorage.getItem('altegio_booking_data');
       if (savedData) {
         const parsedData = JSON.parse(savedData);
 
         // Validate the data before restoring
         if (parsedData && parsedData.services) {
           bookingData = parsedData;
-          debug("Restored booking session from local storage", bookingData);
+          debug('Restored booking session from local storage', bookingData);
 
           // Apply restored data to UI
           applyRestoredSession();
@@ -275,7 +275,7 @@
         }
       }
     } catch (e) {
-      debug("Error restoring booking session", e);
+      debug('Error restoring booking session', e);
     }
     return false;
   }
@@ -287,21 +287,21 @@
     // Restore service selections
     bookingData.services.forEach((service) => {
       const checkbox = $(`.service-checkbox[data-service-id="${service.id}"]`);
-      checkbox.prop("checked", true);
-      checkbox.closest(".service-item").addClass("selected");
+      checkbox.prop('checked', true);
+      checkbox.closest('.service-item').addClass('selected');
     });
 
     // Restore staff selection
     if (bookingData.staffId) {
-      $(`.staff-item[data-staff-id="${bookingData.staffId}"]`).addClass("selected");
+      $(`.staff-item[data-staff-id="${bookingData.staffId}"]`).addClass('selected');
     }
 
     // Restore contact form data
     if (bookingData.contact) {
-      $("#client-name").val(bookingData.contact.name || "");
-      $("#client-phone").val(bookingData.contact.phone || "");
-      $("#client-email").val(bookingData.contact.email || "");
-      $("#client-comment").val(bookingData.contact.comment || "");
+      $('#client-name').val(bookingData.contact.name || '');
+      $('#client-phone').val(bookingData.contact.phone || '');
+      $('#client-email').val(bookingData.contact.email || '');
+      $('#client-comment').val(bookingData.contact.comment || '');
     }
 
     // Update add-on availability
@@ -314,10 +314,10 @@
   function clearBookingSession() {
     if (!config.useLocalStorage) return;
     try {
-      localStorage.removeItem("altegio_booking_data");
-      debug("Booking session cleared from local storage");
+      localStorage.removeItem('altegio_booking_data');
+      debug('Booking session cleared from local storage');
     } catch (e) {
-      debug("Error clearing booking session", e);
+      debug('Error clearing booking session', e);
     }
   }
 
@@ -326,78 +326,78 @@
    */
   function initBookingPopup() {
     // Open popup when book button is clicked
-    $(document).on("click", " .open-popup", function (e) {
+    $(document).on('click', ' .open-popup', function (e) {
       e.preventDefault();
 
       // Reset booking data
       resetBookingForm();
 
       // If booking from service card, pre-select that service
-      if ($(this).closest(".service-card").length) {
-        const serviceId = $(this).closest(".service-card").data("service-id");
+      if ($(this).closest('.service-card').length) {
+        const serviceId = $(this).closest('.service-card').data('service-id');
         bookingData.preSelectedServiceId = serviceId;
       }
 
       // If booking from master card, pre-select that master
-      if ($(this).closest(".master-card").length) {
-        const masterId = $(this).closest(".master-card").data("master-id");
+      if ($(this).closest('.master-card').length) {
+        const masterId = $(this).closest('.master-card').data('master-id');
         bookingData.preSelectedMasterId = masterId;
         // Set initial option to master if coming from master card
-        bookingData.initialOption = "master";
+        bookingData.initialOption = 'master';
       }
 
       // Show popup
-      $(".booking-popup-overlay").addClass("active");
-      $("body").addClass("popup-open");
-      $(".loading-overlay").hide();
+      $('.booking-popup-overlay').addClass('active');
+      $('body').addClass('popup-open');
+      $('.loading-overlay').hide();
       // Trigger custom event
-      $(document).trigger("bookingPopupOpened");
+      $(document).trigger('bookingPopupOpened');
     });
 
     // Close popup
-    $(document).on("click", ".booking-popup-close, .close-popup-btn", function () {
-      $(".booking-popup-overlay").removeClass("active");
-      $("body").removeClass("popup-open");
+    $(document).on('click', '.booking-popup-close, .close-popup-btn', function () {
+      $('.booking-popup-overlay').removeClass('active');
+      $('body').removeClass('popup-open');
       // Add a confirmation if there's unsaved data
       clearBookingSession();
     });
 
     // Close when clicking outside popup
-    $(document).on("click", ".booking-popup-overlay", function (e) {
-      if ($(e.target).is(".booking-popup-overlay")) {
-        $(".booking-popup-overlay").removeClass("active");
-        $("body").removeClass("popup-open");
+    $(document).on('click', '.booking-popup-overlay', function (e) {
+      if ($(e.target).is('.booking-popup-overlay')) {
+        $('.booking-popup-overlay').removeClass('active');
+        $('body').removeClass('popup-open');
         clearBookingSession();
       }
     });
 
     // Initial step selection (Services or Master)
-    $(document).on("click", ".booking-option-item", function () {
-      $(".booking-option-item").removeClass("active");
-      $(".status-indicator").removeClass("active");
+    $(document).on('click', '.booking-option-item', function () {
+      $('.booking-option-item').removeClass('active');
+      $('.status-indicator').removeClass('active');
 
-      $(this).addClass("active");
-      $(this).find(".status-indicator").addClass("active");
+      $(this).addClass('active');
+      $(this).find('.status-indicator').addClass('active');
 
-      bookingData.initialOption = $(this).data("option");
-      debug("Initial option selected", bookingData.initialOption);
+      bookingData.initialOption = $(this).data('option');
+      debug('Initial option selected', bookingData.initialOption);
       // Update flow history
-      bookingData.flowHistory = ["initial"];
+      bookingData.flowHistory = ['initial'];
     });
 
     // Next button in initial step
-    $(document).on("click", '.booking-step[data-step="initial"] .next-btn', function () {
+    $(document).on('click', '.booking-step[data-step="initial"] .next-btn', function () {
       // Get selected option (services or master)
-      const nextStep = $(".booking-option-item.active").data("option") || "services";
+      const nextStep = $('.booking-option-item.active').data('option') || 'services';
       bookingData.initialOption = nextStep;
 
       // Initialize flow history
-      bookingData.flowHistory = ["initial", nextStep];
-      debug("Going to step", nextStep);
+      bookingData.flowHistory = ['initial', nextStep];
+      debug('Going to step', nextStep);
       goToStep(nextStep);
 
       // If pre-selected service, select it
-      if (nextStep === "services" && bookingData.preSelectedMasterId) {
+      if (nextStep === 'services' && bookingData.preSelectedMasterId) {
         setTimeout(function () {
           const masterId = bookingData.preSelectedMasterId;
           loadServicesForMaster(masterId);
@@ -405,15 +405,15 @@
       }
 
       // If pre-selected master, load that master's data
-      if (nextStep === "master" && bookingData.preSelectedMasterId) {
+      if (nextStep === 'master' && bookingData.preSelectedMasterId) {
         loadStaffById(bookingData.preSelectedMasterId);
       }
     });
 
     // Universal back button behavior - fixed to go to previous step, not always initial
-    $(document).on("click", ".booking-back-btn", function () {
-      const currentStep = $(this).closest(".booking-step").data("step");
-      debug("Going back from", currentStep);
+    $(document).on('click', '.booking-back-btn', function () {
+      const currentStep = $(this).closest('.booking-step').data('step');
+      debug('Going back from', currentStep);
 
       // Remove current step from history
       if (bookingData.flowHistory.length > 1) {
@@ -423,57 +423,57 @@
         goToStep(previousStep);
       } else {
         // Fallback to initial if history is broken
-        goToStep("initial");
+        goToStep('initial');
       }
     });
   }
 
-  $(document).on("click", ".want-this-btn", function (e) {
+  $(document).on('click', '.want-this-btn', function (e) {
     e.preventDefault();
 
-    const masterId = parseInt($(this).data("master-id"));
+    const masterId = parseInt($(this).data('master-id'));
     const serviceIds = $(this)
-      .data("service-ids")
+      .data('service-ids')
       .toString()
-      .split(",")
+      .split(',')
       .map((id) => parseInt(id.trim()));
 
-    const galleryTitle = $(this).data("gallery-title") || "";
+    const galleryTitle = $(this).data('gallery-title') || '';
     bookingData.galleryTitle = galleryTitle;
     if (!masterId || !serviceIds.length) return;
     resetBookingForm();
 
-    $(".booking-popup").hide();
-    $(".loading-overlay").show();
+    $('.booking-popup').hide();
+    $('.loading-overlay').show();
 
     bookingData.staffId = masterId;
-    bookingData.initialOption = "master";
-    bookingData.flowHistory = ["initial", "master"];
+    bookingData.initialOption = 'master';
+    bookingData.flowHistory = ['initial', 'master'];
     bookingData.galleryTitle = galleryTitle;
-    $(".booking-popup-overlay").addClass("active");
-    $("body").addClass("popup-open");
+    $('.booking-popup-overlay').addClass('active');
+    $('body').addClass('popup-open');
 
     const $staffItem = $(`.staff-item[data-staff-id="${masterId}"]`);
     if ($staffItem.length) {
-      $(".staff-item").removeClass("selected");
-      $staffItem.addClass("selected");
+      $('.staff-item').removeClass('selected');
+      $staffItem.addClass('selected');
 
       const $radio = $staffItem.find('input[type="radio"]');
       if ($radio.length) {
-        $radio.prop("checked", true).trigger("change").trigger("click");
+        $radio.prop('checked', true).trigger('change').trigger('click');
       }
 
-      const name = $staffItem.find(".staff-name").text().trim();
-      const level = $staffItem.find(".star").length || 0;
-      const specialization = $staffItem.find(".stars span").text().trim().replace(/[()]/g, "");
+      const name = $staffItem.find('.staff-name').text().trim();
+      const level = $staffItem.find('.star').length || 0;
+      const specialization = $staffItem.find('.stars span').text().trim().replace(/[()]/g, '');
 
-      bookingData.staffName = name || "Selected Master";
+      bookingData.staffName = name || 'Selected Master';
       bookingData.staffLevel = level;
       bookingData.staffSpecialization = specialization;
 
-      $staffItem.trigger("click");
+      $staffItem.trigger('click');
     } else {
-      bookingData.staffName = "Selected Master";
+      bookingData.staffName = 'Selected Master';
       bookingData.staffLevel = 1;
     }
 
@@ -486,7 +486,9 @@
     function waitForServiceCheckboxes(serviceIds, callback, maxTries = 30, delay = 100) {
       let tries = 0;
       const interval = setInterval(() => {
-        const allFound = serviceIds.every((id) => $(`.service-checkbox[data-service-id="${id}"]`).length > 0);
+        const allFound = serviceIds.every(
+          (id) => $(`.service-checkbox[data-service-id="${id}"]`).length > 0,
+        );
         if (allFound || tries >= maxTries) {
           clearInterval(interval);
           callback();
@@ -499,32 +501,43 @@
       serviceIds.forEach((id) => {
         const $checkbox = $(`.service-checkbox[data-service-id="${id}"]`);
         if ($checkbox.length) {
-          $checkbox.prop("checked", true).trigger("change");
-          $checkbox.closest(".service-item").addClass("selected");
+          $checkbox.prop('checked', true).trigger('change');
+          $checkbox.closest('.service-item').addClass('selected');
 
-          if (typeof window.addService === "function") {
-            const title = $checkbox.data("service-title") || "Service";
-            const price = parseFloat($checkbox.data("service-price")) || 0;
-            const currency = $checkbox.data("service-currency") || "SGD";
-            const duration = $checkbox.data("service-duration") || "";
-            const wearTime = $checkbox.data("service-wear-time") || "";
-            const isAddon = $checkbox.data("is-addon") === true || $checkbox.data("is-addon") === "true";
+          if (typeof window.addService === 'function') {
+            const title = $checkbox.data('service-title') || 'Service';
+            const price = parseFloat($checkbox.data('service-price')) || 0;
+            const currency = $checkbox.data('service-currency') || 'SGD';
+            const duration = $checkbox.data('service-duration') || '';
+            const wearTime = $checkbox.data('service-wear-time') || '';
+            const isAddon =
+              $checkbox.data('is-addon') === true || $checkbox.data('is-addon') === 'true';
 
-            addService(id, title, price, currency, duration, wearTime, isAddon, isAddon ? id : null, "");
+            addService(
+              id,
+              title,
+              price,
+              currency,
+              duration,
+              wearTime,
+              isAddon,
+              isAddon ? id : null,
+              '',
+            );
           }
         }
       });
-      if (!bookingData.flowHistory.includes("services")) {
-        bookingData.flowHistory.push("services");
+      if (!bookingData.flowHistory.includes('services')) {
+        bookingData.flowHistory.push('services');
       }
-      bookingData.flowHistory = ["initial", "services", "master", "datetime"];
+      bookingData.flowHistory = ['initial', 'services', 'master', 'datetime'];
 
-      goToStep("datetime");
+      goToStep('datetime');
       generateCalendar();
       updateSummary();
 
-      $(".booking-popup").fadeIn(200);
-      $(".loading-overlay").hide();
+      $('.booking-popup').fadeIn(200);
+      $('.loading-overlay').hide();
     });
   });
 
@@ -533,87 +546,101 @@
    */
   function initServiceHandling() {
     // Category filter tabs
-    $(document).on("click", ".category-tab", function () {
-      const categoryId = $(this).data("category-id");
+    $(document).on('click', '.category-tab', function () {
+      const categoryId = $(this).data('category-id');
 
       // Update active tab
-      $(".category-tab").removeClass("active");
-      $(this).addClass("active");
+      $('.category-tab').removeClass('active');
+      $(this).addClass('active');
 
       // Show only services from selected category
-      $(".category-services").hide();
+      $('.category-services').hide();
       $(`.category-services[data-category-id="${categoryId}"]`).show();
     });
 
     // Make the entire service item clickable
-    $(document).on("click", ".service-item", function (e) {
+    $(document).on('click', '.service-item', function (e) {
       // Prevent triggering if clicking on checkbox directly
-      if ($(e.target).is(".service-checkbox")) {
+      if ($(e.target).is('.service-checkbox')) {
         return;
       }
 
       // Don't allow clicking if disabled
-      if ($(this).hasClass("disabled")) {
-        debug("Service item is disabled");
+      if ($(this).hasClass('disabled')) {
+        debug('Service item is disabled');
         return;
       }
 
-      const checkbox = $(this).find(".service-checkbox");
+      const checkbox = $(this).find('.service-checkbox');
 
       // If checkbox is disabled, don't allow toggling
-      if (checkbox.prop("disabled")) {
+      if (checkbox.prop('disabled')) {
         return;
       }
 
-      checkbox.prop("checked", !checkbox.prop("checked"));
-      checkbox.trigger("change");
+      checkbox.prop('checked', !checkbox.prop('checked'));
+      checkbox.trigger('change');
     });
 
     // Service checkbox selection
-    $(document).on("change", ".service-checkbox", function () {
-      const serviceId = $(this).data("service-id");
-      const serviceTitle = $(this).data("service-title");
-      const servicePrice = $(this).data("service-price");
-      const serviceCurrency = $(this).data("service-currency");
-      const serviceDuration = $(this).data("service-duration") || "";
-      const serviceWearTime = $(this).data("service-wear-time") || "";
+    $(document).on('change', '.service-checkbox', function () {
+      const serviceId = $(this).data('service-id');
+      const serviceTitle = $(this).data('service-title');
+      const servicePrice = $(this).data('service-price');
+      const serviceCurrency = $(this).data('service-currency');
+      const serviceDuration = $(this).data('service-duration') || '';
+      const serviceWearTime = $(this).data('service-wear-time') || '';
 
-      const isAddon = $(this).data("is-addon") === true || $(this).data("is-addon") === "true" || $(this).closest(".service-item").hasClass("addon-item") || $(this).closest(".core-related-addons").length > 0;
+      const isAddon =
+        $(this).data('is-addon') === true ||
+        $(this).data('is-addon') === 'true' ||
+        $(this).closest('.service-item').hasClass('addon-item') ||
+        $(this).closest('.core-related-addons').length > 0;
 
-      const altegioId = $(this).data("altegio-id") || serviceId;
+      const altegioId = $(this).data('altegio-id') || serviceId;
 
-      const $serviceItem = $(this).closest(".service-item");
-      const desc = $serviceItem.find(".service-description").text().trim();
+      const $serviceItem = $(this).closest('.service-item');
+      const desc = $serviceItem.find('.service-description').text().trim();
 
-      if ($(this).is(":checked")) {
-        $serviceItem.addClass("selected");
+      if ($(this).is(':checked')) {
+        $serviceItem.addClass('selected');
 
-        addService(serviceId, serviceTitle, servicePrice, serviceCurrency, serviceDuration, serviceWearTime, isAddon, altegioId, desc);
-        debug("Service added", { id: serviceId, title: serviceTitle, isAddon });
+        addService(
+          serviceId,
+          serviceTitle,
+          servicePrice,
+          serviceCurrency,
+          serviceDuration,
+          serviceWearTime,
+          isAddon,
+          altegioId,
+          desc,
+        );
+        debug('Service added', { id: serviceId, title: serviceTitle, isAddon });
 
         if (!isAddon) {
-          const coreId = $(this).data("service-id");
+          const coreId = $(this).data('service-id');
 
           const $container = $(`.core-related-addons[data-core-id="${coreId}"]`);
-          $container.addClass("open");
-          $container.find(".service-checkbox").prop("disabled", false);
-          $container.find(".addon-item").removeClass("disabled");
+          $container.addClass('open');
+          $container.find('.service-checkbox').prop('disabled', false);
+          $container.find('.addon-item').removeClass('disabled');
         }
       } else {
-        $serviceItem.removeClass("selected");
+        $serviceItem.removeClass('selected');
         removeService(serviceId);
-        debug("Service removed", serviceId);
+        debug('Service removed', serviceId);
 
         if (!isAddon) {
-          const coreId = $(this).data("service-id");
+          const coreId = $(this).data('service-id');
 
           const $container = $(`.core-related-addons[data-core-id="${coreId}"]`);
-          $container.removeClass("open");
-          $container.find("input[type=checkbox]").prop("checked", false).prop("disabled", true);
-          $container.find(".addon-item").removeClass("selected").addClass("disabled");
+          $container.removeClass('open');
+          $container.find('input[type=checkbox]').prop('checked', false).prop('disabled', true);
+          $container.find('.addon-item').removeClass('selected').addClass('disabled');
 
-          $container.find(".service-checkbox").each(function () {
-            const addonId = $(this).data("service-id");
+          $container.find('.service-checkbox').each(function () {
+            const addonId = $(this).data('service-id');
             removeService(addonId);
           });
         }
@@ -624,35 +651,35 @@
     });
 
     // Next button in services step
-    $(document).on("click", '.booking-step[data-step="services"] .next-btn', function () {
+    $(document).on('click', '.booking-step[data-step="services"] .next-btn', function () {
       try {
         let nextStep;
-        if (bookingData.initialOption === "services") {
-          nextStep = "master";
+        if (bookingData.initialOption === 'services') {
+          nextStep = 'master';
         } else {
-          nextStep = "datetime";
+          nextStep = 'datetime';
         }
 
         bookingData.flowHistory.push(nextStep);
 
-        debug("Services selected, proceeding to", nextStep);
+        debug('Services selected, proceeding to', nextStep);
 
-        if (nextStep === "master") {
+        if (nextStep === 'master') {
           goToStep(nextStep);
-        } else if (nextStep === "datetime") {
+        } else if (nextStep === 'datetime') {
           if (!bookingData.staffId) {
-            showValidationAlert("Please go back and select a master first");
+            showValidationAlert('Please go back and select a master first');
             return false;
           }
           goToStep(nextStep);
           generateCalendar();
         }
 
-        $(document).trigger("bookingServicesCompleted", [bookingData.services]);
+        $(document).trigger('bookingServicesCompleted', [bookingData.services]);
 
         return true;
       } catch (error) {
-        showValidationAlert("An error occurred. Please try again.");
+        showValidationAlert('An error occurred. Please try again.');
         return false;
       }
     });
@@ -662,23 +689,26 @@
    * Initialize master selection handling
    */
   function initMasterHandling() {
-    $(document).on("click", ".staff-item", function () {
-      $(".staff-item").removeClass("selected");
-      $(".staff-item input[type='radio']").prop("checked", false);
+    $(document).on('click', '.staff-item', function () {
+      $('.staff-item').removeClass('selected');
+      $(".staff-item input[type='radio']").prop('checked', false);
 
-      $(this).addClass("selected");
-      $(this).find("input[type='radio']").prop("checked", true);
+      $(this).addClass('selected');
+      $(this).find("input[type='radio']").prop('checked', true);
 
-      const staffId = $(this).data("staff-id");
-      const staffName = $(this).find(".staff-name").text();
-      let staffAvatar = "";
+      const staffId = $(this).data('staff-id');
+      const staffName = $(this).find('.staff-name').text();
+      let staffAvatar = '';
 
-      const avatarImg = $(this).find(".staff-avatar img");
+      const avatarImg = $(this).find('.staff-avatar img');
       if (avatarImg.length) {
-        staffAvatar = avatarImg.attr("src") || "";
+        staffAvatar = avatarImg.attr('src') || '';
       }
-      const specialization = $(this).data("staff-specialization");
-      const staffLevel = typeof $(this).data("staff-level") !== "undefined" ? parseInt($(this).data("staff-level")) : 1;
+      const specialization = $(this).data('staff-specialization');
+      const staffLevel =
+        typeof $(this).data('staff-level') !== 'undefined'
+          ? parseInt($(this).data('staff-level'))
+          : 1;
 
       bookingData.staffLevel = staffLevel;
       bookingData.staffSpecialization = specialization;
@@ -688,36 +718,36 @@
       updateMasterNextButtonState();
     });
 
-    $(document).on("click", '.booking-step[data-step="master"] .next-btn', function () {
+    $(document).on('click', '.booking-step[data-step="master"] .next-btn', function () {
       if (!bookingData.staffId) {
-        showValidationAlert("Please select a specialist");
+        showValidationAlert('Please select a specialist');
         return;
       }
 
       let nextStep;
-      if (bookingData.initialOption === "master") {
-        nextStep = "services";
+      if (bookingData.initialOption === 'master') {
+        nextStep = 'services';
 
-        if (bookingData.flowHistory.includes("datetime")) {
-          nextStep = "datetime";
+        if (bookingData.flowHistory.includes('datetime')) {
+          nextStep = 'datetime';
         }
       } else {
-        nextStep = "datetime";
+        nextStep = 'datetime';
       }
 
       bookingData.flowHistory.push(nextStep);
 
-      debug("Master selected, proceeding to", nextStep);
+      debug('Master selected, proceeding to', nextStep);
 
-      if (nextStep === "services") {
+      if (nextStep === 'services') {
         loadServicesForMaster(bookingData.staffId);
-      } else if (nextStep === "datetime") {
+      } else if (nextStep === 'datetime') {
         generateCalendar();
       }
 
       goToStep(nextStep);
 
-      $(document).trigger("bookingMasterSelected", [
+      $(document).trigger('bookingMasterSelected', [
         {
           id: bookingData.staffId,
           name: bookingData.staffName,
@@ -728,20 +758,21 @@
   }
 
   function renderContactStepSummary() {
-    const level = typeof bookingData.staffLevel !== "undefined" ? parseInt(bookingData.staffLevel) : 1;
+    const level =
+      typeof bookingData.staffLevel !== 'undefined' ? parseInt(bookingData.staffLevel) : 1;
 
-    $(".summary-master .name").text(bookingData.staffName || "N/A");
+    $('.summary-master .name').text(bookingData.staffName || 'N/A');
 
     const stars = generateStarsHtml(level);
-    $(".summary-master .stars").html(stars);
+    $('.summary-master .stars').html(stars);
 
     const levelTitle = levelTitles[level];
-    $(".summary-master .stars-name")
-      .text(levelTitle ? `(${levelTitle})` : "")
+    $('.summary-master .stars-name')
+      .text(levelTitle ? `(${levelTitle})` : '')
       .toggle(!!levelTitle);
 
     if (bookingData.staffAvatar) {
-      $(".summary-master .avatar").attr("src", bookingData.staffAvatar);
+      $('.summary-master .avatar').attr('src', bookingData.staffAvatar);
     }
   }
   /**
@@ -749,64 +780,66 @@
    * @param {string} date - Date in YYYY-MM-DD format
    */
   function showUnavailableDateDialog(date) {
-    showValidationAlert(`This date (${date}) is unavailable for booking. Please choose another date.`);
+    showValidationAlert(
+      `This date (${date}) is unavailable for booking. Please choose another date.`,
+    );
   }
   /**
    * Initialize date and time selection handling
    */
   function initDateTimeHandling() {
-    $(document).on("click", ".prev-month", function () {
+    $(document).on('click', '.prev-month', function () {
       navigateCalendar(-1);
     });
 
-    $(document).on("click", ".next-month", function () {
+    $(document).on('click', '.next-month', function () {
       navigateCalendar(1);
     });
 
     // Додай у initDateTimeHandling() перед викликом loadTimeSlots(date):
 
-    $(document).on("click", ".calendar-day:not(.disabled, .empty)", function () {
+    $(document).on('click', '.calendar-day:not(.disabled, .empty)', function () {
       const $day = $(this);
-      const date = $day.data("date");
+      const date = $day.data('date');
 
       // Check if day is marked as unavailable
-      if ($day.hasClass("unavailable")) {
+      if ($day.hasClass('unavailable')) {
         showUnavailableDateDialog(date);
         return;
       }
 
       // Показати лоадер у time-sections (або .calendar-slots, якщо треба)
-      $(".time-sections").html('<div class="loading">Loading available time slots...</div>');
+      $('.time-sections').html('<div class="loading">Loading available time slots...</div>');
 
       // Proceed with normal date selection for available dates
       selectDate(date);
-      $(".calendar-day").removeClass("selected");
-      $day.addClass("selected");
+      $('.calendar-day').removeClass('selected');
+      $day.addClass('selected');
 
       // Load time slots for selected date
       loadTimeSlots(date);
     });
 
-    $(document).on("click", ".time-slot:not(.disabled)", function () {
-      const time = $(this).data("time");
+    $(document).on('click', '.time-slot:not(.disabled)', function () {
+      const time = $(this).data('time');
       selectTime(time);
 
-      $(".time-slot").removeClass("selected");
-      $(this).addClass("selected");
+      $('.time-slot').removeClass('selected');
+      $(this).addClass('selected');
 
       updateDateTimeNextButtonState();
     });
 
-    $(document).on("click", '.booking-step[data-step="datetime"] .next-btn', function () {
+    $(document).on('click', '.booking-step[data-step="datetime"] .next-btn', function () {
       if (validateDateTimeStep()) {
-        bookingData.flowHistory.push("contact");
+        bookingData.flowHistory.push('contact');
 
         renderContactStepSummary();
-        goToStep("contact");
+        goToStep('contact');
 
         updateSummary();
 
-        $(document).trigger("bookingDateTimeSelected", [
+        $(document).trigger('bookingDateTimeSelected', [
           {
             date: bookingData.date,
             time: bookingData.time,
@@ -822,21 +855,23 @@
    * @param {number} year - Year
    */
   function showDatePreloader(show = true) {
-    $(".date-preloader").toggle(show);
+    $('.date-preloader').toggle(show);
     if (show) {
       // Show message in time section while checking dates
-      $(".time-sections").html('<p class="loading-message">Checking available dates, please wait...</p>');
+      $('.time-sections').html(
+        '<p class="loading-message">Checking available dates, please wait...</p>',
+      );
     } else {
       // If no date selected, show message to select a date
       if (!bookingData.date) {
-        $(".time-sections").html('<p class="error-message">Please select an available date.</p>');
+        $('.time-sections').html('<p class="error-message">Please select an available date.</p>');
       } else {
-        $(".time-sections").html('<p class="error-message">Please select an available date.</p>');
+        $('.time-sections').html('<p class="error-message">Please select an available date.</p>');
       }
     }
   }
   function getAvailabilityCacheKey(month, year, staffId, serviceIds) {
-    return `availability_${year}_${month}_${staffId}_${serviceIds.join("_")}`;
+    return `availability_${year}_${month}_${staffId}_${serviceIds.join('_')}`;
   }
 
   function setAvailabilityCache(key, data) {
@@ -861,7 +896,7 @@
 
   function checkDayAvailability(month, year) {
     if (!bookingData.staffId || bookingData.services.length === 0) {
-      console.log("Skipping availability check - no staff or services selected");
+      console.log('Skipping availability check - no staff or services selected');
       return;
     }
     showDatePreloader(true);
@@ -877,9 +912,9 @@
 
     $.ajax({
       url: booking_params.ajax_url,
-      method: "POST",
+      method: 'POST',
       data: {
-        action: "get_month_availability",
+        action: 'get_month_availability',
         nonce: booking_params.nonce,
         staff_id: bookingData.staffId,
         service_ids: serviceIds,
@@ -892,13 +927,13 @@
 
           const results = [];
           daysArr.forEach((day) => {
-            const dateStr = `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+            const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
             results.push({ date: dateStr, hasSlots: true });
           });
 
           const daysInMonth = new Date(year, month + 1, 0).getDate();
           for (let d = 1; d <= daysInMonth; d++) {
-            const dateStr = `${year}-${String(month + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
+            const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
             if (!daysArr.includes(String(d))) {
               results.push({ date: dateStr, hasSlots: false });
             }
@@ -910,7 +945,7 @@
           const daysInMonth = new Date(year, month + 1, 0).getDate();
           const results = [];
           for (let d = 1; d <= daysInMonth; d++) {
-            const dateStr = `${year}-${String(month + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
+            const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
             results.push({ date: dateStr, hasSlots: false });
           }
           setAvailabilityCache(cacheKey, results);
@@ -920,7 +955,9 @@
       },
       error: function () {
         showDatePreloader(false);
-        $(".time-sections").html('<p class="error-message">Error loading available dates. Please try again later.</p>');
+        $('.time-sections').html(
+          '<p class="error-message">Error loading available dates. Please try again later.</p>',
+        );
       },
     });
   }
@@ -933,14 +970,14 @@
       if (obj.hasSlots) availableMap[obj.date] = true;
     });
 
-    $(".calendar-day").each(function () {
+    $('.calendar-day').each(function () {
       const $day = $(this);
-      if ($day.hasClass("empty") || $day.hasClass("disabled")) return;
-      const dateStr = $day.data("date");
+      if ($day.hasClass('empty') || $day.hasClass('disabled')) return;
+      const dateStr = $day.data('date');
       if (availableMap[dateStr]) {
-        $day.removeClass("unavailable").addClass("available");
+        $day.removeClass('unavailable').addClass('available');
       } else {
-        $day.removeClass("available").addClass("unavailable");
+        $day.removeClass('available').addClass('unavailable');
       }
     });
   }
@@ -950,53 +987,62 @@
   function clearAvailabilityCache() {
     $.ajax({
       url: booking_params.ajax_url,
-      method: "POST",
+      method: 'POST',
       data: {
-        action: "clear_availability_cache",
+        action: 'clear_availability_cache',
         nonce: booking_params.nonce,
       },
       success: function (response) {
         if (response.success) {
-          debug("Availability cache cleared");
+          debug('Availability cache cleared');
           // Refresh current month's availability
-          const monthHeader = $(".month-header span").text();
+          const monthHeader = $('.month-header span').text();
           if (monthHeader) {
-            const [monthName, year] = monthHeader.split(" ");
+            const [monthName, year] = monthHeader.split(' ');
             const monthIndex = getMonthIndex(monthName);
             checkDayAvailability(monthIndex, parseInt(year));
           }
         }
       },
       error: function (xhr, status, error) {
-        console.error("Failed to clear availability cache:", error);
+        console.error('Failed to clear availability cache:', error);
       },
     });
   }
   function markUnavailableDatesFromTimeSlots() {
-    $(".calendar-day:not(.disabled, .empty)").each(function () {
-      const dateStr = $(this).data("date");
+    $('.calendar-day:not(.disabled, .empty)').each(function () {
+      const dateStr = $(this).data('date');
       const $dayElement = $(this);
 
-      if (dateStr && !$dayElement.hasClass("unavailable")) {
+      if (dateStr && !$dayElement.hasClass('unavailable')) {
         $.ajax({
           url: booking_params.ajax_url,
-          method: "POST",
+          method: 'POST',
           data: {
-            action: "get_time_slots",
+            action: 'get_time_slots',
             nonce: booking_params.nonce,
             staff_id: bookingData.staffId,
             date: dateStr,
             service_ids: bookingData.services.map((s) => s.altegioId || s.id),
           },
           success: function (response) {
-            if (!response.success || !response.data || (Array.isArray(response.data) && response.data.length === 0) || (response.data.slots && Array.isArray(response.data.slots) && response.data.slots.length === 0)) {
-              $dayElement.addClass("unavailable");
+            if (
+              !response.success ||
+              !response.data ||
+              (Array.isArray(response.data) && response.data.length === 0) ||
+              (response.data.slots &&
+                Array.isArray(response.data.slots) &&
+                response.data.slots.length === 0)
+            ) {
+              $dayElement.addClass('unavailable');
 
-              if ($dayElement.hasClass("selected")) {
-                $dayElement.removeClass("selected");
+              if ($dayElement.hasClass('selected')) {
+                $dayElement.removeClass('selected');
                 bookingData.date = null;
                 bookingData.time = null;
-                $(".time-sections").html('<p class="error-message">Please select an available date.</p>');
+                $('.time-sections').html(
+                  '<p class="error-message">Please select an available date.</p>',
+                );
                 updateDateTimeNextButtonState();
               }
             }
@@ -1010,32 +1056,32 @@
    */
   function initContactHandling() {
     // Form field validation on blur
-    $(document).on("blur", ".contact-form input[required]", function () {
+    $(document).on('blur', '.contact-form input[required]', function () {
       validateField($(this));
     });
 
     // Phone number formatting
-    $(document).on("input", "#client-phone", function () {
+    $(document).on('input', '#client-phone', function () {
       const input = $(this);
       let value = input.val();
 
-      const countryCode = window.getSelectedCountryCode ? window.getSelectedCountryCode() : "";
-      const codeDigits = countryCode.replace(/\D/g, "");
+      const countryCode = window.getSelectedCountryCode ? window.getSelectedCountryCode() : '';
+      const codeDigits = countryCode.replace(/\D/g, '');
 
       const maxTotalDigits = 12;
 
-      let cleaned = value.replace(/\D/g, "");
+      let cleaned = value.replace(/\D/g, '');
 
       cleaned = cleaned.slice(0, maxTotalDigits - codeDigits.length);
 
       let formatted = cleaned;
       if (cleaned.length > 4) {
-        formatted = cleaned.substring(0, 4) + " " + cleaned.substring(4);
+        formatted = cleaned.substring(0, 4) + ' ' + cleaned.substring(4);
       }
 
       input.val(formatted);
 
-      if (typeof bookingData !== "undefined") {
+      if (typeof bookingData !== 'undefined') {
         bookingData.contact = bookingData.contact || {};
         bookingData.contact.phone = cleaned;
         bookingData.contact.countryCode = countryCode;
@@ -1043,28 +1089,28 @@
       }
     });
 
-    $(document).on("click", ".confirm-booking-btn", function () {
-      const form = $("#booking-form")[0];
-      const $form = $("#booking-form");
+    $(document).on('click', '.confirm-booking-btn', function () {
+      const form = $('#booking-form')[0];
+      const $form = $('#booking-form');
       let valid = true;
 
-      $form.find(".input-error").text("");
-      $(".global-form-error").hide();
+      $form.find('.input-error').text('');
+      $('.global-form-error').hide();
 
       const fields = [
-        { id: "client-name", label: "Name" },
-        { id: "client-email", label: "Email" },
-        { id: "client-phone", label: "Phone" },
-        { id: "privacy-policy", label: "Privacy policy", type: "checkbox" },
+        { id: 'client-name', label: 'Name' },
+        { id: 'client-email', label: 'Email' },
+        { id: 'client-phone', label: 'Phone' },
+        { id: 'privacy-policy', label: 'Privacy policy', type: 'checkbox' },
       ];
 
       fields.forEach((field) => {
         const input = document.getElementById(field.id);
         const errorBlock = $(`.input-error[data-for="${field.id}"]`);
 
-        if (field.type === "checkbox") {
+        if (field.type === 'checkbox') {
           if (!input.checked) {
-            errorBlock.text("You must accept the terms");
+            errorBlock.text('You must accept the terms');
             valid = false;
           }
         } else if (!input.value.trim()) {
@@ -1074,15 +1120,15 @@
       });
 
       if (!valid) {
-        $(".global-form-error").fadeIn();
+        $('.global-form-error').fadeIn();
         return;
       }
 
       bookingData.contact = {
-        name: $("#client-name").val().trim(),
-        phone: bookingData.contact.fullPhone || $("#client-phone").val().trim().replace(/\D/g, ""),
-        email: $("#client-email").val().trim(),
-        comment: $("#client-comment").val().trim(),
+        name: $('#client-name').val().trim(),
+        phone: bookingData.contact.fullPhone || $('#client-phone').val().trim().replace(/\D/g, ''),
+        email: $('#client-email').val().trim(),
+        comment: $('#client-comment').val().trim(),
       };
 
       updateSummary();
@@ -1096,27 +1142,34 @@
    */
   function setupEditButtons() {
     // Edit master button
-    $(document).on("click", ".edit-master-btn", function () {
+    $(document).on('click', '.edit-master-btn', function () {
       // Add the current step to history so we can return
       bookingData.returnToContactStep = true;
-      goToStep("master");
+      goToStep('master');
     });
 
     // Edit date/time button
-    $(document).on("click", ".edit-datetime-btn", function () {
+    $(document).on('click', '.edit-datetime-btn', function () {
       bookingData.returnToContactStep = false;
       generateCalendar();
-      goToStep("datetime");
+      goToStep('datetime');
     });
 
     // When returning from edit, check if we should go back to contact step
-    $(document).on("bookingStepChanged", function (e, step) {
-      if (bookingData.returnToContactStep && (step === "services" || step === "datetime") && bookingData.flowHistory.includes("contact")) {
+    $(document).on('bookingStepChanged', function (e, step) {
+      if (
+        bookingData.returnToContactStep &&
+        (step === 'services' || step === 'datetime') &&
+        bookingData.flowHistory.includes('contact')
+      ) {
         // Make sure we have the necessary data before returning
-        if ((step === "master" && bookingData.staffId) || (step === "datetime" && bookingData.date && bookingData.time)) {
+        if (
+          (step === 'master' && bookingData.staffId) ||
+          (step === 'datetime' && bookingData.date && bookingData.time)
+        ) {
           // Return to contact step
           setTimeout(function () {
-            goToStep("contact");
+            goToStep('contact');
             updateSummary();
             bookingData.returnToContactStep = false;
           }, 100);
@@ -1132,40 +1185,40 @@
    */
   function validateField(field) {
     const value = field.val().trim();
-    const fieldId = field.attr("id");
+    const fieldId = field.attr('id');
 
     const fieldLabels = {
-      "client-name": "Name",
-      "client-email": "Email",
-      "client-phone": "Phone",
-      "client-comment": "Comment",
+      'client-name': 'Name',
+      'client-email': 'Email',
+      'client-phone': 'Phone',
+      'client-comment': 'Comment',
     };
     const fieldName = fieldLabels[fieldId] || fieldId;
 
-    field.removeClass("error");
-    field.next(".field-error").remove();
+    field.removeClass('error');
+    field.next('.field-error').remove();
 
     // Required
-    if (field.prop("required") && !value) {
-      field.addClass("error");
+    if (field.prop('required') && !value) {
+      field.addClass('error');
       field.after(`<div class="field-error">${fieldName} is required</div>`);
       return false;
     }
 
     // Email
-    if (fieldId === "client-email" && value) {
+    if (fieldId === 'client-email' && value) {
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailRegex.test(value)) {
-        field.addClass("error");
+        field.addClass('error');
         field.after('<div class="field-error">Please enter a valid email address</div>');
         return false;
       }
     }
 
     // Phone
-    if (fieldId === "client-phone" && value) {
-      if (value.replace(/\D/g, "").length < 7) {
-        field.addClass("error");
+    if (fieldId === 'client-phone' && value) {
+      if (value.replace(/\D/g, '').length < 7) {
+        field.addClass('error');
         field.after('<div class="field-error">Please enter a valid phone number</div>');
         return false;
       }
@@ -1179,7 +1232,7 @@
    */
   function updateNextButtonState() {
     const hasServicesSelected = bookingData.services.length > 0;
-    $('.booking-step[data-step="services"] .next-btn').prop("disabled", !hasServicesSelected);
+    $('.booking-step[data-step="services"] .next-btn').prop('disabled', !hasServicesSelected);
   }
 
   /**
@@ -1187,7 +1240,7 @@
    */
   function updateMasterNextButtonState() {
     const hasMasterSelected = !!bookingData.staffId;
-    $('.booking-step[data-step="master"] .next-btn').prop("disabled", !hasMasterSelected);
+    $('.booking-step[data-step="master"] .next-btn').prop('disabled', !hasMasterSelected);
   }
 
   /**
@@ -1195,7 +1248,7 @@
    */
   function updateDateTimeNextButtonState() {
     const hasDateTimeSelected = bookingData.date !== null && bookingData.time !== null;
-    $('.booking-step[data-step="datetime"] .next-btn').prop("disabled", !hasDateTimeSelected);
+    $('.booking-step[data-step="datetime"] .next-btn').prop('disabled', !hasDateTimeSelected);
   }
 
   /**
@@ -1204,28 +1257,28 @@
   function updateAddonAvailability() {
     if (bookingData.coreServices.length > 0) {
       // Enable all addon checkboxes
-      $(".service-checkbox[data-is-addon='true']").prop("disabled", false);
-      $(".service-item.addon-item").removeClass("disabled");
-      debug("Addons enabled");
+      $(".service-checkbox[data-is-addon='true']").prop('disabled', false);
+      $('.service-item.addon-item').removeClass('disabled');
+      debug('Addons enabled');
 
       // Show addon section if it exists
-      $(".addon-services-container").show();
-      $(".addon-title").show();
+      $('.addon-services-container').show();
+      $('.addon-title').show();
     } else {
       // Disable and uncheck all addon checkboxes
-      $(".service-checkbox[data-is-addon='true']").prop("disabled", true).prop("checked", false);
+      $(".service-checkbox[data-is-addon='true']").prop('disabled', true).prop('checked', false);
 
-      $(".service-item.addon-item").addClass("disabled").removeClass("selected");
+      $('.service-item.addon-item').addClass('disabled').removeClass('selected');
 
       // Remove all addons from bookingData
       bookingData.addons = [];
       bookingData.services = bookingData.services.filter((service) => !service.isAddon);
 
-      debug("Addons disabled and removed from selection");
+      debug('Addons disabled and removed from selection');
 
       // Hide addon section
-      $(".addon-services-container").hide();
-      $(".addon-title").hide();
+      $('.addon-services-container').hide();
+      $('.addon-title').hide();
     }
   }
 
@@ -1235,30 +1288,32 @@
    */
   function showValidationAlert(message) {
     // Remove any existing alerts
-    $(".validation-alert-overlay").remove();
+    $('.validation-alert-overlay').remove();
     const dateMatch = message.match(/\((.*?)\)/);
-    const cleanMessage = dateMatch ? `This service is not available at the selected time ${dateMatch[0]}` : message;
+    const cleanMessage = dateMatch
+      ? `This service is not available at the selected time ${dateMatch[0]}`
+      : message;
 
-    let alertMessage = "Please choose a different time.";
+    let alertMessage = 'Please choose a different time.';
 
-    if (message.includes("phone") || message.includes("Phone")) {
-      alertMessage = "Please check your phone number and try again.";
-    } else if (message.includes("email") || message.includes("Email")) {
-      alertMessage = "Please check your email address and try again.";
-    } else if (message.includes("name") || message.includes("Name")) {
-      alertMessage = "Please enter your name and try again.";
-    } else if (message.includes("specialist") || message.includes("master")) {
-      alertMessage = "Please select a specialist to continue.";
-    } else if (message.includes("service")) {
-      alertMessage = "Please select at least one service.";
-    } else if (message.includes("date")) {
-      alertMessage = "Please select a date to continue.";
-    } else if (message.includes("time")) {
-      alertMessage = "Please choose a different time.";
-    } else if (message.includes("network") || message.includes("Network")) {
-      alertMessage = "Please check your internet connection and try again.";
-    } else if (message.includes("error") || message.includes("Error")) {
-      alertMessage = "Something went wrong. Please try again.";
+    if (message.includes('phone') || message.includes('Phone')) {
+      alertMessage = 'Please check your phone number and try again.';
+    } else if (message.includes('email') || message.includes('Email')) {
+      alertMessage = 'Please check your email address and try again.';
+    } else if (message.includes('name') || message.includes('Name')) {
+      alertMessage = 'Please enter your name and try again.';
+    } else if (message.includes('specialist') || message.includes('master')) {
+      alertMessage = 'Please select a specialist to continue.';
+    } else if (message.includes('service')) {
+      alertMessage = 'Please select at least one service.';
+    } else if (message.includes('date')) {
+      alertMessage = 'Please select a date to continue.';
+    } else if (message.includes('time')) {
+      alertMessage = 'Please choose a different time.';
+    } else if (message.includes('network') || message.includes('Network')) {
+      alertMessage = 'Please check your internet connection and try again.';
+    } else if (message.includes('error') || message.includes('Error')) {
+      alertMessage = 'Something went wrong. Please try again.';
     }
     // Create custom alert
     const alertHtml = `
@@ -1279,11 +1334,11 @@
     </div>
   `;
 
-    $("body").append(alertHtml);
+    $('body').append(alertHtml);
 
     // Bind click event to the button
-    $(document).on("click", ".validation-alert-button", function () {
-      $(".validation-alert-overlay").remove();
+    $(document).on('click', '.validation-alert-button', function () {
+      $('.validation-alert-overlay').remove();
     });
   }
   /**
@@ -1295,59 +1350,59 @@
       coreServices: [],
       addons: [],
       staffId: null,
-      staffName: "",
-      staffAvatar: "",
+      staffName: '',
+      staffAvatar: '',
       staffLevel: 1,
       date: null,
       time: null,
       coupon: null,
       contact: {},
-      flowHistory: ["initial"],
-      initialOption: "services",
+      flowHistory: ['initial'],
+      initialOption: 'services',
     };
 
-    $("#coupon-code").val("");
-    $(".coupon-feedback").hide();
+    $('#coupon-code').val('');
+    $('.coupon-feedback').hide();
 
-    $(".booking-step").removeClass("active");
-    $('.booking-step[data-step="initial"]').addClass("active");
+    $('.booking-step').removeClass('active');
+    $('.booking-step[data-step="initial"]').addClass('active');
 
-    $(".booking-option-item").removeClass("active");
-    $('.booking-option-item[data-option="services"]').addClass("active");
-    $(".status-indicator").removeClass("active");
-    $('.booking-option-item[data-option="services"] .status-indicator').addClass("active");
+    $('.booking-option-item').removeClass('active');
+    $('.booking-option-item[data-option="services"]').addClass('active');
+    $('.status-indicator').removeClass('active');
+    $('.booking-option-item[data-option="services"] .status-indicator').addClass('active');
 
-    $(".service-checkbox").prop("checked", false);
-    $(".service-item").removeClass("selected");
+    $('.service-checkbox').prop('checked', false);
+    $('.service-item').removeClass('selected');
 
-    $(".calendar-day").removeClass("selected");
-    $(".time-slot").removeClass("selected");
+    $('.calendar-day').removeClass('selected');
+    $('.time-slot').removeClass('selected');
 
-    $("#client-name, #client-phone, #client-email, #client-comment").val("");
-    $(".field-error").remove();
-    $(".contact-form input").removeClass("error");
+    $('#client-name, #client-phone, #client-email, #client-comment').val('');
+    $('.field-error').remove();
+    $('.contact-form input').removeClass('error');
 
-    $(".selected-master-info").empty();
-    $(".summary-services-list").empty();
-    $(".summary-total-amount").text("0.00");
+    $('.selected-master-info').empty();
+    $('.summary-services-list').empty();
+    $('.summary-total-amount').text('0.00');
 
-    $(".addon-title").hide();
-    $(".addon-services-container").hide();
-    $(".service-item.addon-item").addClass("disabled");
-    $(".service-checkbox[data-is-addon='true']").prop("disabled", true);
+    $('.addon-title').hide();
+    $('.addon-services-container').hide();
+    $('.service-item.addon-item').addClass('disabled');
+    $(".service-checkbox[data-is-addon='true']").prop('disabled', true);
 
-    $(".staff-item").removeClass("selected");
-    $(".staff-item input[type='radio']").prop("checked", false);
-    $(".staff-item.any-master").addClass("selected");
-    $(".staff-item.any-master input[type='radio']").prop("checked", true);
+    $('.staff-item').removeClass('selected');
+    $(".staff-item input[type='radio']").prop('checked', false);
+    $('.staff-item.any-master').addClass('selected');
+    $(".staff-item.any-master input[type='radio']").prop('checked', true);
 
-    $(".time-sections").empty();
+    $('.time-sections').empty();
 
     staffLoadRetryCount = 0;
     servicesLoadRetryCount = 0;
     timeSlotsRetryCount = 0;
 
-    debug("Booking form reset");
+    debug('Booking form reset');
   }
 
   /**
@@ -1355,19 +1410,20 @@
    * @param {string} step - Step name to navigate to
    */
   function goToStep(step) {
-    if (step === "initial") {
+    if (step === 'initial') {
       resetBookingForm();
       return;
     }
-    $(".booking-step").removeClass("active");
-    $(`.booking-step[data-step="${step}"]`).addClass("active");
+    $('.booking-step').removeClass('active');
+    $(`.booking-step[data-step="${step}"]`).addClass('active');
 
-    if (step === "services") {
-      const nextButtonText = bookingData.initialOption === "services" ? "Choose a master" : "Select date and time";
+    if (step === 'services') {
+      const nextButtonText =
+        bookingData.initialOption === 'services' ? 'Choose a master' : 'Select date and time';
       $(`.booking-step[data-step="services"] .next-btn`).text(nextButtonText);
 
       if (bookingData.services.length === 0) {
-        const saved = localStorage.getItem("sunnyBookingData");
+        const saved = localStorage.getItem('sunnyBookingData');
         if (saved) {
           const parsed = JSON.parse(saved);
           if (parsed.services?.length) {
@@ -1381,12 +1437,13 @@
       updateNextButtonState();
     }
 
-    if (step === "master") {
-      const nextButtonText = bookingData.initialOption === "master" ? "Select services" : "Select date and time";
+    if (step === 'master') {
+      const nextButtonText =
+        bookingData.initialOption === 'master' ? 'Select services' : 'Select date and time';
       $(`.booking-step[data-step="master"] .next-btn`).text(nextButtonText);
 
       if (bookingData.services.length === 0) {
-        const saved = localStorage.getItem("sunnyBookingData");
+        const saved = localStorage.getItem('sunnyBookingData');
         if (saved) {
           const parsed = JSON.parse(saved);
           if (parsed.services?.length) {
@@ -1397,15 +1454,15 @@
         }
       }
 
-      if (!bookingData.staffId || bookingData.staffId === "any") {
-        bookingData.staffId = "any";
-        $(".staff-item").removeClass("selected");
-        $(".staff-item input[type='radio']").prop("checked", false);
-        $(".staff-item.any-master").addClass("selected");
-        $(".staff-item.any-master input[type='radio']").prop("checked", true);
+      if (!bookingData.staffId || bookingData.staffId === 'any') {
+        bookingData.staffId = 'any';
+        $('.staff-item').removeClass('selected');
+        $(".staff-item input[type='radio']").prop('checked', false);
+        $('.staff-item.any-master').addClass('selected');
+        $(".staff-item.any-master input[type='radio']").prop('checked', true);
       }
 
-      const staffItemsCount = $(".staff-item").not(".any-master").length;
+      const staffItemsCount = $('.staff-item').not('.any-master').length;
 
       if (bookingData.services.length > 0) {
         if (staffItemsCount === 0) {
@@ -1424,20 +1481,20 @@
       updateMasterNextButtonState();
     }
 
-    if (step === "datetime") {
+    if (step === 'datetime') {
       updateDateTimeNextButtonState();
     }
 
-    debug("Navigated to step", step);
+    debug('Navigated to step', step);
 
-    $(document).trigger("bookingStepChanged", [step]);
+    $(document).trigger('bookingStepChanged', [step]);
   }
   function renderDefaultStaffList() {
-    let html = "";
-    const isAnyMasterSelected = bookingData.staffId === "any" || !bookingData.staffId;
+    let html = '';
+    const isAnyMasterSelected = bookingData.staffId === 'any' || !bookingData.staffId;
     html += `
-    <label class="staff-item any-master first${isAnyMasterSelected ? " selected" : ""}" data-staff-id="any" data-staff-level="1">
-      <input type="radio" name="staff"${isAnyMasterSelected ? " checked" : ""}>
+    <label class="staff-item any-master first${isAnyMasterSelected ? ' selected' : ''}" data-staff-id="any" data-staff-level="1">
+      <input type="radio" name="staff"${isAnyMasterSelected ? ' checked' : ''}>
       <div class="staff-radio-content">
         <div class="staff-avatar circle yellow-bg">
           <svg width="21" height="21" viewBox="0 0 21 21" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -1457,32 +1514,32 @@
 
     $.ajax({
       url: config.apiEndpoint,
-      type: "POST",
+      type: 'POST',
       data: {
-        action: "get_masters",
+        action: 'get_masters',
         nonce: config.nonce,
       },
       success: function (response) {
         if (response.success && response.data && Array.isArray(response.data.data)) {
           response.data.data.forEach(function (staff) {
-            const isSelected = bookingData.staffId == staff.id ? " selected" : "";
+            const isSelected = bookingData.staffId == staff.id ? ' selected' : '';
             const staffLevel = Number.isInteger(staff.level) ? staff.level : 1;
-            const levelTitle = levelTitles[staffLevel] || "";
+            const levelTitle = levelTitles[staffLevel] || '';
 
-            let priceModifier = "";
+            let priceModifier = '';
             const modifier = percentMap[staffLevel];
 
-            if (typeof modifier === "number") {
-              const sign = modifier > 0 ? "+" : "";
+            if (typeof modifier === 'number') {
+              const sign = modifier > 0 ? '+' : '';
               priceModifier = `<div class="staff-price-modifier">${sign}${modifier}%    <span>to price</span></div>`;
             }
 
             html += `
               <label class="staff-item${isSelected}" data-staff-id="${staff.id}" data-staff-level="${staffLevel}">
-                <input type="radio" name="staff"${isSelected ? " checked" : ""}>
+                <input type="radio" name="staff"${isSelected ? ' checked' : ''}>
                 <div class="staff-radio-content">
                   <div class="staff-avatar">
-                    ${staff.avatar ? `<img src="${staff.avatar}" alt="${staff.name}">` : ""}
+                    ${staff.avatar ? `<img src="${staff.avatar}" alt="${staff.name}">` : ''}
                   </div>
                   <div class="staff-info">
                     <h4 class="staff-name">${staff.name}</h4>
@@ -1490,7 +1547,7 @@
                      <div class="staff-stars">
                             ${generateStarsHtml(staffLevel)}
                     </div>
-                      ${levelTitle ? `<span class="studio-name">(${levelTitle})</span>` : ""}
+                      ${levelTitle ? `<span class="studio-name">(${levelTitle})</span>` : ''}
                     </div>
                   </div>
                   ${priceModifier}
@@ -1501,11 +1558,11 @@
           });
         }
 
-        $(".staff-list").html(html);
+        $('.staff-list').html(html);
         updateMasterNextButtonState();
       },
       error: function () {
-        $(".staff-list").html(html + '<p class="no-items-message">All specialists available.</p>');
+        $('.staff-list').html(html + '<p class="no-items-message">All specialists available.</p>');
         updateMasterNextButtonState();
       },
     });
@@ -1525,7 +1582,17 @@
   /**
    * Updated addService function to properly handle add-ons
    */
-  function addService(id, title, price, currency, duration, wearTime, isAddon, altegioId, desc = "") {
+  function addService(
+    id,
+    title,
+    price,
+    currency,
+    duration,
+    wearTime,
+    isAddon,
+    altegioId,
+    desc = '',
+  ) {
     try {
       if (!id || !title || !price) return false;
 
@@ -1536,7 +1603,7 @@
           altegioId: altegioId || id,
           title,
           price,
-          currency: currency || "SGD",
+          currency: currency || 'SGD',
           isAddon: isAddon || false,
           duration,
           wearTime,
@@ -1556,7 +1623,7 @@
 
       return false;
     } catch (error) {
-      console.error("Error in addService:", error);
+      console.error('Error in addService:', error);
       return false;
     }
   }
@@ -1578,7 +1645,7 @@
       bookingData.coreServices = bookingData.coreServices.filter((core) => core.id != id);
     }
 
-    debug("Service removed", id);
+    debug('Service removed', id);
   }
 
   /**
@@ -1592,15 +1659,15 @@
     bookingData.staffId = id;
     bookingData.staffName = name;
     bookingData.staffAvatar = avatar;
-    bookingData.staffSpecialization = specialization || "";
-    if (typeof level === "number") {
+    bookingData.staffSpecialization = specialization || '';
+    if (typeof level === 'number') {
       bookingData.staffLevel = level;
     } else {
       const parsedLevel = parseInt(level);
       bookingData.staffLevel = isNaN(parsedLevel) ? 1 : parsedLevel;
     }
 
-    debug("Staff selected", { id, name, level, specialization });
+    debug('Staff selected', { id, name, level, specialization });
 
     updateSummary();
   }
@@ -1623,16 +1690,18 @@
    */
   function loadStaffForServices() {
     if (!bookingData.services || bookingData.services.length === 0) {
-      console.warn("No services selected for staff loading");
+      console.warn('No services selected for staff loading');
       return;
     }
 
-    const serviceIds = bookingData.services.map((service) => service.altegioId || service.id).join(",");
+    const serviceIds = bookingData.services
+      .map((service) => service.altegioId || service.id)
+      .join(',');
 
-    debug("Loading staff for services", serviceIds);
+    debug('Loading staff for services', serviceIds);
 
-    $(".loading-overlay").show();
-    $(".staff-list").html('<p class="loading-message">Loading specialists...</p>');
+    $('.loading-overlay').show();
+    $('.staff-list').html('<p class="loading-message">Loading specialists...</p>');
 
     staffLoadRetryCount = 0;
 
@@ -1646,36 +1715,38 @@
   function performStaffLoadRequest(serviceIds) {
     $.ajax({
       url: config.apiEndpoint,
-      type: "POST",
+      type: 'POST',
       data: {
-        action: "get_filtered_staff",
+        action: 'get_filtered_staff',
         service_id: serviceIds,
         nonce: config.nonce,
       },
       success: function (response) {
         // Hide loading overlay on success
-        $(".loading-overlay").hide();
+        $('.loading-overlay').hide();
 
         if (response.success && response.data && Array.isArray(response.data.data)) {
           renderStaff(response.data.data);
         } else {
-          $(".staff-list").html('<p class="no-items-message">No specialists available for the selected services.</p>');
-          debug("Failed to load staff from API", response);
+          $('.staff-list').html(
+            '<p class="no-items-message">No specialists available for the selected services.</p>',
+          );
+          debug('Failed to load staff from API', response);
         }
       },
       error: function (xhr, status, error) {
-        $(".loading-overlay").hide();
-        debug("AJAX error loading staff", { status, error });
+        $('.loading-overlay').hide();
+        debug('AJAX error loading staff', { status, error });
 
         // Retry logic
         staffLoadRetryCount++;
         if (staffLoadRetryCount <= MAX_STAFF_RETRIES) {
           setTimeout(() => {
-            debug("Retrying staff load request", { attempt: staffLoadRetryCount });
+            debug('Retrying staff load request', { attempt: staffLoadRetryCount });
             performStaffLoadRequest(serviceIds);
           }, STAFF_RETRY_DELAY);
         } else {
-          $(".staff-list").html('<p class="no-items-message">Error loading specialists.</p>');
+          $('.staff-list').html('<p class="no-items-message">Error loading specialists.</p>');
         }
       },
     });
@@ -1686,31 +1757,33 @@
    * @param {string|number} masterId - Master ID to load services for
    */
   function loadServicesForMaster(masterId) {
-    $(".loading-overlay").show();
-    $(".services-list").html('<p class="loading-message">Loading services...</p>');
+    $('.loading-overlay').show();
+    $('.services-list').html('<p class="loading-message">Loading services...</p>');
 
     // Якщо вибрано All masters — підтягуємо всі сервіси (PHP-розмітка)
-    if (masterId === "any") {
+    if (masterId === 'any') {
       $.ajax({
         url: booking_params.ajax_url,
-        method: "POST",
+        method: 'POST',
         data: {
-          action: "get_services",
+          action: 'get_services',
           nonce: booking_params.nonce,
         },
         success: function (response) {
-          $(".loading-overlay").hide();
+          $('.loading-overlay').hide();
           if (response.success && response.data && response.data.html) {
-            $(".services-list").html(response.data.html);
+            $('.services-list').html(response.data.html);
             updateAddonAvailability && updateAddonAvailability();
             updateNextButtonState && updateNextButtonState();
           } else {
-            $(".services-list").html('<p class="no-items-message">No services available.</p>');
+            $('.services-list').html('<p class="no-items-message">No services available.</p>');
           }
         },
         error: function () {
-          $(".loading-overlay").hide();
-          $(".services-list").html('<p class="no-items-message">Error loading services. Please try again.</p>');
+          $('.loading-overlay').hide();
+          $('.services-list').html(
+            '<p class="no-items-message">Error loading services. Please try again.</p>',
+          );
         },
       });
       return;
@@ -1719,25 +1792,29 @@
     // Якщо вибрано конкретного майстра — підтягуємо тільки його сервіси
     $.ajax({
       url: booking_params.ajax_url,
-      method: "POST",
+      method: 'POST',
       data: {
-        action: "get_filtered_services",
+        action: 'get_filtered_services',
         staff_id: masterId,
         nonce: booking_params.nonce,
       },
       success: function (response) {
-        $(".loading-overlay").hide();
+        $('.loading-overlay').hide();
         if (response.success && response.data && response.data.html) {
-          $(".services-list").html(response.data.html);
+          $('.services-list').html(response.data.html);
           updateAddonAvailability && updateAddonAvailability();
           updateNextButtonState && updateNextButtonState();
         } else {
-          $(".services-list").html('<p class="no-items-message">No services available for this master.</p>');
+          $('.services-list').html(
+            '<p class="no-items-message">No services available for this master.</p>',
+          );
         }
       },
       error: function () {
-        $(".loading-overlay").hide();
-        $(".services-list").html('<p class="no-items-message">Error loading services. Please try again.</p>');
+        $('.loading-overlay').hide();
+        $('.services-list').html(
+          '<p class="no-items-message">Error loading services. Please try again.</p>',
+        );
       },
     });
   }
@@ -1749,18 +1826,18 @@
   function performServicesLoadRequest(masterId) {
     $.ajax({
       url: booking_params.ajax_url,
-      method: "POST",
+      method: 'POST',
       data: {
-        action: "get_filtered_services",
+        action: 'get_filtered_services',
         staff_id: masterId,
         nonce: booking_params.nonce,
       },
       success: function (response) {
         // Hide loading overlay on success
-        $(".loading-overlay").hide();
+        $('.loading-overlay').hide();
 
         if (response.success && response.data && response.data.html) {
-          $(".booking-popup .services-list").html(response.data.html);
+          $('.booking-popup .services-list').html(response.data.html);
           updateAddonAvailability();
           updateNextButtonState();
           // Reset retry counter on successful load
@@ -1769,24 +1846,30 @@
           // Try to retry if data is empty but request was "successful"
           if (servicesLoadRetryCount < MAX_SERVICES_RETRIES) {
             servicesLoadRetryCount++;
-            debug(`Retrying services load attempt ${servicesLoadRetryCount}/${MAX_SERVICES_RETRIES} - empty data`);
+            debug(
+              `Retrying services load attempt ${servicesLoadRetryCount}/${MAX_SERVICES_RETRIES} - empty data`,
+            );
 
             setTimeout(() => {
               performServicesLoadRequest(masterId);
             }, SERVICES_RETRY_DELAY);
           } else {
-            console.error("Services response details:", response);
-            $(".booking-popup .services-list").html('<p class="no-items-message">No services available for this master.</p>');
+            console.error('Services response details:', response);
+            $('.booking-popup .services-list').html(
+              '<p class="no-items-message">No services available for this master.</p>',
+            );
           }
         }
       },
       error: function (xhr, status, error) {
-        debug("AJAX error loading services", { status, error });
+        debug('AJAX error loading services', { status, error });
 
         // Retry on error
         if (servicesLoadRetryCount < MAX_SERVICES_RETRIES) {
           servicesLoadRetryCount++;
-          debug(`Retrying services load attempt ${servicesLoadRetryCount}/${MAX_SERVICES_RETRIES} after error`);
+          debug(
+            `Retrying services load attempt ${servicesLoadRetryCount}/${MAX_SERVICES_RETRIES} after error`,
+          );
 
           // Keep loading overlay visible during retry
           setTimeout(() => {
@@ -1794,13 +1877,15 @@
           }, SERVICES_RETRY_DELAY);
         } else {
           // Hide loading overlay after all retries failed
-          $(".loading-overlay").hide();
-          console.error("AJAX Error:", {
+          $('.loading-overlay').hide();
+          console.error('AJAX Error:', {
             status: status,
             error: error,
             responseText: xhr.responseText,
           });
-          $(".booking-popup .services-list").html('<p class="no-items-message">Error loading services. Please try again.</p>');
+          $('.booking-popup .services-list').html(
+            '<p class="no-items-message">Error loading services. Please try again.</p>',
+          );
         }
       },
     });
@@ -1815,61 +1900,68 @@
     const serviceIds = bookingData.services.map((s) => s.id);
 
     // Показати preloader
-    $(".time-preloader").show();
-    $(".time-sections").html('<div class="loading">Loading available time slots...</div>');
+    $('.time-preloader').show();
+    $('.time-sections').html('<div class="loading">Loading available time slots...</div>');
 
     $.ajax({
       url: booking_params.ajax_url,
-      method: "POST",
-      dataType: "json",
+      method: 'POST',
+      dataType: 'json',
       data: {
-        action: "get_time_slots_for_all_masters",
+        action: 'get_time_slots_for_all_masters',
         nonce: booking_params.nonce,
         date: date,
         service_ids: serviceIds,
       },
       success: function (response) {
-        $(".time-preloader").hide(); // Сховати preloader після завантаження
+        $('.time-preloader').hide(); // Сховати preloader після завантаження
         if (response.success && response.data) {
           renderAllMastersSlots(response.data);
         } else {
-          $(".calendar-slots").html('<div class="error">No slots found</div>');
+          $('.calendar-slots').html('<div class="error">No slots found</div>');
         }
       },
       error: function (xhr, status, error) {
-        $(".time-preloader").hide(); // Сховати preloader при помилці
-        $(".calendar-slots").html('<div class="error">Error loading slots</div>');
-        console.error("AJAX error:", error, xhr.responseText);
+        $('.time-preloader').hide(); // Сховати preloader при помилці
+        $('.calendar-slots').html('<div class="error">Error loading slots</div>');
+        console.error('AJAX error:', error, xhr.responseText);
       },
     });
   }
   function renderAllMastersSlots(data) {
-    const $target = $(".time-sections");
+    const $target = $('.time-sections');
     if (!data || Object.keys(data).length === 0) {
-      $target.html('<div class="no-slots-message">No available slots for any master on this date.</div>');
+      $target.html(
+        '<div class="no-slots-message">No available slots for any master on this date.</div>',
+      );
       return;
     }
 
-    let html = "";
+    let html = '';
     Object.values(data).forEach((entry) => {
       if (!entry.slots || entry.slots.length === 0) return;
 
       const staff = entry.staff || {};
-      const name = staff.name || "Master";
-      const avatar = staff.avatar ? `<img src="${staff.avatar}" alt="${name}">` : "";
+      const name = staff.name || 'Master';
+      const avatar = staff.avatar ? `<img src="${staff.avatar}" alt="${name}">` : '';
       const level = staff.level || 1;
 
       // Build slots HTML
-      let slotsHtml = "";
+      let slotsHtml = '';
       entry.slots.forEach((slot) => {
-        let time = typeof slot === "object" && slot.time ? slot.time : typeof slot === "string" ? slot.split(" ")[1]?.slice(0, 5) : "";
+        let time =
+          typeof slot === 'object' && slot.time
+            ? slot.time
+            : typeof slot === 'string'
+              ? slot.split(' ')[1]?.slice(0, 5)
+              : '';
         if (!time) return;
         slotsHtml += `<div class="time-slot"
         data-time="${time}"
         data-staff-id="${staff.id}"
         data-staff-name="${name}"
         data-staff-level="${level}"
-        data-staff-avatar="${staff.avatar || ""}"
+        data-staff-avatar="${staff.avatar || ''}"
       >${time}</div>`;
       });
 
@@ -1881,8 +1973,8 @@
             <h4 class="staff-name">${name}</h4>
             <div class="staff-specialization">
               <div class="staff-stars">${generateStarsHtml(level)}</div>
-              ${levelTitles[level] ? `<span class="studio-name">(${levelTitles[level]})</span>` : ""}
-              ${percentMap[level] > 0 ? `<div class="staff-price-modifier">+${percentMap[level]}%    <span>to price</span></div>` : ""}
+              ${levelTitles[level] ? `<span class="studio-name">(${levelTitles[level]})</span>` : ''}
+              ${percentMap[level] > 0 ? `<div class="staff-price-modifier">+${percentMap[level]}%    <span>to price</span></div>` : ''}
             </div>
           </div>
         </div>
@@ -1892,7 +1984,9 @@
     });
 
     if (!html) {
-      $target.html('<div class="no-slots-message">No available slots for any master on this date.</div>');
+      $target.html(
+        '<div class="no-slots-message">No available slots for any master on this date.</div>',
+      );
     } else {
       $target.html(html);
     }
@@ -1901,7 +1995,7 @@
   // Patch loadTimeSlots to support "All masters" logic
   const originalLoadTimeSlots = loadTimeSlots;
   loadTimeSlots = function (date) {
-    if (bookingData.staffId === "any") {
+    if (bookingData.staffId === 'any') {
       loadTimeSlotsForAllMasters(date);
       return;
     }
@@ -1909,25 +2003,25 @@
   };
 
   // Handle slot click for "All masters"
-  $(document).on("click", ".time-sections .time-slot", function () {
-    if (bookingData.staffId === "any") {
+  $(document).on('click', '.time-sections .time-slot', function () {
+    if (bookingData.staffId === 'any') {
       const $slot = $(this);
-      bookingData.staffId = $slot.data("staff-id");
-      bookingData.staffName = $slot.data("staff-name");
-      bookingData.staffLevel = parseInt($slot.data("staff-level")) || 1;
-      bookingData.staffAvatar = $slot.data("staff-avatar") || "";
-      bookingData.time = $slot.data("time");
-      $(".time-slot").removeClass("selected");
-      $slot.addClass("selected");
+      bookingData.staffId = $slot.data('staff-id');
+      bookingData.staffName = $slot.data('staff-name');
+      bookingData.staffLevel = parseInt($slot.data('staff-level')) || 1;
+      bookingData.staffAvatar = $slot.data('staff-avatar') || '';
+      bookingData.time = $slot.data('time');
+      $('.time-slot').removeClass('selected');
+      $slot.addClass('selected');
       updateDateTimeNextButtonState();
       updateSummary();
       return;
     }
     // Default logic for single master
-    const time = $(this).data("time");
+    const time = $(this).data('time');
     selectTime(time);
-    $(".time-slot").removeClass("selected");
-    $(this).addClass("selected");
+    $('.time-slot').removeClass('selected');
+    $(this).addClass('selected');
     updateDateTimeNextButtonState();
   });
 
@@ -1937,13 +2031,15 @@
    */
   function loadTimeSlots(date) {
     if (!bookingData.staffId || bookingData.services.length === 0) {
-      console.warn("Staff or service not selected");
-      $(".time-sections").html('<p class="error-message">Please select a staff and service first.</p>');
+      console.warn('Staff or service not selected');
+      $('.time-sections').html(
+        '<p class="error-message">Please select a staff and service first.</p>',
+      );
       return;
     }
 
     if (!date) {
-      $(".time-sections").html('<p class="error-message">Please select a date.</p>');
+      $('.time-sections').html('<p class="error-message">Please select a date.</p>');
       return;
     }
 
@@ -1951,13 +2047,13 @@
     const serviceIds = bookingData.services.map((s) => s.altegioId || s.id);
 
     if (!serviceIds.length) {
-      $(".time-sections").html('<p class="error-message">Please select at least one service.</p>');
+      $('.time-sections').html('<p class="error-message">Please select at least one service.</p>');
       return;
     }
 
     // Show loading overlay
-    $(".time-preloader").show();
-    $(".time-sections").html('<p class="loading-message">Loading available time slots...</p>');
+    $('.time-preloader').show();
+    $('.time-sections').html('<p class="loading-message">Loading available time slots...</p>');
 
     // Reset retry counter for new request
     timeSlotsRetryCount = 0;
@@ -1973,9 +2069,9 @@
   function performLoadTimeSlotsRequest(date, serviceIds) {
     $.ajax({
       url: booking_params.ajax_url,
-      method: "POST",
+      method: 'POST',
       data: {
-        action: "get_time_slots",
+        action: 'get_time_slots',
         nonce: booking_params.nonce,
         staff_id: bookingData.staffId,
         date: date,
@@ -1983,7 +2079,7 @@
       },
       success: function (response) {
         // Hide loading overlay on success
-        $(".time-preloader").hide();
+        $('.time-preloader').hide();
 
         if (response.success) {
           let slots = [];
@@ -2001,34 +2097,44 @@
             // Reset retry counter on successful load
             timeSlotsRetryCount = 0;
           } else {
-            $(".time-sections").html('<p class="error-message">No available time slots for this day.</p>');
+            $('.time-sections').html(
+              '<p class="error-message">No available time slots for this day.</p>',
+            );
           }
         } else {
           // Try to retry if request was not successful
           if (timeSlotsRetryCount < MAX_TIMESLOTS_RETRIES) {
             timeSlotsRetryCount++;
-            debug(`Retrying time slots load attempt ${timeSlotsRetryCount}/${MAX_TIMESLOTS_RETRIES} - unsuccessful response`);
+            debug(
+              `Retrying time slots load attempt ${timeSlotsRetryCount}/${MAX_TIMESLOTS_RETRIES} - unsuccessful response`,
+            );
 
             setTimeout(() => {
               performLoadTimeSlotsRequest(date, serviceIds);
             }, TIMESLOTS_RETRY_DELAY);
           } else {
-            $(".time-sections").html('<p class="error-message">Error loading time slots. Please try again later.</p>');
+            $('.time-sections').html(
+              '<p class="error-message">Error loading time slots. Please try again later.</p>',
+            );
           }
         }
       },
       error: function (xhr, status, error) {
-        console.error("Error loading time slots:", error, xhr.responseText);
+        console.error('Error loading time slots:', error, xhr.responseText);
 
         if (timeSlotsRetryCount < MAX_TIMESLOTS_RETRIES) {
           timeSlotsRetryCount++;
-          debug(`Retrying time slots load attempt ${timeSlotsRetryCount}/${MAX_TIMESLOTS_RETRIES} after error`);
+          debug(
+            `Retrying time slots load attempt ${timeSlotsRetryCount}/${MAX_TIMESLOTS_RETRIES} after error`,
+          );
           setTimeout(() => {
             performLoadTimeSlotsRequest(date, serviceIds);
           }, TIMESLOTS_RETRY_DELAY);
         } else {
-          $(".time-preloader").hide();
-          $(".time-sections").html('<p class="error-message">Error loading time slots. Please try again later.</p>');
+          $('.time-preloader').hide();
+          $('.time-sections').html(
+            '<p class="error-message">Error loading time slots. Please try again later.</p>',
+          );
         }
       },
     });
@@ -2040,16 +2146,18 @@
    */
   function renderStaff(staffList) {
     if (!staffList || staffList.length === 0) {
-      $(".staff-list").html('<p class="no-items-message">No specialists available for the selected services.</p>');
+      $('.staff-list').html(
+        '<p class="no-items-message">No specialists available for the selected services.</p>',
+      );
       return;
     }
 
-    let html = "";
+    let html = '';
     // --- ALWAYS show "Random master" at the top ---
-    const isAnyMasterSelected = bookingData.staffId === "any" || !bookingData.staffId;
+    const isAnyMasterSelected = bookingData.staffId === 'any' || !bookingData.staffId;
     html += `
-    <label class="staff-item any-master first${isAnyMasterSelected ? " selected" : ""}" data-staff-id="any" data-staff-level="1">
-      <input type="radio" name="staff"${isAnyMasterSelected ? " checked" : ""}>
+    <label class="staff-item any-master first${isAnyMasterSelected ? ' selected' : ''}" data-staff-id="any" data-staff-level="1">
+      <input type="radio" name="staff"${isAnyMasterSelected ? ' checked' : ''}>
       <div class="staff-radio-content">
         <div class="staff-avatar circle yellow-bg">
           <img src="${themeUrl}/assets/svg/any-master.svg" alt="Random master">
@@ -2064,24 +2172,24 @@
 
     // Render all available masters
     staffList.forEach(function (staff) {
-      const isSelected = bookingData.staffId == staff.id ? " selected" : "";
+      const isSelected = bookingData.staffId == staff.id ? ' selected' : '';
       const staffLevel = Number.isInteger(staff.level) ? staff.level : 1;
-      const levelTitle = levelTitles[staffLevel] || "";
+      const levelTitle = levelTitles[staffLevel] || '';
 
-      let priceModifier = "";
+      let priceModifier = '';
       const modifier = percentMap[staffLevel];
 
-      if (typeof modifier === "number") {
-        const sign = modifier > 0 ? "+" : "";
+      if (typeof modifier === 'number') {
+        const sign = modifier > 0 ? '+' : '';
         priceModifier = `<div class="staff-price-modifier">${sign}${modifier}%    <span>to price</span></div>`;
       }
 
       html += `
         <label class="staff-item${isSelected}" data-staff-id="${staff.id}" data-staff-level="${staffLevel}">
-          <input type="radio" name="staff"${isSelected ? " checked" : ""}>
+          <input type="radio" name="staff"${isSelected ? ' checked' : ''}>
           <div class="staff-radio-content">
             <div class="staff-avatar">
-              ${staff.avatar ? `<img src="${staff.avatar}" alt="${staff.name}">` : ""}
+              ${staff.avatar ? `<img src="${staff.avatar}" alt="${staff.name}">` : ''}
             </div>
             <div class="staff-info">
               <h4 class="staff-name">${staff.name}</h4>
@@ -2089,7 +2197,7 @@
                <div class="staff-stars">
                       ${generateStarsHtml(staffLevel)}
               </div>
-                ${levelTitle ? `<span class="studio-name">(${levelTitle})</span>` : ""}
+                ${levelTitle ? `<span class="studio-name">(${levelTitle})</span>` : ''}
               </div>
             </div>
             ${priceModifier}
@@ -2099,7 +2207,7 @@
       `;
     });
 
-    $(".staff-list").html(html);
+    $('.staff-list').html(html);
 
     // Update next button state
     updateMasterNextButtonState();
@@ -2111,7 +2219,7 @@
    */
   function selectDate(date) {
     bookingData.date = date;
-    debug("Date selected", date);
+    debug('Date selected', date);
   }
 
   /**
@@ -2120,7 +2228,7 @@
    */
   function selectTime(time) {
     bookingData.time = time;
-    debug("Time selected", time);
+    debug('Time selected', time);
   }
 
   /**
@@ -2139,12 +2247,12 @@
     renderCalendar(currentMonth, currentYear);
 
     setTimeout(() => {
-      $(`.calendar-day[data-date="${todayFormatted}"]`).addClass("selected");
+      $(`.calendar-day[data-date="${todayFormatted}"]`).addClass('selected');
 
       loadTimeSlots(todayFormatted);
     }, 50);
 
-    debug("Calendar generated + today selected + time slots loaded", todayFormatted);
+    debug('Calendar generated + today selected + time slots loaded', todayFormatted);
   }
 
   /**
@@ -2152,8 +2260,8 @@
    * @param {number} direction - Direction to navigate (-1 for prev, 1 for next)
    */
   function navigateCalendar(direction) {
-    const monthText = $(".month-header span").text();
-    const [month, year] = monthText.split(" ");
+    const monthText = $('.month-header span').text();
+    const [month, year] = monthText.split(' ');
 
     const monthIndex = getMonthIndex(month);
     let newMonth = monthIndex + direction;
@@ -2168,7 +2276,7 @@
     }
 
     renderCalendar(newMonth, newYear);
-    debug("Calendar navigated to", { month: newMonth, year: newYear });
+    debug('Calendar navigated to', { month: newMonth, year: newYear });
   }
 
   /**
@@ -2177,7 +2285,20 @@
    * @returns {number} - Month index (0-11)
    */
   function getMonthIndex(monthName) {
-    const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+    const months = [
+      'January',
+      'February',
+      'March',
+      'April',
+      'May',
+      'June',
+      'July',
+      'August',
+      'September',
+      'October',
+      'November',
+      'December',
+    ];
     return months.indexOf(monthName);
   }
 
@@ -2199,10 +2320,23 @@
     let startDay = firstDay.getDay() - 1;
     if (startDay < 0) startDay = 6;
 
-    const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-    $(".month-header span").text(monthNames[month] + " " + year);
+    const monthNames = [
+      'January',
+      'February',
+      'March',
+      'April',
+      'May',
+      'June',
+      'July',
+      'August',
+      'September',
+      'October',
+      'November',
+      'December',
+    ];
+    $('.month-header span').text(monthNames[month] + ' ' + year);
 
-    let html = "";
+    let html = '';
 
     // Empty days at the beginning
     for (let i = 0; i < startDay; i++) {
@@ -2220,18 +2354,18 @@
       const isToday = date.getTime() === today.getTime();
       const isPast = date < today;
 
-      let classes = "calendar-day";
-      if (isToday) classes += " today";
-      if (isPast) classes += " disabled";
+      let classes = 'calendar-day';
+      if (isToday) classes += ' today';
+      if (isPast) classes += ' disabled';
 
       if (bookingData.date === dateStr && !isPast) {
-        classes += " selected";
+        classes += ' selected';
       }
 
       html += `<div class="${classes}" data-date="${dateStr}">${i}</div>`;
     }
 
-    $(".calendar-grid").html(html);
+    $('.calendar-grid').html(html);
 
     // Check availability for all days in this month (if we have staff and services selected)
     if (bookingData.staffId && bookingData.services.length > 0) {
@@ -2259,9 +2393,9 @@
    */
   function formatDate(date) {
     const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const day = String(date.getDate()).padStart(2, "0");
-    return year + "-" + month + "-" + day;
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return year + '-' + month + '-' + day;
   }
 
   /**
@@ -2275,13 +2409,15 @@
    */
   function loadTimeSlots(date) {
     if (!bookingData.staffId || bookingData.services.length === 0) {
-      console.warn("Staff or service not selected");
-      $(".time-sections").html('<p class="error-message">Please select a staff and service first.</p>');
+      console.warn('Staff or service not selected');
+      $('.time-sections').html(
+        '<p class="error-message">Please select a staff and service first.</p>',
+      );
       return;
     }
 
     if (!date) {
-      $(".time-sections").html('<p class="error-message">Please select a date.</p>');
+      $('.time-sections').html('<p class="error-message">Please select a date.</p>');
       return;
     }
 
@@ -2289,13 +2425,13 @@
     const serviceIds = bookingData.services.map((s) => s.altegioId || s.id);
 
     if (!serviceIds.length) {
-      $(".time-sections").html('<p class="error-message">Please select at least one service.</p>');
+      $('.time-sections').html('<p class="error-message">Please select at least one service.</p>');
       return;
     }
 
     // Show loading overlay
-    $(".time-preloader").show();
-    $(".time-sections").html('<p class="loading-message">Loading available time slots...</p>');
+    $('.time-preloader').show();
+    $('.time-sections').html('<p class="loading-message">Loading available time slots...</p>');
 
     // Reset retry counter for new request
     timeSlotsRetryCount = 0;
@@ -2311,16 +2447,16 @@
   function performLoadTimeSlotsRequest(date, serviceIds) {
     $.ajax({
       url: booking_params.ajax_url,
-      method: "POST",
+      method: 'POST',
       data: {
-        action: "get_time_slots",
+        action: 'get_time_slots',
         nonce: booking_params.nonce,
         staff_id: bookingData.staffId,
         date: date,
         service_ids: serviceIds,
       },
       success: function (response) {
-        $(".time-preloader").hide();
+        $('.time-preloader').hide();
 
         if (response.success) {
           let slots = [];
@@ -2337,32 +2473,42 @@
             renderTimeSlots(slots);
             timeSlotsRetryCount = 0;
           } else {
-            $(".time-sections").html('<p class="error-message">No available time slots for this day.</p>');
+            $('.time-sections').html(
+              '<p class="error-message">No available time slots for this day.</p>',
+            );
           }
         } else {
           if (timeSlotsRetryCount < MAX_TIMESLOTS_RETRIES) {
             timeSlotsRetryCount++;
-            debug(`Retrying time slots load attempt ${timeSlotsRetryCount}/${MAX_TIMESLOTS_RETRIES} - unsuccessful response`);
+            debug(
+              `Retrying time slots load attempt ${timeSlotsRetryCount}/${MAX_TIMESLOTS_RETRIES} - unsuccessful response`,
+            );
             setTimeout(() => {
               performLoadTimeSlotsRequest(date, serviceIds);
             }, TIMESLOTS_RETRY_DELAY);
           } else {
-            $(".time-sections").html('<p class="error-message">Error loading time slots. Please try again later.</p>');
+            $('.time-sections').html(
+              '<p class="error-message">Error loading time slots. Please try again later.</p>',
+            );
           }
         }
       },
       error: function (xhr, status, error) {
-        console.error("Error loading time slots:", error, xhr.responseText);
+        console.error('Error loading time slots:', error, xhr.responseText);
 
         if (timeSlotsRetryCount < MAX_TIMESLOTS_RETRIES) {
           timeSlotsRetryCount++;
-          debug(`Retrying time slots load attempt ${timeSlotsRetryCount}/${MAX_TIMESLOTS_RETRIES} after error`);
+          debug(
+            `Retrying time slots load attempt ${timeSlotsRetryCount}/${MAX_TIMESLOTS_RETRIES} after error`,
+          );
           setTimeout(() => {
             performLoadTimeSlotsRequest(date, serviceIds);
           }, TIMESLOTS_RETRY_DELAY);
         } else {
-          $(".time-preloader").hide();
-          $(".time-sections").html('<p class="error-message">Error loading time slots. Please try again later.</p>');
+          $('.time-preloader').hide();
+          $('.time-sections').html(
+            '<p class="error-message">Error loading time slots. Please try again later.</p>',
+          );
         }
       },
     });
@@ -2374,16 +2520,18 @@
    */
   function renderStaff(staffList) {
     if (!staffList || staffList.length === 0) {
-      $(".staff-list").html('<p class="no-items-message">No specialists available for the selected services.</p>');
+      $('.staff-list').html(
+        '<p class="no-items-message">No specialists available for the selected services.</p>',
+      );
       return;
     }
 
-    let html = "";
+    let html = '';
     // --- ALWAYS show "Random master" at the top ---
-    const isAnyMasterSelected = bookingData.staffId === "any" || !bookingData.staffId;
+    const isAnyMasterSelected = bookingData.staffId === 'any' || !bookingData.staffId;
     html += `
-    <label class="staff-item any-master first${isAnyMasterSelected ? " selected" : ""}" data-staff-id="any" data-staff-level="1">
-      <input type="radio" name="staff"${isAnyMasterSelected ? " checked" : ""}>
+    <label class="staff-item any-master first${isAnyMasterSelected ? ' selected' : ''}" data-staff-id="any" data-staff-level="1">
+      <input type="radio" name="staff"${isAnyMasterSelected ? ' checked' : ''}>
       <div class="staff-radio-content">
         <div class="staff-avatar circle yellow-bg">
           <img src="${themeUrl}/assets/svg/any-master.svg" alt="Random master">
@@ -2398,24 +2546,24 @@
 
     // Render all available masters
     staffList.forEach(function (staff) {
-      const isSelected = bookingData.staffId == staff.id ? " selected" : "";
+      const isSelected = bookingData.staffId == staff.id ? ' selected' : '';
       const staffLevel = Number.isInteger(staff.level) ? staff.level : 1;
-      const levelTitle = levelTitles[staffLevel] || "";
+      const levelTitle = levelTitles[staffLevel] || '';
 
-      let priceModifier = "";
+      let priceModifier = '';
       const modifier = percentMap[staffLevel];
 
-      if (typeof modifier === "number") {
-        const sign = modifier > 0 ? "+" : "";
+      if (typeof modifier === 'number') {
+        const sign = modifier > 0 ? '+' : '';
         priceModifier = `<div class="staff-price-modifier">${sign}${modifier}%    <span>to price</span></div>`;
       }
 
       html += `
         <label class="staff-item${isSelected}" data-staff-id="${staff.id}" data-staff-level="${staffLevel}">
-          <input type="radio" name="staff"${isSelected ? " checked" : ""}>
+          <input type="radio" name="staff"${isSelected ? ' checked' : ''}>
           <div class="staff-radio-content">
             <div class="staff-avatar">
-              ${staff.avatar ? `<img src="${staff.avatar}" alt="${staff.name}">` : ""}
+              ${staff.avatar ? `<img src="${staff.avatar}" alt="${staff.name}">` : ''}
             </div>
             <div class="staff-info">
               <h4 class="staff-name">${staff.name}</h4>
@@ -2423,7 +2571,7 @@
                <div class="staff-stars">
                       ${generateStarsHtml(staffLevel)}
               </div>
-                ${levelTitle ? `<span class="studio-name">(${levelTitle})</span>` : ""}
+                ${levelTitle ? `<span class="studio-name">(${levelTitle})</span>` : ''}
               </div>
             </div>
             ${priceModifier}
@@ -2433,7 +2581,7 @@
       `;
     });
 
-    $(".staff-list").html(html);
+    $('.staff-list').html(html);
 
     // Update next button state
     updateMasterNextButtonState();
@@ -2445,7 +2593,7 @@
    */
   function selectDate(date) {
     bookingData.date = date;
-    debug("Date selected", date);
+    debug('Date selected', date);
   }
 
   /**
@@ -2454,7 +2602,7 @@
    */
   function selectTime(time) {
     bookingData.time = time;
-    debug("Time selected", time);
+    debug('Time selected', time);
   }
 
   /**
@@ -2473,12 +2621,12 @@
     renderCalendar(currentMonth, currentYear);
 
     setTimeout(() => {
-      $(`.calendar-day[data-date="${todayFormatted}"]`).addClass("selected");
+      $(`.calendar-day[data-date="${todayFormatted}"]`).addClass('selected');
 
       loadTimeSlots(todayFormatted);
     }, 50);
 
-    debug("Calendar generated + today selected + time slots loaded", todayFormatted);
+    debug('Calendar generated + today selected + time slots loaded', todayFormatted);
   }
 
   /**
@@ -2486,8 +2634,8 @@
    * @param {number} direction - Direction to navigate (-1 for prev, 1 for next)
    */
   function navigateCalendar(direction) {
-    const monthText = $(".month-header span").text();
-    const [month, year] = monthText.split(" ");
+    const monthText = $('.month-header span').text();
+    const [month, year] = monthText.split(' ');
 
     const monthIndex = getMonthIndex(month);
     let newMonth = monthIndex + direction;
@@ -2502,7 +2650,7 @@
     }
 
     renderCalendar(newMonth, newYear);
-    debug("Calendar navigated to", { month: newMonth, year: newYear });
+    debug('Calendar navigated to', { month: newMonth, year: newYear });
   }
 
   /**
@@ -2511,7 +2659,20 @@
    * @returns {number} - Month index (0-11)
    */
   function getMonthIndex(monthName) {
-    const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+    const months = [
+      'January',
+      'February',
+      'March',
+      'April',
+      'May',
+      'June',
+      'July',
+      'August',
+      'September',
+      'October',
+      'November',
+      'December',
+    ];
     return months.indexOf(monthName);
   }
 
@@ -2533,10 +2694,23 @@
     let startDay = firstDay.getDay() - 1;
     if (startDay < 0) startDay = 6;
 
-    const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-    $(".month-header span").text(monthNames[month] + " " + year);
+    const monthNames = [
+      'January',
+      'February',
+      'March',
+      'April',
+      'May',
+      'June',
+      'July',
+      'August',
+      'September',
+      'October',
+      'November',
+      'December',
+    ];
+    $('.month-header span').text(monthNames[month] + ' ' + year);
 
-    let html = "";
+    let html = '';
 
     // Empty days at the beginning
     for (let i = 0; i < startDay; i++) {
@@ -2554,18 +2728,18 @@
       const isToday = date.getTime() === today.getTime();
       const isPast = date < today;
 
-      let classes = "calendar-day";
-      if (isToday) classes += " today";
-      if (isPast) classes += " disabled";
+      let classes = 'calendar-day';
+      if (isToday) classes += ' today';
+      if (isPast) classes += ' disabled';
 
       if (bookingData.date === dateStr && !isPast) {
-        classes += " selected";
+        classes += ' selected';
       }
 
       html += `<div class="${classes}" data-date="${dateStr}">${i}</div>`;
     }
 
-    $(".calendar-grid").html(html);
+    $('.calendar-grid').html(html);
 
     // Check availability for all days in this month (if we have staff and services selected)
     if (bookingData.staffId && bookingData.services.length > 0) {
@@ -2593,9 +2767,9 @@
    */
   function formatDate(date) {
     const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const day = String(date.getDate()).padStart(2, "0");
-    return year + "-" + month + "-" + day;
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return year + '-' + month + '-' + day;
   }
 
   /**
@@ -2609,13 +2783,15 @@
    */
   function loadTimeSlots(date) {
     if (!bookingData.staffId || bookingData.services.length === 0) {
-      console.warn("Staff or service not selected");
-      $(".time-sections").html('<p class="error-message">Please select a staff and service first.</p>');
+      console.warn('Staff or service not selected');
+      $('.time-sections').html(
+        '<p class="error-message">Please select a staff and service first.</p>',
+      );
       return;
     }
 
     if (!date) {
-      $(".time-sections").html('<p class="error-message">Please select a date.</p>');
+      $('.time-sections').html('<p class="error-message">Please select a date.</p>');
       return;
     }
 
@@ -2623,13 +2799,13 @@
     const serviceIds = bookingData.services.map((s) => s.altegioId || s.id);
 
     if (!serviceIds.length) {
-      $(".time-sections").html('<p class="error-message">Please select at least one service.</p>');
+      $('.time-sections').html('<p class="error-message">Please select at least one service.</p>');
       return;
     }
 
     // Show loading overlay
-    $(".time-preloader").show();
-    $(".time-sections").html('<p class="loading-message">Loading available time slots...</p>');
+    $('.time-preloader').show();
+    $('.time-sections').html('<p class="loading-message">Loading available time slots...</p>');
 
     // Reset retry counter for new request
     timeSlotsRetryCount = 0;
@@ -2645,16 +2821,16 @@
   function performLoadTimeSlotsRequest(date, serviceIds) {
     $.ajax({
       url: booking_params.ajax_url,
-      method: "POST",
+      method: 'POST',
       data: {
-        action: "get_time_slots",
+        action: 'get_time_slots',
         nonce: booking_params.nonce,
         staff_id: bookingData.staffId,
         date: date,
         service_ids: serviceIds,
       },
       success: function (response) {
-        $(".time-preloader").hide();
+        $('.time-preloader').hide();
 
         if (response.success) {
           let slots = [];
@@ -2671,32 +2847,42 @@
             renderTimeSlots(slots);
             timeSlotsRetryCount = 0;
           } else {
-            $(".time-sections").html('<p class="error-message">No available time slots for this day.</p>');
+            $('.time-sections').html(
+              '<p class="error-message">No available time slots for this day.</p>',
+            );
           }
         } else {
           if (timeSlotsRetryCount < MAX_TIMESLOTS_RETRIES) {
             timeSlotsRetryCount++;
-            debug(`Retrying time slots load attempt ${timeSlotsRetryCount}/${MAX_TIMESLOTS_RETRIES} - unsuccessful response`);
+            debug(
+              `Retrying time slots load attempt ${timeSlotsRetryCount}/${MAX_TIMESLOTS_RETRIES} - unsuccessful response`,
+            );
             setTimeout(() => {
               performLoadTimeSlotsRequest(date, serviceIds);
             }, TIMESLOTS_RETRY_DELAY);
           } else {
-            $(".time-sections").html('<p class="error-message">Error loading time slots. Please try again later.</p>');
+            $('.time-sections').html(
+              '<p class="error-message">Error loading time slots. Please try again later.</p>',
+            );
           }
         }
       },
       error: function (xhr, status, error) {
-        console.error("Error loading time slots:", error, xhr.responseText);
+        console.error('Error loading time slots:', error, xhr.responseText);
 
         if (timeSlotsRetryCount < MAX_TIMESLOTS_RETRIES) {
           timeSlotsRetryCount++;
-          debug(`Retrying time slots load attempt ${timeSlotsRetryCount}/${MAX_TIMESLOTS_RETRIES} after error`);
+          debug(
+            `Retrying time slots load attempt ${timeSlotsRetryCount}/${MAX_TIMESLOTS_RETRIES} after error`,
+          );
           setTimeout(() => {
             performLoadTimeSlotsRequest(date, serviceIds);
           }, TIMESLOTS_RETRY_DELAY);
         } else {
-          $(".time-preloader").hide();
-          $(".time-sections").html('<p class="error-message">Error loading time slots. Please try again later.</p>');
+          $('.time-preloader').hide();
+          $('.time-sections').html(
+            '<p class="error-message">Error loading time slots. Please try again later.</p>',
+          );
         }
       },
     });
@@ -2707,9 +2893,11 @@
    * @param {Array} slots - Array of time slot objects from API
    */
   function renderTimeSlots(slots) {
-    const $target = $(".time-sections");
+    const $target = $('.time-sections');
     if (!slots || slots.length === 0) {
-      $target.html('<div class="no-slots-message">This servise is not available at the selected time.</div>');
+      $target.html(
+        '<div class="no-slots-message">This servise is not available at the selected time.</div>',
+      );
       return;
     }
 
@@ -2717,11 +2905,11 @@
     const times = [];
     slots.forEach((slot) => {
       // Handle different data formats from API
-      if (typeof slot === "object" && slot.time) {
+      if (typeof slot === 'object' && slot.time) {
         times.push(slot.time);
-      } else if (typeof slot === "string") {
+      } else if (typeof slot === 'string') {
         // If it's a string like "2025-05-23 10:00:00", extract just the time part
-        const timePart = slot.split(" ")[1];
+        const timePart = slot.split(' ')[1];
         if (timePart) {
           times.push(timePart.slice(0, 5)); // Get just HH:MM
         }
@@ -2730,21 +2918,21 @@
 
     // Group times by period of day
     const grouped = {
-      Morning: times.filter((t) => parseInt(t.split(":")[0]) < 12),
+      Morning: times.filter((t) => parseInt(t.split(':')[0]) < 12),
       Afternoon: times.filter((t) => {
-        const h = parseInt(t.split(":")[0]);
+        const h = parseInt(t.split(':')[0]);
         return h >= 12 && h < 17;
       }),
-      Evening: times.filter((t) => parseInt(t.split(":")[0]) >= 17),
+      Evening: times.filter((t) => parseInt(t.split(':')[0]) >= 17),
     };
 
     // Build HTML for each time group
-    let html = "";
+    let html = '';
     for (const [label, group] of Object.entries(grouped)) {
       if (!group.length) continue;
       html += `<div class="time-group">
       <div class="time-group-title">${label}</div>
-      <div class="time-slot-list">${group.map((t) => `<div class="time-slot" data-time="${t}">${t}</div>`).join("")}</div>
+      <div class="time-slot-list">${group.map((t) => `<div class="time-slot" data-time="${t}">${t}</div>`).join('')}</div>
     </div>`;
     }
 
@@ -2752,7 +2940,7 @@
 
     // If a time was previously selected, mark it as selected
     if (bookingData.time) {
-      $(`.time-slot[data-time="${bookingData.time}"]`).addClass("selected");
+      $(`.time-slot[data-time="${bookingData.time}"]`).addClass('selected');
     }
   }
 
@@ -2764,7 +2952,7 @@
    */
   function calculateAdjustedPrice(basePrice, staffLevel) {
     // Get numeric price and level
-    const numericPrice = parseFloat(basePrice.toString().replace(/[^\d.]/g, ""));
+    const numericPrice = parseFloat(basePrice.toString().replace(/[^\d.]/g, ''));
     const level = parseInt(staffLevel) || 1;
 
     if (isNaN(numericPrice)) {
@@ -2781,7 +2969,7 @@
     const adjustment = numericPrice * (adjustmentPercent / 100);
     const adjustedPrice = numericPrice + adjustment;
 
-    debug("Price adjustment", {
+    debug('Price adjustment', {
       basePrice,
       level,
       adjustmentPercent,
@@ -2798,12 +2986,12 @@
    */
   function validateDateTimeStep() {
     if (!bookingData.date) {
-      showValidationAlert("Please select a date");
+      showValidationAlert('Please select a date');
       return false;
     }
 
     if (!bookingData.time) {
-      showValidationAlert("Please select a time");
+      showValidationAlert('Please select a time');
       return false;
     }
 
@@ -2816,13 +3004,26 @@
    * @returns {string} Formatted date (e.g., "5 May, Monday")
    */
   function formatDateDisplay(dateStr) {
-    if (!dateStr) return "";
+    if (!dateStr) return '';
 
     const date = new Date(dateStr);
     const day = date.getDate();
-    const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+    const monthNames = [
+      'January',
+      'February',
+      'March',
+      'April',
+      'May',
+      'June',
+      'July',
+      'August',
+      'September',
+      'October',
+      'November',
+      'December',
+    ];
     const month = monthNames[date.getMonth()];
-    const dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+    const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
     const dayOfWeek = dayNames[date.getDay()];
 
     return `${day} ${month}, ${dayOfWeek}`;
@@ -2834,10 +3035,10 @@
    * @returns {string} Formatted time range (e.g., "12:00-13:30")
    */
   function formatTimeRange(timeStr) {
-    if (!timeStr) return "";
+    if (!timeStr) return '';
 
     // Calculate end time based on service duration if available
-    let endTime = "";
+    let endTime = '';
     let duration = 0;
 
     // Get average duration from core services
@@ -2846,10 +3047,10 @@
         if (service.duration) {
           // Parse duration from string or number
           let serviceDuration = 0;
-          if (typeof service.duration === "string") {
+          if (typeof service.duration === 'string') {
             const match = service.duration.match(/(\d+)/);
             if (match) serviceDuration = parseInt(match[1]);
-          } else if (typeof service.duration === "number") {
+          } else if (typeof service.duration === 'number') {
             serviceDuration = service.duration;
           }
           duration += serviceDuration;
@@ -2864,12 +3065,12 @@
 
     // If we have duration info, calculate end time
     if (duration > 0 && timeStr) {
-      const [hours, minutes] = timeStr.split(":").map(Number);
+      const [hours, minutes] = timeStr.split(':').map(Number);
       const startDate = new Date();
       startDate.setHours(hours, minutes, 0);
 
       const endDate = new Date(startDate.getTime() + duration * 60000);
-      endTime = `${String(endDate.getHours()).padStart(2, "0")}:${String(endDate.getMinutes()).padStart(2, "0")}`;
+      endTime = `${String(endDate.getHours()).padStart(2, '0')}:${String(endDate.getMinutes()).padStart(2, '0')}`;
 
       // Return time range
       return `${timeStr}-${endTime}`;
@@ -2879,8 +3080,8 @@
     return timeStr;
   }
 
-  $(document).on("click", ".booking-step[data-step='master'] .next-btn", function () {
-    goToStep("datetime");
+  $(document).on('click', ".booking-step[data-step='master'] .next-btn", function () {
+    goToStep('datetime');
     generateCalendar();
     updateSummary();
   });
@@ -2889,40 +3090,40 @@
    * Updated updateSummary function with proper add-on handling
    */
   function updateSummary() {
-    const masterBox = $(".summary-master .master-info");
-    const dateTimeBox = $(".booking-date-time");
-    const serviceList = $(".summary-services-list").not(".summary-addons");
-    const addonsList = $(".summary-addons");
-    const masterBonusEl = $(".master-bonus");
-    const masterPercent = $(".summary-total-group .percent");
-    const totalAmountEl = $(".summary-total-amount");
+    const masterBox = $('.summary-master .master-info');
+    const dateTimeBox = $('.booking-date-time');
+    const serviceList = $('.summary-services-list').not('.summary-addons');
+    const addonsList = $('.summary-addons');
+    const masterBonusEl = $('.master-bonus');
+    const masterPercent = $('.summary-total-group .percent');
+    const totalAmountEl = $('.summary-total-amount');
 
     if (bookingData.staffAvatar) {
-      masterBox.find(".avatar").attr("src", bookingData.staffAvatar);
+      masterBox.find('.avatar').attr('src', bookingData.staffAvatar);
     } else {
-      masterBox.find(".avatar").attr("src", "https://be.cdn.alteg.io/images/no-master-sm.png");
+      masterBox.find('.avatar').attr('src', 'https://be.cdn.alteg.io/images/no-master-sm.png');
     }
 
-    masterBox.find(".name").text(bookingData.staffName || "Random master");
+    masterBox.find('.name').text(bookingData.staffName || 'Random master');
 
     const stars = generateStarsHtml(bookingData.staffLevel);
-    masterBox.find(".stars").html(stars);
+    masterBox.find('.stars').html(stars);
 
     const title = levelTitles[bookingData.staffLevel];
-    masterBox.find(".stars-name").text(title ? `(${title})` : "");
+    masterBox.find('.stars-name').text(title ? `(${title})` : '');
 
     const dateStr = formatDateDisplay(bookingData.date);
     const timeStr = formatTimeRange(bookingData.time);
-    dateTimeBox.find(".calendar-date").text(dateStr);
-    dateTimeBox.find(".calendar-time").text(timeStr);
+    dateTimeBox.find('.calendar-date').text(dateStr);
+    dateTimeBox.find('.calendar-time').text(timeStr);
 
-    let serviceHTML = "";
-    let addonHTML = "";
+    let serviceHTML = '';
+    let addonHTML = '';
     let basePrice = 0;
     let masterMarkupAmount = 0; // Змінено: тільки для розрахунку націнки майстра
 
     let percent = percentMap[bookingData.staffLevel];
-    if (typeof percent === "undefined") {
+    if (typeof percent === 'undefined') {
       percent = 0;
     }
     if (bookingData.staffLevel === -1) {
@@ -2944,12 +3145,12 @@
                     <div class="service-title">
                         <strong>${service.title}</strong>
                            <strong class="service-price">
-                              ${price.toFixed(2)} ${service.currency || "SGD"}
+                              ${price.toFixed(2)} ${service.currency || 'SGD'}
                         </strong>
                     </div>
-                    ${service.duration ? `<div class="meta"><strong>Duration:</strong> ${service.duration} min</div>` : ""}
-                    ${service.wearTime ? `<div class="meta"><strong>Wear time:</strong> ${service.wearTime}</div>` : ""}
-                    ${service.desc ? `<div class="meta service-description">${service.desc}</div>` : ""}
+                    ${service.duration ? `<div class="meta"><strong>Duration:</strong> ${service.duration} min</div>` : ''}
+                    ${service.wearTime ? `<div class="meta"><strong>Wear time:</strong> ${service.wearTime}</div>` : ''}
+                    ${service.desc ? `<div class="meta service-description">${service.desc}</div>` : ''}
                 </div>
              
             </div>
@@ -2970,12 +3171,12 @@
                 <div class="summary-service-item addon-service">
                     <div class="service-info">
                         <strong>Add-on: ${addon.title}</strong>
-                        ${addon.duration ? `<div class="meta"><strong>Duration:</strong> ${addon.duration} min</div>` : ""}
-                        ${addon.wearTime ? `<div class="meta"><strong>Wear time:</strong> ${addon.wearTime}</div>` : ""}
-                        ${addon.desc ? `<div class="meta service-description">${addon.desc}</div>` : ""}
+                        ${addon.duration ? `<div class="meta"><strong>Duration:</strong> ${addon.duration} min</div>` : ''}
+                        ${addon.wearTime ? `<div class="meta"><strong>Wear time:</strong> ${addon.wearTime}</div>` : ''}
+                        ${addon.desc ? `<div class="meta service-description">${addon.desc}</div>` : ''}
                     </div>
                     <div class="service-price">
-                        <strong>${price.toFixed(2)} ${addon.currency || "SGD"}</strong>
+                        <strong>${price.toFixed(2)} ${addon.currency || 'SGD'}</strong>
                     </div>
                 </div>
             `;
@@ -2993,7 +3194,7 @@
     }
 
     // Показуємо націнку майстра окремо
-    masterPercent.text(`${percent > 0 ? "+" : ""}${percent}`);
+    masterPercent.text(`${percent > 0 ? '+' : ''}${percent}`);
     masterBonusEl.text(`${masterMarkupAmount.toFixed(2)} SGD`);
 
     // Розраховуємо загальну суму: базова ціна + націнка майстра
@@ -3006,15 +3207,17 @@
       discountAmount = adjustedTotal * (discountPercent / 100);
       adjustedTotal = Math.max(0, adjustedTotal - discountAmount);
 
-      $(".summary-coupon").show();
-      $(".summary-coupon-group").show();
-      $(".coupon-discount-amount").text(`- ${discountAmount.toFixed(2)} SGD`);
-      $(".coupon-desc").text(`Applied coupon: ${bookingData.coupon.code} (-${discountPercent}% discount)`);
-      $(".coupon-discount").text(`- ${discountAmount.toFixed(2)} SGD`);
+      $('.summary-coupon').show();
+      $('.summary-coupon-group').show();
+      $('.coupon-discount-amount').text(`- ${discountAmount.toFixed(2)} SGD`);
+      $('.coupon-desc').text(
+        `Applied coupon: ${bookingData.coupon.code} (-${discountPercent}% discount)`,
+      );
+      $('.coupon-discount').text(`- ${discountAmount.toFixed(2)} SGD`);
     } else {
-      $(".summary-coupon").hide();
-      $(".summary-coupon-group").show();
-      $(".coupon-desc").text(`Do you have a coupon? Enter it here and get a discount on services.`);
+      $('.summary-coupon').hide();
+      $('.summary-coupon-group').show();
+      $('.coupon-desc').text(`Do you have a coupon? Enter it here and get a discount on services.`);
     }
 
     totalAmountEl.text(`${adjustedTotal.toFixed(2)} SGD`);
@@ -3026,33 +3229,42 @@
     bookingData.adjustmentPercent = percent;
 
     if (bookingData.contact) {
-      const cleaned = (bookingData.contact.comment || "").replace(/Price information:[\s\S]*/i, "").trim();
-      $("#client-name").val(bookingData.contact.name || "");
-      $("#client-phone").val(bookingData.contact.phone || "");
-      $("#client-email").val(bookingData.contact.email || "");
-      $("#client-comment").val(cleaned);
+      const cleaned = (bookingData.contact.comment || '')
+        .replace(/Price information:[\s\S]*/i, '')
+        .trim();
+      $('#client-name').val(bookingData.contact.name || '');
+      $('#client-phone').val(bookingData.contact.phone || '');
+      $('#client-email').val(bookingData.contact.email || '');
+      $('#client-comment').val(cleaned);
     }
   }
 
   function submitBooking() {
-    $(".confirm-booking-btn").prop("disabled", true).text("Processing...");
-    $(".loading-overlay").show();
+    $('.confirm-booking-btn').prop('disabled', true).text('Processing...');
+    $('.loading-overlay').show();
 
-    if (!bookingData.staffId || !bookingData.date || !bookingData.time || bookingData.services.length === 0) {
-      showValidationAlert("Missing booking information. Please complete all steps.");
-      $(".confirm-booking-btn").prop("disabled", false).text("Book an appointment");
-      $(".loading-overlay").hide();
+    if (
+      !bookingData.staffId ||
+      !bookingData.date ||
+      !bookingData.time ||
+      bookingData.services.length === 0
+    ) {
+      showValidationAlert('Missing booking information. Please complete all steps.');
+      $('.confirm-booking-btn').prop('disabled', false).text('Book an appointment');
+      $('.loading-overlay').hide();
       return;
     }
 
-    const currentCountryCode = window.getSelectedCountryCode ? window.getSelectedCountryCode() : null;
-    const phoneNumber = $("#client-phone").val().trim().replace(/\D/g, "");
+    const currentCountryCode = window.getSelectedCountryCode
+      ? window.getSelectedCountryCode()
+      : null;
+    const phoneNumber = $('#client-phone').val().trim().replace(/\D/g, '');
     const fullPhoneNumber = currentCountryCode ? currentCountryCode + phoneNumber : phoneNumber;
 
     if (!currentCountryCode) {
-      showValidationAlert("Please select a country for your phone number.");
-      $(".confirm-booking-btn").prop("disabled", false).text("Book an appointment");
-      $(".loading-overlay").hide();
+      showValidationAlert('Please select a country for your phone number.');
+      $('.confirm-booking-btn').prop('disabled', false).text('Book an appointment');
+      $('.loading-overlay').hide();
       return;
     }
 
@@ -3068,24 +3280,26 @@
 
     const adjustedPriceBeforeDiscount = basePrice + masterMarkupAmount;
 
-    const formattedServices = [...bookingData.coreServices, ...bookingData.addons].map((service) => ({
-      id: parseInt(service.id),
-      altegio_id: service.altegioId || service.id,
-      title: service.title,
-      price: parseFloat(service.price),
-      currency: service.currency || "SGD",
-      duration: service.duration || "",
-      is_addon: service.isAddon || false,
-    }));
+    const formattedServices = [...bookingData.coreServices, ...bookingData.addons].map(
+      (service) => ({
+        id: parseInt(service.id),
+        altegio_id: service.altegioId || service.id,
+        title: service.title,
+        price: parseFloat(service.price),
+        currency: service.currency || 'SGD',
+        duration: service.duration || '',
+        is_addon: service.isAddon || false,
+      }),
+    );
 
-    const cleanComment = $("#client-comment")
+    const cleanComment = $('#client-comment')
       .val()
       .trim()
-      .replace(/Price information:[\s\S]*$/i, "")
+      .replace(/Price information:[\s\S]*$/i, '')
       .trim();
 
-    let galleryInfo = "";
-    if (bookingData.initialOption === "master" && bookingData.galleryTitle) {
+    let galleryInfo = '';
+    if (bookingData.initialOption === 'master' && bookingData.galleryTitle) {
       galleryInfo = `Gallery selection: ${bookingData.galleryTitle}\n\n`;
     }
 
@@ -3095,25 +3309,25 @@
         const servicePrice = parseFloat(service.price);
         return `- ${service.title}: ${servicePrice.toFixed(2)} SGD`;
       })
-      .join("\n");
+      .join('\n');
 
     const addonServiceDescriptions = bookingData.addons
       .map((addon) => {
         const servicePrice = parseFloat(addon.price);
         return `- ${addon.title}: ${servicePrice.toFixed(2)} SGD`;
       })
-      .join("\n");
+      .join('\n');
 
     // Combine all service descriptions
     let serviceDescriptions = coreServiceDescriptions;
     if (addonServiceDescriptions) {
-      serviceDescriptions += "\n" + addonServiceDescriptions;
+      serviceDescriptions += '\n' + addonServiceDescriptions;
     }
 
     let discountAmount = 0;
     let finalAdjustedPrice = adjustedPriceBeforeDiscount;
 
-    let couponInfo = "";
+    let couponInfo = '';
     if (bookingData.coupon && bookingData.coupon.value > 0) {
       discountAmount = (adjustedPriceBeforeDiscount * bookingData.coupon.value) / 100;
       finalAdjustedPrice = adjustedPriceBeforeDiscount - discountAmount;
@@ -3121,27 +3335,33 @@
     }
 
     const fullComment =
-      `${cleanComment ? "Comment from client: " + cleanComment + "\n\n" : ""}` +
+      `${cleanComment ? 'Comment from client: ' + cleanComment + '\n\n' : ''}` +
       galleryInfo +
       `WEB-SITE BOOKING 
       Price information:
 ${serviceDescriptions}
 Base price: ${basePrice.toFixed(2)} SGD
-Master category: ${adjustmentPercent >= 0 ? "+" : ""}${adjustmentPercent}% (${masterMarkupAmount.toFixed(2)} SGD)
+Master category: ${adjustmentPercent >= 0 ? '+' : ''}${adjustmentPercent}% (${masterMarkupAmount.toFixed(2)} SGD)
 Final price before discount: ${adjustedPriceBeforeDiscount.toFixed(2)} SGD
 ${couponInfo}Note: Master markup applied only to core services, not to Add-on services.`;
 
     const bookingRequest = {
-      action: "submit_booking",
+      action: 'submit_booking',
       booking_nonce: booking_params.nonce,
       staff_id: bookingData.staffId,
       date: bookingData.date,
       time: bookingData.time,
-      core_services: JSON.stringify(formattedServices.filter((s) => bookingData.coreServices.find((cs) => parseInt(cs.id) === s.id))),
-      addon_services: JSON.stringify(formattedServices.filter((s) => bookingData.addons.find((a) => parseInt(a.id) === s.id))),
+      core_services: JSON.stringify(
+        formattedServices.filter((s) =>
+          bookingData.coreServices.find((cs) => parseInt(cs.id) === s.id),
+        ),
+      ),
+      addon_services: JSON.stringify(
+        formattedServices.filter((s) => bookingData.addons.find((a) => parseInt(a.id) === s.id)),
+      ),
       client_name: bookingData.contact.name,
       client_phone: fullPhoneNumber,
-      client_email: bookingData.contact.email || "",
+      client_email: bookingData.contact.email || '',
       client_comment: fullComment,
       staff_level: staffLevel,
       base_price: basePrice.toFixed(2),
@@ -3149,28 +3369,28 @@ ${couponInfo}Note: Master markup applied only to core services, not to Add-on se
       price_adjustment: masterMarkupAmount.toFixed(2),
       adjustment_percent: adjustmentPercent,
       total_price: finalAdjustedPrice.toFixed(2),
-      coupon_code: bookingData.coupon ? bookingData.coupon.code : "",
+      coupon_code: bookingData.coupon ? bookingData.coupon.code : '',
     };
 
     $.ajax({
       url: booking_params.ajax_url,
-      type: "POST",
+      type: 'POST',
       data: bookingRequest,
       success: function (response) {
-        $(".loading-overlay").hide();
-        $(".confirm-booking-btn").prop("disabled", false).text("Book an appointment");
+        $('.loading-overlay').hide();
+        $('.confirm-booking-btn').prop('disabled', false).text('Book an appointment');
 
         if (response.success) {
           handleSuccessfulBooking(response.data);
         } else {
-          showValidationAlert(response.data?.message || "Booking failed. Please try again.");
+          showValidationAlert(response.data?.message || 'Booking failed. Please try again.');
         }
       },
       error: function (xhr, status, error) {
-        $(".loading-overlay").hide();
-        $(".confirm-booking-btn").prop("disabled", false).text("Book an appointment");
-        console.error("Booking submission error:", { xhr, status, error });
-        showValidationAlert("Network error. Please check your connection and try again.");
+        $('.loading-overlay').hide();
+        $('.confirm-booking-btn').prop('disabled', false).text('Book an appointment');
+        console.error('Booking submission error:', { xhr, status, error });
+        showValidationAlert('Network error. Please check your connection and try again.');
       },
     });
   }
@@ -3218,15 +3438,15 @@ ${couponInfo}Note: Master markup applied only to core services, not to Add-on se
     const reference = data.booking?.reference || generateBookingReference();
 
     // Update confirmation screen values
-    $(".booking-reference").text(reference);
-    $(".booking-date").text(formatDateDisplay(bookingData.date));
-    $(".booking-time").text(formatTimeRange(bookingData.time));
+    $('.booking-reference').text(reference);
+    $('.booking-date').text(formatDateDisplay(bookingData.date));
+    $('.booking-time').text(formatTimeRange(bookingData.time));
 
     // Build services summary for confirmation screen
     buildBookingConfirmationSummary();
 
     // Navigate to confirmation step
-    goToStep("confirm");
+    goToStep('confirm');
     updateSummary();
 
     // Clear session data
@@ -3235,7 +3455,7 @@ ${couponInfo}Note: Master markup applied only to core services, not to Add-on se
     }
 
     // Trigger event that booking was confirmed
-    $(document).trigger("bookingConfirmed", [
+    $(document).trigger('bookingConfirmed', [
       {
         reference: reference,
         date: bookingData.date,
@@ -3253,7 +3473,7 @@ ${couponInfo}Note: Master markup applied only to core services, not to Add-on se
    * @returns {string} - Reference number
    */
   function generateBookingReference() {
-    return "BK" + Math.floor(10000 + Math.random() * 90000);
+    return 'BK' + Math.floor(10000 + Math.random() * 90000);
   }
 
   /**
@@ -3276,23 +3496,23 @@ ${couponInfo}Note: Master markup applied only to core services, not to Add-on se
       servicesHtml += `
         <div class="booked-service-item">
           <span class="booked-service-name">
-            ${service.title}${service.isAddon ? ' <span class="addon-label"></span>' : ""}
+            ${service.title}${service.isAddon ? ' <span class="addon-label"></span>' : ''}
           </span>
           <span class="booked-service-price">
-            ${displayPrice.toFixed(2)} ${service.currency || "SGD"}
+            ${displayPrice.toFixed(2)} ${service.currency || 'SGD'}
           </span>
         </div>`;
     });
 
     // Add master info with stars
-    const masterWithStars = bookingData.staffName + " " + generateStarsHtml(bookingData.staffLevel);
+    const masterWithStars = bookingData.staffName + ' ' + generateStarsHtml(bookingData.staffLevel);
     servicesHtml += `</div><div class="booked-master">Specialist: ${masterWithStars}</div>`;
 
     // Show total price
     const totalPrice = calculateTotalPrice();
-    servicesHtml += `<div class="booked-total">Total: ${totalPrice} ${bookingData.services[0]?.currency || "SGD"}</div>`;
+    servicesHtml += `<div class="booked-total">Total: ${totalPrice} ${bookingData.services[0]?.currency || 'SGD'}</div>`;
 
-    $(".booked-services-summary").html(servicesHtml);
+    $('.booked-services-summary').html(servicesHtml);
   }
 
   /**
@@ -3303,7 +3523,7 @@ ${couponInfo}Note: Master markup applied only to core services, not to Add-on se
     let totalPrice = 0;
 
     bookingData.services.forEach(function (service) {
-      let price = parseFloat(service.price.toString().replace(/[^\d.]/g, ""));
+      let price = parseFloat(service.price.toString().replace(/[^\d.]/g, ''));
 
       // Apply staff level price adjustment
       if (bookingData.staffLevel > 1) {
@@ -3316,29 +3536,29 @@ ${couponInfo}Note: Master markup applied only to core services, not to Add-on se
     return totalPrice.toFixed(2);
   }
 
-  $(document).on("click", ".new-booking-btn", function () {
+  $(document).on('click', '.new-booking-btn', function () {
     resetBookingForm();
   });
 
-  $(document).on("click", ".cancel-booking-btn", function (e) {
+  $(document).on('click', '.cancel-booking-btn', function (e) {
     e.preventDefault();
     resetBookingForm();
-    $(".booking-popup-overlay").removeClass("active");
-    $("body").removeClass("popup-open");
-    $(".booking-popup-overlay").hide();
-    $(".booking-popup").hide();
-    $(".loading-overlay").hide();
+    $('.booking-popup-overlay').removeClass('active');
+    $('body').removeClass('popup-open');
+    $('.booking-popup-overlay').hide();
+    $('.booking-popup').hide();
+    $('.loading-overlay').hide();
 
-    if (typeof resetBookingForm === "function") {
+    if (typeof resetBookingForm === 'function') {
       resetBookingForm();
     }
 
     if (window.localStorage) {
-      localStorage.removeItem("bookingData");
+      localStorage.removeItem('bookingData');
     }
   });
-  $(document).on("mouseenter", ".calendar-day.unavailable", function (e) {
-    $(".calendar-tooltip").remove();
+  $(document).on('mouseenter', '.calendar-day.unavailable', function (e) {
+    $('.calendar-tooltip').remove();
 
     const $day = $(this);
     const offset = $day.offset();
@@ -3362,11 +3582,11 @@ ${couponInfo}Note: Master markup applied only to core services, not to Add-on se
     </div>
   `);
 
-    $("body").append(tooltip);
+    $('body').append(tooltip);
   });
 
-  $(document).on("mouseleave", ".calendar-day.unavailable", function () {
-    $(".calendar-tooltip").remove();
+  $(document).on('mouseleave', '.calendar-day.unavailable', function () {
+    $('.calendar-tooltip').remove();
   });
   // Initialize styles when document is ready
 })(jQuery);

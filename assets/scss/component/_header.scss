@@ -87,11 +87,11 @@
         font-size: 14px;
       }
       &::before {
-        content: "";
+        content: '';
         display: block;
         width: get-d(26px);
         height: get-d(26px);
-        background: url("../svg/location.svg") center / cover no-repeat;
+        background: url('../svg/location.svg') center / cover no-repeat;
         @include respond(lg) {
           width: 26px;
           height: 26px;

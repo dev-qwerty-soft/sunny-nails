@@ -1,16 +1,16 @@
-@import "utilc/_variables.scss";
-@import "./fonts.scss";
-@import "./base/_base.scss";
-@import "./base/_container.scss";
-@import "./component/preloader";
-@import "./component/_btn.scss";
-@import "./component/header";
-@import "./component/search";
-@import "./component/burger";
-@import "./component/breadcump";
-@import "./component/validation-alert.scss";
-@import "./layout/main.min.scss";
-@import "./component/footer";
+@import 'utilc/_variables.scss';
+@import './fonts.scss';
+@import './base/_base.scss';
+@import './base/_container.scss';
+@import './component/preloader';
+@import './component/_btn.scss';
+@import './component/header';
+@import './component/search';
+@import './component/burger';
+@import './component/breadcump';
+@import './component/validation-alert.scss';
+@import './layout/main.min.scss';
+@import './component/footer';
 
 section {
   overflow: hidden;
@@ -20,7 +20,8 @@ section {
   }
 }
 
-.about-section, .section-not-found {
+.about-section,
+.section-not-found {
   min-height: calc(100vh - get-d($header-height + $footer-height));
   @include respond(lg) {
     min-height: calc(100vh - $header-height - get-lg($footer-height));

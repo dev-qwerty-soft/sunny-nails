@@ -7,8 +7,8 @@ $bg-grey: #302f34;
 $bg-yellow: #fdc41f;
 $bg-white: #fff;
 $red: #dc3232;
-$font-family: "Montserrat", sans-serif;
-$font-family-inter: "Inter", sans-serif;
+$font-family: 'Montserrat', sans-serif;
+$font-family-inter: 'Inter', sans-serif;
 
 @mixin respond($breakpoint) {
   @if $breakpoint == xs {

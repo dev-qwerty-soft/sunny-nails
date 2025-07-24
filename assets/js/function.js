@@ -33,11 +33,7 @@ export const random = (min, max) => {
   return Math.round(Math.random() * (max - min + 1) + min);
 };
 
-export function g(
-  element,
-  cont = document,
-  flag = false
-) {
+export function g(element, cont = document, flag = false) {
   const elements = Array.from(cont.querySelectorAll(element));
   if (!elements.length || !cont) return;
 
@@ -48,8 +44,7 @@ export function g(
   }
 }
 
-export const max = (arr) =>
-  arr.reduce((acc, num) => (acc > num ? acc : num));
+export const max = (arr) => arr.reduce((acc, num) => (acc > num ? acc : num));
 
 export const upper = (text) => text[0].toUpperCase() + text.slice(1);
 
@@ -74,8 +69,7 @@ export const isSize = (num) => window.innerWidth <= num;
 export const round = (num, del) => Math.round(num / del) * del;
 
 export const getUrl = (url) => {
-  const regExp =
-    /^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\v=)([^#\\?]*).*/;
+  const regExp = /^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\v=)([^#\\?]*).*/;
   const match = url.match(regExp);
   if (match && match[2].length === 11) {
     return match[2];
@@ -134,13 +128,12 @@ export function respond(breakpoint) {
   return width <= breakpoints[breakpoint];
 }
 
-
 export function formatNumber(number) {
   return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
 }
 
 export function formatUnit(unit) {
-  return unit < 10 ? "0" + unit : String(unit);
+  return unit < 10 ? '0' + unit : String(unit);
 }
 
 export function updateDisplay(msLeft) {
@@ -149,8 +142,8 @@ export function updateDisplay(msLeft) {
   const hours = Math.floor((totalSeconds % (24 * 3600)) / 3600);
   const minutes = Math.floor((totalSeconds % 3600) / 60);
   const seconds = totalSeconds % 60;
-  g("#days").textContent = formatUnit(days);
-  g("#hours").textContent = formatUnit(hours);
-  g("#minutes").textContent = formatUnit(minutes);
-  g("#seconds").textContent = formatUnit(seconds);
-};
+  g('#days').textContent = formatUnit(days);
+  g('#hours').textContent = formatUnit(hours);
+  g('#minutes').textContent = formatUnit(minutes);
+  g('#seconds').textContent = formatUnit(seconds);
+}

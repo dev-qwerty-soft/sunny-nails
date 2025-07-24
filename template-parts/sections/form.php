@@ -1,15 +1,14 @@
 <?php
-$isPage = $args["page"] ?? false;
-?>
+$isPage = $args['page'] ?? false; ?>
 
 <section class="promo-form-section">
   <?php
   $image_desktop = get_field('form_image', 'option');
-  $url_desktop = isset($image_desktop["url"]) ? $image_desktop["url"] : null;
-  $title_desktop = isset($image_desktop["title"]) ? $image_desktop["title"] : '';
+  $url_desktop = isset($image_desktop['url']) ? $image_desktop['url'] : null;
+  $title_desktop = isset($image_desktop['title']) ? $image_desktop['title'] : '';
   if ($url_desktop) {
     echo "<img class='promo-form-section__image' src='$url_desktop' alt='$title_desktop'>";
-  };
+  }
   ?>
   <div class="container">
     <?php
@@ -17,7 +16,7 @@ $isPage = $args["page"] ?? false;
     if ($title) {
       $tag = $isPage ? 'h1' : 'h2';
       echo "<$tag class='title'>$title</$tag>";
-    };
+    }
     ?>
     <div class="paragraph">
       <?php the_field('form_text', 'option'); ?>
@@ -26,7 +25,7 @@ $isPage = $args["page"] ?? false;
     $code = get_field('form_code', 'option');
     if ($code) {
       echo do_shortcode($code);
-    };
+    }
     ?>
   </div>
 </section>
