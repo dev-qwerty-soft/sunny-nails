@@ -2,6 +2,7 @@ import './scss/main.min.scss';
 import './js/gsap.js';
 import './js/services-validation.js';
 import './js/services.js';
+import './js/parnters.js';
 import 'swiper/css';
 import 'swiper/css/pagination';
 import 'swiper/css/scrollbar';

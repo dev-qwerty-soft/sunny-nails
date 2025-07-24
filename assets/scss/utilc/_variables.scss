@@ -55,6 +55,7 @@ $font-family-inter: 'Inter', sans-serif;
   text-fill-color: transparent;
   color: transparent;
 }
+
 @function get-d($target) {
   $vw-context: calc((1440 * 0.01) * 1px);
   @return calc(($target / $vw-context) * 1vw);
