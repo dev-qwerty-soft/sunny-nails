@@ -157,7 +157,8 @@ $benefits = get_field('benefit_item');
                     </div>
                     <div class="partner-card__content">
                         <div class="partner-card__title"><?= esc_html($partner['title']) ?></div>
-                        <div class="partner-card__desc clamp-3"><?= esc_html($partner['desc']) ?></div>
+
+                        <div class="partner-card__desc clamp-3"><?= esc_html(wp_strip_all_tags($partner['desc'])) ?></div>
                         <?php if ($partner['benefit_icon'] || $partner['benefit_title']): ?>
                             <div class="partner-card__benefit">
                                 <div class="partner-card__benefit-icon">
