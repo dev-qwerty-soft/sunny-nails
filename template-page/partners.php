@@ -8,6 +8,7 @@ get_header();
 $hero_title = get_field('title');
 $hero_desc = get_field('description');
 $hero_image = get_field('image');
+$image_mob = get_field('image_mob');
 $benefits = get_field('benefit_item');
 ?>
 <main>
@@ -34,6 +35,17 @@ $benefits = get_field('benefit_item');
                 </div>
 
             </div>
+
+            <?php if ($image_mob): ?>
+                <div class="partners-hero__image mobile">
+                    <img
+                        src="<?= esc_url($image_mob['url']) ?>"
+                        alt="<?= esc_attr($image_mob['alt']) ?>"
+                        width="<?= esc_attr($image_mob['width'] ?? 700) ?>"
+                        height="<?= esc_attr($image_mob['height'] ?? 700) ?>"
+                        loading="lazy">
+                </div>
+            <?php endif; ?>
             <?php if ($benefits): ?>
                 <div class="partners-hero__benefits">
                     <?php foreach ($benefits as $item): ?>
@@ -176,6 +188,7 @@ $benefits = get_field('benefit_item');
         <?php foreach ($partners_arr as $partner): ?>
             <div class="partner-popup-backdrop" id="partner-popup-<?= $partner['ID'] ?>" style="display:none;">
                 <div class="partner-popup">
+                    <div class="partner-popup__title mob"><?= esc_html($partner['title']) ?></div>
                     <div class="partner-popup__img">
                         <?php if ($partner['featured']): ?>
                             <img src="<?= esc_url($partner['featured']) ?>" alt="">
