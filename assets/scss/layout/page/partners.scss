@@ -334,9 +334,9 @@
 
 .partners-section {
   background: #f7f1e0;
-  padding: get-d(150px) get-d(60px) get-d(75px);
+  padding: get-d(75px) get-d(60px) get-d(75px);
   @include respond(md) {
-    padding: 75px 25px;
+    padding: 0 25px 75px;
   }
   &__head {
     display: flex;
