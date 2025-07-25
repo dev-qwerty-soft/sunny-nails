@@ -1,5 +1,6 @@
 <?php
-function altegio_get_services() {
+function altegio_get_services()
+{
   check_ajax_referer('booking_nonce', 'nonce');
 
   $staff_id = isset($_POST['staff_id']) ? sanitize_text_field($_POST['staff_id']) : 'any';
@@ -77,7 +78,7 @@ function altegio_get_services() {
         'is_addon' => $is_addon,
         'categories' => $service_categories,
         'altegio_id' =>
-          get_post_meta($post_id, 'altegio_id', true) ?:
+        get_post_meta($post_id, 'altegio_id', true) ?:
           get_post_meta($post_id, 'altegio_id', true) ?:
           $post_id,
       ];
@@ -93,7 +94,8 @@ add_action('wp_ajax_get_services', 'altegio_get_services');
 add_action('wp_ajax_nopriv_get_services', 'altegio_get_services');
 
 // AJAX Handler for Getting Masters
-function altegio_get_masters() {
+function altegio_get_masters()
+{
   check_ajax_referer('booking_nonce', 'nonce');
 
   // Get service ID from request (optional)
@@ -149,7 +151,8 @@ add_action('wp_ajax_nopriv_get_masters', 'altegio_get_masters');
 /**
  * AJAX handler for submitting booking with price adjustment
  */
-function altegio_submit_booking() {
+function altegio_submit_booking()
+{
   check_ajax_referer('booking_nonce', 'booking_nonce');
 
   // Get client data
@@ -328,7 +331,8 @@ function altegio_submit_booking() {
  * @param array $booking_data Booking data including price information
  * @return int|bool Post ID on success, false on failure
  */
-function save_booking_record_with_price($booking_data) {
+function save_booking_record_with_price($booking_data)
+{
   // Check if CPT exists, if not, use regular post
   $post_type = post_type_exists('booking') ? 'booking' : 'post';
 
@@ -383,7 +387,8 @@ function save_booking_record_with_price($booking_data) {
 add_action('wp_ajax_submit_booking', 'altegio_submit_booking');
 add_action('wp_ajax_nopriv_submit_booking', 'altegio_submit_booking');
 
-function altegio_get_filtered_staff() {
+function altegio_get_filtered_staff()
+{
   check_ajax_referer('booking_nonce', 'nonce');
 
   $service_ids_raw = isset($_POST['service_id']) ? sanitize_text_field($_POST['service_id']) : '';
@@ -434,7 +439,7 @@ function altegio_get_filtered_staff() {
         'avatar' => get_the_post_thumbnail_url($post_id, 'thumbnail'),
         'level' => $level,
         'specialization' =>
-          get_field('master_specialization', $post_id) ?: $level_titles[$level] ?? '',
+        get_field('master_specialization', $post_id) ?: $level_titles[$level] ?? '',
       ];
     }
 
@@ -445,7 +450,8 @@ function altegio_get_filtered_staff() {
 }
 add_action('wp_ajax_get_filtered_staff', 'altegio_get_filtered_staff');
 add_action('wp_ajax_nopriv_get_filtered_staff', 'altegio_get_filtered_staff');
-function altegio_get_filtered_services() {
+function altegio_get_filtered_services()
+{
   check_ajax_referer('booking_nonce', 'nonce');
 
   $staff_id = isset($_POST['staff_id']) ? intval($_POST['staff_id']) : 0;
@@ -556,176 +562,176 @@ function altegio_get_filtered_services() {
     }
 
     $has_any_service = true;
-    ?>
-        <div class="category-services" data-category-id="<?php echo esc_attr(
-          $category->term_id,
-        ); ?>" style="<?php echo $i === 0 ? '' : 'display:none'; ?>">
-            <?php
-            foreach ($core_services as $service):
+?>
+    <div class="category-services" data-category-id="<?php echo esc_attr(
+                                                        $category->term_id,
+                                                      ); ?>" style="<?php echo $i === 0 ? '' : 'display:none'; ?>">
+      <?php
+      foreach ($core_services as $service):
 
-              setup_postdata($service);
-              $post_id = $service->ID;
-              $price = get_post_meta($post_id, 'price_min', true);
-              $currency = get_post_meta($post_id, 'currency', true) ?: 'SGD';
-              $duration = get_post_meta($post_id, 'duration_minutes', true);
-              $wear_time = get_post_meta($post_id, 'wear_time', true);
-              $desc = get_post_meta($post_id, 'description', true);
-              $altegio_id = get_post_meta($post_id, 'altegio_id', true);
+        setup_postdata($service);
+        $post_id = $service->ID;
+        $price = get_post_meta($post_id, 'price_min', true);
+        $currency = get_post_meta($post_id, 'currency', true) ?: 'SGD';
+        $duration = get_post_meta($post_id, 'duration_minutes', true);
+        $wear_time = get_post_meta($post_id, 'wear_time', true);
+        $desc = $service->post_content;
+        $altegio_id = get_post_meta($post_id, 'altegio_id', true);
 
-              if (empty($wear_time) && !empty($service->post_content)) {
-                preg_match('/wear\s+time:?\s+([^\.]+)/i', $service->post_content, $matches);
-                if (!empty($matches[1])) {
-                  $wear_time = trim($matches[1]);
+        if (empty($wear_time) && !empty($service->post_content)) {
+          preg_match('/wear\s+time:?\s+([^\.]+)/i', $service->post_content, $matches);
+          if (!empty($matches[1])) {
+            $wear_time = trim($matches[1]);
+          }
+        }
+      ?>
+        <div class="service-item" data-service-id="<?php echo esc_attr($post_id); ?>">
+          <div class="service-info">
+            <div class="service-title">
+              <h4 class="service-name"><?php echo esc_html(
+                                          get_the_title($post_id),
+                                        ); ?></h4>
+              <div class="service-checkbox-wrapper">
+                <div class="service-price"><?php echo esc_html(
+                                              $price,
+                                            ); ?> <?php echo esc_html($currency); ?></div>
+                <input type="checkbox"
+                  class="service-checkbox"
+                  data-service-id="<?php echo esc_attr($post_id); ?>"
+                  data-altegio-id="<?php echo esc_attr($altegio_id); ?>"
+                  data-service-title="<?php echo esc_attr(
+                                        get_the_title($post_id),
+                                      ); ?>"
+                  data-service-price="<?php echo esc_attr($price); ?>"
+                  data-service-currency="<?php echo esc_attr($currency); ?>"
+                  data-is-addon="false"
+                  <?php if (
+                    $duration
+                  ): ?>data-service-duration="<?php echo esc_attr(
+                                                                  $duration,
+                                                                ); ?>" <?php endif; ?>
+                  <?php if (
+                    $wear_time
+                  ): ?>data-service-wear-time="<?php echo esc_attr(
+                                                                    $wear_time,
+                                                                  ); ?>" <?php endif; ?>>
+              </div>
+            </div>
+            <?php if (
+              $duration
+            ): ?><div class="service-duration"><strong>Duration:</strong> <?php echo esc_html(
+                                                                                        $duration,
+                                                                                      ); ?> min</div><?php endif; ?>
+            <?php if (
+              $wear_time
+            ): ?><div class="service-wear-time"><strong>Wear time:</strong> <?php echo esc_html(
+                                                                                          $wear_time,
+                                                                                        ); ?></div><?php endif; ?>
+            <?php if ($desc): ?><div class="service-description"><?php echo esc_html(
+                                                                    $desc,
+                                                                  ); ?></div><?php endif; ?>
+          </div>
+          <?php
+          $related_addons = get_field('addons', $post_id);
+          if (!empty($related_addons)): ?>
+            <div class="core-related-addons" data-core-id="<?php echo esc_attr(
+                                                              $post_id,
+                                                            ); ?>">
+              <?php foreach ($related_addons as $addon):
+
+                $addon_post = is_object($addon) ? $addon : get_post($addon);
+                if (!$addon_post) {
+                  continue;
                 }
-              }
+
+                $a_id = $addon_post->ID;
+
+                // Check if addon is online
+                $addon_is_online = get_post_meta($a_id, 'is_online', true);
+                if (!$addon_is_online) {
+                  continue;
+                }
+
+                $a_title = get_the_title($a_id);
+                $a_price = get_post_meta($a_id, 'price_min', true);
+                $a_currency = get_post_meta($a_id, 'currency', true) ?: 'SGD';
+                $a_duration = get_post_meta($a_id, 'duration_minutes', true);
+                $a_wear = get_post_meta($a_id, 'wear_time', true);
+                $a_desc = get_post_meta($a_id, 'description', true);
+                $a_altegio = get_post_meta($a_id, 'altegio_id', true);
               ?>
-                <div class="service-item" data-service-id="<?php echo esc_attr($post_id); ?>">
-                    <div class="service-info">
-                        <div class="service-title">
-                            <h4 class="service-name"><?php echo esc_html(
-                              get_the_title($post_id),
-                            ); ?></h4>
-                            <div class="service-checkbox-wrapper">
-                                <div class="service-price"><?php echo esc_html(
-                                  $price,
-                                ); ?> <?php echo esc_html($currency); ?></div>
-                                <input type="checkbox"
-                                    class="service-checkbox"
-                                    data-service-id="<?php echo esc_attr($post_id); ?>"
-                                    data-altegio-id="<?php echo esc_attr($altegio_id); ?>"
-                                    data-service-title="<?php echo esc_attr(
-                                      get_the_title($post_id),
-                                    ); ?>"
-                                    data-service-price="<?php echo esc_attr($price); ?>"
-                                    data-service-currency="<?php echo esc_attr($currency); ?>"
-                                    data-is-addon="false"
-                                    <?php if (
-                                      $duration
-                                    ): ?>data-service-duration="<?php echo esc_attr(
-  $duration,
-); ?>" <?php endif; ?>
-                                    <?php if (
-                                      $wear_time
-                                    ): ?>data-service-wear-time="<?php echo esc_attr(
-  $wear_time,
-); ?>" <?php endif; ?>>
-                            </div>
-                        </div>
-                        <?php if (
-                          $duration
-                        ): ?><div class="service-duration"><strong>Duration:</strong> <?php echo esc_html(
-  $duration,
-); ?> min</div><?php endif; ?>
-                        <?php if (
-                          $wear_time
-                        ): ?><div class="service-wear-time"><strong>Wear time:</strong> <?php echo esc_html(
-  $wear_time,
-); ?></div><?php endif; ?>
-                        <?php if ($desc): ?><div class="service-description"><?php echo esc_html(
-  $desc,
-); ?></div><?php endif; ?>
-                    </div>
-                    <?php
-                    $related_addons = get_field('addons', $post_id);
-                    if (!empty($related_addons)): ?>
-                        <div class="core-related-addons" data-core-id="<?php echo esc_attr(
-                          $post_id,
-                        ); ?>">
-                            <?php foreach ($related_addons as $addon):
 
-                              $addon_post = is_object($addon) ? $addon : get_post($addon);
-                              if (!$addon_post) {
-                                continue;
-                              }
-
-                              $a_id = $addon_post->ID;
-
-                              // Check if addon is online
-                              $addon_is_online = get_post_meta($a_id, 'is_online', true);
-                              if (!$addon_is_online) {
-                                continue;
-                              }
-
-                              $a_title = get_the_title($a_id);
-                              $a_price = get_post_meta($a_id, 'price_min', true);
-                              $a_currency = get_post_meta($a_id, 'currency', true) ?: 'SGD';
-                              $a_duration = get_post_meta($a_id, 'duration_minutes', true);
-                              $a_wear = get_post_meta($a_id, 'wear_time', true);
-                              $a_desc = get_post_meta($a_id, 'description', true);
-                              $a_altegio = get_post_meta($a_id, 'altegio_id', true);
-                              ?>
-
-                                <div class="service-item addon-item disabled"
-                                    data-service-id="<?php echo esc_attr($a_id); ?>"
-                                    data-core-linked="<?php echo esc_attr($post_id); ?>">
-                                    <div class="service-info">
-                                        <div class="service-title">
-                                            <h4 class="service-name"><?php echo esc_html(
-                                              $a_title,
-                                            ); ?> <span class="addon-label"></span></h4>
-                                            <div class="service-checkbox-wrapper">
-                                                <div class="service-price"><?php echo esc_html(
-                                                  $a_price,
-                                                ); ?> <?php echo esc_html($a_currency); ?></div>
-                                                <input type="checkbox"
-                                                    class="service-checkbox"
-                                                    data-service-id="<?php echo esc_attr($a_id); ?>"
-                                                    data-altegio-id="<?php echo esc_attr(
-                                                      $a_altegio,
-                                                    ); ?>"
-                                                    data-service-title="<?php echo esc_attr(
-                                                      $a_title,
-                                                    ); ?>"
-                                                    data-service-price="<?php echo esc_attr(
+                <div class="service-item addon-item disabled"
+                  data-service-id="<?php echo esc_attr($a_id); ?>"
+                  data-core-linked="<?php echo esc_attr($post_id); ?>">
+                  <div class="service-info">
+                    <div class="service-title">
+                      <h4 class="service-name"><?php echo esc_html(
+                                                  $a_title,
+                                                ); ?> <span class="addon-label"></span></h4>
+                      <div class="service-checkbox-wrapper">
+                        <div class="service-price"><?php echo esc_html(
                                                       $a_price,
-                                                    ); ?>"
-                                                    data-service-currency="<?php echo esc_attr(
-                                                      $a_currency,
-                                                    ); ?>"
-                                                    data-is-addon="true"
-                                                    disabled
-                                                    <?php if (
-                                                      $a_duration
-                                                    ): ?>data-service-duration="<?php echo esc_attr(
-  $a_duration,
-); ?>" <?php endif; ?>
-                                                    <?php if (
-                                                      $a_wear
-                                                    ): ?>data-service-wear-time="<?php echo esc_attr(
-  $a_wear,
-); ?>" <?php endif; ?>>
-                                            </div>
-                                        </div>
-                                        <?php if (
-                                          $a_duration
-                                        ): ?><div class="service-duration"><strong>Duration:</strong> <?php echo esc_html(
-  $a_duration,
-); ?> min</div><?php endif; ?>
-                                        <?php if (
-                                          $a_wear
-                                        ): ?><div class="service-wear-time"><strong>Wear time:</strong> <?php echo esc_html(
-  $a_wear,
-); ?></div><?php endif; ?>
-                                        <?php if (
-                                          $a_desc
-                                        ): ?><div class="service-description"><?php echo esc_html(
-  $a_desc,
-); ?></div><?php endif; ?>
-                                    </div>
-                                </div>
-                            <?php
-                            endforeach; ?>
-                        </div>
-                    <?php endif;
-                    ?>
+                                                    ); ?> <?php echo esc_html($a_currency); ?></div>
+                        <input type="checkbox"
+                          class="service-checkbox"
+                          data-service-id="<?php echo esc_attr($a_id); ?>"
+                          data-altegio-id="<?php echo esc_attr(
+                                              $a_altegio,
+                                            ); ?>"
+                          data-service-title="<?php echo esc_attr(
+                                                $a_title,
+                                              ); ?>"
+                          data-service-price="<?php echo esc_attr(
+                                                $a_price,
+                                              ); ?>"
+                          data-service-currency="<?php echo esc_attr(
+                                                    $a_currency,
+                                                  ); ?>"
+                          data-is-addon="true"
+                          disabled
+                          <?php if (
+                            $a_duration
+                          ): ?>data-service-duration="<?php echo esc_attr(
+                                                                                  $a_duration,
+                                                                                ); ?>" <?php endif; ?>
+                          <?php if (
+                            $a_wear
+                          ): ?>data-service-wear-time="<?php echo esc_attr(
+                                                                                    $a_wear,
+                                                                                  ); ?>" <?php endif; ?>>
+                      </div>
+                    </div>
+                    <?php if (
+                      $a_duration
+                    ): ?><div class="service-duration"><strong>Duration:</strong> <?php echo esc_html(
+                                                                                                        $a_duration,
+                                                                                                      ); ?> min</div><?php endif; ?>
+                    <?php if (
+                      $a_wear
+                    ): ?><div class="service-wear-time"><strong>Wear time:</strong> <?php echo esc_html(
+                                                                                                          $a_wear,
+                                                                                                        ); ?></div><?php endif; ?>
+                    <?php if (
+                      $a_desc
+                    ): ?><div class="service-description"><?php echo esc_html(
+                                                                                $a_desc,
+                                                                              ); ?></div><?php endif; ?>
+                  </div>
                 </div>
-
-
-            <?php
-            endforeach;
-            wp_reset_postdata();
-            ?>
+              <?php
+              endforeach; ?>
+            </div>
+          <?php endif;
+          ?>
         </div>
+
+
+      <?php
+      endforeach;
+      wp_reset_postdata();
+      ?>
+    </div>
 <?php
   endforeach;
 
@@ -747,7 +753,8 @@ add_action('wp_ajax_nopriv_get_filtered_services', 'altegio_get_filtered_service
 /**
  * AJAX handler for getting time slots
  */
-function ajax_get_time_slots() {
+function ajax_get_time_slots()
+{
   check_ajax_referer('booking_nonce', 'nonce');
 
   $staff_id = isset($_POST['staff_id']) ? intval($_POST['staff_id']) : 0;
@@ -806,7 +813,8 @@ function ajax_get_time_slots() {
  * @param string $date Date in YYYY-MM-DD format
  * @return array Array of time slot objects
  */
-function generate_fallback_time_slots($date) {
+function generate_fallback_time_slots($date)
+{
   $slots = [];
   $start_hour = 9; // 9 AM
   $end_hour = 19; // 7 PM
@@ -836,7 +844,8 @@ add_action('wp_ajax_nopriv_get_time_slots', 'ajax_get_time_slots');
 /**
  * AJAX handler for fetching services for a specific master
  */
-function get_services_for_master() {
+function get_services_for_master()
+{
   // Check nonce
   if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'booking_nonce')) {
     // Nonce verification failed
@@ -865,7 +874,8 @@ function get_services_for_master() {
 
 add_action('wp_ajax_get_services_for_master', 'get_services_for_master');
 add_action('wp_ajax_nopriv_get_services_for_master', 'get_services_for_master');
-function get_services_by_staff($staff_id) {
+function get_services_by_staff($staff_id)
+{
   error_log('Looking for services for staff_id: ' . $staff_id);
 
   $query = new WP_Query([
@@ -924,7 +934,8 @@ function get_services_by_staff($staff_id) {
  * AJAX handler for checking promo codes
  */
 
-function altegio_check_promo_code() {
+function altegio_check_promo_code()
+{
   check_ajax_referer('booking_nonce', 'nonce');
 
   $promo_code = isset($_POST['promo_code']) ? sanitize_text_field($_POST['promo_code']) : '';
@@ -1024,7 +1035,8 @@ add_action('wp_ajax_nopriv_check_promo_code', 'altegio_check_promo_code');
 /**
  * Increment promo code usage count after successful booking
  */
-function increment_promo_usage($promo_code) {
+function increment_promo_usage($promo_code)
+{
   $promo_code = trim($promo_code);
 
   if (empty($promo_code)) {
@@ -1036,7 +1048,8 @@ function increment_promo_usage($promo_code) {
   update_option('promo_usage_' . $promo_code, $usage_count);
 }
 
-function handle_get_month_availability() {
+function handle_get_month_availability()
+{
   if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'booking_nonce')) {
     error_log('Month availability: Nonce verification failed');
     wp_send_json_error(['message' => 'Invalid security token']);
@@ -1176,7 +1189,8 @@ function handle_get_month_availability() {
   wp_send_json_success($result_data);
 }
 
-function generate_fallback_month_availability($start_date) {
+function generate_fallback_month_availability($start_date)
+{
   $available_dates = [];
   $unavailable_dates = [];
 
@@ -1211,7 +1225,8 @@ function generate_fallback_month_availability($start_date) {
   ];
 }
 
-function handle_clear_month_availability_cache() {
+function handle_clear_month_availability_cache()
+{
   check_ajax_referer('booking_nonce', 'nonce');
 
   $staff_id = isset($_POST['staff_id']) ? (int) $_POST['staff_id'] : 0;
@@ -1239,7 +1254,8 @@ add_action(
 add_action('wp_ajax_get_month_availability', 'sunny_get_month_availability');
 add_action('wp_ajax_nopriv_get_month_availability', 'sunny_get_month_availability');
 
-function sunny_get_month_availability() {
+function sunny_get_month_availability()
+{
   $staff_id = intval($_POST['staff_id']);
   $service_ids = isset($_POST['service_ids']) ? (array) $_POST['service_ids'] : [];
   $month = intval($_POST['month']);
@@ -1287,7 +1303,8 @@ function sunny_get_month_availability() {
 /**
  * AJAX handler for getting nearest sessions
  */
-function altegio_get_nearest_sessions() {
+function altegio_get_nearest_sessions()
+{
   check_ajax_referer('booking_nonce', 'nonce');
 
   $staff_id = isset($_POST['staff_id']) ? intval($_POST['staff_id']) : 0;
@@ -1318,7 +1335,8 @@ add_action('wp_ajax_nopriv_get_nearest_sessions', 'altegio_get_nearest_sessions'
 add_action('wp_ajax_get_time_slots_for_all_masters', 'ajax_get_time_slots_for_all_masters');
 add_action('wp_ajax_nopriv_get_time_slots_for_all_masters', 'ajax_get_time_slots_for_all_masters');
 
-function ajax_get_time_slots_for_all_masters() {
+function ajax_get_time_slots_for_all_masters()
+{
   check_ajax_referer('booking_nonce', 'nonce');
   $date = sanitize_text_field($_POST['date'] ?? '');
   $service_ids = isset($_POST['service_ids'])

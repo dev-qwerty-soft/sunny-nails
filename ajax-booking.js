@@ -29,7 +29,7 @@
 
   // Configuration
   const config = {
-    debug: true, // Enable debug logging
+    debug: false, // Enable debug logging
     priceAdjustmentPerLevel: 10, // Price increase percentage per master level above 1
     apiEndpoint: booking_params.ajax_url, // API endpoint from localized WP
     nonce: booking_params.nonce, // Security nonce from WP
