@@ -19,7 +19,9 @@ document.addEventListener('DOMContentLoaded', function () {
           </div>
           <div class="partner-card__content">
             <div class="partner-card__title">${partner.title}</div>
-            <div class="partner-card__desc clamp-3">${partner.desc ? partner.desc : ''}</div>
+           <div class="partner-card__desc clamp-3">${
+             partner.desc ? partner.desc.split(/<\/p>/i)[0].replace(/(<([^>]+)>)/gi, '') : ''
+           }</div>
             ${
               partner.benefit_icon || partner.benefit_title
                 ? `
