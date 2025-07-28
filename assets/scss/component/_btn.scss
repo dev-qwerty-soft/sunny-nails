@@ -590,6 +590,11 @@
     & .form-checkbox-submit {
       display: contents;
 
+      & span {
+        display: flex;
+        height: 100%;
+      }
+
       & p {
         display: flex;
         align-items: center;
