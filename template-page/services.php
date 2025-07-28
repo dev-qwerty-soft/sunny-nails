@@ -91,23 +91,15 @@ if (empty($ordered_category_ids)) {
                 <div class="categories-overview">
                   <div class="category-overview-item">
                     <div class="category-image">
-                      <img src="<?php echo esc_url(
-                                  $category_image['url'],
-                                ); ?>"
-                        alt="<?php echo esc_attr(
-                                $category_image['alt'] ?: $category->name,
-                              ); ?>"
+                      <img src="<?php echo esc_url($category_image['url']); ?>"
+                        alt="<?php echo esc_attr($category_image['alt'] ?: $category->name); ?>"
                         class="category-img" />
                     </div>
-                    <h3 class="category-name"><?php echo esc_html(
-                                                $category->name,
-                                              ); ?></h3>
+                    <h3 class="category-name"><?php echo esc_html($category->name); ?></h3>
                   </div>
                 </div>
               <?php else: ?>
-                <h3 class="category-name"><?php echo esc_html(
-                                            $category->name,
-                                          ); ?></h3>
+                <h3 class="category-name"><?php echo esc_html($category->name); ?></h3>
               <?php endif; ?>
 
               <?php

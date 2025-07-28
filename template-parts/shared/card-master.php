@@ -5,7 +5,6 @@ if (!$post) {
   return;
 }
 
-
 $levelTitles = [
   -1 => 'Intern',
   1 => 'Sunny Ray',
@@ -40,8 +39,8 @@ $instagram = get_field('instagram_url', $post->ID);
     <span class='team-card__name'><?= esc_html($name) ?></span>
     <!-- <?php if ($instagram): ?>
       <a href='<?= esc_url(
-                  $instagram,
-                ) ?>' aria-label='Instagram' target='_blank' class='team-card__instagram'></a>
+        $instagram,
+      ) ?>' aria-label='Instagram' target='_blank' class='team-card__instagram'></a>
     <?php endif; ?> -->
     <div class='team-card__rate'>
       <div class='stars yellow'>
@@ -91,8 +90,8 @@ $instagram = get_field('instagram_url', $post->ID);
 
   <div class='team-card__buttons page'>
     <button data-staff-id="<?= esc_attr(
-                              $id,
-                            ) ?>" class='btn yellow book-tem'>Book an Appointment</button>
+      $id,
+    ) ?>" class='btn yellow book-tem'>Book an Appointment</button>
     <?php
     $link_team = get_field('team_link_url', 'option');
     $url = $link_team['url'] ?? '';
@@ -102,8 +101,8 @@ $instagram = get_field('instagram_url', $post->ID);
 
     <?php if (!$isPage && $url): ?>
       <!-- <a href="<?= esc_url($url) ?>" target="<?= esc_attr(
-                                                    $target,
-                                                  ) ?>" class="btn"><?= esc_html($title) ?></a> -->
+  $target,
+) ?>" class="btn"><?= esc_html($title) ?></a> -->
     <?php endif; ?>
   </div>
 </div>

@@ -13,14 +13,12 @@ add_action('acf/init', function () {
   }
 });
 add_filter('acf/settings/save_json', 'my_acf_json_save_point');
-function my_acf_json_save_point($path)
-{
+function my_acf_json_save_point($path) {
   return get_stylesheet_directory() . '/acf-json';
 }
 
 add_filter('acf/settings/load_json', 'my_acf_json_load_point');
-function my_acf_json_load_point($paths)
-{
+function my_acf_json_load_point($paths) {
   $paths[] = get_stylesheet_directory() . '/acf-json';
   return $paths;
 }

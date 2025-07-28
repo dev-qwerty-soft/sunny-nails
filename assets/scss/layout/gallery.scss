@@ -1,30 +1,3 @@
-// @mixin codeBig() {
-//   grid-row: span 2;
-//   grid-column: span 2;
-//   & .image__back {
-//     padding-top: get-d(170px);
-//     & .image__title {
-//       font-size: get-d(36px);
-//     }
-//   }
-//   @include respond(lg) {
-//     & .image__back {
-//       padding-top: get-lg(32px);
-//       & .image__title {
-//         font-size: get-lg(36px);
-//       }
-//     }
-//   }
-//   @include respond(md) {
-//     & .image__back {
-//       padding-top: 170px;
-//       & .image__title {
-//         font-size: 24px;
-//       }
-//     }
-//   }
-// }
-
 .gallery-section {
   padding: get-d(150px) get-d(60px) get-d(75px) get-d(60px);
 

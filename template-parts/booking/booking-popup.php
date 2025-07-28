@@ -97,10 +97,8 @@ if (empty($ordered_category_ids)) {
                 isset($category_popup->term_id, $category_popup->name)
               ): ?>
                 <button type="button" class="category-tab<?php echo $i === 0
-                                                            ? ' active'
-                                                            : ''; ?>" data-category-id="<?php echo esc_attr(
-                                                                $category_popup->term_id,
-                                                              ); ?>">
+                  ? ' active'
+                  : ''; ?>" data-category-id="<?php echo esc_attr($category_popup->term_id); ?>">
                   <?php echo esc_html($category_popup->name); ?>
                 </button>
 
@@ -116,12 +114,10 @@ if (empty($ordered_category_ids)) {
                 is_object($category_popup) &&
                 isset($category_popup->term_id)
               ): ?>
-                <?php $services = get_services_by_category(
-                  $category_popup->term_id,
-                ); ?>
+                <?php $services = get_services_by_category($category_popup->term_id); ?>
                 <div class="category-services" data-category-id="<?php echo esc_attr(
-                                                                    $category_popup->term_id,
-                                                                  ); ?>" style="<?php echo $i === 0 ? '' : 'display:none'; ?>">
+                  $category_popup->term_id,
+                ); ?>" style="<?php echo $i === 0 ? '' : 'display:none'; ?>">
                   <?php
                   foreach ($services as $service):
 
@@ -129,11 +125,9 @@ if (empty($ordered_category_ids)) {
                     $post_id = $service->ID;
 
                     // Get service categories
-                    $service_categories = wp_get_post_terms(
-                      $post_id,
-                      'service_category',
-                      ['fields' => 'slugs'],
-                    );
+                    $service_categories = wp_get_post_terms($post_id, 'service_category', [
+                      'fields' => 'slugs',
+                    ]);
                     $category_slugs = is_array($service_categories)
                       ? implode(' ', $service_categories)
                       : '';
@@ -150,17 +144,12 @@ if (empty($ordered_category_ids)) {
                       in_array('add-ons-nail-art', $service_categories);
 
                     $price = get_post_meta($post_id, 'price_min', true);
-                    $currency =
-                      get_post_meta($post_id, 'currency', true) ?: 'SGD';
+                    $currency = get_post_meta($post_id, 'currency', true) ?: 'SGD';
                     $duration = get_post_meta($post_id, 'duration_minutes', true);
                     $wear_time = get_post_meta($post_id, 'wear_time', true);
                     $desc = $service->post_content;
                     if (empty($wear_time) && !empty($service->post_content)) {
-                      preg_match(
-                        '/wear\s+time:?\s+([^\.]+)/i',
-                        $service->post_content,
-                        $matches,
-                      );
+                      preg_match('/wear\s+time:?\s+([^\.]+)/i', $service->post_content, $matches);
                       if (!empty($matches[1])) {
                         $wear_time = trim($matches[1]);
                       }
@@ -171,190 +160,124 @@ if (empty($ordered_category_ids)) {
                     }
 
                     // Skip add-ons for now
-                  ?>
+                    ?>
                     <div class="service-item"
                       data-service-id="<?php echo esc_attr($post_id); ?>"
-                      data-category-slugs="<?php echo esc_attr(
-                                              $category_slugs,
-                                            ); ?>"
+                      data-category-slugs="<?php echo esc_attr($category_slugs); ?>"
                       data-exclude-master-markup="<?php echo $should_exclude_markup
-                                                    ? 'true'
-                                                    : 'false'; ?>">
+                        ? 'true'
+                        : 'false'; ?>">
                       <div class="service-info">
                         <div class="service-title">
                           <h4 class="service-name"><?php echo esc_html(
-                                                      get_the_title($post_id),
-                                                    ); ?></h4>
+                            get_the_title($post_id),
+                          ); ?></h4>
                           <div class="service-checkbox-wrapper">
                             <div class="service-price">
-                              <?php echo esc_html(
-                                $price,
-                              ); ?> <?php echo esc_html($currency); ?>
+                              <?php echo esc_html($price); ?> <?php echo esc_html($currency); ?>
                             </div>
                             <input type="checkbox"
                               class="service-checkbox"
-                              data-service-id="<?php echo esc_attr(
-                                                  $post_id,
-                                                ); ?>"
-                              data-altegio-id="<?php echo esc_attr(
-                                                  $altegio_id,
-                                                ); ?>"
-                              data-service-title="<?php echo esc_attr(
-                                                    get_the_title($post_id),
-                                                  ); ?>"
-                              data-service-price="<?php echo esc_attr(
-                                                    $price,
-                                                  ); ?>"
-                              data-service-currency="<?php echo esc_attr(
-                                                        $currency,
-                                                      ); ?>"
+                              data-service-id="<?php echo esc_attr($post_id); ?>"
+                              data-altegio-id="<?php echo esc_attr($altegio_id); ?>"
+                              data-service-title="<?php echo esc_attr(get_the_title($post_id)); ?>"
+                              data-service-price="<?php echo esc_attr($price); ?>"
+                              data-service-currency="<?php echo esc_attr($currency); ?>"
                               data-is-addon="false"
-                              <?php if (
-                                $duration
-                              ): ?>data-service-duration="<?php echo esc_attr(
-                                                                                          $duration,
-                                                                                        ); ?>" <?php endif; ?>
-                              <?php if (
-                                $wear_time
-                              ): ?>data-service-wear-time="<?php echo esc_attr(
-                                                                                            $wear_time,
-                                                                                          ); ?>" <?php endif; ?>>
+                              <?php if ($duration): ?>data-service-duration="<?php echo esc_attr(
+  $duration,
+); ?>" <?php endif; ?>
+                              <?php if ($wear_time): ?>data-service-wear-time="<?php echo esc_attr(
+  $wear_time,
+); ?>" <?php endif; ?>>
                           </div>
                         </div>
                         <?php if ($duration): ?>
                           <div class="service-duration"><strong>Duration:</strong> <?php echo esc_html(
-                                                                                      $duration,
-                                                                                    ); ?> min</div>
+                            $duration,
+                          ); ?> min</div>
                         <?php endif; ?>
                         <?php if ($wear_time): ?>
                           <div class="service-wear-time"><strong>Wear time:</strong> <?php echo esc_html(
-                                                                                        $wear_time,
-                                                                                      ); ?></div>
+                            $wear_time,
+                          ); ?></div>
                         <?php endif; ?>
 
                         <?php if ($desc): ?>
-                          <div class="service-description"><?php echo esc_html(
-                                                              $desc,
-                                                            ); ?></div>
+                          <div class="service-description"><?php echo esc_html($desc); ?></div>
                         <?php endif; ?>
                       </div>
                       <?php
                       $related_addons = get_field('addons', $post_id);
                       if (!empty($related_addons)): ?>
                         <div class="core-related-addons" data-core-id="<?php echo esc_attr(
-                                                                          $post_id,
-                                                                        ); ?>">
+                          $post_id,
+                        ); ?>">
                           <?php foreach ($related_addons as $addon):
 
-                            $addon_post = is_object($addon)
-                              ? $addon
-                              : get_post($addon);
+                            $addon_post = is_object($addon) ? $addon : get_post($addon);
                             $a_id = $addon_post->ID;
 
                             // Check if addon is online
-                            $addon_is_online = get_post_meta(
-                              $a_id,
-                              'is_online',
-                              true,
-                            );
+                            $addon_is_online = get_post_meta($a_id, 'is_online', true);
                             if (!$addon_is_online) {
                               continue;
                             } // Skip offline addons
 
                             $a_title = get_the_title($a_id);
-                            $a_price = get_post_meta(
-                              $a_id,
-                              'price_min',
-                              true,
-                            );
-                            $a_currency =
-                              get_post_meta($a_id, 'currency', true) ?:
-                              'SGD';
-                            $a_duration = get_post_meta(
-                              $a_id,
-                              'duration_minutes',
-                              true,
-                            );
-                            $a_wear = get_post_meta(
-                              $a_id,
-                              'wear_time',
-                              true,
-                            );
-                            $a_desc = get_post_meta(
-                              $a_id,
-                              'description',
-                              true,
-                            );
-                            $a_altegio = get_post_meta(
-                              $a_id,
-                              'altegio_id',
-                              true,
-                            );
-                          ?>
+                            $a_price = get_post_meta($a_id, 'price_min', true);
+                            $a_currency = get_post_meta($a_id, 'currency', true) ?: 'SGD';
+                            $a_duration = get_post_meta($a_id, 'duration_minutes', true);
+                            $a_wear = get_post_meta($a_id, 'wear_time', true);
+                            $a_desc = get_post_meta($a_id, 'description', true);
+                            $a_altegio = get_post_meta($a_id, 'altegio_id', true);
+                            ?>
                             <div class="service-item addon-item"
-                              data-service-id="<?php echo esc_attr(
-                                                  $a_id,
-                                                ); ?>"
-                              data-core-linked="<?php echo esc_attr(
-                                                  $post_id,
-                                                ); ?>">
+                              data-service-id="<?php echo esc_attr($a_id); ?>"
+                              data-core-linked="<?php echo esc_attr($post_id); ?>">
 
                               <div class="service-info">
                                 <div class="service-title">
-                                  <h4 class="service-name"><?php echo esc_html(
-                                                              $a_title,
-                                                            ); ?></h4>
+                                  <h4 class="service-name"><?php echo esc_html($a_title); ?></h4>
                                   <div class="service-checkbox-wrapper">
                                     <div class="service-price"><?php echo esc_html(
-                                                                  $a_price,
-                                                                ); ?> <?php echo esc_html(
-                                                                                $a_currency,
-                                                                              ); ?></div>
+                                      $a_price,
+                                    ); ?> <?php echo esc_html($a_currency); ?></div>
                                     <input type="checkbox"
                                       class="service-checkbox"
-                                      data-service-id="<?php echo esc_attr(
-                                                          $a_id,
-                                                        ); ?>"
-                                      data-altegio-id="<?php echo esc_attr(
-                                                          $a_altegio,
-                                                        ); ?>"
-                                      data-service-title="<?php echo esc_attr(
-                                                            $a_title,
-                                                          ); ?>"
-                                      data-service-price="<?php echo esc_attr(
-                                                            $a_price,
-                                                          ); ?>"
-                                      data-service-currency="<?php echo esc_attr(
-                                                                $a_currency,
-                                                              ); ?>"
+                                      data-service-id="<?php echo esc_attr($a_id); ?>"
+                                      data-altegio-id="<?php echo esc_attr($a_altegio); ?>"
+                                      data-service-title="<?php echo esc_attr($a_title); ?>"
+                                      data-service-price="<?php echo esc_attr($a_price); ?>"
+                                      data-service-currency="<?php echo esc_attr($a_currency); ?>"
                                       data-is-addon="true"
                                       <?php if (
                                         $a_duration
                                       ): ?>data-service-duration="<?php echo esc_attr(
-                                                                                                          $a_duration,
-                                                                                                        ); ?>" <?php endif; ?>
+  $a_duration,
+); ?>" <?php endif; ?>
                                       <?php if (
                                         $a_wear
                                       ): ?>data-service-wear-time="<?php echo esc_attr(
-                                                                                                            $a_wear,
-                                                                                                          ); ?>" <?php endif; ?>>
+  $a_wear,
+); ?>" <?php endif; ?>>
                                   </div>
                                 </div>
                                 <?php if (
                                   $a_duration
                                 ): ?><div class="service-duration"><strong>Duration:</strong> <?php echo esc_html(
-                                                                                                                                $a_duration,
-                                                                                                                              ); ?> min</div><?php endif; ?>
+  $a_duration,
+); ?> min</div><?php endif; ?>
                                 <?php if (
                                   $a_wear
                                 ): ?><div class="service-wear-time"><strong>Wear time:</strong> <?php echo esc_html(
-                                                                                                                                  $a_wear,
-                                                                                                                                ); ?></div><?php endif; ?>
+  $a_wear,
+); ?></div><?php endif; ?>
                                 <?php if (
                                   $a_desc
                                 ): ?><div class="service-description"><?php echo esc_html(
-                                                                                                        $a_desc,
-                                                                                                      ); ?></div><?php endif; ?>
+  $a_desc,
+); ?></div><?php endif; ?>
                               </div>
                             </div>
                           <?php
@@ -463,20 +386,18 @@ if (empty($ordered_category_ids)) {
                 $avatar = get_the_post_thumbnail_url(get_the_ID(), 'thumbnail');
                 $specialization = get_field('master_specialization');
                 $levelTitle = $levelTitles[$level] ?? '';
-            ?>
+                ?>
                 <label class="staff-item level-<?php echo esc_attr($level); ?>"
                   data-staff-id="<?php echo esc_attr(get_field('altegio_id')); ?>"
                   data-staff-level="<?php echo esc_attr($level); ?>"
-                  data-staff-specialization="<?php echo esc_attr(
-                                                $specialization,
-                                              ); ?>">
+                  data-staff-specialization="<?php echo esc_attr($specialization); ?>">
                   <input type="radio" name="staff">
                   <div class="staff-radio-content">
                     <div class="staff-avatar">
                       <?php if ($avatar): ?>
                         <img src="<?php echo esc_url(
-                                    $avatar,
-                                  ); ?>" alt="<?php the_title_attribute(); ?>">
+                          $avatar,
+                        ); ?>" alt="<?php the_title_attribute(); ?>">
                       <?php endif; ?>
                     </div>
                     <div class="staff-info">
@@ -486,16 +407,12 @@ if (empty($ordered_category_ids)) {
                           <?php echo $stars; ?>
                         </div>
                         <?php if ($levelTitle): ?>
-                          <span class="studio-name">(<?php echo esc_html(
-                                                        $levelTitle,
-                                                      ); ?>)</span>
+                          <span class="studio-name">(<?php echo esc_html($levelTitle); ?>)</span>
                         <?php endif; ?>
                       </div>
                     </div>
                     <?php if ($markup): ?>
-                      <div class="staff-price-modifier"><?php echo esc_html(
-                                                          $markup,
-                                                        ); ?></div>
+                      <div class="staff-price-modifier"><?php echo esc_html($markup); ?></div>
                     <?php endif; ?>
                     <span class="radio-indicator"></span>
                   </div>
@@ -504,7 +421,7 @@ if (empty($ordered_category_ids)) {
               endwhile;
               wp_reset_postdata();
             else:
-              ?>
+               ?>
               <p class="no-items-message">No specialists available at the moment.</p>
             <?php
             endif;
@@ -660,9 +577,7 @@ if (empty($ordered_category_ids)) {
                 <?php
                 $price_notice = get_field('booking_price_note', 'option');
                 if ($price_notice): ?>
-                  <div class="summary-item tax"><?= esc_html(
-                                                  $price_notice,
-                                                ) ?></div>
+                  <div class="summary-item tax"><?= esc_html($price_notice) ?></div>
                 <?php endif;
                 ?>
               </div>
@@ -933,8 +848,8 @@ if (empty($ordered_category_ids)) {
                     <span>
                       I confirm that I have read and accepted the
                       <a href="<?= esc_url(
-                                  home_url('/terms-of-services/'),
-                                ) ?>" target="_blank" rel="noopener noreferrer">
+                        home_url('/terms-of-services/'),
+                      ) ?>" target="_blank" rel="noopener noreferrer">
                         Privacy Policy & Terms of Services
                       </a>.
                     </span>
@@ -1043,9 +958,7 @@ if (empty($ordered_category_ids)) {
                 <?php
                 $price_notice = get_field('booking_price_note', 'option');
                 if ($price_notice): ?>
-                  <div class="summary-item tax"><?= esc_html(
-                                                  $price_notice,
-                                                ) ?></div>
+                  <div class="summary-item tax"><?= esc_html($price_notice) ?></div>
                 <?php endif;
                 ?>
 
