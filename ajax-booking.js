@@ -2004,6 +2004,10 @@
 
   // Handle slot click for "All masters"
   $(document).on('click', '.time-sections .time-slot', function () {
+    // При виборі нового часу очищаємо selectedPreviewSlot
+    if (bookingData.selectedPreviewSlot) {
+      bookingData.selectedPreviewSlot = null;
+    }
     if (bookingData.staffId === 'any') {
       const $slot = $(this);
       bookingData.staffId = $slot.data('staff-id');
@@ -2274,6 +2278,10 @@
    * @param {string} date - Date in YYYY-MM-DD format
    */
   function selectDate(date) {
+    // При виборі нової дати очищаємо selectedPreviewSlot
+    if (bookingData.selectedPreviewSlot) {
+      bookingData.selectedPreviewSlot = null;
+    }
     bookingData.date = date;
     debug('Date selected', date);
   }
@@ -2298,11 +2306,9 @@
 
     let selectedDate = formatDate(today);
     let selectedTime = null;
-    // Якщо є збережений вибір зі слотів майстрів — підставляємо його
+    // If there is a saved slot selection, use it
     if (bookingData.selectedPreviewSlot && bookingData.selectedPreviewSlot.time) {
-      // Потрібно знайти дату у форматі YYYY-MM-DD з тексту
-      // Наприклад, "Nearest time slot for the appointment 14 July, Monday:"
-      // Витягуємо дату через RegExp
+      // Try to find date in YYYY-MM-DD format from slot
       const match =
         bookingData.selectedPreviewSlot.dateText &&
         bookingData.selectedPreviewSlot.dateText.match(/(\d{1,2}) ([A-Za-z]+),/);
@@ -2310,7 +2316,7 @@
         const day = match[1];
         const monthName = match[2];
         const monthIndex = getMonthIndex(monthName);
-        const year = currentYear; // Можна доопрацювати для міжмісячних переходів
+        const year = currentYear; // Can be improved for cross-month navigation
         selectedDate = `${year}-${String(monthIndex + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
         selectedTime = bookingData.selectedPreviewSlot.time;
         bookingData.date = selectedDate;
@@ -2325,7 +2331,7 @@
     setTimeout(() => {
       $(`.calendar-day[data-date="${selectedDate}"]`).addClass('selected');
       loadTimeSlots(selectedDate);
-      // Після рендера слотів підсвічуємо вибраний
+      // After rendering slots, highlight the selected one
       if (selectedTime) {
         setTimeout(() => {
           $(`.time-slot[data-time="${selectedTime}"]`).addClass('selected');
