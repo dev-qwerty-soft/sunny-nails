@@ -77,7 +77,7 @@
             "required": 0,
             "conditional_logic": 0,
             "wrapper": {
-                "width": "50",
+                "width": "",
                 "class": "",
                 "id": ""
             },
@@ -89,8 +89,25 @@
         },
         {
             "key": "field_68823db628863",
-            "label": "Partners link",
-            "name": "partners_link",
+            "label": "Partners link card",
+            "name": "partners_link_card",
+            "aria-label": "",
+            "type": "url",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "50",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "placeholder": ""
+        },
+        {
+            "key": "field_6888ea8a02a62",
+            "label": "Partners link popup",
+            "name": "partners_link_popup",
             "aria-label": "",
             "type": "url",
             "instructions": "",
@@ -123,5 +140,5 @@
     "active": true,
     "description": "",
     "show_in_rest": 0,
-    "modified": 1753366337
+    "modified": 1753803634
 }

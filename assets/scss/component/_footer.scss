@@ -50,10 +50,15 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
+    .footer__logo {
+      display: flex;
+      align-items: center;
+      gap: get-d(30px);
+    }
     @include respond(lg) {
-      flex-wrap: wrap;
-      gap: get-lg(20px);
-      justify-content: space-between;
+      .menu-footer-container {
+        display: none;
+      }
     }
     @include respond(md) {
       display: contents;
@@ -147,24 +152,19 @@
   display: flex;
   align-items: center;
   flex-wrap: wrap;
+  gap: get-d(8px);
+  @include respond(lg) {
+    gap: get-lg(8px);
+  }
+  @include respond(md) {
+    gap: 8px;
+  }
   & a {
     display: inline-block;
     transition: transform 0.5s;
-    margin: 0 get-d(8px);
-    @include respond(lg) {
-      margin: 0 get-lg(8px);
-    }
-    @include respond(md) {
-      margin: 0 4px;
-    }
+
     &:hover {
       transform: scale(1.2);
-    }
-    &:first-of-type {
-      margin-left: 0 !important;
-    }
-    &:last-of-type {
-      margin-right: 0 !important;
     }
   }
   & img {
@@ -175,8 +175,8 @@
       height: get-lg(36px);
     }
     @include respond(md) {
-      width: 40px;
-      height: 40px;
+      width: 36px;
+      height: 36px;
     }
   }
 }
