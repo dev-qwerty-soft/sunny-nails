@@ -391,6 +391,7 @@
       font-weight: inherit;
       background: $bg-white;
       border-radius: 1000px;
+      white-space: nowrap;
       padding: get-d(4px) get-d(10px);
       @include respond(lg) {
         padding: get-lg(4px) get-lg(10px);

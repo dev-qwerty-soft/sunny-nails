@@ -2,8 +2,8 @@
   <?php if ($category_popup && is_object($category_popup) && isset($category_popup->term_id)): ?>
     <?php $services = get_services_by_category($category_popup->term_id); ?>
     <div class="category-services" data-category-id="<?php echo esc_attr(
-                                                        $category_popup->term_id,
-                                                      ); ?>" style="<?php echo $i === 0 ? '' : 'display:none'; ?>">
+      $category_popup->term_id,
+    ); ?>" style="<?php echo $i === 0 ? '' : 'display:none'; ?>">
       <?php
       foreach ($services as $service):
 
@@ -14,9 +14,7 @@
         $service_categories = wp_get_post_terms($post_id, 'service_category', [
           'fields' => 'slugs',
         ]);
-        $category_slugs = is_array($service_categories)
-          ? implode(' ', $service_categories)
-          : '';
+        $category_slugs = is_array($service_categories) ? implode(' ', $service_categories) : '';
 
         // Check if service is online
         $is_online = get_post_meta($post_id, 'is_online', true);
@@ -46,55 +44,43 @@
         }
 
         // Skip add-ons for now
-      ?>
+        ?>
         <div class="service-item"
           data-service-id="<?php echo esc_attr($post_id); ?>"
           data-category-slugs="<?php echo esc_attr($category_slugs); ?>"
-          data-exclude-master-markup="<?php echo $should_exclude_markup
-                                        ? 'true'
-                                        : 'false'; ?>">
+          data-exclude-master-markup="<?php echo $should_exclude_markup ? 'true' : 'false'; ?>">
           <div class="service-info">
             <div class="service-title">
-              <h4 class="service-name"><?php echo esc_html(
-                                          get_the_title($post_id),
-                                        ); ?></h4>
+              <h4 class="service-name"><?php echo esc_html(get_the_title($post_id)); ?></h4>
               <div class="service-checkbox-wrapper">
                 <div class="service-price">
-                  <?php echo esc_html($price); ?> <?php echo esc_html(
-                                                    $currency,
-                                                  ); ?>
+                  <?php echo esc_html($price); ?> <?php echo esc_html($currency); ?>
                 </div>
                 <input type="checkbox"
                   class="service-checkbox"
                   data-service-id="<?php echo esc_attr($post_id); ?>"
                   data-altegio-id="<?php echo esc_attr($altegio_id); ?>"
-                  data-service-title="<?php echo esc_attr(
-                                        get_the_title($post_id),
-                                      ); ?>"
+                  data-service-title="<?php echo esc_attr(get_the_title($post_id)); ?>"
                   data-service-price="<?php echo esc_attr($price); ?>"
                   data-service-currency="<?php echo esc_attr($currency); ?>"
                   data-is-addon="false"
-                  <?php if (
-                    $duration
-                  ): ?>data-service-duration="<?php echo esc_attr(
-                                                                  $duration,
-                                                                ); ?>" <?php endif; ?>
-                  <?php if (
-                    $wear_time
-                  ): ?>data-service-wear-time="<?php echo esc_attr(
-                                                                    $wear_time,
-                                                                  ); ?>" <?php endif; ?>>
+                  <?php if ($duration): ?>data-service-duration="<?php echo esc_attr(
+  $duration,
+); ?>" <?php endif; ?>
+                  <?php if ($wear_time): ?>data-service-wear-time="<?php echo esc_attr(
+  $wear_time,
+); ?>" <?php endif; ?>>
               </div>
             </div>
             <?php if ($duration): ?>
               <div class="service-duration"><strong>Duration:</strong> <?php echo esc_html(
-                                                                          $duration,
-                                                                        ); ?> min</div>
+                $duration,
+              ); ?> min</div>
             <?php endif; ?>
             <?php if ($wear_time): ?>
               <div class="service-wear-time"><strong>Wear time:</strong> <?php echo esc_html(
-                                                                            $wear_time,
-                                                                          ); ?></div>
+                $wear_time,
+              ); ?></div>
             <?php endif; ?>
 
             <?php if ($desc): ?>
@@ -104,9 +90,7 @@
           <?php
           $related_addons = get_field('addons', $post_id);
           if (!empty($related_addons)): ?>
-            <div class="core-related-addons" data-core-id="<?php echo esc_attr(
-                                                              $post_id,
-                                                            ); ?>">
+            <div class="core-related-addons" data-core-id="<?php echo esc_attr($post_id); ?>">
               <?php foreach ($related_addons as $addon):
 
                 $addon_post = is_object($addon) ? $addon : get_post($addon);
@@ -125,63 +109,47 @@
                 $a_wear = get_post_meta($a_id, 'wear_time', true);
                 $a_desc = get_post_meta($a_id, 'description', true);
                 $a_altegio = get_post_meta($a_id, 'altegio_id', true);
-              ?>
+                ?>
                 <div class="service-item addon-item"
                   data-service-id="<?php echo esc_attr($a_id); ?>"
                   data-core-linked="<?php echo esc_attr($post_id); ?>">
 
                   <div class="service-info">
                     <div class="service-title">
-                      <h4 class="service-name"><?php echo esc_html(
-                                                  $a_title,
-                                                ); ?></h4>
+                      <h4 class="service-name"><?php echo esc_html($a_title); ?></h4>
                       <div class="service-checkbox-wrapper">
                         <div class="service-price"><?php echo esc_html(
-                                                      $a_price,
-                                                    ); ?> <?php echo esc_html($a_currency); ?></div>
+                          $a_price,
+                        ); ?> <?php echo esc_html($a_currency); ?></div>
                         <input type="checkbox"
                           class="service-checkbox"
                           data-service-id="<?php echo esc_attr($a_id); ?>"
-                          data-altegio-id="<?php echo esc_attr(
-                                              $a_altegio,
-                                            ); ?>"
-                          data-service-title="<?php echo esc_attr(
-                                                $a_title,
-                                              ); ?>"
-                          data-service-price="<?php echo esc_attr(
-                                                $a_price,
-                                              ); ?>"
-                          data-service-currency="<?php echo esc_attr(
-                                                    $a_currency,
-                                                  ); ?>"
+                          data-altegio-id="<?php echo esc_attr($a_altegio); ?>"
+                          data-service-title="<?php echo esc_attr($a_title); ?>"
+                          data-service-price="<?php echo esc_attr($a_price); ?>"
+                          data-service-currency="<?php echo esc_attr($a_currency); ?>"
                           data-is-addon="true"
-                          <?php if (
-                            $a_duration
-                          ): ?>data-service-duration="<?php echo esc_attr(
-                                                                                  $a_duration,
-                                                                                ); ?>" <?php endif; ?>
-                          <?php if (
-                            $a_wear
-                          ): ?>data-service-wear-time="<?php echo esc_attr(
-                                                                                    $a_wear,
-                                                                                  ); ?>" <?php endif; ?>>
+                          <?php if ($a_duration): ?>data-service-duration="<?php echo esc_attr(
+  $a_duration,
+); ?>" <?php endif; ?>
+                          <?php if ($a_wear): ?>data-service-wear-time="<?php echo esc_attr(
+  $a_wear,
+); ?>" <?php endif; ?>>
                       </div>
                     </div>
                     <?php if (
                       $a_duration
                     ): ?><div class="service-duration"><strong>Duration:</strong> <?php echo esc_html(
-                                                                                                        $a_duration,
-                                                                                                      ); ?> min</div><?php endif; ?>
+  $a_duration,
+); ?> min</div><?php endif; ?>
                     <?php if (
                       $a_wear
                     ): ?><div class="service-wear-time"><strong>Wear time:</strong> <?php echo esc_html(
-                                                                                                          $a_wear,
-                                                                                                        ); ?></div><?php endif; ?>
-                    <?php if (
-                      $a_desc
-                    ): ?><div class="service-description"><?php echo esc_html(
-                                                                                $a_desc,
-                                                                              ); ?></div><?php endif; ?>
+  $a_wear,
+); ?></div><?php endif; ?>
+                    <?php if ($a_desc): ?><div class="service-description"><?php echo esc_html(
+  $a_desc,
+); ?></div><?php endif; ?>
                   </div>
                 </div>
               <?php
