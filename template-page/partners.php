@@ -183,7 +183,7 @@ $benefits = get_field('benefit_item');
                 </div>
             <?php endforeach; ?>
         </div>
-        <button class="partners-show-more btn yellow" style="display:none;">Show more</button>
+        <button class="partners-show-more btn " style="display:none;">Show more</button>
 
 
         <?php foreach ($partners_arr as $partner): ?>
