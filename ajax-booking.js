@@ -1482,6 +1482,30 @@
     }
 
     if (step === 'datetime') {
+      // Auto-navigate calendar to the month of the selected slot or date
+      let targetMonth = null;
+      let targetYear = null;
+      if (bookingData.selectedPreviewSlot && bookingData.selectedPreviewSlot.dateText) {
+        // Try to extract date from dateText (e.g. '14 July, Monday')
+        const match = bookingData.selectedPreviewSlot.dateText.match(/(\d{1,2}) ([A-Za-z]+),/);
+        if (match) {
+          const day = match[1];
+          const monthName = match[2];
+          const monthIndex = getMonthIndex(monthName);
+          const year = new Date().getFullYear();
+          targetMonth = monthIndex;
+          targetYear = year;
+        }
+      } else if (bookingData.date) {
+        const dateObj = new Date(bookingData.date);
+        if (!isNaN(dateObj)) {
+          targetMonth = dateObj.getMonth();
+          targetYear = dateObj.getFullYear();
+        }
+      }
+      if (typeof generateCalendar === 'function') {
+        generateCalendar(targetMonth, targetYear);
+      }
       updateDateTimeNextButtonState();
     }
 
@@ -2299,16 +2323,15 @@
    * Generate calendar for date selection
    * This creates a month view calendar starting from current month
    */
-  function generateCalendar() {
+  function generateCalendar(targetMonth, targetYear) {
     const today = new Date();
-    const currentMonth = today.getMonth();
-    const currentYear = today.getFullYear();
+    let month = typeof targetMonth === 'number' ? targetMonth : today.getMonth();
+    let year = typeof targetYear === 'number' ? targetYear : today.getFullYear();
 
     let selectedDate = formatDate(today);
     let selectedTime = null;
     // If there is a saved slot selection, use it
     if (bookingData.selectedPreviewSlot && bookingData.selectedPreviewSlot.time) {
-      // Try to find date in YYYY-MM-DD format from slot
       const match =
         bookingData.selectedPreviewSlot.dateText &&
         bookingData.selectedPreviewSlot.dateText.match(/(\d{1,2}) ([A-Za-z]+),/);
@@ -2316,17 +2339,26 @@
         const day = match[1];
         const monthName = match[2];
         const monthIndex = getMonthIndex(monthName);
-        const year = currentYear; // Can be improved for cross-month navigation
-        selectedDate = `${year}-${String(monthIndex + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        const slotYear = year; // Use passed year or current year
+        selectedDate = `${slotYear}-${String(monthIndex + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
         selectedTime = bookingData.selectedPreviewSlot.time;
         bookingData.date = selectedDate;
         bookingData.time = selectedTime;
+        month = monthIndex;
+        year = slotYear;
+      }
+    } else if (bookingData.date) {
+      selectedDate = bookingData.date;
+      const dateObj = new Date(selectedDate);
+      if (!isNaN(dateObj)) {
+        month = dateObj.getMonth();
+        year = dateObj.getFullYear();
       }
     } else {
       bookingData.date = selectedDate;
     }
 
-    renderCalendar(currentMonth, currentYear);
+    renderCalendar(month, year);
 
     setTimeout(() => {
       $(`.calendar-day[data-date="${selectedDate}"]`).addClass('selected');
