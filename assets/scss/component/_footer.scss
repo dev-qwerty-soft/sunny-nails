@@ -2,7 +2,7 @@
   margin-top: auto;
   background: $bg-yellow;
   padding: 0 get-d(60px) get-d(15px) get-d(60px);
-  height: get-d($footer-height);
+  min-height: get-d($footer-height);
   display: flex;
   align-items: flex-end;
   & .container {
@@ -10,13 +10,14 @@
     // height: 100%;
     @include respond(md) {
       display: grid;
-      grid-template-columns: repeat(2, max-content);
+      // grid-template-columns: repeat(2, max-content);
       justify-content: space-between;
-      grid-gap: 38px;
+      grid-gap: 20px;
       align-items: center;
       & .icons {
         grid-column: 1 / 2;
         grid-row: 1 / 2;
+        justify-content: flex-start !important;
       }
       & .menu-footer-aside-container {
         grid-column: 2 / 3;
@@ -38,17 +39,22 @@
   }
 
   @include respond(lg) {
-    padding: 0 get-lg(60px) get-lg(15px) get-lg(60px);
-    height: get-lg($footer-height);
+    padding: get-lg(15px) get-lg(60px) get-lg(15px) get-lg(60px);
+    min-height: get-lg($footer-height);
   }
   @include respond(md) {
     padding: 25px 25px 25px;
-    height: fit-content;
+    min-height: fit-content;
   }
   &__top {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    @include respond(lg) {
+      flex-wrap: wrap;
+      gap: get-lg(20px);
+      justify-content: space-between;
+    }
     @include respond(md) {
       display: contents;
     }
@@ -140,6 +146,7 @@
 .icons {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   & a {
     display: inline-block;
     transition: transform 0.5s;

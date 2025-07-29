@@ -563,12 +563,11 @@
     border-radius: 50px;
     background: var(--yellow, #fdc41f);
     border: none;
-
     padding: get-d(10px);
     font-size: get-d(14px);
     font-weight: 500;
     cursor: pointer;
-    width: calc(100% - get-d(40px));
+    width: 100%;
     transition: background 0.2s;
     display: flex;
     align-items: center;

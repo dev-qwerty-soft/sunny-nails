@@ -61,25 +61,32 @@ if (empty($ordered_category_ids)) {
                   'terms' => $category->term_id,
                 ],
               ],
-              'meta_query' => [
-                [
-                  'key' => 'is_online',
-                  'value' => '1',
-                  'compare' => '=',
-                ],
-                [
-                  'key' => 'price_min',
-                  'compare' => 'EXISTS',
-                ],
+              'orderby' => [
+                'menu_order' => 'ASC',
+                'title' => 'ASC',
               ],
-              'orderby' => 'meta_value_num',
-              'meta_key' => 'price_min',
-              'order' => 'ASC',
             ]);
 
             if (empty($services)) {
               continue;
             }
+
+            // Custom sorting function
+            usort($services, function ($a, $b) {
+              $a_order = (int) $a->menu_order;
+              $b_order = (int) $b->menu_order;
+
+
+              if ($a_order > 0 && $b_order > 0) {
+                return $a_order - $b_order;
+              }
+
+              if ($a_order > 0) return -1;
+              if ($b_order > 0) return 1;
+
+
+              return strcasecmp($a->post_title, $b->post_title);
+            });
 
             $category_image = function_exists('get_field')
               ? get_field('image', 'service_category_' . $category->term_id)
