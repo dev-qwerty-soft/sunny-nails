@@ -1,14 +1,16 @@
 <footer class="footer">
   <div class="container">
     <div class="footer__top">
-      <?= logo('footer_logo') ?>
-      <?php if (has_nav_menu('footer-menu')) { ?>
-        <?php wp_nav_menu([
-          'theme_location' => 'footer-menu',
-          'depth' => 1,
-          'menu_class' => 'footer__menu',
-        ]); ?>
-      <?php } ?>
+      <div class="footer__logo">
+        <?= logo('footer_logo') ?>
+        <?php if (has_nav_menu('footer-menu')) { ?>
+          <?php wp_nav_menu([
+            'theme_location' => 'footer-menu',
+            'depth' => 1,
+            'menu_class' => 'footer__menu',
+          ]); ?>
+        <?php } ?>
+      </div>
       <div class="icons">
         <?php displayIcon(); ?>
       </div>
@@ -31,4 +33,5 @@
 </script>
 <?php wp_footer(); ?>
 </body>
+
 </html>

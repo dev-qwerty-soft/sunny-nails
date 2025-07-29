@@ -119,6 +119,9 @@ main {
 }
 .home main {
   padding: get-d($header-height) 0 0;
+  @include respond(md) {
+    padding: 72px 0 0;
+  }
 }
 body {
   &.page-template-sunny-friends,

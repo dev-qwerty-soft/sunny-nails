@@ -218,7 +218,7 @@
 
 .chat {
   position: fixed;
-  bottom: get-d(160px);
+  bottom: get-d(180px);
   right: get-d(60px);
   background: $bg-white;
   z-index: 100;
@@ -238,14 +238,14 @@
     transform: scale(1.1);
   }
   @include respond(lg) {
-    bottom: get-lg(160px);
+    bottom: get-lg(180px);
     right: get-lg(60px);
     font-size: get-lg(16px);
     gap: get-lg(4px);
     padding: get-lg(14px) get-lg(20px);
   }
   @include respond(md) {
-    bottom: 160px;
+    bottom: 180px;
     right: 30px;
     font-size: 14px;
     gap: 4px;
