@@ -217,83 +217,46 @@
 .staff-item input[type='radio']:checked ~ .radio-indicator::after {
   opacity: 1;
 }
+
 .nearest-seances {
   margin-top: 10px;
-  font-size: 15px;
-}
-.nearest-seances .slots-list {
-  margin-top: 6px;
-}
-.nearest-seances .slot {
-  display: inline-block;
-  background: #f8f5e9;
-  border-radius: 20px;
-  padding: 4px 18px;
-  margin-right: 8px;
-  margin-bottom: 4px;
-  font-weight: 500;
-}
-.nearest-seances {
-  margin-top: 12px;
-  padding: 8px 0;
-}
-
-.nearest-date {
-  font-size: 12px;
-  color: #666;
-  margin-bottom: 8px;
-  line-height: 1.3;
-}
-
-.nearest-date strong {
-  color: #333;
-  font-weight: 600;
-}
-
-.slots-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-}
-
-.slot {
-  background: #f5f5f5;
-  border: 1px solid #e0e0e0;
-  border-radius: 6px;
-  padding: 4px 8px;
-  font-size: 11px;
-  font-weight: 500;
-  color: #333;
-  white-space: nowrap;
-}
-
-.loading-slots {
-  font-size: 11px;
-  color: #999;
-  font-style: italic;
-}
-
-.no-slots {
-  font-size: 11px;
-  color: #999;
-}
-
-.error-slots {
-  font-size: 11px;
-  color: #e74c3c;
-}
-
-@media (max-width: 768px) {
-  .nearest-seances {
-    margin-top: 8px;
-  }
-
-  .nearest-date {
-    font-size: 11px;
+  .slots {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
   }
 
   .slot {
-    font-size: 10px;
-    padding: 3px 6px;
+    border-radius: 50px;
+    background: #f7f1e0;
+    padding: 10px 20px;
+    font-size: 14px;
+    color: #302f34;
+    font-weight: 500;
+    cursor: pointer;
+    transition:
+      background 0.2s,
+      border-color 0.2s,
+      color 0.2s;
+    &.active {
+      background: #fdc41f;
+      border-color: #fdc41f;
+      color: #302f34;
+    }
+  }
+  .slots {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .seance-date {
+    margin-bottom: 8px;
+    color: var(--black, #302f34);
+    font-family: 'Montserrat', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 120%; /* 16.8px */
+    letter-spacing: -0.42px;
   }
 }

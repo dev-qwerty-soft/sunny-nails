@@ -927,4 +927,10 @@ class AltegioClient
       'data' => $body,
     ];
   }
+
+  public function getNextSeances($staffId)
+  {
+    $url = "/book_staff_seances/{$this->company_id}/{$staffId}/";
+    return $this->request('GET', $url);
+  }
 }
