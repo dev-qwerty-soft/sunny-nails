@@ -901,7 +901,7 @@ class AltegioClient
     return self::request("book_services/{$companyId}", $params);
   }
 
-  // Пример метода для AltegioClient
+
   public static function getBookDates($company_id, $staff_id, $service_ids, $date_from, $date_to)
   {
     $url = "https://api.alteg.io/api/v1/book_dates/{$company_id}";
@@ -926,5 +926,11 @@ class AltegioClient
       'success' => isset($body['success']) ? $body['success'] : true,
       'data' => $body,
     ];
+  }
+
+  public function getNextSeances($staffId)
+  {
+    $url = "/book_staff_seances/{$this->company_id}/{$staffId}/";
+    return $this->request('GET', $url);
   }
 }

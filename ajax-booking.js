@@ -29,7 +29,7 @@
 
   // Configuration
   const config = {
-    debug: false, // Enable debug logging
+    debug: true, // Enable debug logging
     priceAdjustmentPerLevel: 10, // Price increase percentage per master level above 1
     apiEndpoint: booking_params.ajax_url, // API endpoint from localized WP
     nonce: booking_params.nonce, // Security nonce from WP
@@ -689,12 +689,20 @@
    * Initialize master selection handling
    */
   function initMasterHandling() {
-    $(document).on('click', '.staff-item', function () {
+    $(document).on('click', '.staff-item', function (e) {
+      if ($(e.target).closest('.slot').length) {
+        return;
+      }
+
       $('.staff-item').removeClass('selected');
       $(".staff-item input[type='radio']").prop('checked', false);
 
       $(this).addClass('selected');
       $(this).find("input[type='radio']").prop('checked', true);
+
+      $('.nearest-seances .slot').removeClass('active');
+      bookingData.selectedPreviewSlot = null;
+      bookingData.time = null;
 
       const staffId = $(this).data('staff-id');
       const staffName = $(this).find('.staff-name').text();
@@ -716,6 +724,24 @@
 
       bookingData.staffId = staffId;
       updateMasterNextButtonState();
+      $.ajax({
+        url: booking_params.ajax_url,
+        method: 'POST',
+        data: {
+          action: 'get_next_seances',
+          staff_id: staffId,
+          nonce: booking_params.nonce,
+        },
+        success: function (response) {
+          if (response.success && response.data && response.data.seance_date) {
+            bookingData.date = response.data.seance_date;
+
+            if ($('.booking-step[data-step="datetime"]').is('.active')) {
+              generateCalendar();
+            }
+          }
+        },
+      });
     });
 
     $(document).on('click', '.booking-step[data-step="master"] .next-btn', function () {
@@ -796,8 +822,6 @@
       navigateCalendar(1);
     });
 
-    // Додай у initDateTimeHandling() перед викликом loadTimeSlots(date):
-
     $(document).on('click', '.calendar-day:not(.disabled, .empty)', function () {
       const $day = $(this);
       const date = $day.data('date');
@@ -808,7 +832,6 @@
         return;
       }
 
-      // Показати лоадер у time-sections (або .calendar-slots, якщо треба)
       $('.time-sections').html('<div class="loading">Loading available time slots...</div>');
 
       // Proceed with normal date selection for available dates
@@ -964,7 +987,7 @@
 
   function applyAvailabilityResults(bookingDays) {
     // bookingDays: [{date: "2025-07-21", hasSlots: true}, ...]
-    // Створюємо мапу для швидкого пошуку
+
     const availableMap = {};
     bookingDays.forEach((obj) => {
       if (obj.hasSlots) availableMap[obj.date] = true;
@@ -1434,6 +1457,13 @@
         }
       }
 
+      setTimeout(function () {
+        $('.category-tab').removeClass('active');
+        $('.category-tab').first().addClass('active');
+        $('.category-services').hide();
+        $('.category-services').first().show();
+      }, 100);
+
       updateNextButtonState();
     }
 
@@ -1482,7 +1512,36 @@
     }
 
     if (step === 'datetime') {
+      // Auto-navigate calendar to the month of the selected slot or date
+      let targetMonth = null;
+      let targetYear = null;
+      if (bookingData.selectedPreviewSlot && bookingData.selectedPreviewSlot.dateText) {
+        // Try to extract date from dateText (e.g. '14 July, Monday')
+        const match = bookingData.selectedPreviewSlot.dateText.match(/(\d{1,2}) ([A-Za-z]+),/);
+        if (match) {
+          const day = match[1];
+          const monthName = match[2];
+          const monthIndex = getMonthIndex(monthName);
+          const year = new Date().getFullYear();
+          targetMonth = monthIndex;
+          targetYear = year;
+        }
+      } else if (bookingData.date) {
+        const dateObj = new Date(bookingData.date);
+        if (!isNaN(dateObj)) {
+          targetMonth = dateObj.getMonth();
+          targetYear = dateObj.getFullYear();
+        }
+      }
+      if (typeof generateCalendar === 'function') {
+        generateCalendar(targetMonth, targetYear);
+      }
       updateDateTimeNextButtonState();
+      if (bookingData.date && bookingData.staffId && bookingData.services.length > 0) {
+        setTimeout(function () {
+          loadTimeSlots(bookingData.date);
+        }, 100);
+      }
     }
 
     debug('Navigated to step', step);
@@ -1753,73 +1812,6 @@
   }
 
   /**
-   * Load services for a specific master with loading overlay and retry mechanism
-   * @param {string|number} masterId - Master ID to load services for
-   */
-  function loadServicesForMaster(masterId) {
-    $('.loading-overlay').show();
-    $('.services-list').html('<p class="loading-message">Loading services...</p>');
-
-    // Якщо вибрано All masters — підтягуємо всі сервіси (PHP-розмітка)
-    if (masterId === 'any') {
-      $.ajax({
-        url: booking_params.ajax_url,
-        method: 'POST',
-        data: {
-          action: 'get_services',
-          nonce: booking_params.nonce,
-        },
-        success: function (response) {
-          $('.loading-overlay').hide();
-          if (response.success && response.data && response.data.html) {
-            $('.services-list').html(response.data.html);
-            updateAddonAvailability && updateAddonAvailability();
-            updateNextButtonState && updateNextButtonState();
-          } else {
-            $('.services-list').html('<p class="no-items-message">No services available.</p>');
-          }
-        },
-        error: function () {
-          $('.loading-overlay').hide();
-          $('.services-list').html(
-            '<p class="no-items-message">Error loading services. Please try again.</p>',
-          );
-        },
-      });
-      return;
-    }
-
-    // Якщо вибрано конкретного майстра — підтягуємо тільки його сервіси
-    $.ajax({
-      url: booking_params.ajax_url,
-      method: 'POST',
-      data: {
-        action: 'get_filtered_services',
-        staff_id: masterId,
-        nonce: booking_params.nonce,
-      },
-      success: function (response) {
-        $('.loading-overlay').hide();
-        if (response.success && response.data && response.data.html) {
-          $('.services-list').html(response.data.html);
-          updateAddonAvailability && updateAddonAvailability();
-          updateNextButtonState && updateNextButtonState();
-        } else {
-          $('.services-list').html(
-            '<p class="no-items-message">No services available for this master.</p>',
-          );
-        }
-      },
-      error: function () {
-        $('.loading-overlay').hide();
-        $('.services-list').html(
-          '<p class="no-items-message">Error loading services. Please try again.</p>',
-        );
-      },
-    });
-  }
-
-  /**
    * Perform the actual services loading request with retry logic
    * @param {string|number} masterId - Master ID
    */
@@ -1899,7 +1891,6 @@
   function loadTimeSlotsForAllMasters(date) {
     const serviceIds = bookingData.services.map((s) => s.id);
 
-    // Показати preloader
     $('.time-preloader').show();
     $('.time-sections').html('<div class="loading">Loading available time slots...</div>');
 
@@ -1914,7 +1905,7 @@
         service_ids: serviceIds,
       },
       success: function (response) {
-        $('.time-preloader').hide(); // Сховати preloader після завантаження
+        $('.time-preloader').hide();
         if (response.success && response.data) {
           renderAllMastersSlots(response.data);
         } else {
@@ -1922,7 +1913,7 @@
         }
       },
       error: function (xhr, status, error) {
-        $('.time-preloader').hide(); // Сховати preloader при помилці
+        $('.time-preloader').hide();
         $('.calendar-slots').html('<div class="error">Error loading slots</div>');
         console.error('AJAX error:', error, xhr.responseText);
       },
@@ -2004,6 +1995,9 @@
 
   // Handle slot click for "All masters"
   $(document).on('click', '.time-sections .time-slot', function () {
+    if (bookingData.selectedPreviewSlot) {
+      bookingData.selectedPreviewSlot = null;
+    }
     if (bookingData.staffId === 'any') {
       const $slot = $(this);
       bookingData.staffId = $slot.data('staff-id');
@@ -2031,7 +2025,6 @@
    */
   function loadTimeSlots(date) {
     if (!bookingData.staffId || bookingData.services.length === 0) {
-      console.warn('Staff or service not selected');
       $('.time-sections').html(
         '<p class="error-message">Please select a staff and service first.</p>',
       );
@@ -2043,22 +2036,65 @@
       return;
     }
 
-    // Include ALL services (core services + addons) for time slot calculation
     const serviceIds = bookingData.services.map((s) => s.altegioId || s.id);
+    const currentStaffId = bookingData.staffId;
+    const currentServices = JSON.stringify(serviceIds);
+    const currentDate = date;
 
-    if (!serviceIds.length) {
-      $('.time-sections').html('<p class="error-message">Please select at least one service.</p>');
-      return;
-    }
-
-    // Show loading overlay
     $('.time-preloader').show();
     $('.time-sections').html('<p class="loading-message">Loading available time slots...</p>');
 
-    // Reset retry counter for new request
     timeSlotsRetryCount = 0;
 
-    performLoadTimeSlotsRequest(date, serviceIds);
+    $.ajax({
+      url: booking_params.ajax_url,
+      method: 'POST',
+      data: {
+        action: 'get_time_slots',
+        nonce: booking_params.nonce,
+        staff_id: currentStaffId,
+        date: currentDate,
+        service_ids: serviceIds,
+      },
+      success: function (response) {
+        $('.time-preloader').hide();
+
+        if (
+          bookingData.staffId !== currentStaffId ||
+          JSON.stringify(bookingData.services.map((s) => s.altegioId || s.id)) !==
+            currentServices ||
+          bookingData.date !== currentDate
+        ) {
+          return;
+        }
+
+        let slots = [];
+        if (response.success && response.data) {
+          if (Array.isArray(response.data)) {
+            slots = response.data;
+          } else if (Array.isArray(response.data.slots)) {
+            slots = response.data.slots;
+          } else if (response.data.data && Array.isArray(response.data.data)) {
+            slots = response.data.data;
+          }
+        }
+
+        if (slots.length > 0) {
+          renderTimeSlots(slots);
+          timeSlotsRetryCount = 0;
+        } else {
+          $('.time-sections').html(
+            '<p class="error-message">No available time slots for this day.</p>',
+          );
+        }
+      },
+      error: function (xhr, status, error) {
+        $('.time-preloader').hide();
+        $('.time-sections').html(
+          '<p class="error-message">Error loading time slots. Please try again later.</p>',
+        );
+      },
+    });
   }
 
   /**
@@ -2140,10 +2176,249 @@
     });
   }
 
-  /**
-   * Render staff list
-   * @param {Array} staffList - Array of staff objects from API
-   */
+  function fetchAndShowNextSeancesForMasters() {
+    $('.staff-item').each(function () {
+      const $staff = $(this);
+      const staffId = $staff.data('staff-id');
+      const $target = $staff.find('.nearest-seances');
+
+      if (!staffId || staffId === 'any') return;
+
+      $target.html('<div class="loading-slots">Loading...</div>');
+
+      $.ajax({
+        url: booking_params.ajax_url,
+        method: 'POST',
+        data: {
+          action: 'get_next_seances',
+          staff_id: staffId,
+          nonce: booking_params.nonce,
+        },
+        success: function (response) {
+          if (response.success && response.data && response.data.seances.length) {
+            const date = response.data.seance_date;
+            const formattedDate = formatDateDisplay(date);
+            const slotsHtml = response.data.seances
+
+              .map(
+                (s) =>
+                  `<div class="slot" data-time="${s.time}" data-duration="${s.duration || 30}">${s.time}</div>`,
+              )
+              .join('');
+
+            $target.html(`
+            <div class="seance-date">Nearest time slot for the appointment ${formattedDate}:</div>
+            <div class="slots">${slotsHtml}</div>
+          `);
+          } else {
+            $target.html('<div class="no-slots">No available slots</div>');
+          }
+        },
+        error: function () {
+          $target.html('<div class="no-slots">Error loading slots</div>');
+        },
+      });
+    });
+  }
+
+  function loadServicesForMaster(masterId) {
+    $('.loading-overlay').show();
+    $('.services-list').html('<p class="loading-message">Loading services...</p>');
+
+    if (masterId === 'any') {
+      $.ajax({
+        url: booking_params.ajax_url,
+        method: 'POST',
+        data: {
+          action: 'get_services',
+          nonce: booking_params.nonce,
+        },
+        success: function (response) {
+          $('.loading-overlay').hide();
+          if (response.success && response.data && response.data.html) {
+            $('.services-list').html(response.data.html);
+            if (typeof updateAddonAvailability === 'function') updateAddonAvailability();
+            if (typeof updateNextButtonState === 'function') updateNextButtonState();
+          } else {
+            $('.services-list').html('<p class="no-items-message">No services available.</p>');
+          }
+        },
+        error: function () {
+          $('.loading-overlay').hide();
+          $('.services-list').html(
+            '<p class="no-items-message">Error loading services. Please try again.</p>',
+          );
+        },
+      });
+      return;
+    }
+
+    if (bookingData.date) {
+      $.ajax({
+        url: booking_params.ajax_url,
+        method: 'POST',
+        data: {
+          action: 'get_time_slots',
+          nonce: booking_params.nonce,
+          staff_id: masterId,
+          date: bookingData.date,
+          service_ids: bookingData.services.map((s) => s.altegioId || s.id),
+        },
+        success: function (slotResp) {
+          let slots = [];
+          if (slotResp.success && slotResp.data) {
+            if (Array.isArray(slotResp.data)) {
+              slots = slotResp.data;
+            } else if (Array.isArray(slotResp.data.slots)) {
+              slots = slotResp.data.slots;
+            }
+          }
+          let filterByDuration = false;
+          let minSlotDuration = 0;
+          if (slots.length === 1) {
+            minSlotDuration = slots[0].seance_length ? Math.round(slots[0].seance_length / 60) : 30;
+            if (minSlotDuration <= 30) {
+              filterByDuration = true;
+            }
+          }
+          $.ajax({
+            url: booking_params.ajax_url,
+            method: 'POST',
+            data: {
+              action: 'get_filtered_services',
+              staff_id: masterId,
+              nonce: booking_params.nonce,
+            },
+            success: function (response) {
+              $('.loading-overlay').hide();
+              if (response.success && response.data && response.data.html) {
+                let $html = $('<div>' + response.data.html + '</div>');
+                if (filterByDuration && minSlotDuration > 0 && slots.length === 1) {
+                  $html.find('.service-item').each(function () {
+                    const duration =
+                      parseInt($(this).find('.service-checkbox').data('service-duration')) || 0;
+                    if (duration > minSlotDuration) {
+                      $(this).remove();
+                    }
+                  });
+                  $('.services-list').html($html.html());
+                  setTimeout(function () {
+                    $('.category-tab').removeClass('active');
+                    $('.category-tab[data-category-id="8"]').addClass('active');
+                    $('.category-services').hide();
+                    $('.category-services[data-category-id="8"]').show();
+                  }, 50);
+                } else {
+                  $('.services-list').html($html.html());
+                }
+
+                if (typeof updateAddonAvailability === 'function') updateAddonAvailability();
+                if (typeof updateNextButtonState === 'function') updateNextButtonState();
+              } else {
+                $('.services-list').html(
+                  '<p class="no-items-message">No services available for this master.</p>',
+                );
+              }
+            },
+            error: function () {
+              $('.loading-overlay').hide();
+              $('.services-list').html(
+                '<p class="no-items-message">Error loading services. Please try again.</p>',
+              );
+            },
+          });
+        },
+        error: function () {
+          $('.loading-overlay').hide();
+          $('.services-list').html(
+            '<p class="no-items-message">Error loading slots. Please try again.</p>',
+          );
+        },
+      });
+      return;
+    }
+
+    $.ajax({
+      url: booking_params.ajax_url,
+      method: 'POST',
+      data: {
+        action: 'get_filtered_services',
+        staff_id: masterId,
+        nonce: booking_params.nonce,
+      },
+      success: function (response) {
+        $('.loading-overlay').hide();
+        if (response.success && response.data && response.data.html) {
+          $('.services-list').html(response.data.html);
+          if (typeof updateAddonAvailability === 'function') updateAddonAvailability();
+          if (typeof updateNextButtonState === 'function') updateNextButtonState();
+        } else {
+          $('.services-list').html(
+            '<p class="no-items-message">No services available for this master.</p>',
+          );
+        }
+      },
+      error: function () {
+        $('.loading-overlay').hide();
+        $('.services-list').html(
+          '<p class="no-items-message">Error loading services. Please try again.</p>',
+        );
+      },
+    });
+  }
+
+  $(document).on('click', '.nearest-seances .slot', function (e) {
+    e.stopPropagation();
+    e.preventDefault();
+    $('.nearest-seances .slot').removeClass('active');
+    $(this).addClass('active');
+    const $staff = $(this).closest('.staff-item');
+
+    $('.staff-item').removeClass('selected');
+    $(".staff-item input[type='radio']").prop('checked', false);
+    $staff.addClass('selected');
+    $staff.find("input[type='radio']").prop('checked', true);
+
+    const staffId = $staff.data('staff-id');
+    const staffName = $staff.find('.staff-name').text();
+    const staffLevel = $staff.data('staff-level') || 1;
+    const staffAvatar = $staff.find('.staff-avatar img').attr('src') || '';
+    const time = $(this).data('time');
+    const dateText = $staff.find('.seance-date').text();
+    const minSlotDuration = $(this).data('duration') ? parseInt($(this).data('duration')) : 30;
+    let onlyOneSlot = false;
+    const $slots = $(this).parent().find('.slot');
+    if ($slots.length === 1) {
+      onlyOneSlot = true;
+    }
+
+    let date = '';
+    const match = dateText.match(/appointment\s+(\d{1,2}) ([A-Za-z]+),/);
+    if (match) {
+      const day = match[1];
+      const monthName = match[2];
+      const monthIndex = getMonthIndex(monthName);
+      const year = new Date().getFullYear();
+      date = `${year}-${String(monthIndex + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+    }
+
+    bookingData.selectedPreviewSlot = {
+      staffId: staffId,
+      time: time,
+      dateText: dateText,
+      minSlotDuration: minSlotDuration,
+      onlyOneSlot: onlyOneSlot,
+    };
+    bookingData.staffId = staffId;
+    bookingData.staffName = staffName;
+    bookingData.staffLevel = staffLevel;
+    bookingData.staffAvatar = staffAvatar;
+    bookingData.date = date;
+    bookingData.time = time;
+
+    return false;
+  });
+
   function renderStaff(staffList) {
     if (!staffList || staffList.length === 0) {
       $('.staff-list').html(
@@ -2153,8 +2428,8 @@
     }
 
     let html = '';
-    // --- ALWAYS show "Random master" at the top ---
     const isAnyMasterSelected = bookingData.staffId === 'any' || !bookingData.staffId;
+
     html += `
     <label class="staff-item any-master first${isAnyMasterSelected ? ' selected' : ''}" data-staff-id="any" data-staff-level="1">
       <input type="radio" name="staff"${isAnyMasterSelected ? ' checked' : ''}>
@@ -2170,7 +2445,6 @@
     </label>
   `;
 
-    // Render all available masters
     staffList.forEach(function (staff) {
       const isSelected = bookingData.staffId == staff.id ? ' selected' : '';
       const staffLevel = Number.isInteger(staff.level) ? staff.level : 1;
@@ -2185,39 +2459,45 @@
       }
 
       html += `
-        <label class="staff-item${isSelected}" data-staff-id="${staff.id}" data-staff-level="${staffLevel}">
-          <input type="radio" name="staff"${isSelected ? ' checked' : ''}>
-          <div class="staff-radio-content">
-            <div class="staff-avatar">
-              ${staff.avatar ? `<img src="${staff.avatar}" alt="${staff.name}">` : ''}
-            </div>
-            <div class="staff-info">
-              <h4 class="staff-name">${staff.name}</h4>
-              <div class="staff-specialization">
-               <div class="staff-stars">
-                      ${generateStarsHtml(staffLevel)}
-              </div>
-                ${levelTitle ? `<span class="studio-name">(${levelTitle})</span>` : ''}
-              </div>
-            </div>
-            ${priceModifier}
-            <span class="radio-indicator"></span>
+      <label class="staff-item${isSelected}" data-staff-id="${staff.id}" data-staff-level="${staffLevel}">
+        <input type="radio" name="staff"${isSelected ? ' checked' : ''}>
+        <div class="staff-radio-content">
+          <div class="staff-avatar">
+            ${staff.avatar ? `<img src="${staff.avatar}" alt="${staff.name}">` : ''}
           </div>
-        </label>
-      `;
+          <div class="staff-info">
+            <h4 class="staff-name">${staff.name}</h4>
+            <div class="staff-specialization">
+             <div class="staff-stars">
+                    ${generateStarsHtml(staffLevel)}
+            </div>
+              ${levelTitle ? `<span class="studio-name">(${levelTitle})</span>` : ''}
+            </div>
+            <div class="nearest-seances"></div>
+          </div>
+          ${priceModifier}
+          <span class="radio-indicator"></span>
+        </div>
+      </label>
+    `;
     });
 
     $('.staff-list').html(html);
-
-    // Update next button state
     updateMasterNextButtonState();
+
+    fetchAndShowNextSeancesForMasters();
   }
+
+  jQuery(document).ready(fetchAndShowNextSeancesForMasters);
 
   /**
    * Select a date
    * @param {string} date - Date in YYYY-MM-DD format
    */
   function selectDate(date) {
+    if (bookingData.selectedPreviewSlot) {
+      bookingData.selectedPreviewSlot = null;
+    }
     bookingData.date = date;
     debug('Date selected', date);
   }
@@ -2235,24 +2515,55 @@
    * Generate calendar for date selection
    * This creates a month view calendar starting from current month
    */
-  function generateCalendar() {
+  function generateCalendar(targetMonth, targetYear) {
     const today = new Date();
-    const currentMonth = today.getMonth();
-    const currentYear = today.getFullYear();
+    let month = typeof targetMonth === 'number' ? targetMonth : today.getMonth();
+    let year = typeof targetYear === 'number' ? targetYear : today.getFullYear();
 
-    const todayFormatted = formatDate(today);
+    let selectedDate = formatDate(today);
+    let selectedTime = null;
+    // If there is a saved slot selection, use it
+    if (bookingData.selectedPreviewSlot && bookingData.selectedPreviewSlot.time) {
+      const match =
+        bookingData.selectedPreviewSlot.dateText &&
+        bookingData.selectedPreviewSlot.dateText.match(/(\d{1,2}) ([A-Za-z]+),/);
+      if (match) {
+        const day = match[1];
+        const monthName = match[2];
+        const monthIndex = getMonthIndex(monthName);
+        const slotYear = year; // Use passed year or current year
+        selectedDate = `${slotYear}-${String(monthIndex + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        selectedTime = bookingData.selectedPreviewSlot.time;
+        bookingData.date = selectedDate;
+        bookingData.time = selectedTime;
+        month = monthIndex;
+        year = slotYear;
+      }
+    } else if (bookingData.date) {
+      selectedDate = bookingData.date;
+      const dateObj = new Date(selectedDate);
+      if (!isNaN(dateObj)) {
+        month = dateObj.getMonth();
+        year = dateObj.getFullYear();
+      }
+    } else {
+      bookingData.date = selectedDate;
+    }
 
-    bookingData.date = todayFormatted;
-
-    renderCalendar(currentMonth, currentYear);
+    renderCalendar(month, year);
 
     setTimeout(() => {
-      $(`.calendar-day[data-date="${todayFormatted}"]`).addClass('selected');
-
-      loadTimeSlots(todayFormatted);
+      $(`.calendar-day[data-date="${selectedDate}"]`).addClass('selected');
+      loadTimeSlots(selectedDate);
+      // After rendering slots, highlight the selected one
+      if (selectedTime) {
+        setTimeout(() => {
+          $(`.time-slot[data-time="${selectedTime}"]`).addClass('selected');
+        }, 100);
+      }
     }, 50);
 
-    debug('Calendar generated + today selected + time slots loaded', todayFormatted);
+    debug('Calendar generated + selected slot loaded', selectedDate, selectedTime);
   }
 
   /**
@@ -2396,496 +2707,6 @@
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const day = String(date.getDate()).padStart(2, '0');
     return year + '-' + month + '-' + day;
-  }
-
-  /**
-   * Load time slots for selected date and staff
-   * @param {string} date - Date in YYYY-MM-DD format
-   */
-
-  /**
-   * Load time slots for selected date and staff
-   * @param {string} date - Date in YYYY-MM-DD format
-   */
-  function loadTimeSlots(date) {
-    if (!bookingData.staffId || bookingData.services.length === 0) {
-      console.warn('Staff or service not selected');
-      $('.time-sections').html(
-        '<p class="error-message">Please select a staff and service first.</p>',
-      );
-      return;
-    }
-
-    if (!date) {
-      $('.time-sections').html('<p class="error-message">Please select a date.</p>');
-      return;
-    }
-
-    // Include ALL services (core services + addons) for time slot calculation
-    const serviceIds = bookingData.services.map((s) => s.altegioId || s.id);
-
-    if (!serviceIds.length) {
-      $('.time-sections').html('<p class="error-message">Please select at least one service.</p>');
-      return;
-    }
-
-    // Show loading overlay
-    $('.time-preloader').show();
-    $('.time-sections').html('<p class="loading-message">Loading available time slots...</p>');
-
-    // Reset retry counter for new request
-    timeSlotsRetryCount = 0;
-
-    performLoadTimeSlotsRequest(date, serviceIds);
-  }
-
-  /**
-   * Perform the actual time slots loading request with retry logic
-   * @param {string} date - Date in YYYY-MM-DD format
-   * @param {Array} serviceIds - Array of service IDs
-   */
-  function performLoadTimeSlotsRequest(date, serviceIds) {
-    $.ajax({
-      url: booking_params.ajax_url,
-      method: 'POST',
-      data: {
-        action: 'get_time_slots',
-        nonce: booking_params.nonce,
-        staff_id: bookingData.staffId,
-        date: date,
-        service_ids: serviceIds,
-      },
-      success: function (response) {
-        $('.time-preloader').hide();
-
-        if (response.success) {
-          let slots = [];
-
-          if (response.data && Array.isArray(response.data)) {
-            slots = response.data;
-          } else if (response.data && Array.isArray(response.data.slots)) {
-            slots = response.data.slots;
-          } else if (response.data && response.data.data && Array.isArray(response.data.data)) {
-            slots = response.data.data;
-          }
-
-          if (slots.length > 0) {
-            renderTimeSlots(slots);
-            timeSlotsRetryCount = 0;
-          } else {
-            $('.time-sections').html(
-              '<p class="error-message">No available time slots for this day.</p>',
-            );
-          }
-        } else {
-          if (timeSlotsRetryCount < MAX_TIMESLOTS_RETRIES) {
-            timeSlotsRetryCount++;
-            debug(
-              `Retrying time slots load attempt ${timeSlotsRetryCount}/${MAX_TIMESLOTS_RETRIES} - unsuccessful response`,
-            );
-            setTimeout(() => {
-              performLoadTimeSlotsRequest(date, serviceIds);
-            }, TIMESLOTS_RETRY_DELAY);
-          } else {
-            $('.time-sections').html(
-              '<p class="error-message">Error loading time slots. Please try again later.</p>',
-            );
-          }
-        }
-      },
-      error: function (xhr, status, error) {
-        console.error('Error loading time slots:', error, xhr.responseText);
-
-        if (timeSlotsRetryCount < MAX_TIMESLOTS_RETRIES) {
-          timeSlotsRetryCount++;
-          debug(
-            `Retrying time slots load attempt ${timeSlotsRetryCount}/${MAX_TIMESLOTS_RETRIES} after error`,
-          );
-          setTimeout(() => {
-            performLoadTimeSlotsRequest(date, serviceIds);
-          }, TIMESLOTS_RETRY_DELAY);
-        } else {
-          $('.time-preloader').hide();
-          $('.time-sections').html(
-            '<p class="error-message">Error loading time slots. Please try again later.</p>',
-          );
-        }
-      },
-    });
-  }
-
-  /**
-   * Render staff list
-   * @param {Array} staffList - Array of staff objects from API
-   */
-  function renderStaff(staffList) {
-    if (!staffList || staffList.length === 0) {
-      $('.staff-list').html(
-        '<p class="no-items-message">No specialists available for the selected services.</p>',
-      );
-      return;
-    }
-
-    let html = '';
-    // --- ALWAYS show "Random master" at the top ---
-    const isAnyMasterSelected = bookingData.staffId === 'any' || !bookingData.staffId;
-    html += `
-    <label class="staff-item any-master first${isAnyMasterSelected ? ' selected' : ''}" data-staff-id="any" data-staff-level="1">
-      <input type="radio" name="staff"${isAnyMasterSelected ? ' checked' : ''}>
-      <div class="staff-radio-content">
-        <div class="staff-avatar circle yellow-bg">
-          <img src="${themeUrl}/assets/svg/any-master.svg" alt="Random master">
-        </div>
-        <div class="staff-info">
-          <h4 class="staff-name">Random master</h4>
-        </div>
-        <span class="radio-indicator"></span>
-      </div>
-    </label>
-  `;
-
-    // Render all available masters
-    staffList.forEach(function (staff) {
-      const isSelected = bookingData.staffId == staff.id ? ' selected' : '';
-      const staffLevel = Number.isInteger(staff.level) ? staff.level : 1;
-      const levelTitle = levelTitles[staffLevel] || '';
-
-      let priceModifier = '';
-      const modifier = percentMap[staffLevel];
-
-      if (typeof modifier === 'number') {
-        const sign = modifier > 0 ? '+' : '';
-        priceModifier = `<div class="staff-price-modifier">${sign}${modifier}%    <span>to price</span></div>`;
-      }
-
-      html += `
-        <label class="staff-item${isSelected}" data-staff-id="${staff.id}" data-staff-level="${staffLevel}">
-          <input type="radio" name="staff"${isSelected ? ' checked' : ''}>
-          <div class="staff-radio-content">
-            <div class="staff-avatar">
-              ${staff.avatar ? `<img src="${staff.avatar}" alt="${staff.name}">` : ''}
-            </div>
-            <div class="staff-info">
-              <h4 class="staff-name">${staff.name}</h4>
-              <div class="staff-specialization">
-               <div class="staff-stars">
-                      ${generateStarsHtml(staffLevel)}
-              </div>
-                ${levelTitle ? `<span class="studio-name">(${levelTitle})</span>` : ''}
-              </div>
-            </div>
-            ${priceModifier}
-            <span class="radio-indicator"></span>
-          </div>
-        </label>
-      `;
-    });
-
-    $('.staff-list').html(html);
-
-    // Update next button state
-    updateMasterNextButtonState();
-  }
-
-  /**
-   * Select a date
-   * @param {string} date - Date in YYYY-MM-DD format
-   */
-  function selectDate(date) {
-    bookingData.date = date;
-    debug('Date selected', date);
-  }
-
-  /**
-   * Select a time
-   * @param {string} time - Time in HH:MM format
-   */
-  function selectTime(time) {
-    bookingData.time = time;
-    debug('Time selected', time);
-  }
-
-  /**
-   * Generate calendar for date selection
-   * This creates a month view calendar starting from current month
-   */
-  function generateCalendar() {
-    const today = new Date();
-    const currentMonth = today.getMonth();
-    const currentYear = today.getFullYear();
-
-    const todayFormatted = formatDate(today);
-
-    bookingData.date = todayFormatted;
-
-    renderCalendar(currentMonth, currentYear);
-
-    setTimeout(() => {
-      $(`.calendar-day[data-date="${todayFormatted}"]`).addClass('selected');
-
-      loadTimeSlots(todayFormatted);
-    }, 50);
-
-    debug('Calendar generated + today selected + time slots loaded', todayFormatted);
-  }
-
-  /**
-   * Navigate calendar to previous or next month
-   * @param {number} direction - Direction to navigate (-1 for prev, 1 for next)
-   */
-  function navigateCalendar(direction) {
-    const monthText = $('.month-header span').text();
-    const [month, year] = monthText.split(' ');
-
-    const monthIndex = getMonthIndex(month);
-    let newMonth = monthIndex + direction;
-    let newYear = parseInt(year, 10);
-
-    if (newMonth < 0) {
-      newMonth = 11;
-      newYear--;
-    } else if (newMonth > 11) {
-      newMonth = 0;
-      newYear++;
-    }
-
-    renderCalendar(newMonth, newYear);
-    debug('Calendar navigated to', { month: newMonth, year: newYear });
-  }
-
-  /**
-   * Get month index from name
-   * @param {string} monthName - Month name
-   * @returns {number} - Month index (0-11)
-   */
-  function getMonthIndex(monthName) {
-    const months = [
-      'January',
-      'February',
-      'March',
-      'April',
-      'May',
-      'June',
-      'July',
-      'August',
-      'September',
-      'October',
-      'November',
-      'December',
-    ];
-    return months.indexOf(monthName);
-  }
-
-  /**
-   * Render calendar for specified month and year
-   * @param {number} month - Month index (0-11)
-   * @param {number} year - Year
-   */
-  /**
-   * Render calendar for specified month and year
-   * @param {number} month - Month index (0-11)
-   * @param {number} year - Year
-   */
-  function renderCalendar(month, year) {
-    const firstDay = new Date(year, month, 1);
-    const lastDay = new Date(year, month + 1, 0);
-    const daysInMonth = lastDay.getDate();
-
-    let startDay = firstDay.getDay() - 1;
-    if (startDay < 0) startDay = 6;
-
-    const monthNames = [
-      'January',
-      'February',
-      'March',
-      'April',
-      'May',
-      'June',
-      'July',
-      'August',
-      'September',
-      'October',
-      'November',
-      'December',
-    ];
-    $('.month-header span').text(monthNames[month] + ' ' + year);
-
-    let html = '';
-
-    // Empty days at the beginning
-    for (let i = 0; i < startDay; i++) {
-      html += '<div class="calendar-day empty"></div>';
-    }
-
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-
-    // Render all days of the month
-    for (let i = 1; i <= daysInMonth; i++) {
-      const date = new Date(year, month, i);
-      const dateStr = formatDate(date);
-
-      const isToday = date.getTime() === today.getTime();
-      const isPast = date < today;
-
-      let classes = 'calendar-day';
-      if (isToday) classes += ' today';
-      if (isPast) classes += ' disabled';
-
-      if (bookingData.date === dateStr && !isPast) {
-        classes += ' selected';
-      }
-
-      html += `<div class="${classes}" data-date="${dateStr}">${i}</div>`;
-    }
-
-    $('.calendar-grid').html(html);
-
-    // Check availability for all days in this month (if we have staff and services selected)
-    if (bookingData.staffId && bookingData.services.length > 0) {
-      // Small delay to ensure DOM is updated
-      setTimeout(() => {
-        checkDayAvailability(month, year);
-      }, 100);
-    }
-
-    // Load time slots for currently selected date if it's in this month
-    if (bookingData.date) {
-      const currentMonth = new Date(bookingData.date).getMonth();
-      const currentYear = new Date(bookingData.date).getFullYear();
-
-      if (currentMonth === month && currentYear === year) {
-        loadTimeSlots(bookingData.date);
-      }
-    }
-  }
-
-  /**
-   * Format date as YYYY-MM-DD
-   * @param {Date} date - Date object
-   * @returns {string} - Formatted date
-   */
-  function formatDate(date) {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    return year + '-' + month + '-' + day;
-  }
-
-  /**
-   * Load time slots for selected date and staff
-   * @param {string} date - Date in YYYY-MM-DD format
-   */
-
-  /**
-   * Load time slots for selected date and staff
-   * @param {string} date - Date in YYYY-MM-DD format
-   */
-  function loadTimeSlots(date) {
-    if (!bookingData.staffId || bookingData.services.length === 0) {
-      console.warn('Staff or service not selected');
-      $('.time-sections').html(
-        '<p class="error-message">Please select a staff and service first.</p>',
-      );
-      return;
-    }
-
-    if (!date) {
-      $('.time-sections').html('<p class="error-message">Please select a date.</p>');
-      return;
-    }
-
-    // Include ALL services (core services + addons) for time slot calculation
-    const serviceIds = bookingData.services.map((s) => s.altegioId || s.id);
-
-    if (!serviceIds.length) {
-      $('.time-sections').html('<p class="error-message">Please select at least one service.</p>');
-      return;
-    }
-
-    // Show loading overlay
-    $('.time-preloader').show();
-    $('.time-sections').html('<p class="loading-message">Loading available time slots...</p>');
-
-    // Reset retry counter for new request
-    timeSlotsRetryCount = 0;
-
-    performLoadTimeSlotsRequest(date, serviceIds);
-  }
-
-  /**
-   * Perform the actual time slots loading request with retry logic
-   * @param {string} date - Date in YYYY-MM-DD format
-   * @param {Array} serviceIds - Array of service IDs
-   */
-  function performLoadTimeSlotsRequest(date, serviceIds) {
-    $.ajax({
-      url: booking_params.ajax_url,
-      method: 'POST',
-      data: {
-        action: 'get_time_slots',
-        nonce: booking_params.nonce,
-        staff_id: bookingData.staffId,
-        date: date,
-        service_ids: serviceIds,
-      },
-      success: function (response) {
-        $('.time-preloader').hide();
-
-        if (response.success) {
-          let slots = [];
-
-          if (response.data && Array.isArray(response.data)) {
-            slots = response.data;
-          } else if (response.data && Array.isArray(response.data.slots)) {
-            slots = response.data.slots;
-          } else if (response.data && response.data.data && Array.isArray(response.data.data)) {
-            slots = response.data.data;
-          }
-
-          if (slots.length > 0) {
-            renderTimeSlots(slots);
-            timeSlotsRetryCount = 0;
-          } else {
-            $('.time-sections').html(
-              '<p class="error-message">No available time slots for this day.</p>',
-            );
-          }
-        } else {
-          if (timeSlotsRetryCount < MAX_TIMESLOTS_RETRIES) {
-            timeSlotsRetryCount++;
-            debug(
-              `Retrying time slots load attempt ${timeSlotsRetryCount}/${MAX_TIMESLOTS_RETRIES} - unsuccessful response`,
-            );
-            setTimeout(() => {
-              performLoadTimeSlotsRequest(date, serviceIds);
-            }, TIMESLOTS_RETRY_DELAY);
-          } else {
-            $('.time-sections').html(
-              '<p class="error-message">Error loading time slots. Please try again later.</p>',
-            );
-          }
-        }
-      },
-      error: function (xhr, status, error) {
-        console.error('Error loading time slots:', error, xhr.responseText);
-
-        if (timeSlotsRetryCount < MAX_TIMESLOTS_RETRIES) {
-          timeSlotsRetryCount++;
-          debug(
-            `Retrying time slots load attempt ${timeSlotsRetryCount}/${MAX_TIMESLOTS_RETRIES} after error`,
-          );
-          setTimeout(() => {
-            performLoadTimeSlotsRequest(date, serviceIds);
-          }, TIMESLOTS_RETRY_DELAY);
-        } else {
-          $('.time-preloader').hide();
-          $('.time-sections').html(
-            '<p class="error-message">Error loading time slots. Please try again later.</p>',
-          );
-        }
-      },
-    });
   }
 
   /**
@@ -3120,7 +2941,7 @@
     let serviceHTML = '';
     let addonHTML = '';
     let basePrice = 0;
-    let masterMarkupAmount = 0; // Змінено: тільки для розрахунку націнки майстра
+    let masterMarkupAmount = 0;
 
     let percent = percentMap[bookingData.staffLevel];
     if (typeof percent === 'undefined') {
@@ -3130,12 +2951,10 @@
       percent = -50;
     }
 
-    // Core services - показуємо базову ціну, розраховуємо націнку окремо
     bookingData.coreServices.forEach((service) => {
       let price = parseFloat(service.price) || 0;
       basePrice += price;
 
-      // Розраховуємо націнку тільки для відображення в Master category
       let serviceMarkup = price * (percent / 100);
       masterMarkupAmount += serviceMarkup;
 
@@ -3159,13 +2978,10 @@
       serviceHTML += itemHTML;
     });
 
-    // Add-ons - показуємо базову ціну, БЕЗ націнки
     if (bookingData.addons && bookingData.addons.length > 0) {
       bookingData.addons.forEach((addon) => {
         let price = parseFloat(addon.price) || 0;
         basePrice += price;
-
-        // БЕЗ націнки для add-on'ів
 
         const addonItemHTML = `
                 <div class="summary-service-item addon-service">
@@ -3193,14 +3009,11 @@
       addonsList.empty().hide();
     }
 
-    // Показуємо націнку майстра окремо
     masterPercent.text(`${percent > 0 ? '+' : ''}${percent}`);
     masterBonusEl.text(`${masterMarkupAmount.toFixed(2)} SGD`);
 
-    // Розраховуємо загальну суму: базова ціна + націнка майстра
     let adjustedTotal = basePrice + masterMarkupAmount;
 
-    // Застосовуємо знижку купону якщо є
     let discountAmount = 0;
     if (bookingData.coupon && bookingData.coupon.value > 0) {
       const discountPercent = bookingData.coupon.value;
@@ -3411,21 +3224,6 @@ ${couponInfo}Note: Master markup applied only to core services, not to Add-on se
     return parseFloat(total.toFixed(2));
   }
 
-  /**
-   * Calculate price adjustment based on master level
-   * @param {number} basePrice - Base price
-   * @param {number} staffLevel - Staff level
-   * @returns {number} Price adjustment amount
-   */
-  function calculatePriceAdjustment(basePrice, staffLevel) {
-    if (staffLevel <= 1) {
-      return 0;
-    }
-
-    const adjustmentPercent = (staffLevel - 1) * config.priceAdjustmentPerLevel;
-    const adjustment = basePrice * (adjustmentPercent / 100);
-    return parseFloat(adjustment.toFixed(2));
-  }
   /**
    * Handle successful booking response
    * @param {Object} data - Response data

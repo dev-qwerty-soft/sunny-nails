@@ -53,20 +53,20 @@ $benefits = get_field('benefit_item');
                             <div class="partners-hero__icon">
                                 <?php if (!empty($item['icon']['url'])): ?>
                                     <img src="<?= esc_url(
-                                      $item['icon']['url'],
-                                    ) ?>" alt="<?= esc_attr($item['icon']['alt'] ?? '') ?>">
+                                                    $item['icon']['url'],
+                                                ) ?>" alt="<?= esc_attr($item['icon']['alt'] ?? '') ?>">
                                 <?php endif; ?>
                             </div>
                             <div class="partners-hero__benefit-text">
                                 <?php if (!empty($item['title'])): ?>
                                     <div class="partners-hero__benefit-title"><?= esc_html(
-                                      $item['title'],
-                                    ) ?></div>
+                                                                                    $item['title'],
+                                                                                ) ?></div>
                                 <?php endif; ?>
                                 <?php if (!empty($item['description'])): ?>
                                     <div class="partners-hero__benefit-desc"><?= esc_html(
-                                      $item['description'],
-                                    ) ?></div>
+                                                                                    $item['description'],
+                                                                                ) ?></div>
                                 <?php endif; ?>
                             </div>
                         </div>
@@ -78,8 +78,8 @@ $benefits = get_field('benefit_item');
         <?php if ($hero_image): ?>
             <div class="partners-hero__image">
                 <img src="<?= esc_url($hero_image['url']) ?>" alt="<?= esc_attr(
-  $hero_image['alt'],
-) ?>">
+                                                                        $hero_image['alt'],
+                                                                    ) ?>">
             </div>
         <?php endif; ?>
     </section>
@@ -90,19 +90,19 @@ $benefits = get_field('benefit_item');
                 <?php
                 $image = get_field('partner_program_image');
                 if ($image) {
-                  echo '<img src="' .
-                    esc_url($image['url']) .
-                    '" alt="' .
-                    esc_attr($image['alt']) .
-                    '">';
+                    echo '<img src="' .
+                        esc_url($image['url']) .
+                        '" alt="' .
+                        esc_attr($image['alt']) .
+                        '">';
                 }
                 ?>
             </div>
             <div class="partner-program__content">
                 <h2 class="partner-program__title"><?php the_field('partner_program_title'); ?></h2>
                 <div class="partner-program__desc"><?php the_field(
-                  'partner_program_description',
-                ); ?></div>
+                                                        'partner_program_description',
+                                                    ); ?></div>
             </div>
         </div>
     </section>
@@ -120,52 +120,54 @@ $benefits = get_field('benefit_item');
         </div>
         <?php
         $partners = get_posts([
-          'post_type' => 'partner',
-          'posts_per_page' => -1,
-          'orderby' => 'menu_order',
-          'order' => 'ASC',
+            'post_type' => 'partner',
+            'posts_per_page' => -1,
+            'orderby' => 'menu_order',
+            'order' => 'ASC',
         ]);
         $cats = get_terms(['taxonomy' => 'partner_cat', 'hide_empty' => false]);
 
         $partners_arr = [];
         foreach ($partners as $post) {
-          $image = get_field('partner_image', $post->ID);
-          $benefit_icon = get_field('partner_benefit', $post->ID);
-          $benefit_title = get_field('partner_benefit_title', $post->ID);
-          $benefit_desc = get_field('partner_benefit_description', $post->ID);
-          $partner_cats = wp_get_post_terms($post->ID, 'partner_cat', ['fields' => 'slugs']);
-          $link = get_field('partners_link', $post->ID);
-          $button_text = get_field('partner_button_text', $post->ID) ?: 'View details';
-          $desc = get_field('partner_description', $post->ID);
-          $partners_arr[] = [
-            'ID' => $post->ID,
-            'title' => get_the_title($post),
-            'desc' => $desc,
-            'cats' => $partner_cats,
-            'image' => $image,
-            'featured' => get_the_post_thumbnail_url($post->ID, 'large'),
-            'benefit_icon' => $benefit_icon,
-            'benefit_title' => $benefit_title,
-            'benefit_desc' => $benefit_desc,
-            'link' => $link,
-            'button_text' => $button_text,
-          ];
+            $image = get_field('partner_image', $post->ID);
+            $benefit_icon = get_field('partner_benefit', $post->ID);
+            $benefit_title = get_field('partner_benefit_title', $post->ID);
+            $benefit_desc = get_field('partner_benefit_description', $post->ID);
+            $partner_cats = wp_get_post_terms($post->ID, 'partner_cat', ['fields' => 'slugs']);
+            $partners_link_card = get_field('partners_link_card', $post->ID);
+            $partners_link_popup = get_field('partners_link_popup', $post->ID);
+            $button_text = get_field('partner_button_text', $post->ID) ?: 'View details';
+            $desc = get_field('partner_description', $post->ID);
+            $partners_arr[] = [
+                'ID' => $post->ID,
+                'title' => get_the_title($post),
+                'desc' => $desc,
+                'cats' => $partner_cats,
+                'image' => $image,
+                'featured' => get_the_post_thumbnail_url($post->ID, 'large'),
+                'benefit_icon' => $benefit_icon,
+                'benefit_title' => $benefit_title,
+                'benefit_desc' => $benefit_desc,
+                'link' => $partners_link_card,
+                'link_popup' => $partners_link_popup,
+                'button_text' => $button_text,
+            ];
         }
         ?>
         <div class="partners-filter">
             <button class="partners-filter__btn active" data-cat="all">All</button>
             <?php foreach ($cats as $cat): ?>
                 <button class="partners-filter__btn" data-cat="<?= esc_attr(
-                  $cat->slug,
-                ) ?>"><?= esc_html($cat->name) ?></button>
+                                                                    $cat->slug,
+                                                                ) ?>"><?= esc_html($cat->name) ?></button>
             <?php endforeach; ?>
         </div>
 
         <div class="partners-list">
             <?php foreach ($partners_arr as $partner): ?>
                 <div class="partner-card" data-cats="<?= esc_attr(
-                  implode(' ', $partner['cats']),
-                ) ?>">
+                                                            implode(' ', $partner['cats']),
+                                                        ) ?>">
                     <div class="partner-card__img">
                         <?php if ($partner['featured']): ?>
                             <img src="<?= esc_url($partner['featured']) ?>" alt="">
@@ -175,17 +177,17 @@ $benefits = get_field('benefit_item');
                         <div class="partner-card__title"><?= esc_html($partner['title']) ?></div>
 
                         <div class="partner-card__desc clamp-3"><?= esc_html(
-                          wp_strip_all_tags($partner['desc']),
-                        ) ?></div>
+                                                                    wp_strip_all_tags($partner['desc']),
+                                                                ) ?></div>
                         <?php if ($partner['benefit_icon'] || $partner['benefit_title']): ?>
                             <div class="partner-card__benefit">
                                 <div class="partner-card__benefit-icon">
                                     <?php if ($partner['benefit_icon']): ?>
                                         <img src="<?= esc_url(
-                                          $partner['benefit_icon']['url'],
-                                        ) ?>" alt="<?= esc_attr(
-  $partner['benefit_icon']['alt'],
-) ?>">
+                                                        $partner['benefit_icon']['url'],
+                                                    ) ?>" alt="<?= esc_attr(
+                                                                    $partner['benefit_icon']['alt'],
+                                                                ) ?>">
                                     <?php endif; ?>
                                 </div>
                                 <?php if ($partner['benefit_title']): ?>
@@ -194,13 +196,11 @@ $benefits = get_field('benefit_item');
                             </div>
                         <?php endif; ?>
                         <div class="partner-card__btns">
-                            <button class="partner-card__btn yellow" data-popup="<?= $partner[
-                              'ID'
-                            ] ?>"><?= esc_html($partner['button_text']) ?></button>
+                            <button class="partner-card__btn yellow" data-popup="<?= $partner['ID'] ?>"><?= esc_html($partner['button_text']) ?></button>
                             <?php if ($partner['link']): ?>
                                 <a href="<?= esc_url(
-                                  $partner['link'],
-                                ) ?>" target="_blank" class="partner-card__btn white"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                                $partner['link'],
+                                            ) ?>" target="_blank" class="partner-card__btn white"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
                                         <path d="M14.4273 13.5271L14.5293 5.47019L6.47239 5.57218M13.9627 6.03678L5.69049 14.309" stroke="#85754F" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
                                     </svg></a>
                             <?php endif; ?>
@@ -213,9 +213,7 @@ $benefits = get_field('benefit_item');
 
 
         <?php foreach ($partners_arr as $partner): ?>
-            <div class="partner-popup-backdrop" id="partner-popup-<?= $partner[
-              'ID'
-            ] ?>" style="display:none;">
+            <div class="partner-popup-backdrop" id="partner-popup-<?= $partner['ID'] ?>" style="display:none;">
                 <div class="partner-popup">
                     <div class="partner-popup__title mob"><?= esc_html($partner['title']) ?></div>
                     <div class="partner-popup__img">
@@ -231,28 +229,24 @@ $benefits = get_field('benefit_item');
                                 <div class="partner-card__benefit">
                                     <?php if ($partner['benefit_icon']): ?>
                                         <div class="partner-popup__benefit-icon"><img src="<?= esc_url(
-                                          $partner['benefit_icon']['url'],
-                                        ) ?>" alt="<?= esc_attr(
-  $partner['benefit_icon']['alt'],
-) ?>"></div>
+                                                                                                $partner['benefit_icon']['url'],
+                                                                                            ) ?>" alt="<?= esc_attr(
+                                                                                                            $partner['benefit_icon']['alt'],
+                                                                                                        ) ?>"></div>
                                     <?php endif; ?>
                                     <?php if ($partner['benefit_title']): ?>
-                                        <div class="partner-popup__benefit-title"><?= $partner[
-                                          'benefit_title'
-                                        ] ?></div>
+                                        <div class="partner-popup__benefit-title"><?= $partner['benefit_title'] ?></div>
                                     <?php endif; ?>
                                 </div>
                                 <?php if ($partner['benefit_desc']): ?>
-                                    <div class="partner-popup__benefit-desc"><?= $partner[
-                                      'benefit_desc'
-                                    ] ?></div>
+                                    <div class="partner-popup__benefit-desc"><?= $partner['benefit_desc'] ?></div>
                                 <?php endif; ?>
                             </div>
                         <?php endif; ?>
-                        <?php if ($partner['link']): ?>
+                        <?php if ($partner['link_popup']): ?>
                             <a href="<?= esc_url(
-                              $partner['link'],
-                            ) ?>" target="_blank" class="partner-popup__link">Visit the partner’s website</a>
+                                            $partner['link_popup'],
+                                        ) ?>" target="_blank" class="partner-popup__link">Visit the partner’s website</a>
                         <?php endif; ?>
                     </div>
                     <button class="partner-popup__close" type="button"><svg xmlns="http://www.w3.org/2000/svg" width="29" height="29" viewBox="0 0 29 29" fill="none">
