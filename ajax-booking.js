@@ -1777,73 +1777,6 @@
   }
 
   /**
-   * Load services for a specific master with loading overlay and retry mechanism
-   * @param {string|number} masterId - Master ID to load services for
-   */
-  function loadServicesForMaster(masterId) {
-    $('.loading-overlay').show();
-    $('.services-list').html('<p class="loading-message">Loading services...</p>');
-
-    // Якщо вибрано All masters — підтягуємо всі сервіси (PHP-розмітка)
-    if (masterId === 'any') {
-      $.ajax({
-        url: booking_params.ajax_url,
-        method: 'POST',
-        data: {
-          action: 'get_services',
-          nonce: booking_params.nonce,
-        },
-        success: function (response) {
-          $('.loading-overlay').hide();
-          if (response.success && response.data && response.data.html) {
-            $('.services-list').html(response.data.html);
-            updateAddonAvailability && updateAddonAvailability();
-            updateNextButtonState && updateNextButtonState();
-          } else {
-            $('.services-list').html('<p class="no-items-message">No services available.</p>');
-          }
-        },
-        error: function () {
-          $('.loading-overlay').hide();
-          $('.services-list').html(
-            '<p class="no-items-message">Error loading services. Please try again.</p>',
-          );
-        },
-      });
-      return;
-    }
-
-    // Якщо вибрано конкретного майстра — підтягуємо тільки його сервіси
-    $.ajax({
-      url: booking_params.ajax_url,
-      method: 'POST',
-      data: {
-        action: 'get_filtered_services',
-        staff_id: masterId,
-        nonce: booking_params.nonce,
-      },
-      success: function (response) {
-        $('.loading-overlay').hide();
-        if (response.success && response.data && response.data.html) {
-          $('.services-list').html(response.data.html);
-          updateAddonAvailability && updateAddonAvailability();
-          updateNextButtonState && updateNextButtonState();
-        } else {
-          $('.services-list').html(
-            '<p class="no-items-message">No services available for this master.</p>',
-          );
-        }
-      },
-      error: function () {
-        $('.loading-overlay').hide();
-        $('.services-list').html(
-          '<p class="no-items-message">Error loading services. Please try again.</p>',
-        );
-      },
-    });
-  }
-
-  /**
    * Perform the actual services loading request with retry logic
    * @param {string|number} masterId - Master ID
    */
@@ -2059,7 +1992,6 @@
    */
   function loadTimeSlots(date) {
     if (!bookingData.staffId || bookingData.services.length === 0) {
-      console.warn('Staff or service not selected');
       $('.time-sections').html(
         '<p class="error-message">Please select a staff and service first.</p>',
       );
@@ -2071,22 +2003,65 @@
       return;
     }
 
-    // Include ALL services (core services + addons) for time slot calculation
     const serviceIds = bookingData.services.map((s) => s.altegioId || s.id);
+    const currentStaffId = bookingData.staffId;
+    const currentServices = JSON.stringify(serviceIds);
+    const currentDate = date;
 
-    if (!serviceIds.length) {
-      $('.time-sections').html('<p class="error-message">Please select at least one service.</p>');
-      return;
-    }
-
-    // Show loading overlay
     $('.time-preloader').show();
     $('.time-sections').html('<p class="loading-message">Loading available time slots...</p>');
 
-    // Reset retry counter for new request
     timeSlotsRetryCount = 0;
 
-    performLoadTimeSlotsRequest(date, serviceIds);
+    $.ajax({
+      url: booking_params.ajax_url,
+      method: 'POST',
+      data: {
+        action: 'get_time_slots',
+        nonce: booking_params.nonce,
+        staff_id: currentStaffId,
+        date: currentDate,
+        service_ids: serviceIds,
+      },
+      success: function (response) {
+        $('.time-preloader').hide();
+
+        if (
+          bookingData.staffId !== currentStaffId ||
+          JSON.stringify(bookingData.services.map((s) => s.altegioId || s.id)) !==
+            currentServices ||
+          bookingData.date !== currentDate
+        ) {
+          return;
+        }
+
+        let slots = [];
+        if (response.success && response.data) {
+          if (Array.isArray(response.data)) {
+            slots = response.data;
+          } else if (Array.isArray(response.data.slots)) {
+            slots = response.data.slots;
+          } else if (response.data.data && Array.isArray(response.data.data)) {
+            slots = response.data.data;
+          }
+        }
+
+        if (slots.length > 0) {
+          renderTimeSlots(slots);
+          timeSlotsRetryCount = 0;
+        } else {
+          $('.time-sections').html(
+            '<p class="error-message">No available time slots for this day.</p>',
+          );
+        }
+      },
+      error: function (xhr, status, error) {
+        $('.time-preloader').hide();
+        $('.time-sections').html(
+          '<p class="error-message">Error loading time slots. Please try again later.</p>',
+        );
+      },
+    });
   }
 
   /**
@@ -2167,6 +2142,7 @@
       },
     });
   }
+
   function fetchAndShowNextSeancesForMasters() {
     $('.staff-item').each(function () {
       const $staff = $(this);
@@ -2190,14 +2166,17 @@
             const date = response.data.seance_date;
             const formattedDate = formatDateDisplay(date);
             const slotsHtml = response.data.seances
-              .slice(0, 3)
-              .map((s) => `<div class=\"slot\" data-time=\"${s.time}\">${s.time}</div>`)
+
+              .map(
+                (s) =>
+                  `<div class="slot" data-time="${s.time}" data-duration="${s.duration || 30}">${s.time}</div>`,
+              )
               .join('');
 
             $target.html(`
-              <div class=\"seance-date\">Nearest time slot for the appointment ${formattedDate}:</div>
-              <div class=\"slots\">${slotsHtml}</div>
-            `);
+            <div class="seance-date">Nearest time slot for the appointment ${formattedDate}:</div>
+            <div class="slots">${slotsHtml}</div>
+          `);
           } else {
             $target.html('<div class="no-slots">No available slots</div>');
           }
@@ -2208,21 +2187,194 @@
       });
     });
   }
+
+  function loadServicesForMaster(masterId) {
+    $('.loading-overlay').show();
+    $('.services-list').html('<p class="loading-message">Loading services...</p>');
+
+    if (masterId === 'any') {
+      $.ajax({
+        url: booking_params.ajax_url,
+        method: 'POST',
+        data: {
+          action: 'get_services',
+          nonce: booking_params.nonce,
+        },
+        success: function (response) {
+          $('.loading-overlay').hide();
+          if (response.success && response.data && response.data.html) {
+            $('.services-list').html(response.data.html);
+            if (typeof updateAddonAvailability === 'function') updateAddonAvailability();
+            if (typeof updateNextButtonState === 'function') updateNextButtonState();
+          } else {
+            $('.services-list').html('<p class="no-items-message">No services available.</p>');
+          }
+        },
+        error: function () {
+          $('.loading-overlay').hide();
+          $('.services-list').html(
+            '<p class="no-items-message">Error loading services. Please try again.</p>',
+          );
+        },
+      });
+      return;
+    }
+
+    if (bookingData.date) {
+      $.ajax({
+        url: booking_params.ajax_url,
+        method: 'POST',
+        data: {
+          action: 'get_time_slots',
+          nonce: booking_params.nonce,
+          staff_id: masterId,
+          date: bookingData.date,
+          service_ids: bookingData.services.map((s) => s.altegioId || s.id),
+        },
+        success: function (slotResp) {
+          let slots = [];
+          if (slotResp.success && slotResp.data) {
+            if (Array.isArray(slotResp.data)) {
+              slots = slotResp.data;
+            } else if (Array.isArray(slotResp.data.slots)) {
+              slots = slotResp.data.slots;
+            }
+          }
+          let filterByDuration = false;
+          let minSlotDuration = 0;
+          if (slots.length === 1) {
+            minSlotDuration = slots[0].seance_length ? Math.round(slots[0].seance_length / 60) : 30;
+            if (minSlotDuration <= 30) {
+              filterByDuration = true;
+            }
+          }
+          $.ajax({
+            url: booking_params.ajax_url,
+            method: 'POST',
+            data: {
+              action: 'get_filtered_services',
+              staff_id: masterId,
+              nonce: booking_params.nonce,
+            },
+            success: function (response) {
+              $('.loading-overlay').hide();
+              if (response.success && response.data && response.data.html) {
+                let $html = $('<div>' + response.data.html + '</div>');
+                if (filterByDuration && minSlotDuration > 0 && slots.length === 1) {
+                  $html.find('.service-item').each(function () {
+                    const duration =
+                      parseInt($(this).find('.service-checkbox').data('service-duration')) || 0;
+                    if (duration > minSlotDuration) {
+                      $(this).remove();
+                    }
+                  });
+                  $('.services-list').html($html.html());
+                  setTimeout(function () {
+                    $('.category-tab').removeClass('active');
+                    $('.category-tab[data-category-id="8"]').addClass('active');
+                    $('.category-services').hide();
+                    $('.category-services[data-category-id="8"]').show();
+                  }, 50);
+                } else {
+                  $('.services-list').html($html.html());
+                }
+
+                if (typeof updateAddonAvailability === 'function') updateAddonAvailability();
+                if (typeof updateNextButtonState === 'function') updateNextButtonState();
+              } else {
+                $('.services-list').html(
+                  '<p class="no-items-message">No services available for this master.</p>',
+                );
+              }
+            },
+            error: function () {
+              $('.loading-overlay').hide();
+              $('.services-list').html(
+                '<p class="no-items-message">Error loading services. Please try again.</p>',
+              );
+            },
+          });
+        },
+        error: function () {
+          $('.loading-overlay').hide();
+          $('.services-list').html(
+            '<p class="no-items-message">Error loading slots. Please try again.</p>',
+          );
+        },
+      });
+      return;
+    }
+
+    $.ajax({
+      url: booking_params.ajax_url,
+      method: 'POST',
+      data: {
+        action: 'get_filtered_services',
+        staff_id: masterId,
+        nonce: booking_params.nonce,
+      },
+      success: function (response) {
+        $('.loading-overlay').hide();
+        if (response.success && response.data && response.data.html) {
+          $('.services-list').html(response.data.html);
+          if (typeof updateAddonAvailability === 'function') updateAddonAvailability();
+          if (typeof updateNextButtonState === 'function') updateNextButtonState();
+        } else {
+          $('.services-list').html(
+            '<p class="no-items-message">No services available for this master.</p>',
+          );
+        }
+      },
+      error: function () {
+        $('.loading-overlay').hide();
+        $('.services-list').html(
+          '<p class="no-items-message">Error loading services. Please try again.</p>',
+        );
+      },
+    });
+  }
+
   $(document).on('click', '.nearest-seances .slot', function () {
     $('.nearest-seances .slot').removeClass('active');
     $(this).addClass('active');
-    // Зберігаємо вибір у bookingData.selectedPreviewSlot
     const $staff = $(this).closest('.staff-item');
     const staffId = $staff.data('staff-id');
     const time = $(this).data('time');
-    // Знаходимо дату з тексту .seance-date
     const dateText = $staff.find('.seance-date').text();
-    // Витягуємо дату у форматі YYYY-MM-DD з data-атрибута або збереженої відповіді
-    // Але у нас є тільки відформатований текст, тому збережемо як є
+    const minSlotDuration = $(this).data('duration') ? parseInt($(this).data('duration')) : 30;
+    let onlyOneSlot = false;
+    const $slots = $(this).parent().find('.slot');
+    if ($slots.length === 1) {
+      onlyOneSlot = true;
+    }
     bookingData.selectedPreviewSlot = {
       staffId: staffId,
       time: time,
       dateText: dateText,
+      minSlotDuration: minSlotDuration,
+      onlyOneSlot: onlyOneSlot,
+    };
+  });
+
+  $(document).on('click', '.nearest-seances .slot', function () {
+    $('.nearest-seances .slot').removeClass('active');
+    $(this).addClass('active');
+    const $staff = $(this).closest('.staff-item');
+    const staffId = $staff.data('staff-id');
+    const time = $(this).data('time');
+    const dateText = $staff.find('.seance-date').text();
+    const minSlotDuration = $(this).data('duration') ? parseInt($(this).data('duration')) : 30;
+    let onlyOneSlot = false;
+    const $slots = $(this).parent().find('.slot');
+    if ($slots.length === 1) {
+      onlyOneSlot = true;
+    }
+    bookingData.selectedPreviewSlot = {
+      staffId: staffId,
+      time: time,
+      dateText: dateText,
+      minSlotDuration: minSlotDuration,
+      onlyOneSlot: onlyOneSlot,
     };
   });
 
