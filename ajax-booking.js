@@ -689,12 +689,20 @@
    * Initialize master selection handling
    */
   function initMasterHandling() {
-    $(document).on('click', '.staff-item', function () {
+    $(document).on('click', '.staff-item', function (e) {
+      if ($(e.target).closest('.slot').length) {
+        return;
+      }
+
       $('.staff-item').removeClass('selected');
       $(".staff-item input[type='radio']").prop('checked', false);
 
       $(this).addClass('selected');
       $(this).find("input[type='radio']").prop('checked', true);
+
+      $('.nearest-seances .slot').removeClass('active');
+      bookingData.selectedPreviewSlot = null;
+      bookingData.time = null;
 
       const staffId = $(this).data('staff-id');
       const staffName = $(this).find('.staff-name').text();
@@ -716,6 +724,24 @@
 
       bookingData.staffId = staffId;
       updateMasterNextButtonState();
+      $.ajax({
+        url: booking_params.ajax_url,
+        method: 'POST',
+        data: {
+          action: 'get_next_seances',
+          staff_id: staffId,
+          nonce: booking_params.nonce,
+        },
+        success: function (response) {
+          if (response.success && response.data && response.data.seance_date) {
+            bookingData.date = response.data.seance_date;
+
+            if ($('.booking-step[data-step="datetime"]').is('.active')) {
+              generateCalendar();
+            }
+          }
+        },
+      });
     });
 
     $(document).on('click', '.booking-step[data-step="master"] .next-btn', function () {
@@ -796,8 +822,6 @@
       navigateCalendar(1);
     });
 
-    // Додай у initDateTimeHandling() перед викликом loadTimeSlots(date):
-
     $(document).on('click', '.calendar-day:not(.disabled, .empty)', function () {
       const $day = $(this);
       const date = $day.data('date');
@@ -808,7 +832,6 @@
         return;
       }
 
-      // Показати лоадер у time-sections (або .calendar-slots, якщо треба)
       $('.time-sections').html('<div class="loading">Loading available time slots...</div>');
 
       // Proceed with normal date selection for available dates
@@ -964,7 +987,7 @@
 
   function applyAvailabilityResults(bookingDays) {
     // bookingDays: [{date: "2025-07-21", hasSlots: true}, ...]
-    // Створюємо мапу для швидкого пошуку
+
     const availableMap = {};
     bookingDays.forEach((obj) => {
       if (obj.hasSlots) availableMap[obj.date] = true;
@@ -1434,6 +1457,13 @@
         }
       }
 
+      setTimeout(function () {
+        $('.category-tab').removeClass('active');
+        $('.category-tab').first().addClass('active');
+        $('.category-services').hide();
+        $('.category-services').first().show();
+      }, 100);
+
       updateNextButtonState();
     }
 
@@ -1507,6 +1537,11 @@
         generateCalendar(targetMonth, targetYear);
       }
       updateDateTimeNextButtonState();
+      if (bookingData.date && bookingData.staffId && bookingData.services.length > 0) {
+        setTimeout(function () {
+          loadTimeSlots(bookingData.date);
+        }, 100);
+      }
     }
 
     debug('Navigated to step', step);
@@ -1856,7 +1891,6 @@
   function loadTimeSlotsForAllMasters(date) {
     const serviceIds = bookingData.services.map((s) => s.id);
 
-    // Показати preloader
     $('.time-preloader').show();
     $('.time-sections').html('<div class="loading">Loading available time slots...</div>');
 
@@ -1871,7 +1905,7 @@
         service_ids: serviceIds,
       },
       success: function (response) {
-        $('.time-preloader').hide(); // Сховати preloader після завантаження
+        $('.time-preloader').hide();
         if (response.success && response.data) {
           renderAllMastersSlots(response.data);
         } else {
@@ -1879,7 +1913,7 @@
         }
       },
       error: function (xhr, status, error) {
-        $('.time-preloader').hide(); // Сховати preloader при помилці
+        $('.time-preloader').hide();
         $('.calendar-slots').html('<div class="error">Error loading slots</div>');
         console.error('AJAX error:', error, xhr.responseText);
       },
@@ -1961,7 +1995,6 @@
 
   // Handle slot click for "All masters"
   $(document).on('click', '.time-sections .time-slot', function () {
-    // При виборі нового часу очищаємо selectedPreviewSlot
     if (bookingData.selectedPreviewSlot) {
       bookingData.selectedPreviewSlot = null;
     }
@@ -2334,33 +2367,22 @@
     });
   }
 
-  $(document).on('click', '.nearest-seances .slot', function () {
+  $(document).on('click', '.nearest-seances .slot', function (e) {
+    e.stopPropagation();
+    e.preventDefault();
     $('.nearest-seances .slot').removeClass('active');
     $(this).addClass('active');
     const $staff = $(this).closest('.staff-item');
-    const staffId = $staff.data('staff-id');
-    const time = $(this).data('time');
-    const dateText = $staff.find('.seance-date').text();
-    const minSlotDuration = $(this).data('duration') ? parseInt($(this).data('duration')) : 30;
-    let onlyOneSlot = false;
-    const $slots = $(this).parent().find('.slot');
-    if ($slots.length === 1) {
-      onlyOneSlot = true;
-    }
-    bookingData.selectedPreviewSlot = {
-      staffId: staffId,
-      time: time,
-      dateText: dateText,
-      minSlotDuration: minSlotDuration,
-      onlyOneSlot: onlyOneSlot,
-    };
-  });
 
-  $(document).on('click', '.nearest-seances .slot', function () {
-    $('.nearest-seances .slot').removeClass('active');
-    $(this).addClass('active');
-    const $staff = $(this).closest('.staff-item');
+    $('.staff-item').removeClass('selected');
+    $(".staff-item input[type='radio']").prop('checked', false);
+    $staff.addClass('selected');
+    $staff.find("input[type='radio']").prop('checked', true);
+
     const staffId = $staff.data('staff-id');
+    const staffName = $staff.find('.staff-name').text();
+    const staffLevel = $staff.data('staff-level') || 1;
+    const staffAvatar = $staff.find('.staff-avatar img').attr('src') || '';
     const time = $(this).data('time');
     const dateText = $staff.find('.seance-date').text();
     const minSlotDuration = $(this).data('duration') ? parseInt($(this).data('duration')) : 30;
@@ -2369,6 +2391,17 @@
     if ($slots.length === 1) {
       onlyOneSlot = true;
     }
+
+    let date = '';
+    const match = dateText.match(/appointment\s+(\d{1,2}) ([A-Za-z]+),/);
+    if (match) {
+      const day = match[1];
+      const monthName = match[2];
+      const monthIndex = getMonthIndex(monthName);
+      const year = new Date().getFullYear();
+      date = `${year}-${String(monthIndex + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+    }
+
     bookingData.selectedPreviewSlot = {
       staffId: staffId,
       time: time,
@@ -2376,6 +2409,14 @@
       minSlotDuration: minSlotDuration,
       onlyOneSlot: onlyOneSlot,
     };
+    bookingData.staffId = staffId;
+    bookingData.staffName = staffName;
+    bookingData.staffLevel = staffLevel;
+    bookingData.staffAvatar = staffAvatar;
+    bookingData.date = date;
+    bookingData.time = time;
+
+    return false;
   });
 
   function renderStaff(staffList) {
@@ -2454,7 +2495,6 @@
    * @param {string} date - Date in YYYY-MM-DD format
    */
   function selectDate(date) {
-    // При виборі нової дати очищаємо selectedPreviewSlot
     if (bookingData.selectedPreviewSlot) {
       bookingData.selectedPreviewSlot = null;
     }
@@ -2901,7 +2941,7 @@
     let serviceHTML = '';
     let addonHTML = '';
     let basePrice = 0;
-    let masterMarkupAmount = 0; // Змінено: тільки для розрахунку націнки майстра
+    let masterMarkupAmount = 0;
 
     let percent = percentMap[bookingData.staffLevel];
     if (typeof percent === 'undefined') {
@@ -2911,12 +2951,10 @@
       percent = -50;
     }
 
-    // Core services - показуємо базову ціну, розраховуємо націнку окремо
     bookingData.coreServices.forEach((service) => {
       let price = parseFloat(service.price) || 0;
       basePrice += price;
 
-      // Розраховуємо націнку тільки для відображення в Master category
       let serviceMarkup = price * (percent / 100);
       masterMarkupAmount += serviceMarkup;
 
@@ -2940,13 +2978,10 @@
       serviceHTML += itemHTML;
     });
 
-    // Add-ons - показуємо базову ціну, БЕЗ націнки
     if (bookingData.addons && bookingData.addons.length > 0) {
       bookingData.addons.forEach((addon) => {
         let price = parseFloat(addon.price) || 0;
         basePrice += price;
-
-        // БЕЗ націнки для add-on'ів
 
         const addonItemHTML = `
                 <div class="summary-service-item addon-service">
@@ -2974,14 +3009,11 @@
       addonsList.empty().hide();
     }
 
-    // Показуємо націнку майстра окремо
     masterPercent.text(`${percent > 0 ? '+' : ''}${percent}`);
     masterBonusEl.text(`${masterMarkupAmount.toFixed(2)} SGD`);
 
-    // Розраховуємо загальну суму: базова ціна + націнка майстра
     let adjustedTotal = basePrice + masterMarkupAmount;
 
-    // Застосовуємо знижку купону якщо є
     let discountAmount = 0;
     if (bookingData.coupon && bookingData.coupon.value > 0) {
       const discountPercent = bookingData.coupon.value;

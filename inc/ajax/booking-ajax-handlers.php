@@ -5,7 +5,6 @@ function altegio_get_services()
 
   $staff_id = isset($_POST['staff_id']) ? sanitize_text_field($_POST['staff_id']) : 'any';
   if ($staff_id === 'any' || empty($staff_id)) {
-    // Додаємо формування $service_categories_popup
     $ordered_category_ids = function_exists('get_field')
       ? get_field('category_selection', 'option')
       : [];
@@ -949,16 +948,15 @@ function altegio_check_promo_code()
     if (!empty($promo['expiration_date'])) {
       $expiry_date_raw = $promo['expiration_date'];
 
-      // Якщо масив, беремо .date
+
       if (is_array($expiry_date_raw)) {
         $expiry_date_raw = $expiry_date_raw['date'] ?? '';
       }
 
       try {
-        // Спробуємо розпарсити d/m/Y
         $expiry_date_obj = DateTime::createFromFormat('d/m/Y', $expiry_date_raw);
         if ($expiry_date_obj === false) {
-          // Фолбек: спроба парсити будь-який інший формат
+
           $expiry_date_obj = new DateTime($expiry_date_raw);
         }
 
