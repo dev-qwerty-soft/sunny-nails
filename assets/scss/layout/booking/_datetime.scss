@@ -240,9 +240,23 @@
 
 @media (max-width: 600px) {
   .booking-step[data-step='datetime'] {
+    max-height: calc(100vh - 150px);
+    height: calc(100vh - 150px - env(safe-area-inset-bottom, 0px));
+    max-height: calc(100vh - 150px - env(safe-area-inset-bottom, 0px));
+    @supports (-webkit-touch-callout: none) {
+      height: calc(100vh - 150px - env(safe-area-inset-bottom, 0px));
+      max-height: calc(100vh - 150px - env(safe-area-inset-bottom, 0px));
+    }
+
     .datetime-container {
       flex-direction: column;
-      max-height: calc(100vh - 150px);
+      max-height: calc(100vh - 180px);
+      height: calc(100vh - 180px - env(safe-area-inset-bottom, 0px));
+      max-height: calc(100vh - 180px - env(safe-area-inset-bottom, 0px));
+      @supports (-webkit-touch-callout: none) {
+        height: calc(100vh - 210px - env(safe-area-inset-bottom, 0px));
+        max-height: calc(100vh - 210px - env(safe-area-inset-bottom, 0px));
+      }
 
       .date-selector,
       .time-selector {
@@ -250,7 +264,6 @@
         max-width: 100%;
         padding: 20px;
         border-radius: 12px;
-        max-height: fit-content;
       }
 
       .weekdays div {

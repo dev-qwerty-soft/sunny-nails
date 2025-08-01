@@ -31,7 +31,7 @@
   align-items: center;
   background: rgba(255, 255, 255, 0.75);
   border-radius: 10px;
-  padding: 30px;
+  padding: 22px 30px;
   position: relative;
   border: 1px solid transparent;
   transition: border-color 0.2s;
@@ -99,8 +99,8 @@
   }
   @media screen and (max-width: 768px) {
     position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
+    // top: 50%;
+    // transform: translateY(-50%);
     left: 0;
   }
 }
@@ -125,7 +125,6 @@
   font-size: 16px;
   font-weight: 600;
   color: #302f34;
-  margin-bottom: 4px;
   line-height: 1.2;
   text-wrap: nowrap;
 }
@@ -186,8 +185,8 @@
   flex-shrink: 0;
   @media screen and (max-width: 768px) {
     position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
+    // top: 50%;
+    // transform: translateY(-50%);
     right: 0;
   }
 }
