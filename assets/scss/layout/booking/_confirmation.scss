@@ -32,6 +32,7 @@
     max-height: calc(90vh - 190px) !important;
     @media screen and (max-width: 768px) {
       max-height: calc(100vh - 200px) !important;
+      max-height: calc(100vh - 200px - env(safe-area-inset-bottom, 0px) - 50px) !important;
       @supports (-webkit-touch-callout: none) {
         max-height: calc(100vh - 200px - env(safe-area-inset-bottom, 0px) - 50px) !important;
       }

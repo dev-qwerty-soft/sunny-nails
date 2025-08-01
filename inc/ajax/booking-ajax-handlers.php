@@ -333,7 +333,11 @@ function altegio_submit_booking()
 function save_booking_record_with_price($booking_data)
 {
   // Check if CPT exists, if not, use regular post
-  $post_type = post_type_exists('booking') ? 'booking' : 'post';
+  $post_type = post_type_exists('booking') ? 'booking' : false;
+  if (!$post_type) {
+    // Do not save booking if CPT does not exist
+    return false;
+  }
 
   // Create post title
   $post_title = sprintf(
