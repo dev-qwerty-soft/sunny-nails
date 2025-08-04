@@ -415,14 +415,20 @@
       const currentStep = $(this).closest('.booking-step').data('step');
       debug('Going back from', currentStep);
 
-      // Remove current step from history
+      // Clear selected slot when going back from certain steps
+      if (currentStep === 'master' || currentStep === 'services') {
+        if (bookingData.selectedPreviewSlot) {
+          bookingData.selectedPreviewSlot = null;
+          $('.nearest-seances .slot').removeClass('active');
+          bookingData.time = null;
+        }
+      }
+
       if (bookingData.flowHistory.length > 1) {
         bookingData.flowHistory.pop();
-        // Get the previous step
         const previousStep = bookingData.flowHistory[bookingData.flowHistory.length - 1];
         goToStep(previousStep);
       } else {
-        // Fallback to initial if history is broken
         goToStep('initial');
       }
     });
@@ -700,6 +706,7 @@
       $(this).addClass('selected');
       $(this).find("input[type='radio']").prop('checked', true);
 
+      // Clear all selected slots when selecting a different master
       $('.nearest-seances .slot').removeClass('active');
       bookingData.selectedPreviewSlot = null;
       bookingData.time = null;
@@ -1437,6 +1444,16 @@
       resetBookingForm();
       return;
     }
+
+    // Clear selected preview slot when going back to initial or services step
+    if (step === 'initial' || step === 'services') {
+      if (bookingData.selectedPreviewSlot) {
+        bookingData.selectedPreviewSlot = null;
+        $('.nearest-seances .slot').removeClass('active');
+        bookingData.time = null;
+      }
+    }
+
     $('.booking-step').removeClass('active');
     $(`.booking-step[data-step="${step}"]`).addClass('active');
 
@@ -1512,11 +1529,9 @@
     }
 
     if (step === 'datetime') {
-      // Auto-navigate calendar to the month of the selected slot or date
       let targetMonth = null;
       let targetYear = null;
       if (bookingData.selectedPreviewSlot && bookingData.selectedPreviewSlot.dateText) {
-        // Try to extract date from dateText (e.g. '14 July, Monday')
         const match = bookingData.selectedPreviewSlot.dateText.match(/(\d{1,2}) ([A-Za-z]+),/);
         if (match) {
           const day = match[1];
@@ -2683,18 +2698,72 @@
       // Small delay to ensure DOM is updated
       setTimeout(() => {
         checkDayAvailability(month, year);
+
+        // After checking availability, ensure slots are loaded for selected date
+        setTimeout(() => {
+          if (bookingData.date) {
+            const currentMonth = new Date(bookingData.date).getMonth();
+            const currentYear = new Date(bookingData.date).getFullYear();
+
+            if (currentMonth === month && currentYear === year) {
+              loadTimeSlots(bookingData.date);
+            }
+          } else {
+            // If no date selected, auto-select first available date and load its slots
+            autoSelectAndLoadFirstAvailableDate();
+          }
+        }, 300);
       }, 100);
-    }
+    } else {
+      // Load time slots for currently selected date if it's in this month
+      if (bookingData.date) {
+        const currentMonth = new Date(bookingData.date).getMonth();
+        const currentYear = new Date(bookingData.date).getFullYear();
 
-    // Load time slots for currently selected date if it's in this month
-    if (bookingData.date) {
-      const currentMonth = new Date(bookingData.date).getMonth();
-      const currentYear = new Date(bookingData.date).getFullYear();
-
-      if (currentMonth === month && currentYear === year) {
-        loadTimeSlots(bookingData.date);
+        if (currentMonth === month && currentYear === year) {
+          loadTimeSlots(bookingData.date);
+        }
       }
     }
+  }
+
+  /**
+   * Auto-select first available date and load its slots
+   */
+  function autoSelectAndLoadFirstAvailableDate() {
+    // Wait a bit for availability classes to be applied
+    setTimeout(() => {
+      const $firstAvailable = $('.calendar-day.available:not(.disabled):not(.empty)').first();
+
+      if ($firstAvailable.length) {
+        const date = $firstAvailable.data('date');
+        selectDate(date);
+        $('.calendar-day').removeClass('selected');
+        $firstAvailable.addClass('selected');
+        loadTimeSlots(date);
+      } else {
+        // If no available dates found, try to select today if it's not disabled
+        const today = formatDate(new Date());
+        const $todayElement = $(`.calendar-day[data-date="${today}"]`);
+
+        if ($todayElement.length && !$todayElement.hasClass('disabled')) {
+          selectDate(today);
+          $('.calendar-day').removeClass('selected');
+          $todayElement.addClass('selected');
+          loadTimeSlots(today);
+        } else {
+          // Try to select first non-disabled date
+          const $firstNonDisabled = $('.calendar-day:not(.disabled):not(.empty)').first();
+          if ($firstNonDisabled.length) {
+            const date = $firstNonDisabled.data('date');
+            selectDate(date);
+            $('.calendar-day').removeClass('selected');
+            $firstNonDisabled.addClass('selected');
+            loadTimeSlots(date);
+          }
+        }
+      }
+    }, 200);
   }
 
   /**
