@@ -167,7 +167,6 @@ if (have_posts()) :
                 height: 80%;
             }
         </style>
-
 <?php
     endwhile;
 endif;
