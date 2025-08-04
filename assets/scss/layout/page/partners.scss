@@ -416,9 +416,6 @@
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: get-d(20px);
-    @include respond(xl) {
-      grid-template-columns: repeat(3, 1fr);
-    }
     @include respond(md) {
       grid-template-columns: repeat(2, 1fr);
       gap: get-xs(20px);
