@@ -1,12 +1,23 @@
 document.addEventListener('DOMContentLoaded', function () {
-  const partnersData = JSON.parse(document.getElementById('partners-data').textContent);
+  const partnersDataElement = document.getElementById('partners-data');
+  if (!partnersDataElement) {
+    return;
+  }
+
+  const partnersData = JSON.parse(partnersDataElement.textContent);
   const partnersList = document.querySelector('.partners-list');
   const showMoreBtn = document.querySelector('.partners-show-more');
   const partnersPerPage = 8;
   let currentPage = 1;
   let currentCat = 'all';
   let filteredPartners = partnersData;
+  if (!partnersList) {
+    return;
+  }
 
+  if (!showMoreBtn) {
+    return;
+  }
   function renderPartners() {
     partnersList.innerHTML = '';
     const end = currentPage * partnersPerPage;
