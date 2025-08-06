@@ -129,7 +129,7 @@ $categories = get_categories([
         const toShow = filtered.slice(0, currentPage * postsPerPage);
 
         if (toShow.length === 0) {
-            list.innerHTML = `<div class="blog-no-results">Nothing found. Try changing your query.</div>`;
+            list.innerHTML = `<div class="blog-no-results"><strong>No results found</strong> <div class="blog-no-results-text">We couldn’t find any articles matching your search</div></div> `;
             document.getElementById('blog-show-more').style.display = 'none';
             return;
         }
@@ -149,6 +149,11 @@ $categories = get_categories([
         <div class="blog-post-title">${post.title}</div>
         <div class="blog-post-excerpt">${post.excerpt}</div>
         <div class="blog-post-cats">${catsHtml}</div>
+        <div class="blog-post-arrow">
+            <svg xmlns="http://www.w3.org/2000/svg" width="21" height="20" viewBox="0 0 21 20" fill="none">
+                <path d="M14.7594 13.5272L14.8614 5.47025L6.80442 5.57224M14.2948 6.03684L6.02252 14.3091" stroke="#85754F" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+        </div>
       </a>`;
         });
 

@@ -96,8 +96,6 @@
         }
         &:hover {
           transition: all 0.3s ease-in-out;
-          border: 1px solid var(--black, #ffffff);
-          background: #ffffff;
         }
       }
     }
@@ -133,6 +131,7 @@
         font-size: get-d(18px);
         font-weight: 600;
         line-height: 140%; /* 25.2px */
+        text-decoration: underline;
         @include respond(lg) {
           font-size: 18px;
         }

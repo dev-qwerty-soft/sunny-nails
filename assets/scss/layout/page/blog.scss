@@ -71,7 +71,6 @@
 }
 .blog-categories-wrap {
   width: 100%;
-  margin-bottom: 40px;
 
   .blog-categories-row {
     display: flex;
@@ -187,24 +186,33 @@
   }
 }
 .blog-no-results {
+  position: relative;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  margin: 0 auto;
+  gap: get-d(8px);
+  margin: get-d(100px) auto 0;
+  top: get-d(60px);
+  z-index: 2;
   color: var(--black, #302f34);
   text-align: center;
   font-size: get-d(16px);
   font-weight: 500;
   line-height: 120%; /* 19.2px */
-  padding: 48px 0;
+  padding: get-d(60px) 0;
   @include respond(lg) {
+    top: 60px;
+    margin: 100px auto 0;
     font-size: 16px;
+    gap: 8px;
   }
 }
 .blog-posts-list {
   display: flex;
   flex-wrap: wrap;
   gap: get-d(20px);
+  margin-top: 40px;
   @include respond(lg) {
     gap: 20px;
   }
@@ -213,7 +221,6 @@
     max-width: 100%;
   }
 }
-
 .blog-post-card {
   width: calc(33.333% - get-d(20px));
   border-radius: 10px;
@@ -232,11 +239,50 @@
   @include respond(md) {
     width: 100%;
   }
+
+  .blog-post-arrow {
+    display: flex;
+    position: absolute;
+    right: get-d(36px);
+    top: get-d(36px);
+    width: get-d(44px);
+    height: get-d(44px);
+    background: rgba(255, 255, 255);
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    z-index: 3;
+    opacity: 0;
+    transform: scale(0.5) rotate(-90deg);
+    transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    @include respond(lg) {
+      right: 36px;
+      top: 36px;
+      width: 44px;
+      height: 44px;
+    }
+    svg {
+      width: get-d(20px);
+      height: get-d(20px);
+      transition: transform 0.3s ease;
+      @include respond(lg) {
+        width: 20px;
+        height: 20px;
+      }
+    }
+  }
+
   &:hover {
     box-shadow: 0 4px 18px rgba(0, 0, 0, 0.1);
+    .blog-post-arrow {
+      opacity: 1;
+      transform: scale(1) rotate(0deg);
+      svg {
+        transform: translateX(2px);
+      }
+    }
   }
 }
-
 .blog-post-thumb {
   width: 100%;
   margin-bottom: get-d(20px);
