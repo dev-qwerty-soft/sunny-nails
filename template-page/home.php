@@ -193,7 +193,7 @@ function reviews_item()
                             }
                         endforeach;
                     else:
-                        echo "No data in category_selection_right";
+                        echo "<p style='color: #999; font-style: italic; padding: 20px 0;'>Please select categories in ACF field 'category_selection_right' in admin panel</p>";
                     endif;
                     ?>
                 </div>

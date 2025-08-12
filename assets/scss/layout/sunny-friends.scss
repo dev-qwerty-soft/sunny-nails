@@ -212,7 +212,7 @@
     max-width: 100%;
     display: flex;
     & .cell {
-      padding: 0 get-d(25px);
+      padding: get-d(10px) get-d(25px);
       font-weight: 600;
       font-size: get-d(14px);
       line-height: 100%;
@@ -223,11 +223,11 @@
       justify-content: center;
       width: 100%;
       @include respond(lg) {
-        padding: 0 get-lg(25px);
+        padding: 10px get-lg(25px);
         font-size: get-lg(14px);
       }
       @include respond(md) {
-        padding: 0 25px;
+        padding: 10px 25px;
         font-size: 10px;
       }
       &.label {
@@ -278,19 +278,20 @@
       display: grid;
       grid-template-columns: 1fr;
       grid-auto-rows: get-d(58px);
+      gap: get-d(12px);
       min-width: get-d(200px);
-      padding: get-d(20px) 0;
+      padding: get-d(20px) 0 get-d(90px) 0;
       width: auto;
       align-items: center;
       @include respond(lg) {
         grid-auto-rows: get-lg(58px);
         min-width: get-lg(200px);
-        padding: get-lg(20px) 0;
+        padding: get-lg(20px) 0 get-lg(90px) 0;
       }
       @include respond(md) {
         grid-auto-rows: 50px;
         min-width: 130px;
-        padding: 20px 0;
+        padding: 20px 0 90px;
       }
       &:nth-of-type(even) {
         background: #ffe3911a;
@@ -361,6 +362,50 @@
     &::-webkit-scrollbar-thumb {
       background: $bg-yellow;
       border-radius: 100px;
+    }
+  }
+  .sunny-friends-table-section__qualifying-spend {
+    position: absolute;
+    bottom: get-d(25px);
+    left: get-d(25px);
+    right: get-d(25px);
+    z-index: 10;
+    width: calc(100% - get-d(50px));
+    display: flex;
+    border-radius: 10px;
+    background: var(--beige, #f7f1e0);
+    display: flex;
+    padding: get-d(8px);
+    align-items: center;
+    gap: get-d(8px);
+    flex: 1 0 0;
+    color: var(--black, #302f34);
+    font-family: 'Montserrat', sans-serif;
+    font-size: get-d(14px);
+    font-style: normal;
+    font-weight: 500;
+    line-height: get-d(16px); /* 114.286% */
+    svg {
+      width: get-d(24px);
+      height: get-d(24px);
+      @include respond(lg) {
+        width: get-lg(24px);
+        height: get-lg(24px);
+      }
+      @include respond(md) {
+        width: 24px;
+        height: 24px;
+      }
+    }
+    @include respond(lg) {
+      z-index: 10;
+      width: calc(100% - 50px);
+      padding: 8px;
+      font-size: 14px;
+      line-height: 16px;
+      bottom: 25px;
+      left: 25px;
+      right: 25px;
     }
   }
 }

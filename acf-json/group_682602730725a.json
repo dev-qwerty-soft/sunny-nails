@@ -399,6 +399,26 @@
             ]
         },
         {
+            "key": "field_689b3f3e2d2ed",
+            "label": "Sunny friends join link active",
+            "name": "sunny_friends_join_link_active",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "50",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "maxlength": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": ""
+        },
+        {
             "key": "field_682b5147b9f7f",
             "label": "Sunny friends join link",
             "name": "sunny_friends_join_link",
@@ -408,7 +428,7 @@
             "required": 0,
             "conditional_logic": 0,
             "wrapper": {
-                "width": "",
+                "width": "50",
                 "class": "",
                 "id": ""
             },
@@ -437,5 +457,5 @@
     "active": true,
     "description": "",
     "show_in_rest": 0,
-    "modified": 1748028701
+    "modified": 1755004835
 }
