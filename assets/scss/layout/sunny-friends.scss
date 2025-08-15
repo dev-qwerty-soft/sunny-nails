@@ -211,6 +211,11 @@
     width: 100%;
     max-width: 100%;
     display: flex;
+    @include respond(md) {
+      min-width: 600px; // або більше, якщо потрібно
+      width: max-content;
+      display: flex;
+    }
     & .cell {
       padding: get-d(10px) get-d(25px);
       font-weight: 600;
@@ -227,7 +232,7 @@
         font-size: get-lg(14px);
       }
       @include respond(md) {
-        padding: 10px 25px;
+        padding: 10px;
         font-size: 10px;
       }
       &.label {
@@ -290,8 +295,11 @@
       }
       @include respond(md) {
         grid-auto-rows: 50px;
-        min-width: 130px;
+        min-width: 120px;
         padding: 20px 0 90px;
+      }
+      @media screen and (max-width: 410px) {
+        grid-auto-rows: 60px;
       }
       &:nth-of-type(even) {
         background: #ffe3911a;
@@ -305,12 +313,27 @@
         background: #fdfcf9;
         z-index: 5;
         @include respond(md) {
-          min-width: 200px;
+          position: sticky;
+          left: 0;
+          z-index: 2;
+          background: #fdfcf9;
+          box-shadow: 2px 0 8px 0 rgba(0, 0, 0, 0.04);
+          width: 204px;
+          min-width: 204px;
+          max-width: 204px;
+          @media screen and (max-width: 410px) {
+            min-width: 120px;
+          }
         }
         & .cell {
           font-weight: 600;
           font-size: get-d(16px);
           justify-content: flex-start;
+          p {
+            min-height: 100%;
+            display: flex;
+            flex-direction: column;
+          }
           @include respond(lg) {
             font-size: get-lg(16px);
           }
@@ -332,6 +355,7 @@
     }
   }
   &__wrapper {
+    position: relative;
     width: 100%;
     max-width: 100%;
     overflow: auto;
@@ -343,6 +367,8 @@
       margin-top: get-lg(120px);
     }
     @include respond(md) {
+      overflow-x: auto;
+      padding-bottom: 24px;
       border-radius: 20px;
       margin-top: 45px;
     }
@@ -393,19 +419,26 @@
         height: get-lg(24px);
       }
       @include respond(md) {
+        min-width: 24px;
+        min-height: 24px;
         width: 24px;
         height: 24px;
       }
     }
     @include respond(lg) {
+      align-items: start;
       z-index: 10;
       width: calc(100% - 50px);
-      padding: 8px;
+      padding: 8px 12px;
+      gap: 8px;
       font-size: 14px;
       line-height: 16px;
       bottom: 25px;
       left: 25px;
       right: 25px;
+    }
+    @include respond(md) {
+      position: fixed;
     }
   }
 }

@@ -380,7 +380,7 @@
                     "label": "Sunny friends main column table text",
                     "name": "sunny_friends_main_column_table_text",
                     "aria-label": "",
-                    "type": "text",
+                    "type": "wysiwyg",
                     "instructions": "",
                     "required": 0,
                     "conditional_logic": 0,
@@ -390,10 +390,10 @@
                         "id": ""
                     },
                     "default_value": "",
-                    "maxlength": "",
-                    "placeholder": "",
-                    "prepend": "",
-                    "append": "",
+                    "tabs": "all",
+                    "toolbar": "full",
+                    "media_upload": 1,
+                    "delay": 0,
                     "parent_repeater": "field_682b29f63c080"
                 }
             ]
@@ -457,5 +457,5 @@
     "active": true,
     "description": "",
     "show_in_rest": 0,
-    "modified": 1755004835
+    "modified": 1755249574
 }
