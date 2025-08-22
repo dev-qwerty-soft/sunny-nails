@@ -442,9 +442,9 @@
     "location": [
         [
             {
-                "param": "page_template",
+                "param": "page",
                 "operator": "==",
-                "value": "template-page\/sunny-friends.php"
+                "value": "1255"
             }
         ]
     ],
@@ -457,5 +457,5 @@
     "active": true,
     "description": "",
     "show_in_rest": 0,
-    "modified": 1755249574
+    "modified": 1755894172
 }
