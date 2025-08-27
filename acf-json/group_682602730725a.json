@@ -445,6 +445,11 @@
                 "param": "page",
                 "operator": "==",
                 "value": "1255"
+            },
+            {
+                "param": "page_template",
+                "operator": "==",
+                "value": "template-page\/sunny-friends.php"
             }
         ]
     ],
@@ -457,5 +462,5 @@
     "active": true,
     "description": "",
     "show_in_rest": 0,
-    "modified": 1755894172
+    "modified": 1755894252
 }
