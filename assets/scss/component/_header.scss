@@ -1,5 +1,5 @@
 .site-header {
-  padding: get-d(15px) get-d(60px) 0 get-d(60px);
+  padding: get-d(15px) get-d(60px);
   position: static;
   top: 0;
   right: 0;
@@ -9,7 +9,7 @@
   transition: transform 0.5s ease;
   --border-color: transparent;
   position: fixed;
-  height: get-d($header-height);
+  min-height: get-d($header-height);
   &.hidden {
     transform: translateY(-100%);
   }
