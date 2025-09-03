@@ -25,7 +25,7 @@
   @include respond(lg) {
     padding: 28px 25px 16px 25px;
     // border-bottom: 2px solid var(--border-color);
-    height: $header-height;
+    min-height: $header-height;
     & .buttons {
       display: none;
     }
