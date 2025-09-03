@@ -104,7 +104,10 @@
     }
   }
 }
-
+.team-section__wrapper .swiper-button-next.swiper-button-disabled,
+.team-section__wrapper .swiper-button-prev.swiper-button-disabled {
+  display: none !important;
+}
 .team-swiper {
   width: 100%;
   & .swiper-wrapper {

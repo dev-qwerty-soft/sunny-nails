@@ -138,14 +138,41 @@ if (g('.reviews-swiper')) {
 }
 
 if (g('.team-swiper')) {
+  const teamSwiper = g('.team-swiper');
+  const slides = teamSwiper.querySelectorAll('.swiper-slide');
+  const slidesCount = slides.length;
+
+  // Determine if navigation should be enabled based on screen size and slide count
+  const shouldShowNavigation = () => {
+    const width = window.innerWidth;
+    if (width >= 1024) {
+      // Desktop: slidesPerView = 3, show navigation if 4 or more slides
+      return slidesCount >= 4;
+    } else if (width >= 768) {
+      // Tablet: slidesPerView = 2, show navigation if 3 or more slides
+      return slidesCount >= 3;
+    } else {
+      // Mobile: slidesPerView = 1, show navigation if 2 or more slides
+      return slidesCount >= 2;
+    }
+  };
+
+  const navigationEnabled = shouldShowNavigation();
+
+  // Get navigation buttons
+  const nextBtn = g('.team-section__wrapper .swiper-button-next');
+  const prevBtn = g('.team-section__wrapper .swiper-button-prev');
+
   new Swiper('.team-swiper', {
-    modules: [Navigation],
+    modules: navigationEnabled ? [Navigation] : [],
     slidesPerView: 1,
     spaceBetween: 20,
-    navigation: {
-      nextEl: '.team-section__wrapper .swiper-button-next',
-      prevEl: '.team-section__wrapper .swiper-button-prev',
-    },
+    navigation: navigationEnabled
+      ? {
+          nextEl: '.team-section__wrapper .swiper-button-next',
+          prevEl: '.team-section__wrapper .swiper-button-prev',
+        }
+      : false,
     nested: true,
     simulateTouch: true,
     allowTouchMove: true,
@@ -158,6 +185,14 @@ if (g('.team-swiper')) {
       },
     },
   });
+
+  // Hide or show navigation buttons based on condition
+  if (nextBtn) {
+    nextBtn.style.display = navigationEnabled ? 'block' : 'none';
+  }
+  if (prevBtn) {
+    prevBtn.style.display = navigationEnabled ? 'block' : 'none';
+  }
 }
 
 if (g('.mini-swiper')) {
