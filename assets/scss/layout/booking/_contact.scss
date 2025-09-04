@@ -732,4 +732,7 @@
 .personal-discount {
   padding: 16px 25px;
   background: rgba(210, 181, 101, 0.3) !important;
+  .summary-discount-amount {
+    min-width: fit-content;
+  }
 }
