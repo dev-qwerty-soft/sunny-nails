@@ -3,6 +3,7 @@
   .booking-details-content {
     display: flex;
     flex-direction: column;
+    position: relative;
   }
 
   .booking-summary-box {
@@ -244,6 +245,10 @@
         @media screen and (max-width: 768px) {
           font-size: 16px;
         }
+      }
+      &.personal-discount {
+        padding: 16px 25px;
+        background: rgba(210, 181, 101, 0.3);
       }
     }
   }
@@ -694,4 +699,37 @@
   font-weight: 500;
   line-height: 16px; /* 114.286% */
   margin-top: 6px;
+}
+.booking-details-notification {
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  z-index: 10;
+  opacity: 0;
+  visibility: hidden;
+  transform: translate(-50%, -100px);
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  margin-bottom: 0;
+  display: flex;
+  padding: 12px 14px 12px 12px;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  border-radius: 500px;
+  background: var(--white, #fff);
+  box-shadow: 0 4px 14px 0 rgba(55, 42, 42, 0.09);
+  color: var(--black, #302f34);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 100%; /* 14px */
+  &.visible {
+    opacity: 1;
+    visibility: visible;
+    transform: translate(-50%, 0px);
+  }
+}
+.personal-discount {
+  padding: 16px 25px;
+  background: rgba(210, 181, 101, 0.3) !important;
 }

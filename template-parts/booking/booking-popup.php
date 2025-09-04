@@ -6,6 +6,289 @@
  * This template is included in the footer and displays the booking popup.
  */
 
+// Get user data for pre-filling the form if user is logged in
+$user_name = '';
+$user_email = '';
+$user_phone = '';
+$user_phone_country = '+65'; // Default to Singapore
+
+if (is_user_logged_in()) {
+  $current_user = wp_get_current_user();
+  $user_id = get_current_user_id();
+
+  error_log('PHP Debug - User logged in: ' . ($user_id ? 'YES' : 'NO'));
+  error_log('PHP Debug - Current user ID: ' . $user_id);
+  error_log('PHP Debug - Current user email: ' . $current_user->user_email);
+
+  // Check if plugin is active and table exists
+  $plugin_active = false;
+  $user_data = null;
+
+  // Try to get data from sunny_friends_customers table directly
+  global $wpdb;
+  $registrations_table = $wpdb->prefix . 'sunny_friends_customers';
+
+  // Check if table exists to avoid SQL errors
+  $table_exists = $wpdb->get_var($wpdb->prepare("SHOW TABLES LIKE %s", $registrations_table)) == $registrations_table;
+  error_log('PHP Debug - Table exists: ' . ($table_exists ? 'YES' : 'NO'));
+
+  if ($table_exists) {
+    try {
+      $user_data = $wpdb->get_row(
+        $wpdb->prepare("SELECT * FROM $registrations_table WHERE user_id = %d", $user_id)
+      );
+      $plugin_active = true; // If we can query the table, consider plugin "active"
+      error_log('PHP Debug - SQL Query: SELECT * FROM ' . $registrations_table . ' WHERE user_id = ' . $user_id);
+      error_log('PHP Debug - Found user_data: ' . ($user_data ? 'YES' : 'NO'));
+      if ($user_data) {
+        error_log('PHP Debug - User data object: ' . json_encode($user_data));
+      }
+    } catch (Exception $e) {
+      // If there's any error, fall back to WordPress data
+      $plugin_active = false;
+      error_log('PHP Debug - SQL Error: ' . $e->getMessage());
+    }
+  }
+
+  if ($plugin_active && $user_data) {
+    // Use plugin data
+    $user_name = trim($user_data->first_name . ' ' . $user_data->last_name);
+    $user_email = $user_data->email;
+    $phone = $user_data->phone;
+
+    error_log('PHP Debug - User data from plugin:');
+    error_log('PHP Debug - first_name: ' . $user_data->first_name);
+    error_log('PHP Debug - last_name: ' . $user_data->last_name);
+    error_log('PHP Debug - email: ' . $user_data->email);
+    error_log('PHP Debug - phone field from DB: "' . $phone . '"');
+    error_log('PHP Debug - phone length: ' . strlen($phone));
+    error_log('PHP Debug - phone is empty: ' . (empty($phone) ? 'true' : 'false'));
+
+    // Parse phone number to get country code and number (same logic as personal-info.php)
+    $user_phone_country = '+380'; // Default
+    $user_phone = '';
+
+    if ($phone) {
+      error_log('PHP Debug - Original phone from DB: ' . $phone);
+
+      // Parse country code from phone number
+      $phone_cleaned = preg_replace('/[^\d+]/', '', $phone);
+      error_log('PHP Debug - Phone cleaned: ' . $phone_cleaned);
+
+      // List of country codes to check (longest first)
+      $country_codes = [
+        '+380',
+        '+420',
+        '+421',
+        '+359',
+        '+385',
+        '+386',
+        '+372',
+        '+371',
+        '+370',
+        '+375',
+        '+373',
+        '+995',
+        '+374',
+        '+994',
+        '+971',
+        '+966',
+        '+234',
+        '+254',
+        '+65',
+        '+44',
+        '+49',
+        '+33',
+        '+48',
+        '+39',
+        '+34',
+        '+31',
+        '+32',
+        '+41',
+        '+43',
+        '+36',
+        '+40',
+        '+30',
+        '+46',
+        '+47',
+        '+45',
+        '+358',
+        '+354',
+        '+353',
+        '+351',
+        '+61',
+        '+64',
+        '+81',
+        '+82',
+        '+86',
+        '+91',
+        '+55',
+        '+52',
+        '+54',
+        '+56',
+        '+57',
+        '+51',
+        '+58',
+        '+20',
+        '+27',
+        '+60',
+        '+66',
+        '+84',
+        '+63',
+        '+62',
+        '+90',
+        '+1',
+        '+7'
+      ];
+
+      foreach ($country_codes as $code) {
+        if (strpos($phone_cleaned, $code) === 0) {
+          $user_phone_country = $code;
+          $user_phone = substr($phone_cleaned, strlen($code));
+          error_log('PHP Debug - Found country code: ' . $code . ', phone number: ' . $user_phone);
+          break;
+        }
+      }
+
+      // If no country code found, treat as local number
+      if ($user_phone === '' && $phone_cleaned) {
+        $user_phone = ltrim($phone_cleaned, '+');
+        error_log('PHP Debug - No country code found, using as local number: ' . $user_phone);
+      }
+    } else {
+      error_log('PHP Debug - Phone field is empty or null in database');
+    }
+  }
+
+  // Fallback to WordPress user data if plugin is not active or no custom data
+  if (!$plugin_active || !$user_data) {
+    $user_name = trim($current_user->first_name . ' ' . $current_user->last_name);
+    if (empty($user_name)) {
+      $user_name = $current_user->display_name;
+    }
+    $user_email = $current_user->user_email;
+
+    // Try to get phone from user meta as fallback
+    $user_phone_meta = get_user_meta($user_id, 'phone', true);
+    if ($user_phone_meta) {
+      $phone = $user_phone_meta;
+      error_log('PHP Debug - Using WordPress user meta phone: ' . $phone);
+
+      // Use the same parsing logic as above
+      $user_phone_country = '+380'; // Default
+      $user_phone = '';
+
+      if ($phone) {
+        // Parse country code from phone number
+        $phone_cleaned = preg_replace('/[^\d+]/', '', $phone);
+
+        // List of country codes to check (longest first)
+        $country_codes = [
+          '+380',
+          '+420',
+          '+421',
+          '+359',
+          '+385',
+          '+386',
+          '+372',
+          '+371',
+          '+370',
+          '+375',
+          '+373',
+          '+995',
+          '+374',
+          '+994',
+          '+971',
+          '+966',
+          '+234',
+          '+254',
+          '+65',
+          '+44',
+          '+49',
+          '+33',
+          '+48',
+          '+39',
+          '+34',
+          '+31',
+          '+32',
+          '+41',
+          '+43',
+          '+36',
+          '+40',
+          '+30',
+          '+46',
+          '+47',
+          '+45',
+          '+358',
+          '+354',
+          '+353',
+          '+351',
+          '+61',
+          '+64',
+          '+81',
+          '+82',
+          '+86',
+          '+91',
+          '+55',
+          '+52',
+          '+54',
+          '+56',
+          '+57',
+          '+51',
+          '+58',
+          '+20',
+          '+27',
+          '+60',
+          '+66',
+          '+84',
+          '+63',
+          '+62',
+          '+90',
+          '+1',
+          '+7'
+        ];
+
+        foreach ($country_codes as $code) {
+          if (strpos($phone_cleaned, $code) === 0) {
+            $user_phone_country = $code;
+            $user_phone = substr($phone_cleaned, strlen($code));
+            error_log('PHP Debug - Fallback: Found country code: ' . $code . ', phone number: ' . $user_phone);
+            break;
+          }
+        }
+
+        // If no country code found, treat as local number
+        if ($user_phone === '' && $phone_cleaned) {
+          $user_phone = ltrim($phone_cleaned, '+');
+          error_log('PHP Debug - Fallback: No country code found, using as local number: ' . $user_phone);
+        }
+      }
+    } else {
+      error_log('PHP Debug - No phone found in WordPress user meta either');
+    }
+  }
+}
+
+// Get user discount
+$user_discount_percentage = 0;
+$user_discount_value = '';
+
+if (is_user_logged_in()) {
+  if ($plugin_active && $user_data && !empty($user_data->discount)) {
+    $user_discount_percentage = intval($user_data->discount);
+    $user_discount_value = '-' . $user_discount_percentage . '%';
+  } else {
+    $user_discount_percentage = 5; // Default fallback
+    $user_discount_value = '-5%';
+  }
+}
+
+// Pass user data to JavaScript
+?>
+
+
+<?php
+
 // Get necessary data
 $staffList = isset($staff_list) && !empty($staff_list['data']) ? $staff_list['data'] : [];
 $ordered_category_ids = function_exists('get_field')
@@ -500,6 +783,14 @@ if (empty($ordered_category_ids)) {
           <div class="booking-details-content">
 
             <div class="booking-summary-box">
+              <!-- Floating Check booking details button -->
+              <div class="booking-details-notification">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                  <path d="M12.5879 7.52654L8.08789 2.91116L3.58789 7.52654M8.08789 3.55218V12.9112" stroke="#302F34" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+                Check booking details
+              </div>
+
               <div class="summary-master-date">
                 <div class="summary-master">
                   <div class="master-info">
@@ -574,6 +865,11 @@ if (empty($ordered_category_ids)) {
                   <div class="coupon-feedback" style="display: none;"></div>
                 </div>
 
+
+                <div class="summary-item personal-discount" <?php echo !is_user_logged_in() || empty($user_discount_value) ? 'style="display:none;"' : ''; ?>>
+                  <span>Your personal discount (<?php echo esc_html($user_discount_value); ?>)</span>
+                  <span class="summary-discount-amount">-5 SGD</span>
+                </div>
                 <div class="summary-item total"><span>Total</span> <span class="summary-total-amount">0.00 SGD</span></div>
                 <?php
                 $price_notice = get_field('booking_price_note', 'option');
@@ -586,24 +882,55 @@ if (empty($ordered_category_ids)) {
                 <h3>Personal Information</h3>
 
                 <div class="form-group">
-                  <input type="text" id="client-name" name="client[name]" placeholder="Name*" required />
+                  <input type="text" id="client-name" name="client[name]" placeholder="Name*" value="<?php echo esc_attr($user_name); ?>" required />
                 </div>
 
                 <div class="form-group">
-                  <input type="email" id="client-email" name="client[email]" placeholder="Email*" required />
+                  <input type="email" id="client-email" name="client[email]" placeholder="Email*" value="<?php echo esc_attr($user_email); ?>" required />
                 </div>
 
                 <div class="form-group">
                   <div class="phone-input-wrapper">
                     <div class="custom-country-select">
                       <button type="button" class="country-select-button" id="countrySelectButton">
-                        <span class="selected-country">Singapore +65</span>
+                        <span class="selected-country">
+                          <?php
+                          // Set default selected country based on user data
+                          $selected_country = 'Singapore +65'; // Default
+                          if ($user_phone_country) {
+                            $country_names = [
+                              '+65' => 'Singapore',
+                              '+380' => 'Ukraine',
+                              '+1' => 'United States',
+                              '+44' => 'United Kingdom',
+                              '+49' => 'Germany',
+                              '+33' => 'France',
+                              '+48' => 'Poland',
+                              '+7' => 'Russia',
+                              '+39' => 'Italy',
+                              '+34' => 'Spain',
+                              '+31' => 'Netherlands',
+                              '+32' => 'Belgium',
+                              '+41' => 'Switzerland',
+                              '+43' => 'Austria',
+                              '+420' => 'Czech Republic',
+                              '+421' => 'Slovakia',
+                              '+36' => 'Hungary',
+                              '+40' => 'Romania',
+                              '+359' => 'Bulgaria'
+                            ];
+                            $selected_country = isset($country_names[$user_phone_country])
+                              ? $country_names[$user_phone_country] . ' ' . $user_phone_country
+                              : 'Singapore +65';
+                          }
+                          echo esc_html($selected_country);                          ?>
+                        </span>
                         <svg class="country-select-arrow" viewBox="0 0 24 24">
                           <polyline points="6,9 12,15 18,9"></polyline>
                         </svg>
                       </button>
                       <div class="country-dropdown" id="countryDropdown">
-                        <div class="country-option selected" data-value="+65" data-country="Singapore">Singapore +65</div>
+                        <div class="country-option<?php echo $user_phone_country === '+65' ? ' selected' : ''; ?>" data-value="+65" data-country="Singapore">Singapore +65</div>
                         <div class="country-option" data-value="+93" data-country="Afghanistan">Afghanistan +93</div>
                         <div class="country-option" data-value="+355" data-country="Albania">Albania +355</div>
                         <div class="country-option" data-value="+213" data-country="Algeria">Algeria +213</div>
@@ -670,13 +997,13 @@ if (empty($ordered_category_ids)) {
                         <div class="country-option" data-value="+298" data-country="Faroe Islands">Faroe Islands +298</div>
                         <div class="country-option" data-value="+679" data-country="Fiji">Fiji +679</div>
                         <div class="country-option" data-value="+358" data-country="Finland">Finland +358</div>
-                        <div class="country-option" data-value="+33" data-country="France">France +33</div>
+                        <div class="country-option<?php echo $user_phone_country === '+33' ? ' selected' : ''; ?>" data-value="+33" data-country="France">France +33</div>
                         <div class="country-option" data-value="+594" data-country="French Guiana">French Guiana +594</div>
                         <div class="country-option" data-value="+689" data-country="French Polynesia">French Polynesia +689</div>
                         <div class="country-option" data-value="+241" data-country="Gabon">Gabon +241</div>
                         <div class="country-option" data-value="+220" data-country="Gambia">Gambia +220</div>
                         <div class="country-option" data-value="+995" data-country="Georgia">Georgia +995</div>
-                        <div class="country-option" data-value="+49" data-country="Germany">Germany +49</div>
+                        <div class="country-option<?php echo $user_phone_country === '+49' ? ' selected' : ''; ?>" data-value="+49" data-country="Germany">Germany +49</div>
                         <div class="country-option" data-value="+233" data-country="Ghana">Ghana +233</div>
                         <div class="country-option" data-value="+350" data-country="Gibraltar">Gibraltar +350</div>
                         <div class="country-option" data-value="+30" data-country="Greece">Greece +30</div>
@@ -819,10 +1146,10 @@ if (empty($ordered_category_ids)) {
                         <div class="country-option" data-value="+688" data-country="Tuvalu">Tuvalu +688</div>
                         <div class="country-option" data-value="+1340" data-country="U.S. Virgin Islands">U.S. Virgin Islands +1340</div>
                         <div class="country-option" data-value="+256" data-country="Uganda">Uganda +256</div>
-                        <div class="country-option" data-value="+380" data-country="Ukraine">Ukraine +380</div>
+                        <div class="country-option<?php echo $user_phone_country === '+380' ? ' selected' : ''; ?>" data-value="+380" data-country="Ukraine">Ukraine +380</div>
                         <div class="country-option" data-value="+971" data-country="United Arab Emirates">United Arab Emirates +971</div>
-                        <div class="country-option" data-value="+44" data-country="United Kingdom">United Kingdom +44</div>
-                        <div class="country-option" data-value="+1" data-country="United States">United States +1</div>
+                        <div class="country-option<?php echo $user_phone_country === '+44' ? ' selected' : ''; ?>" data-value="+44" data-country="United Kingdom">United Kingdom +44</div>
+                        <div class="country-option<?php echo $user_phone_country === '+1' ? ' selected' : ''; ?>" data-value="+1" data-country="United States">United States +1</div>
                         <div class="country-option" data-value="+598" data-country="Uruguay">Uruguay +598</div>
                         <div class="country-option" data-value="+998" data-country="Uzbekistan">Uzbekistan +998</div>
                         <div class="country-option" data-value="+678" data-country="Vanuatu">Vanuatu +678</div>
@@ -835,13 +1162,14 @@ if (empty($ordered_category_ids)) {
                         <div class="country-option" data-value="+263" data-country="Zimbabwe">Zimbabwe +263</div>
                       </div>
                     </div>
-                    <input type="tel" id="client-phone" name="client[phone]" placeholder="Phone number*" required />
+                    <input type="tel" id="client-phone" name="client[phone]" placeholder="Phone number*" value="<?php echo esc_attr($user_phone); ?>" required />
                   </div>
                 </div>
 
                 <div class="form-group">
                   <textarea id="client-comment" name="client_comment" placeholder="Comment"></textarea>
                 </div>
+
 
                 <div class="form-group checkbox">
                   <label for="privacy-policy">
@@ -868,6 +1196,37 @@ if (empty($ordered_category_ids)) {
 
                 </div>
               </form>
+
+              <?php if (is_user_logged_in() && $user_phone_country): ?>
+                <script>
+                  document.addEventListener('DOMContentLoaded', function() {
+                    // Set the correct country for logged-in users
+                    const countryButton = document.getElementById('countrySelectButton');
+                    const countryDropdown = document.getElementById('countryDropdown');
+                    const userCountryCode = '<?php echo esc_js($user_phone_country); ?>';
+
+                    if (countryButton && countryDropdown && userCountryCode) {
+                      // Find and select the correct country option
+                      const countryOption = countryDropdown.querySelector(`[data-value="${userCountryCode}"]`);
+                      if (countryOption) {
+                        // Remove selected class from all options
+                        countryDropdown.querySelectorAll('.country-option').forEach(option => {
+                          option.classList.remove('selected');
+                        });
+
+                        // Add selected class to the user's country
+                        countryOption.classList.add('selected');
+
+                        // Update the button text
+                        const selectedCountrySpan = countryButton.querySelector('.selected-country');
+                        if (selectedCountrySpan) {
+                          selectedCountrySpan.textContent = countryOption.textContent;
+                        }
+                      }
+                    }
+                  });
+                </script>
+              <?php endif; ?>
 
 
             </div>
@@ -954,6 +1313,10 @@ if (empty($ordered_category_ids)) {
 
                 </div>
 
+                <div class="summary-item personal-discount" <?php echo !is_user_logged_in() || empty($user_discount_value) ? 'style="display:none;"' : ''; ?>>
+                  <span>Your personal discount (<?php echo esc_html($user_discount_value); ?>)</span>
+                  <span class="summary-discount-amount">-5 SGD</span>
+                </div>
 
                 <div class="summary-item total"><span>Total</span> <span class="summary-total-amount">0.00 SGD</span></div>
                 <?php
@@ -980,3 +1343,64 @@ if (empty($ordered_category_ids)) {
     </div>
   </div>
 </div>
+
+<script>
+  window.bookingUserData = {
+    name: '<?php echo esc_js($user_name); ?>',
+    email: '<?php echo esc_js($user_email); ?>',
+    phone: '<?php echo esc_js($user_phone); ?>',
+    phoneCountry: '<?php echo esc_js($user_phone_country); ?>',
+    discountPercentage: <?php echo (int)$user_discount_percentage; ?>,
+    discountValue: '<?php echo esc_js($user_discount_value); ?>',
+    // Debug info
+    debug_user_phone_raw: '<?php echo esc_js($user_data ? ($user_data->phone ?? 'NULL_PHONE') : 'NO_USER_DATA'); ?>',
+    debug_wp_user_meta_phone: '<?php echo esc_js(get_user_meta($user_id, 'phone', true) ?: 'NO_WP_PHONE'); ?>',
+    debug_phone_from_personal_info: '669259097', // Test value from DB check
+    debug_hardcoded_phone: '669259097' // Temporary hardcoded for testing
+  };
+
+  // Debug information
+  console.log('=== PHP DEBUG START ===');
+  console.log('PHP Debug - User logged in:', <?php echo is_user_logged_in() ? 'true' : 'false'; ?>);
+  console.log('PHP Debug - Plugin active:', <?php echo $plugin_active ? 'true' : 'false'; ?>);
+  console.log('PHP Debug - User data exists:', <?php echo $user_data ? 'true' : 'false'; ?>);
+  <?php if ($user_data): ?>
+    console.log('PHP Debug - Raw user data from DB:',
+      <?php echo json_encode([
+        'first_name' => $user_data->first_name ?? 'NULL',
+        'last_name' => $user_data->last_name ?? 'NULL',
+        'email' => $user_data->email ?? 'NULL',
+        'phone' => $user_data->phone ?? 'NULL'
+      ]); ?>);
+  <?php endif; ?>
+  console.log('PHP Debug - Final processed data:', {
+    user_name: '<?php echo esc_js($user_name); ?>',
+    user_email: '<?php echo esc_js($user_email); ?>',
+    user_phone: '<?php echo esc_js($user_phone); ?>',
+    user_phone_country: '<?php echo esc_js($user_phone_country); ?>'
+  });
+  console.log('PHP Debug - Fields have values:');
+  console.log('  - Name field value attribute:', '<?php echo esc_js($user_name); ?>');
+  console.log('  - Email field value attribute:', '<?php echo esc_js($user_email); ?>');
+  console.log('  - Phone field value attribute:', '<?php echo esc_js($user_phone); ?>');
+  console.log('PHP Debug - window.bookingUserData:', window.bookingUserData);
+  console.log('=== PHP DEBUG END ===');
+
+  // Use jQuery with proper document ready or vanilla JS
+  document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(function() {
+      console.log('=== FORM FIELDS TEST ===');
+      const nameField = document.getElementById('client-name');
+      const emailField = document.getElementById('client-email');
+      const phoneField = document.getElementById('client-phone');
+
+      console.log('Name field (#client-name):', nameField ? 'EXISTS' : 'NOT FOUND');
+      console.log('Name field value:', nameField ? nameField.value : 'N/A');
+      console.log('Email field (#client-email):', emailField ? 'EXISTS' : 'NOT FOUND');
+      console.log('Email field value:', emailField ? emailField.value : 'N/A');
+      console.log('Phone field (#client-phone):', phoneField ? 'EXISTS' : 'NOT FOUND');
+      console.log('Phone field value:', phoneField ? phoneField.value : 'N/A');
+      console.log('=== FORM FIELDS TEST END ===');
+    }, 1000);
+  });
+</script>

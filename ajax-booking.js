@@ -29,13 +29,13 @@
 
   // Configuration
   const config = {
-    debug: true, // Enable debug logging
-    priceAdjustmentPerLevel: 10, // Price increase percentage per master level above 1
-    apiEndpoint: booking_params.ajax_url, // API endpoint from localized WP
-    nonce: booking_params.nonce, // Security nonce from WP
-    simulateTimeSlots: true, // Enable time slot simulation as fallback
-    useLocalStorage: true, // Save form progress in local storage
-    maxRetries: 3, // Maximum API call retries
+    debug: true,
+    priceAdjustmentPerLevel: 10,
+    apiEndpoint: booking_params.ajax_url,
+    nonce: booking_params.nonce,
+    simulateTimeSlots: true,
+    useLocalStorage: true,
+    maxRetries: 3,
   };
 
   /**
@@ -98,6 +98,54 @@
     }
   }
 
+  function showBookingDetailsNotification() {
+    const notification = $('.booking-details-notification');
+
+    if (notification.length) {
+      notification.addClass('show');
+
+      setTimeout(() => {
+        notification.removeClass('show');
+      }, 5000);
+    }
+  }
+
+  /**
+   * Initialize floating notification behavior
+   */
+  function initFloatingNotification() {
+    const notification = $('.booking-details-notification');
+    const summaryBox = $('.booking-summary-box');
+
+    if (!notification.length || !summaryBox.length) {
+      return;
+    }
+
+    function toggleNotificationVisibility() {
+      const summaryBoxElement = summaryBox[0];
+      const scrollTop = summaryBoxElement.scrollTop;
+      const scrollHeight = summaryBoxElement.scrollHeight;
+      const clientHeight = summaryBoxElement.clientHeight;
+
+      // Show notification when user has scrolled down significantly
+      // Hide when at the top or near the top
+      const scrollPercentage = scrollTop / (scrollHeight - clientHeight);
+
+      if (scrollPercentage > 0.3) {
+        // Show when scrolled more than 30%
+        notification.addClass('visible');
+      } else {
+        notification.removeClass('visible');
+      }
+    }
+
+    // Listen to scroll events on the summary box
+    summaryBox.on('scroll', toggleNotificationVisibility);
+
+    // Initial check
+    toggleNotificationVisibility();
+  }
+
   /**
    * Initialize the booking system when document is ready
    */
@@ -110,7 +158,25 @@
     initLocalStorageSupport();
     setupEditButtons();
     initBookingPopup();
-    // Check for restored session
+    initCountrySelector();
+    initFloatingNotification(); // Initialize floating notification
+
+    $(document).on('click', '.booking-details-notification', function () {
+      try {
+        const summaryBox = $('.booking-summary-box');
+        if (summaryBox.length) {
+          // Scroll to top of the summary box
+          summaryBox.animate({ scrollTop: 0 }, 'smooth');
+        } else {
+          // Fallback to window scroll
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+        $(this).removeClass('visible show');
+      } catch (e) {
+        debug('Error scrolling to top:', e);
+      }
+    });
+
     if (config.useLocalStorage) {
       restoreBookingSession();
     }
@@ -322,6 +388,314 @@
   }
 
   /**
+   * Pre-fill booking form with user data from WordPress/cabinet
+   */
+  function prefillBookingForm() {
+    debug('prefillBookingForm called');
+    debug('window.bookingUserData:', window.bookingUserData);
+
+    if (!window.bookingUserData || typeof window.bookingUserData !== 'object') {
+      debug('No user data available for prefilling');
+      return;
+    }
+
+    const userName = (window.bookingUserData.name || '').trim();
+    const userEmail = (window.bookingUserData.email || '').trim();
+    let userPhone = (window.bookingUserData.phone || '').trim();
+    const userPhoneCountry = (window.bookingUserData.phoneCountry || '').trim();
+
+    // DEBUG: If phone is empty, check raw phone from DB
+    if (!userPhone && window.bookingUserData.debug_user_phone_raw) {
+      debug(
+        'Phone is empty, checking raw phone from DB:',
+        window.bookingUserData.debug_user_phone_raw,
+      );
+
+      // Try to parse the raw phone the same way as personal-info.php
+      let rawPhone = window.bookingUserData.debug_user_phone_raw;
+      if (rawPhone && rawPhone !== 'NO_USER_DATA' && rawPhone !== 'NULL_PHONE') {
+        // Simple parsing - if it starts with +380, extract the number
+        if (rawPhone.includes('+380')) {
+          userPhone = rawPhone.replace('+380', '').replace(/[^\d]/g, '');
+          debug('Extracted phone from +380:', userPhone);
+        } else {
+          // Use as is, removing non-digits
+          userPhone = rawPhone.replace(/[^\d]/g, '');
+          debug('Extracted phone digits only:', userPhone);
+        }
+      }
+    }
+
+    // If still no phone, try WordPress user meta
+    if (!userPhone && window.bookingUserData.debug_wp_user_meta_phone) {
+      debug(
+        'Still no phone, checking WordPress user meta:',
+        window.bookingUserData.debug_wp_user_meta_phone,
+      );
+
+      let wpPhone = window.bookingUserData.debug_wp_user_meta_phone;
+      if (wpPhone && wpPhone !== 'NO_WP_PHONE') {
+        // Parse the same way
+        if (wpPhone.includes('+380')) {
+          userPhone = wpPhone.replace('+380', '').replace(/[^\d]/g, '');
+          debug('Extracted phone from WP meta +380:', userPhone);
+        } else if (wpPhone.includes('+65')) {
+          userPhone = wpPhone.replace('+65', '').replace(/[^\d]/g, '');
+          debug('Extracted phone from WP meta +65:', userPhone);
+        } else {
+          // Use as is, removing non-digits
+          userPhone = wpPhone.replace(/[^\d]/g, '');
+          debug('Extracted phone from WP meta digits only:', userPhone);
+        }
+      }
+    }
+
+    // If STILL no phone, try hardcoded debug value
+    if (!userPhone && window.bookingUserData.debug_hardcoded_phone) {
+      debug('Using hardcoded debug phone:', window.bookingUserData.debug_hardcoded_phone);
+      userPhone = window.bookingUserData.debug_hardcoded_phone;
+    }
+
+    debug('Prefilling form with user data:', { userName, userEmail, userPhone, userPhoneCountry });
+
+    // Add delay to ensure DOM is ready
+    setTimeout(function () {
+      debug('=== DELAYED PREFILL START ===');
+
+      if (userName && userName.length > 0) {
+        try {
+          const nameField = $('#client-name');
+          debug('Name field found:', nameField.length > 0);
+          debug('Name field current value before fill:', nameField.val());
+          if (nameField.length) {
+            nameField.val(userName);
+            debug('Filled name field with:', userName);
+            debug('Name field value after fill:', nameField.val());
+
+            // Force trigger change event
+            nameField.trigger('change');
+            nameField.trigger('input');
+
+            // Check again after short delay
+            setTimeout(function () {
+              debug('Name field value after 500ms:', nameField.val());
+            }, 500);
+          }
+        } catch (e) {
+          debug('Error filling name field:', e);
+        }
+      }
+
+      if (userEmail && userEmail.length > 0 && userEmail.includes('@')) {
+        try {
+          const emailField = $('#client-email');
+          debug('Email field found:', emailField.length > 0);
+          debug('Email field current value before fill:', emailField.val());
+          if (emailField.length) {
+            emailField.val(userEmail);
+            debug('Filled email field with:', userEmail);
+            debug('Email field value after fill:', emailField.val());
+
+            // Force trigger change event
+            emailField.trigger('change');
+            emailField.trigger('input');
+
+            // Check again after short delay
+            setTimeout(function () {
+              debug('Email field value after 500ms:', emailField.val());
+            }, 500);
+          }
+        } catch (e) {
+          debug('Error filling email field:', e);
+        }
+      }
+
+      if (userPhone && userPhone.length > 0) {
+        try {
+          const phoneField = $('#client-phone');
+          debug('Phone field found:', phoneField.length > 0);
+          debug('Phone field current value before fill:', phoneField.val());
+          if (phoneField.length) {
+            phoneField.val(userPhone);
+            debug('Filled phone field with:', userPhone);
+            debug('Phone field value after fill:', phoneField.val());
+
+            // Force trigger change event
+            phoneField.trigger('change');
+            phoneField.trigger('input');
+
+            // Check again after short delay
+            setTimeout(function () {
+              debug('Phone field value after 500ms:', phoneField.val());
+            }, 500);
+          }
+        } catch (e) {
+          debug('Error filling phone field:', e);
+        }
+      }
+
+      if (userPhoneCountry && userPhoneCountry.length > 0 && userPhoneCountry.startsWith('+')) {
+        try {
+          setCountrySelector(userPhoneCountry);
+          debug('Set country selector:', userPhoneCountry);
+        } catch (e) {
+          debug('Error setting country selector:', e);
+        }
+      }
+
+      debug('=== DELAYED PREFILL END ===');
+    }, 100);
+
+    if (
+      window.bookingUserData.discountPercentage &&
+      window.bookingUserData.discountPercentage > 0
+    ) {
+      try {
+        bookingData.personalDiscountPercent = window.bookingUserData.discountPercentage;
+        debug('Set personal discount:', window.bookingUserData.discountPercentage + '%');
+        console.log(
+          '🎯 Personal discount set in prefillBookingForm:',
+          bookingData.personalDiscountPercent,
+        );
+
+        const personalDiscountBlock = $('.summary-item.personal-discount');
+        if (personalDiscountBlock.length) {
+          personalDiscountBlock.show();
+          personalDiscountBlock
+            .find('span')
+            .first()
+            .text(`Your personal discount (${window.bookingUserData.discountValue})`);
+        }
+
+        if (typeof updateSummary === 'function') {
+          updateSummary();
+        }
+      } catch (e) {
+        debug('Error setting personal discount:', e);
+      }
+    }
+  }
+
+  /**
+   * Set country selector to specific country code
+   */
+  function setCountrySelector(countryCode) {
+    if (!countryCode || typeof countryCode !== 'string' || !countryCode.trim()) {
+      debug('Invalid country code provided:', countryCode);
+      return false;
+    }
+
+    try {
+      const countryButton = $('#countrySelectButton');
+      const countryDropdown = $('#countryDropdown');
+
+      if (!countryButton.length) {
+        debug('Country selector button not found');
+        return false;
+      }
+
+      const cleanCode = countryCode.trim();
+
+      if (countryDropdown.length) {
+        const countryOption = countryDropdown.find(`[data-value="${cleanCode}"]`);
+
+        if (countryOption.length) {
+          countryDropdown.find('.country-option').removeClass('selected');
+          countryOption.addClass('selected');
+
+          const selectedCountrySpan = countryButton.find('.selected-country');
+          if (selectedCountrySpan.length) {
+            selectedCountrySpan.text(countryOption.text());
+            debug('Country selector updated with:', countryOption.text());
+          }
+
+          countryButton.data('selected-value', cleanCode);
+          debug('Country selector set to:', cleanCode);
+          return true;
+        }
+      }
+
+      countryButton.data('selected-value', cleanCode);
+      debug('Country code stored:', cleanCode);
+      return true;
+    } catch (e) {
+      debug('Error in setCountrySelector:', e);
+      return false;
+    }
+  }
+
+  /**
+   * Initialize country selector functionality
+   */
+  function initCountrySelector() {
+    try {
+      // Toggle dropdown on button click
+      $(document).on('click', '#countrySelectButton', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        const dropdown = $('#countryDropdown');
+        if (dropdown.length) {
+          dropdown.toggleClass('show');
+        }
+      });
+
+      // Handle country option selection
+      $(document).on('click', '.country-option', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        const selectedValue = $(this).data('value');
+        const selectedText = $(this).text();
+
+        if (!selectedValue || !selectedText) {
+          debug('Invalid country option data');
+          return;
+        }
+
+        // Update UI
+        $('.country-option').removeClass('selected');
+        $(this).addClass('selected');
+
+        const countryButton = $('#countrySelectButton');
+        const selectedCountrySpan = countryButton.find('.selected-country');
+
+        if (selectedCountrySpan.length) {
+          selectedCountrySpan.text(selectedText);
+        }
+
+        if (countryButton.length) {
+          countryButton.data('selected-value', selectedValue);
+        }
+
+        // Hide dropdown
+        $('#countryDropdown').removeClass('show');
+      });
+
+      // Close dropdown when clicking outside
+      $(document).on('click', function (e) {
+        if (!$(e.target).closest('.custom-country-select').length) {
+          const dropdown = $('#countryDropdown');
+          if (dropdown.length) {
+            dropdown.removeClass('show');
+          }
+        }
+      });
+
+      // Global function to get selected country code (used by other scripts)
+      window.getSelectedCountryCode = function () {
+        const button = $('#countrySelectButton');
+        if (button.length) {
+          return button.data('selected-value') || '+65'; // Default to Singapore
+        }
+        return '+65';
+      };
+    } catch (e) {
+      debug('Error initializing country selector:', e);
+    }
+  }
+
+  /**
    * Initialize booking popup and general navigation
    */
   function initBookingPopup() {
@@ -350,6 +724,16 @@
       $('.booking-popup-overlay').addClass('active');
       $('body').addClass('popup-open');
       $('.loading-overlay').hide();
+
+      // Pre-fill form with user data after a small delay to ensure DOM is ready
+      setTimeout(function () {
+        try {
+          prefillBookingForm();
+        } catch (e) {
+          debug('Error prefilling form:', e);
+        }
+      }, 100);
+
       // Trigger custom event
       $(document).trigger('bookingPopupOpened');
     });
@@ -1085,6 +1469,115 @@
    * Initialize contact form handling
    */
   function initContactHandling() {
+    // Автоматический AJAX-запрос на получение персональной скидки
+    $(document).on('change keyup', '#client-email, #client-phone', function () {
+      let name = $('#client-name').val();
+      let phone = $('#client-phone').val();
+      let email = $('#client-email').val();
+      let comment = $('#client-comment').val();
+
+      console.log('🎯 Contact change detected:', {
+        email,
+        phone,
+        currentDiscount: bookingData.personalDiscountPercent,
+      });
+
+      bookingData.contact = {
+        name: name || '',
+        phone: phone || '',
+        email: email || '',
+        comment: comment || '',
+      };
+
+      // Получаем персональную скидку по email/телефону
+      if (email || phone) {
+        $.ajax({
+          url: booking_params.ajax_url,
+          type: 'POST',
+          data: {
+            action: 'get_personal_discount',
+            nonce: booking_params.nonce,
+            email: email,
+            phone: phone,
+          },
+          success: function (response) {
+            console.log('🎯 Personal discount AJAX response:', response);
+            if (response.success && response.data) {
+              // Персональная скидка
+              if (response.data.discount_percent) {
+                bookingData.personalDiscountPercent = parseFloat(response.data.discount_percent);
+                $('#personal-discount').val(response.data.discount_percent + '%');
+                $('.personal-discount-group').show();
+                console.log('✅ Discount set to:', bookingData.personalDiscountPercent);
+              } else {
+                // НЕ скидаємо знижку, якщо вона вже встановлена
+                if (
+                  typeof bookingData.personalDiscountPercent === 'undefined' ||
+                  bookingData.personalDiscountPercent === 0
+                ) {
+                  bookingData.personalDiscountPercent = 0;
+                  $('#personal-discount').val('');
+                  $('.personal-discount-group').hide();
+                  console.log('❌ No discount found, cleared discount');
+                } else {
+                  console.log(
+                    '🛡️ Existing discount preserved:',
+                    bookingData.personalDiscountPercent,
+                  );
+                }
+              }
+              // Автозаполнение контактных данных, если backend их вернул
+              if (response.data.name) {
+                $('#client-name').val(response.data.name);
+                bookingData.contact.name = response.data.name;
+              }
+              if (response.data.email) {
+                $('#client-email').val(response.data.email);
+                bookingData.contact.email = response.data.email;
+              }
+              if (response.data.phone) {
+                $('#client-phone').val(response.data.phone);
+                bookingData.contact.phone = response.data.phone;
+              }
+            } else {
+              // НЕ скидаємо знижку, якщо вона вже встановлена
+              if (
+                typeof bookingData.personalDiscountPercent === 'undefined' ||
+                bookingData.personalDiscountPercent === 0
+              ) {
+                bookingData.personalDiscountPercent = 0;
+                $('#personal-discount').val('');
+                $('.personal-discount-group').hide();
+              }
+            }
+            updateSummary();
+          },
+          error: function () {
+            // НЕ скидаємо знижку, якщо вона вже встановлена
+            if (
+              typeof bookingData.personalDiscountPercent === 'undefined' ||
+              bookingData.personalDiscountPercent === 0
+            ) {
+              bookingData.personalDiscountPercent = 0;
+              $('#personal-discount').val('');
+              $('.personal-discount-group').hide();
+            }
+            updateSummary();
+          },
+        });
+      } else {
+        // НЕ скидаємо знижку, якщо вона вже встановлена
+        if (
+          typeof bookingData.personalDiscountPercent === 'undefined' ||
+          bookingData.personalDiscountPercent === 0
+        ) {
+          bookingData.personalDiscountPercent = 0;
+          $('#personal-discount').val('');
+          $('.personal-discount-group').hide();
+        }
+        updateSummary();
+      }
+    });
     // Form field validation on blur
     $(document).on('blur', '.contact-form input[required]', function () {
       validateField($(this));
@@ -1559,9 +2052,44 @@
       }
     }
 
+    if (step === 'contact') {
+      setTimeout(function () {
+        try {
+          prefillBookingForm();
+        } catch (e) {
+          debug('Error prefilling form on contact step:', e);
+        }
+
+        try {
+          const personalInfoSection = $('.contact-form h3');
+          if (personalInfoSection.length) {
+            personalInfoSection[0].scrollIntoView({
+              behavior: 'smooth',
+              block: 'start',
+            });
+          }
+        } catch (e) {
+          debug('Error scrolling to personal info:', e);
+        }
+
+        try {
+          showBookingDetailsNotification();
+        } catch (e) {
+          debug('Error showing notification:', e);
+        }
+      }, 200);
+    }
+
     debug('Navigated to step', step);
 
     $(document).trigger('bookingStepChanged', [step]);
+
+    // Initialize floating notification for confirm and contact steps
+    if (step === 'confirm' || step === 'contact') {
+      setTimeout(() => {
+        initFloatingNotification();
+      }, 300); // Small delay to ensure DOM is updated
+    }
   }
   function renderDefaultStaffList() {
     let html = '';
@@ -3104,6 +3632,43 @@
 
     totalAmountEl.text(`${adjustedTotal.toFixed(2)} SGD`);
 
+    // Персональная скидка: отображение в .summary-item.personal-discount
+    const $personalDiscountBlock = $('.summary-total-group .summary-item.personal-discount');
+    if (bookingData.personalDiscountPercent && bookingData.personalDiscountPercent > 0) {
+      const personalDiscountAmount = (adjustedTotal * bookingData.personalDiscountPercent) / 100;
+      const totalWithPersonalDiscount = Math.max(0, adjustedTotal - personalDiscountAmount);
+      $personalDiscountBlock.show();
+      $personalDiscountBlock
+        .find('.summary-discount-amount')
+        .text(`-${personalDiscountAmount.toFixed(2)} SGD`);
+
+      let $totalBlock = $('.summary-total-group .summary-item.total');
+      if ($totalBlock.length) {
+        $totalBlock.html(
+          `<span>Total</span> <span class="summary-total-amount"><s style="color:#aaa;font-weight:400;">${adjustedTotal.toFixed(2)} SGD</s> ${totalWithPersonalDiscount.toFixed(2)} SGD</span>`,
+        );
+      }
+      bookingData.totalWithTax = totalWithPersonalDiscount;
+      bookingData.adjustedPrice = totalWithPersonalDiscount;
+    } else {
+      $personalDiscountBlock.hide();
+      let $totalBlock = $('.summary-total-group .summary-item.total');
+      if ($totalBlock.length) {
+        $totalBlock.html(
+          `<span>Total</span> <span class="summary-total-amount">${adjustedTotal.toFixed(2)} SGD</span>`,
+        );
+      }
+      bookingData.totalWithTax = adjustedTotal;
+      bookingData.adjustedPrice = adjustedTotal;
+    }
+
+    if (bookingData.contact) {
+      $('#client-name').val(bookingData.contact.name || '');
+      $('#client-phone').val(bookingData.contact.phone || '');
+      $('#client-email').val(bookingData.contact.email || '');
+      $('#client-comment').val(bookingData.contact.comment || '');
+    }
+
     bookingData.totalWithTax = adjustedTotal;
     bookingData.basePrice = basePrice;
     bookingData.adjustedPrice = adjustedTotal;
@@ -3455,5 +4020,48 @@ ${couponInfo}Note: Master markup applied only to core services, not to Add-on se
   $(document).on('mouseleave', '.calendar-day.unavailable', function () {
     $('.calendar-tooltip').remove();
   });
+
   // Initialize styles when document is ready
+  $(document).ready(function () {
+    // Add CSS for country dropdown if not present
+    if (!$('#booking-country-dropdown-styles').length) {
+      $('<style id="booking-country-dropdown-styles">')
+        .text(
+          `
+          .custom-country-select {
+            position: relative;
+          }
+          .country-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            max-height: 200px;
+            overflow-y: auto;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            z-index: 1000;
+            display: none;
+          }
+          .country-dropdown.show {
+            display: block;
+          }
+          .country-option {
+            padding: 8px 12px;
+            cursor: pointer;
+            border-bottom: 1px solid #eee;
+          }
+          .country-option:hover,
+          .country-option.selected {
+            background-color: #f5f5f5;
+          }
+          .country-option:last-child {
+            border-bottom: none;
+          }
+        `,
+        )
+        .appendTo('head');
+    }
+  });
 })(jQuery);
