@@ -29,7 +29,7 @@
 
   // Configuration
   const config = {
-    debug: true,
+    debug: false,
     priceAdjustmentPerLevel: 10,
     apiEndpoint: booking_params.ajax_url,
     nonce: booking_params.nonce,
@@ -91,11 +91,7 @@
    */
   function debug(message, data) {
     if (!config.debug) return;
-    if (data !== undefined) {
-      console.log(message, data);
-    } else {
-      console.log(message);
-    }
+    // Console logging disabled for production
   }
 
   function showBookingDetailsNotification() {
@@ -553,10 +549,6 @@
       try {
         bookingData.personalDiscountPercent = window.bookingUserData.discountPercentage;
         debug('Set personal discount:', window.bookingUserData.discountPercentage + '%');
-        console.log(
-          '🎯 Personal discount set in prefillBookingForm:',
-          bookingData.personalDiscountPercent,
-        );
 
         const personalDiscountBlock = $('.summary-item.personal-discount');
         if (personalDiscountBlock.length) {
@@ -1310,7 +1302,6 @@
 
   function checkDayAvailability(month, year) {
     if (!bookingData.staffId || bookingData.services.length === 0) {
-      console.log('Skipping availability check - no staff or services selected');
       return;
     }
     showDatePreloader(true);
@@ -1476,12 +1467,6 @@
       let email = $('#client-email').val();
       let comment = $('#client-comment').val();
 
-      console.log('🎯 Contact change detected:', {
-        email,
-        phone,
-        currentDiscount: bookingData.personalDiscountPercent,
-      });
-
       bookingData.contact = {
         name: name || '',
         phone: phone || '',
@@ -1501,14 +1486,12 @@
             phone: phone,
           },
           success: function (response) {
-            console.log('🎯 Personal discount AJAX response:', response);
             if (response.success && response.data) {
               // Персональная скидка
               if (response.data.discount_percent) {
                 bookingData.personalDiscountPercent = parseFloat(response.data.discount_percent);
                 $('#personal-discount').val(response.data.discount_percent + '%');
                 $('.personal-discount-group').show();
-                console.log('✅ Discount set to:', bookingData.personalDiscountPercent);
               } else {
                 // НЕ скидаємо знижку, якщо вона вже встановлена
                 if (
@@ -1518,12 +1501,6 @@
                   bookingData.personalDiscountPercent = 0;
                   $('#personal-discount').val('');
                   $('.personal-discount-group').hide();
-                  console.log('❌ No discount found, cleared discount');
-                } else {
-                  console.log(
-                    '🛡️ Existing discount preserved:',
-                    bookingData.personalDiscountPercent,
-                  );
                 }
               }
               // Автозаполнение контактных данных, если backend их вернул
@@ -3781,6 +3758,15 @@
       couponInfo = `Coupon discount (${bookingData.coupon.code}): -${discountAmount.toFixed(2)} SGD\n`;
     }
 
+    // Apply personal discount after coupon
+    let personalDiscountInfo = '';
+    if (bookingData.personalDiscountPercent && bookingData.personalDiscountPercent > 0) {
+      const personalDiscountAmount =
+        (finalAdjustedPrice * bookingData.personalDiscountPercent) / 100;
+      finalAdjustedPrice = Math.max(0, finalAdjustedPrice - personalDiscountAmount);
+      personalDiscountInfo = `Personal discount (${bookingData.personalDiscountPercent}%): -${personalDiscountAmount.toFixed(2)} SGD\n`;
+    }
+
     const fullComment =
       `${cleanComment ? 'Comment from client: ' + cleanComment + '\n\n' : ''}` +
       galleryInfo +
@@ -3790,7 +3776,8 @@ ${serviceDescriptions}
 Base price: ${basePrice.toFixed(2)} SGD
 Master category: ${adjustmentPercent >= 0 ? '+' : ''}${adjustmentPercent}% (${masterMarkupAmount.toFixed(2)} SGD)
 Final price before discount: ${adjustedPriceBeforeDiscount.toFixed(2)} SGD
-${couponInfo}Note: Master markup applied only to core services, not to Add-on services.`;
+${couponInfo}${personalDiscountInfo}TOTAL FINAL PRICE: ${finalAdjustedPrice.toFixed(2)} SGD
+Note: Master markup applied only to core services, not to Add-on services.`;
 
     const bookingRequest = {
       action: 'submit_booking',
