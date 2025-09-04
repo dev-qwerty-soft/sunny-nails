@@ -1474,86 +1474,9 @@
         comment: comment || '',
       };
 
-      // Получаем персональную скидку по email/телефону
-      if (email || phone) {
-        $.ajax({
-          url: booking_params.ajax_url,
-          type: 'POST',
-          data: {
-            action: 'get_personal_discount',
-            nonce: booking_params.nonce,
-            email: email,
-            phone: phone,
-          },
-          success: function (response) {
-            if (response.success && response.data) {
-              // Персональная скидка
-              if (response.data.discount_percent) {
-                bookingData.personalDiscountPercent = parseFloat(response.data.discount_percent);
-                $('#personal-discount').val(response.data.discount_percent + '%');
-                $('.personal-discount-group').show();
-              } else {
-                // НЕ скидаємо знижку, якщо вона вже встановлена
-                if (
-                  typeof bookingData.personalDiscountPercent === 'undefined' ||
-                  bookingData.personalDiscountPercent === 0
-                ) {
-                  bookingData.personalDiscountPercent = 0;
-                  $('#personal-discount').val('');
-                  $('.personal-discount-group').hide();
-                }
-              }
-              // Автозаполнение контактных данных, если backend их вернул
-              if (response.data.name) {
-                $('#client-name').val(response.data.name);
-                bookingData.contact.name = response.data.name;
-              }
-              if (response.data.email) {
-                $('#client-email').val(response.data.email);
-                bookingData.contact.email = response.data.email;
-              }
-              if (response.data.phone) {
-                $('#client-phone').val(response.data.phone);
-                bookingData.contact.phone = response.data.phone;
-              }
-            } else {
-              // НЕ скидаємо знижку, якщо вона вже встановлена
-              if (
-                typeof bookingData.personalDiscountPercent === 'undefined' ||
-                bookingData.personalDiscountPercent === 0
-              ) {
-                bookingData.personalDiscountPercent = 0;
-                $('#personal-discount').val('');
-                $('.personal-discount-group').hide();
-              }
-            }
-            updateSummary();
-          },
-          error: function () {
-            // НЕ скидаємо знижку, якщо вона вже встановлена
-            if (
-              typeof bookingData.personalDiscountPercent === 'undefined' ||
-              bookingData.personalDiscountPercent === 0
-            ) {
-              bookingData.personalDiscountPercent = 0;
-              $('#personal-discount').val('');
-              $('.personal-discount-group').hide();
-            }
-            updateSummary();
-          },
-        });
-      } else {
-        // НЕ скидаємо знижку, якщо вона вже встановлена
-        if (
-          typeof bookingData.personalDiscountPercent === 'undefined' ||
-          bookingData.personalDiscountPercent === 0
-        ) {
-          bookingData.personalDiscountPercent = 0;
-          $('#personal-discount').val('');
-          $('.personal-discount-group').hide();
-        }
-        updateSummary();
-      }
+      // Personal discount functionality removed to prevent AJAX errors
+      // If needed, can be re-implemented when backend function is available
+      updateSummary();
     });
     // Form field validation on blur
     $(document).on('blur', '.contact-form input[required]', function () {
