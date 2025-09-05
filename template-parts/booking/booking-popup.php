@@ -23,6 +23,7 @@ if (is_user_logged_in()) {
   // Try to get data from sunny_friends_customers table directly
   global $wpdb;
   $registrations_table = $wpdb->prefix . 'sunny_friends_customers';
+  $cards_table = $wpdb->prefix . 'sunny_cards';
 
   // Check if table exists to avoid SQL errors
   $table_exists = $wpdb->get_var($wpdb->prepare("SHOW TABLES LIKE %s", $registrations_table)) == $registrations_table;
@@ -30,7 +31,13 @@ if (is_user_logged_in()) {
   if ($table_exists) {
     try {
       $user_data = $wpdb->get_row(
-        $wpdb->prepare("SELECT * FROM $registrations_table WHERE user_id = %d", $user_id)
+        $wpdb->prepare(
+          "SELECT c.*, cards.discount 
+           FROM $registrations_table c 
+           LEFT JOIN $cards_table cards ON c.card_number = cards.card_number 
+           WHERE c.user_id = %d",
+          $user_id
+        )
       );
       $plugin_active = true; // If we can query the table, consider plugin "active"
     } catch (Exception $e) {
