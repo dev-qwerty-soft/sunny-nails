@@ -336,6 +336,25 @@
         }
       }
     }
+
+    .form-group.agreement-text {
+      margin-bottom: 16px;
+      span {
+        color: var(--black, #302f34);
+        font-size: 14px;
+        font-style: normal;
+        font-weight: 500;
+        line-height: 120%; /* 14.4px */
+        a {
+          text-decoration: underline;
+          transition: all 0.3s ease-in-out;
+          &:hover {
+            transition: all 0.3s ease-in-out;
+            color: #85754f;
+          }
+        }
+      }
+    }
     .phone-input-wrapper {
       display: flex;
       flex-wrap: wrap;

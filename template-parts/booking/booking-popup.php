@@ -668,10 +668,13 @@ if (empty($ordered_category_ids)) {
                           <span class="studio-name">(<?php echo esc_html($levelTitle); ?>)</span>
                         <?php endif; ?>
                       </div>
+                      <?php if ($markup): ?>
+                        <div class="staff-price-modifier mobile"><?php echo esc_html($markup); ?></div>
+                      <?php endif; ?>
                       <div class="nearest-seances"></div>
                     </div>
                     <?php if ($markup): ?>
-                      <div class="staff-price-modifier"><?php echo esc_html($markup); ?></div>
+                      <div class="staff-price-modifier desc"><?php echo esc_html($markup); ?></div>
                     <?php endif; ?>
                     <span class="radio-indicator"></span>
                   </div>
@@ -1146,19 +1149,20 @@ if (empty($ordered_category_ids)) {
                 </div>
 
 
-                <div class="form-group checkbox">
-                  <label for="privacy-policy">
-                    <input type="checkbox" id="privacy-policy" required />
-                    <span>
-                      I confirm that I have read and accepted the
-                      <a href="<?= esc_url(
-                                  home_url('/terms-of-services/'),
-                                ) ?>" target="_blank" rel="noopener noreferrer">
-                        Privacy Policy & Terms of Services
-                      </a>.
-                    </span>
-                  </label>
-                  <div class="input-error" data-for="privacy-policy"></div>
+                <div class="form-group agreement-text">
+                  <span>
+                    By clicking Book an appointment, you agree to our
+                    <a href="<?= esc_url(
+                                home_url('/privacy-policy/'),
+                              ) ?>" target="_blank" rel="noopener noreferrer">
+                      Privacy Policy
+                    </a> &
+                    <a href="<?= esc_url(
+                                home_url('/terms-of-services/'),
+                              ) ?>" target="_blank" rel="noopener noreferrer">
+                      Terms of Services
+                    </a>.
+                  </span>
                 </div>
                 <div class="form-errors global-form-error" style="display:none;">
 

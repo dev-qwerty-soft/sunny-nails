@@ -1524,19 +1524,13 @@
         { id: 'client-name', label: 'Name' },
         { id: 'client-email', label: 'Email' },
         { id: 'client-phone', label: 'Phone' },
-        { id: 'privacy-policy', label: 'Privacy policy', type: 'checkbox' },
       ];
 
       fields.forEach((field) => {
         const input = document.getElementById(field.id);
         const errorBlock = $(`.input-error[data-for="${field.id}"]`);
 
-        if (field.type === 'checkbox') {
-          if (!input.checked) {
-            errorBlock.text('You must accept the terms');
-            valid = false;
-          }
-        } else if (!input.value.trim()) {
+        if (!input.value.trim()) {
           errorBlock.text(`${field.label} is required`);
           valid = false;
         }
