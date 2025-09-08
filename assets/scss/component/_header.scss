@@ -36,14 +36,15 @@
   }
   & .container {
     display: grid;
-    grid-template-columns: max-content 1fr max-content;
-    grid-gap: get-d(40px);
+    grid-template-columns: max-content max-content max-content;
+    grid-gap: get-d(16px);
     align-items: center;
     border-bottom: get-d(2px) solid var(--border-color);
     // padding-bottom: get-d(15px);
     height: 100%;
     @include respond(lg) {
       grid-gap: 16px;
+      grid-template-columns: max-content 1fr max-content;
       // padding-bottom: 0;
       border-bottom: 0;
     }
@@ -68,7 +69,7 @@
         font-size: get-d(12px);
         line-height: 100%;
         text-transform: uppercase;
-        padding: get-d(10px) get-d(14px);
+        padding: get-d(10px) get-d(12px);
         color: rgba($bg-grey, 90%);
         @include respond(lg) {
           font-size: 20px;
