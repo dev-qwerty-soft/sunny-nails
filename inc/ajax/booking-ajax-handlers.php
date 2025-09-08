@@ -108,11 +108,6 @@ function altegio_get_masters()
   ]);
 
   $masters = [];
-  $level_titles = [
-    1 => 'Sunny Ray',
-    2 => 'Sunny Shine',
-    3 => 'Sunny Inferno',
-  ];
 
   if ($masters_query->have_posts()) {
     while ($masters_query->have_posts()) {
@@ -120,7 +115,7 @@ function altegio_get_masters()
       $post_id = get_the_ID();
       $level = (int) get_post_meta($post_id, 'master_level', true) ?: 1;
       $specialization =
-        get_post_meta($post_id, 'specialization', true) ?: $level_titles[$level] ?? '';
+        get_post_meta($post_id, 'specialization', true) ?: get_master_level_title($level, false);
       $related_services = get_post_meta($post_id, 'related_services', true);
 
       // Filter by service if specified
@@ -407,12 +402,6 @@ function altegio_get_filtered_staff()
     'post_status' => 'publish',
   ]);
 
-  $level_titles = [
-    1 => 'Sunny Ray',
-    2 => 'Sunny Shine',
-    3 => 'Sunny Inferno',
-  ];
-
   $available_masters = [];
 
   if ($query->have_posts()) {
@@ -442,7 +431,7 @@ function altegio_get_filtered_staff()
         'avatar' => get_the_post_thumbnail_url($post_id, 'thumbnail'),
         'level' => $level,
         'specialization' =>
-        get_field('master_specialization', $post_id) ?: $level_titles[$level] ?? '',
+        get_field('master_specialization', $post_id) ?: get_master_level_title($level, false),
       ];
     }
 

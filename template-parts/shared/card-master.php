@@ -5,26 +5,11 @@ if (!$post) {
   return;
 }
 
-$levelTitles = [
-  -1 => 'Intern',
-  1 => 'Sunny Ray',
-  2 => 'Sunny Shine',
-  3 => 'Sunny Inferno',
-  4 => 'Trainer',
-  5 => 'Sunny Inferno, Supervisor',
-];
-
 $level = max((int) get_field('master_level', $post->ID), -1);
-$levelName = $levelTitles[$level] ?? '';
 
-$starsCount = match (true) {
-  $level === -1 => 0,
-  $level === 1 => 1,
-  $level === 2 => 2,
-  $level === 3 => 3,
-  $level === 4, $level === 5 => 4,
-  default => 0,
-};
+// Use helper functions to get data from ACF fields
+$levelName = get_master_level_title($level, true); // Include additional info
+$starsCount = get_master_level_stars($level);
 
 $id = get_field('altegio_id', $post->ID);
 $image = get_the_post_thumbnail_url($post->ID);
@@ -39,8 +24,8 @@ $instagram = get_field('instagram_url', $post->ID);
     <span class='team-card__name'><?= esc_html($name) ?></span>
     <!-- <?php if ($instagram): ?>
       <a href='<?= esc_url(
-        $instagram,
-      ) ?>' aria-label='Instagram' target='_blank' class='team-card__instagram'></a>
+                  $instagram,
+                ) ?>' aria-label='Instagram' target='_blank' class='team-card__instagram'></a>
     <?php endif; ?> -->
     <div class='team-card__rate'>
       <div class='stars yellow'>
@@ -90,8 +75,8 @@ $instagram = get_field('instagram_url', $post->ID);
 
   <div class='team-card__buttons page'>
     <button data-staff-id="<?= esc_attr(
-      $id,
-    ) ?>" class='btn yellow book-tem'>Book an Appointment</button>
+                              $id,
+                            ) ?>" class='btn yellow book-tem'>Book an Appointment</button>
     <?php
     $link_team = get_field('team_link_url', 'option');
     $url = $link_team['url'] ?? '';
@@ -101,8 +86,8 @@ $instagram = get_field('instagram_url', $post->ID);
 
     <?php if (!$isPage && $url): ?>
       <!-- <a href="<?= esc_url($url) ?>" target="<?= esc_attr(
-  $target,
-) ?>" class="btn"><?= esc_html($title) ?></a> -->
+                                                    $target,
+                                                  ) ?>" class="btn"><?= esc_html($title) ?></a> -->
     <?php endif; ?>
   </div>
 </div>

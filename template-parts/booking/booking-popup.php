@@ -861,23 +861,8 @@ if (empty($ordered_category_ids)) {
               'post_status' => 'publish',
             ]);
 
-            $levelTitles = [
-              -1 => 'Intern',
-              1 => 'Sunny Ray',
-              2 => 'Sunny Shine',
-              3 => 'Sunny Inferno',
-              4 => 'Trainer',
-              5 => 'Sunny Inferno, Supervisor',
-            ];
-
-            $markupMap = [
-              -1 => '-50% to price',
-              1 => '+0% to price',
-              2 => '+10% to price',
-              3 => '+20% to price',
-              4 => '+30% to price',
-              5 => '+30% to price',
-            ];
+            // Get master levels from admin configuration
+            $masterLevelsConfig = get_master_levels_config();
 
             $starSvg = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M20.8965 18.008L18.6085 15.7L19.2965 15.012L21.6045 17.3L20.8965 18.008ZM17.7005 6.373L17.0125 5.685L19.3005 3.396L20.0085 4.085L17.7005 6.373ZM6.30048 6.393L4.01148 4.084L4.70048 3.395L7.00848 5.684L6.30048 6.393ZM3.08548 18.007L2.39648 17.299L4.68548 15.01L5.39248 15.699L3.08548 18.007ZM6.44048 20L7.91048 13.725L3.00048 9.481L9.47048 8.933L12.0005 3L14.5505 8.933L21.0205 9.481L16.1085 13.725L17.5785 20L12.0005 16.66L6.44048 20Z" fill="#FDC41F"/>
@@ -894,20 +879,20 @@ if (empty($ordered_category_ids)) {
                 }
                 $level = (int) get_field('master_level');
 
-                $starsCount = match (true) {
-                  $level === -1 => 0,
-                  $level === 1 => 1,
-                  $level === 2 => 2,
-                  $level === 3 => 3,
-                  $level === 4, $level === 5 => 4,
-                  default => 0,
-                };
+                $starsCount = get_master_level_stars($level);
                 $stars = str_repeat($starSvg, $starsCount);
 
-                $markup = $markupMap[$level] ?? '';
+                // Use new master levels functions
+                $levelTitle = get_master_level_title($level, true); // Include additional info
+                $markup = get_master_level_percent($level) . '% to price';
+                if (get_master_level_percent($level) > 0) {
+                  $markup = '+' . $markup;
+                } elseif (get_master_level_percent($level) < 0) {
+                  // Markup already includes the minus sign
+                }
+
                 $avatar = get_the_post_thumbnail_url(get_the_ID(), 'thumbnail');
                 $specialization = get_field('master_specialization');
-                $levelTitle = $levelTitles[$level] ?? '';
             ?>
                 <label class="staff-item level-<?php echo esc_attr($level); ?>"
                   data-staff-id="<?php echo esc_attr(get_field('altegio_id')); ?>"
@@ -1794,4 +1779,7 @@ if (empty($ordered_category_ids)) {
     discountPercentage: <?php echo (int)$user_discount_percentage; ?>,
     discountValue: '<?php echo esc_js($user_discount_value); ?>'
   };
+
+  // Master levels configuration for JavaScript
+  window.masterLevelsConfig = <?php echo json_encode($masterLevelsConfig); ?>;
 </script>

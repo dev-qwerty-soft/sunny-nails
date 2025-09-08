@@ -39,41 +39,67 @@
   };
 
   /**
+   * Get master levels configuration from PHP
+   */
+  function getMasterLevelsConfig() {
+    return window.masterLevelsConfig || {
+      '-1': { title: 'Intern', percent: -50, stars: 0, additional_info: '' },
+      '1': { title: 'Sunny Ray', percent: 0, stars: 1, additional_info: '' },
+      '2': { title: 'Sunny Shine', percent: 10, stars: 2, additional_info: '' },
+      '3': { title: 'Sunny Inferno', percent: 20, stars: 3, additional_info: '' },
+      '4': { title: 'Trainer', percent: 30, stars: 3, additional_info: '' },
+      '5': { title: 'Salon Manager', percent: 30, stars: 4, additional_info: '' }
+    };
+  }
+
+  /**
+   * Get level title with optional additional info
+   */
+  function getLevelTitle(level, includeAdditionalInfo = false) {
+    const config = getMasterLevelsConfig();
+    const levelStr = String(level);
+    
+    if (!config[levelStr]) {
+      return 'Unknown Level';
+    }
+    
+    let title = config[levelStr].title;
+    
+    if (includeAdditionalInfo && config[levelStr].additional_info) {
+      title += ', ' + config[levelStr].additional_info;
+    }
+    
+    return title;
+  }
+
+  /**
+   * Get level percentage
+   */
+  function getLevelPercent(level) {
+    const config = getMasterLevelsConfig();
+    const levelStr = String(level);
+    return config[levelStr] ? config[levelStr].percent : 0;
+  }
+
+  /**
+   * Get level stars count
+   */
+  function getLevelStars(level) {
+    const config = getMasterLevelsConfig();
+    const levelStr = String(level);
+    return config[levelStr] ? config[levelStr].stars : 1;
+  }
+
+  /**
    * Generate stars HTML based on level
    * @param {number} level - Star level (1-5)
    * @returns {string} - HTML with star SVGs
    */
-  const levelTitles = {
-    [-1]: 'Intern',
-    1: 'Sunny Ray',
-    2: 'Sunny Shine',
-    3: 'Sunny Inferno',
-    4: 'Trainer',
-    5: 'Sunny Inferno, Supervisor',
-  };
-
-  const percentMap = {
-    [-1]: -50,
-    1: 0,
-    2: 10,
-    3: 20,
-    4: 30,
-    5: 30,
-  };
-
-  const starsMap = {
-    [-1]: 0,
-    1: 1,
-    2: 2,
-    3: 3,
-    4: 3,
-    5: 4,
-  };
 
   function generateStarsHtml(level) {
     if (typeof level === 'undefined' || level === null) return '';
 
-    const starsCount = starsMap[level];
+    const starsCount = getLevelStars(level);
 
     if (typeof starsCount === 'undefined' || starsCount === 0) return '';
 
@@ -1175,7 +1201,7 @@
     const stars = generateStarsHtml(level);
     $('.summary-master .stars').html(stars);
 
-    const levelTitle = levelTitles[level];
+    const levelTitle = getLevelTitle(level, true); // Include additional info
     $('.summary-master .stars-name')
       .text(levelTitle ? `(${levelTitle})` : '')
       .toggle(!!levelTitle);
@@ -2020,10 +2046,10 @@
           response.data.data.forEach(function (staff) {
             const isSelected = bookingData.staffId == staff.id ? ' selected' : '';
             const staffLevel = Number.isInteger(staff.level) ? staff.level : 1;
-            const levelTitle = levelTitles[staffLevel] || '';
+            const levelTitle = getLevelTitle(staffLevel, true); // Include additional info
 
             let priceModifier = '';
-            const modifier = percentMap[staffLevel];
+            const modifier = getLevelPercent(staffLevel);
 
             if (typeof modifier === 'number') {
               const sign = modifier > 0 ? '+' : '';
@@ -2401,8 +2427,8 @@
             <h4 class="staff-name">${name}</h4>
             <div class="staff-specialization">
               <div class="staff-stars">${generateStarsHtml(level)}</div>
-              ${levelTitles[level] ? `<span class="studio-name">(${levelTitles[level]})</span>` : ''}
-              ${percentMap[level] > 0 ? `<div class="staff-price-modifier">+${percentMap[level]}%    <span>to price</span></div>` : ''}
+              ${getLevelTitle(level, true) ? `<span class="studio-name">(${getLevelTitle(level, true)})</span>` : ''}
+              ${getLevelPercent(level) > 0 ? `<div class="staff-price-modifier">+${getLevelPercent(level)}%    <span>to price</span></div>` : ''}
             </div>
           </div>
         </div>
@@ -2885,10 +2911,10 @@
     staffList.forEach(function (staff) {
       const isSelected = bookingData.staffId == staff.id ? ' selected' : '';
       const staffLevel = Number.isInteger(staff.level) ? staff.level : 1;
-      const levelTitle = levelTitles[staffLevel] || '';
+      const levelTitle = getLevelTitle(staffLevel, true); // Include additional info
 
       let priceModifier = '';
-      const modifier = percentMap[staffLevel];
+      const modifier = getLevelPercent(staffLevel);
 
       if (typeof modifier === 'number') {
         const sign = modifier > 0 ? '+' : '';
@@ -3421,7 +3447,7 @@
     const stars = generateStarsHtml(bookingData.staffLevel);
     masterBox.find('.stars').html(stars);
 
-    const title = levelTitles[bookingData.staffLevel];
+    const title = getLevelTitle(bookingData.staffLevel, true); // Include additional info
     masterBox.find('.stars-name').text(title ? `(${title})` : '');
 
     const dateStr = formatDateDisplay(bookingData.date);
@@ -3434,12 +3460,9 @@
     let basePrice = 0;
     let masterMarkupAmount = 0;
 
-    let percent = percentMap[bookingData.staffLevel];
+    let percent = getLevelPercent(bookingData.staffLevel);
     if (typeof percent === 'undefined') {
       percent = 0;
-    }
-    if (bookingData.staffLevel === -1) {
-      percent = -50;
     }
 
     bookingData.coreServices.forEach((service) => {
@@ -3611,7 +3634,7 @@
 
     const basePrice = calculateBasePrice();
     const staffLevel = bookingData.staffLevel != null ? parseInt(bookingData.staffLevel) : 1;
-    const adjustmentPercent = percentMap[staffLevel] || 0;
+    const adjustmentPercent = getLevelPercent(staffLevel);
 
     let masterMarkupAmount = 0;
     bookingData.coreServices.forEach((service) => {
