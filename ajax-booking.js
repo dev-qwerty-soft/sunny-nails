@@ -2674,7 +2674,7 @@
             <div class="slots">${slotsHtml}</div>
           `);
           } else {
-            $target.html('<div class="no-slots">No available slots</div>');
+           $target.html('<div class="no-slots">There are no available time slots with this master. Please check the next one for availability.</div>');
           }
         },
         error: function () {
