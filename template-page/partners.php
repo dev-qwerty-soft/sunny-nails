@@ -83,31 +83,32 @@ $benefits = get_field('benefit_item');
             </div>
         <?php endif; ?>
     </section>
-
-    <section class="partner-program">
-        <div class="partner-program__container">
-            <div class="partner-program__image">
-                <?php
-                $image = get_field('partner_program_image');
-                if ($image) {
-                    echo '<img src="' .
-                        esc_url($image['url']) .
-                        '" alt="' .
-                        esc_attr($image['alt']) .
-                        '">';
-                }
-                ?>
+    <?php $partner_program_active = get_field('partner_program_active');
+    if ($partner_program_active) : ?>
+        <section class="partner-program">
+            <div class="partner-program__container">
+                <div class="partner-program__image">
+                    <?php
+                    $image = get_field('partner_program_image');
+                    if ($image) {
+                        echo '<img src="' .
+                            esc_url($image['url']) .
+                            '" alt="' .
+                            esc_attr($image['alt']) .
+                            '">';
+                    }
+                    ?>
+                </div>
+                <div class="partner-program__content">
+                    <h2 class="partner-program__title"><?php the_field('partner_program_title'); ?></h2>
+                    <div class="partner-program__desc"><?php the_field(
+                                                            'partner_program_description',
+                                                        ); ?></div>
+                </div>
             </div>
-            <div class="partner-program__content">
-                <h2 class="partner-program__title"><?php the_field('partner_program_title'); ?></h2>
-                <div class="partner-program__desc"><?php the_field(
-                                                        'partner_program_description',
-                                                    ); ?></div>
-            </div>
-        </div>
-    </section>
+        </section>
 
-
+    <?php endif; ?>
 
     <section class="partners-section">
         <div class="partners-section__head">
