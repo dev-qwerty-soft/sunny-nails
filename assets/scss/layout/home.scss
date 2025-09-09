@@ -484,7 +484,7 @@
 }
 
 .services-preview-section {
-  padding: get-d(75px) get-d(60px) get-d(150px);
+  padding: get-d(75px) get-d(60px);
   @include respond(lg) {
     padding: get-lg(75px) get-lg(60px);
   }
