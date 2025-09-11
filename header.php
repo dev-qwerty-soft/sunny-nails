@@ -6,15 +6,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="profile" href="http://gmpg.org/xfn/11">
     <meta name="robots" content="index, follow">
-    <meta name="description" content="<?php echo get_bloginfo('description'); ?>">
     <meta name="application-name" content="SUNNY NAILS">
     <meta property="og:site_name" content="SUNNY NAILS">
     <meta name="twitter:site" content="@sunnynails">
     <meta property="og:title" content="<?= wp_get_document_title() ?>">
     <meta property="og:type" content="website">
     <meta property="og:url" content="<?php echo esc_url(get_permalink()); ?>">
-    <meta property="og:description" content="Professional nail salon in Singapore offering manicure, pedicure and nail care services.">
-    <meta name="description" content="SUNNY NAILS - Professional nail salon in Singapore offering manicure, pedicure and nail care services">
     <meta property="og:image" content="<?php echo get_site_icon_url(); ?>">
 
     <link rel="icon" type="image/png" sizes="32x32" href="<?= get_template_directory_uri() ?>/assets/svg/favicon_32x32.png">
