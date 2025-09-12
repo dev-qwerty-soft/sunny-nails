@@ -52,6 +52,8 @@
     }
 
     &__img {
+      position: sticky;
+      top: 0;
       width: 40%;
       height: 100%;
       min-height: get-d(500px);
