@@ -9,7 +9,7 @@ import 'swiper/css/scrollbar';
 import Swiper from 'swiper';
 import './js/map.js';
 import { Navigation, Pagination, Scrollbar, FreeMode, Thumbs } from 'swiper/modules';
-import { has, g, add, remove, toggle, updateDisplay } from './js/function.js';
+import { has, g, add, remove, toggle, updateDisplay, initMasterPopup } from './js/function.js';
 import 'swiper/css/thumbs';
 
 const header = g('.site-header');
@@ -324,3 +324,5 @@ document.onclick = (e) => {
     tabFn?.(e.target);
   }
 };
+
+initMasterPopup();

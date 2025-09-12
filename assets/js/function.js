@@ -147,3 +147,39 @@ export function updateDisplay(msLeft) {
   g('#minutes').textContent = formatUnit(minutes);
   g('#seconds').textContent = formatUnit(seconds);
 }
+
+export function initMasterPopup() {
+  const masterButtons = g('.master-details-btn', document, true);
+  if (!masterButtons) return;
+
+  masterButtons.forEach((button) => {
+    button.addEventListener('click', () => {
+      const masterId = button.dataset.masterId;
+      const popup = g(`#master-popup-${masterId}`);
+      if (popup) {
+        popup.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+      }
+    });
+  });
+
+  const popups = g('.master-popup-backdrop', document, true);
+  if (!popups) return;
+
+  popups.forEach((popup) => {
+    const closeBtn = g('.master-popup__close', popup);
+    if (closeBtn) {
+      closeBtn.addEventListener('click', () => {
+        popup.style.display = 'none';
+        document.body.style.overflow = '';
+      });
+    }
+
+    popup.addEventListener('click', (e) => {
+      if (e.target === popup) {
+        popup.style.display = 'none';
+        document.body.style.overflow = '';
+      }
+    });
+  });
+}

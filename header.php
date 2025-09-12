@@ -16,12 +16,6 @@
 
     <link rel="icon" type="image/png" sizes="32x32" href="<?= get_template_directory_uri() ?>/assets/svg/favicon_32x32.png">
     <link rel="shortcut icon" href="<?= get_template_directory_uri() ?>/assets/svg/favicon_32x32.png">
-    <link rel="icon" href="<?= getAssetUrlAcf(
-                                'favicon_black_theme',
-                            ) ?>" media="(prefers-color-scheme: dark)">
-    <link rel="icon" href="<?= getAssetUrlAcf(
-                                'favicon_light_theme',
-                            ) ?>" media="(prefers-color-scheme: light)">
     <script type="application/ld+json">
         {
             "@context": "https://schema.org",

@@ -64,11 +64,14 @@ add_action('login_enqueue_scripts', function () {
   wp_enqueue_style('login-css', getUrl('login/style.css'), false, '1.0.0');
 });
 
-add_action('admin_head', function () {
-  echo '<link rel="icon" href="' .
-    getAssetUrlAcf('favicon_black_theme') .
-    '" media="(prefers-color-scheme: dark)">';
-  echo '<link rel="icon" href="' .
-    getAssetUrlAcf('favicon_light_theme') .
-    '" media="(prefers-color-scheme: light)">';
+add_action('wp_head', function () {
+  $favicon_dark = getAssetUrlAcf('favicon_black_theme');
+  $favicon_light = getAssetUrlAcf('favicon_light_theme');
+
+  if ($favicon_dark) {
+    echo '<link rel="icon" href="' . $favicon_dark . '" media="(prefers-color-scheme: dark)">';
+  }
+  if ($favicon_light) {
+    echo '<link rel="icon" href="' . $favicon_light . '" media="(prefers-color-scheme: light)">';
+  }
 });

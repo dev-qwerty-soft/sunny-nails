@@ -12,14 +12,18 @@ $levelName = get_master_level_title($level, true); // Include additional info
 $starsCount = get_master_level_stars($level);
 
 $id = get_field('altegio_id', $post->ID);
-$image = get_the_post_thumbnail_url($post->ID);
+$image = get_the_post_thumbnail_url($post->ID, 'large') ?: '';
 $images = get_field('master_images_work', $post->ID);
 $name = isset($post->post_title) ? $post->post_title : '';
 $instagram = get_field('instagram_url', $post->ID);
 ?>
 
 <div data-altegio-id='<?= esc_attr($id) ?>' class='team-card'>
-  <img class='team-card__image' src='<?= esc_url($image) ?>' alt='<?= esc_attr($name) ?>'>
+  <?php if ($image): ?>
+    <img class='team-card__image' src='<?= esc_url($image) ?>' alt='<?= esc_attr($name) ?>'>
+  <?php else: ?>
+    <div class='team-card__image-placeholder'>No Image</div>
+  <?php endif; ?>
   <div class='team-card__text'>
     <span class='team-card__name'><?= esc_html($name) ?></span>
     <!-- <?php if ($instagram): ?>
@@ -41,7 +45,7 @@ $instagram = get_field('instagram_url', $post->ID);
     <div class='swiper-wrapper'>
       <?php if (!empty($images)) {
         foreach ($images as $item) {
-          $image = $item['image'];
+          $work_image = $item['image'];
           $tag = $item['master_image_work_tag'];
 
           $tagName = '';
@@ -51,17 +55,17 @@ $instagram = get_field('instagram_url', $post->ID);
             $tagName = $tag[0]->name;
           }
 
-          $url = '';
-          if (is_array($image)) {
-            $url = $image['url'] ?? '';
-          } elseif (is_numeric($image)) {
-            $url = wp_get_attachment_image_url($image, 'large');
+          $work_image_url = '';
+          if (is_array($work_image)) {
+            $work_image_url = $work_image['url'] ?? '';
+          } elseif (is_numeric($work_image)) {
+            $work_image_url = wp_get_attachment_image_url($work_image, 'large');
           }
 
-          if ($url) {
+          if ($work_image_url) {
             echo "<div class='swiper-slide'>
                     <img src='" .
-              esc_url($url) .
+              esc_url($work_image_url) .
               "' alt='" .
               esc_attr($tagName) .
               "'>
@@ -73,21 +77,24 @@ $instagram = get_field('instagram_url', $post->ID);
     <div class='swiper-scrollbar'></div>
   </div>
 
-  <div class='team-card__buttons page'>
+  <?php
+  // Check if Learn More button should be shown
+  $show_learn_more = false;
+  if (!$isPage) {
+    $details_popup = get_field('details_pop_up', $post->ID);
+    $master_description = $details_popup['description'] ?? null;
+    $master_achievements = $details_popup['masters_achievements'] ?? null;
+    $show_learn_more = ($master_description && !empty(trim($master_description))) ||
+      ($master_achievements && is_array($master_achievements) && !empty($master_achievements));
+  }
+  ?>
+
+  <div class='team-card__buttons page<?= $show_learn_more ? ' two-buttons' : '' ?>'>
     <button data-staff-id="<?= esc_attr(
                               $id,
                             ) ?>" class='btn yellow book-tem'>Book an Appointment</button>
-    <?php
-    $link_team = get_field('team_link_url', 'option');
-    $url = $link_team['url'] ?? '';
-    $target = $link_team['target'] ?? '_self';
-    $title = $link_team['title'] ?? 'Learn More';
-    ?>
-
-    <?php if (!$isPage && $url): ?>
-      <!-- <a href="<?= esc_url($url) ?>" target="<?= esc_attr(
-                                                    $target,
-                                                  ) ?>" class="btn"><?= esc_html($title) ?></a> -->
+    <?php if ($show_learn_more): ?>
+      <button data-master-id="<?= esc_attr($post->ID) ?>" class="btn master-details-btn">Learn More</button>
     <?php endif; ?>
   </div>
 </div>

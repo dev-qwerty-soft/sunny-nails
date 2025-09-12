@@ -365,10 +365,19 @@
   &__buttons {
     width: 100%;
     display: grid;
-    grid-template-columns: 3fr 2fr;
+    gap: get-d(3px);
+    grid-template-columns: max-content;
     &.page {
-      grid-template-columns: max-content;
       justify-content: center;
+      &.two-buttons {
+        grid-template-columns: 3fr 2fr;
+        @include respond(lg) {
+          grid-template-columns: 3fr 1fr;
+          .master-details-btn {
+            padding: 14px;
+          }
+        }
+      }
     }
   }
 }
