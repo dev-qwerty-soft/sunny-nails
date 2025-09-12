@@ -20,7 +20,7 @@
     min-height: get-d(500px);
     max-height: 90vh;
     gap: get-d(30px);
-    align-items: center;
+    align-items: flex-start;
     overflow-y: auto;
 
     &::-webkit-scrollbar {
