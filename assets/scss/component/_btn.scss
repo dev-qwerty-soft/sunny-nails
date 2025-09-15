@@ -291,6 +291,8 @@
     }
     @include respond(md) {
       height: 250px;
+      width: 100%;
+      aspect-ratio: 1 / 1;
       border-radius: 10px;
     }
   }
@@ -322,6 +324,11 @@
       }
       & .swiper-scrollbar-drag {
         background: $bg-yellow;
+      }
+    }
+    &.no-images {
+      @include respond(md) {
+        display: none;
       }
     }
   }
@@ -769,16 +776,16 @@
   }
 
   & .star {
-    width: get-d(24px);
+    min-width: get-d(24px);
     height: get-d(24px);
     background: url('../svg/material-symbols-light_star-shine.svg') center / cover no-repeat;
 
     @include respond(lg) {
-      width: get-lg(24px);
+      min-width: get-lg(24px);
       height: get-lg(24px);
     }
     @include respond(md) {
-      width: 24px;
+      min-width: 24px;
       height: 24px;
     }
   }

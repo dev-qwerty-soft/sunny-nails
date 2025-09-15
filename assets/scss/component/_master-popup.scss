@@ -131,6 +131,7 @@
         text-transform: capitalize;
         &.mob {
           text-align: center;
+          width: 100%;
           display: block;
           font-size: 28px;
           line-height: 1.2;
@@ -217,7 +218,9 @@
       border-radius: 14px;
       background: var(--white, #fff);
       padding: get-d(4px);
+      margin-bottom: get-d(20px);
       @include respond(md) {
+        margin-bottom: 20px;
         padding: 4px;
       }
 
@@ -354,7 +357,7 @@
       width: fit-content;
       margin-top: get-d(20px);
       @include respond(md) {
-        margin-top: 20px;
+        margin: auto auto 0 auto;
       }
     }
 
@@ -380,7 +383,7 @@
       @include respond(md) {
         width: 24px;
         height: 24px;
-        top: 20px;
+        top: 27px;
         right: 20px;
 
         svg {

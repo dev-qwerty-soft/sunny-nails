@@ -2,8 +2,8 @@
 $posts = $args['posts'] ?? [];
 $isPage = $args['isPage'] ?? false;
 
-// Don't generate popups for page view
-if ($isPage || empty($posts)) {
+// Don't generate popups if no posts
+if (empty($posts)) {
     return;
 }
 

@@ -41,7 +41,27 @@ $instagram = get_field('instagram_url', $post->ID);
     </div>
   </div>
 
-  <div class='swiper mini-swiper'>
+  <?php
+  // Check if there are any valid work images
+  $has_work_images = false;
+  if (!empty($images)) {
+    foreach ($images as $item) {
+      $work_image = $item['image'];
+      $work_image_url = '';
+      if (is_array($work_image)) {
+        $work_image_url = $work_image['url'] ?? '';
+      } elseif (is_numeric($work_image)) {
+        $work_image_url = wp_get_attachment_image_url($work_image, 'large');
+      }
+      if ($work_image_url) {
+        $has_work_images = true;
+        break;
+      }
+    }
+  }
+  ?>
+
+  <div class='swiper mini-swiper<?= !$has_work_images ? ' no-images' : '' ?>'>
     <div class='swiper-wrapper'>
       <?php if (!empty($images)) {
         foreach ($images as $item) {

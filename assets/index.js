@@ -326,3 +326,8 @@ document.onclick = (e) => {
 };
 
 initMasterPopup();
+
+// Re-initialize master popup on DOM content loaded
+document.addEventListener('DOMContentLoaded', () => {
+  initMasterPopup();
+});
