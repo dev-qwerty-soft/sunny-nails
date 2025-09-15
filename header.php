@@ -65,7 +65,7 @@
             </div>
 
             <div class="menu-container">
-                <?php echo do_shortcode('[sunny_login_icon device="mobile" margin="10"]'); ?>
+                <?php echo do_shortcode('[sunny_login_icon device="mobile" margin="4"]'); ?>
                 <button id="burger" class="burger">
                     <span class="bar bar--top"></span>
                     <span class="bar bar--middle"></span>

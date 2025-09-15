@@ -32,7 +32,7 @@
     }
   }
   @include respond(md) {
-    padding: 10px 10px 25px;
+    padding: 24px 25px 12px;
   }
   & .container {
     display: flex;
@@ -43,7 +43,7 @@
     height: 100%;
     @include respond(lg) {
       display: grid;
-      grid-gap: 20px;
+      grid-gap: 16px;
       grid-template-columns: max-content 1fr max-content;
       // padding-bottom: 0;
       border-bottom: 0;
