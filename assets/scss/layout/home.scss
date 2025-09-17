@@ -938,7 +938,7 @@
 
 .hero-new-section {
   height: 100vh;
-  background: #FDC41F;
+  background: #fdc41f;
   padding: get-d(74px) get-d(60px) get-d(60px) get-d(60px);
   position: relative;
   @include respond(lg) {
@@ -956,7 +956,7 @@
       right: 0;
       left: 0;
       bottom: 0;
-      background: url("../svg/Rectangle\ 259.png") center / cover no-repeat;
+      background: url('../svg/Rectangle\ 259.png') center / cover no-repeat;
       z-index: 1;
     }
   }
@@ -972,7 +972,7 @@
     font-weight: 500;
     font-size: get-d(76px);
     line-height: 100%;
-    color: #FFFFFF;
+    color: #ffffff;
     max-width: get-d(730px);
     @include respond(lg) {
       font-size: get-lg(76px);
@@ -1007,7 +1007,7 @@
   }
   &__box {
     padding: get-d(20px);
-    background: #FFFFFF;
+    background: #ffffff;
     border-radius: get-d(20px);
     width: get-d(340px);
     display: grid;
@@ -1024,18 +1024,18 @@
     }
   }
   &__fire {
-    border: get-d(1px) solid #F7F1E0;
+    border: get-d(1px) solid #f7f1e0;
     width: get-d(52px);
     height: get-d(52px);
     border-radius: 50%;
     position: relative;
     @include respond(lg) {
-      border: get-lg(1px) solid #F7F1E0;
+      border: get-lg(1px) solid #f7f1e0;
       width: get-lg(52px);
       height: get-lg(52px);
     }
     @include respond(md) {
-      border: 1px solid #F7F1E0;
+      border: 1px solid #f7f1e0;
       width: 52px;
       height: 52px;
     }
@@ -1047,7 +1047,7 @@
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      background: url("../svg/bi_fire.png") center / contain no-repeat;
+      background: url('../svg/bi_fire.png') center / contain no-repeat;
       @include respond(lg) {
         width: get-lg(28px);
         height: get-lg(28px);
@@ -1084,7 +1084,7 @@
       grid-gap: 12px;
     }
     & .white {
-      background: #F7F1E0;
+      background: #f7f1e0;
     }
   }
 }

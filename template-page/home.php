@@ -29,9 +29,7 @@ if (empty($ordered_category_ids)) {
 ?>
 
 <main>
-    <?php
-        get_template_part('template-parts/sections/hero/new');
-    ?>
+    <?php get_template_part('template-parts/sections/hero/new'); ?>
     <?php $choose_section_active = get_field('choose_section_active'); ?>
     <?php if ($choose_section_active): ?>
         <section class=" reasons-section">

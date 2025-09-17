@@ -53,6 +53,10 @@ if (empty($ordered_category_ids)) {
           // Custom sorting function
           // Custom sorting function
           // Custom sorting function
+          // Custom sorting function
+          // Custom sorting function
+          // Custom sorting function
+          // Custom sorting function
           else: ?>
           <?php foreach ($categories as $category): ?>
             <?php
