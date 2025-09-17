@@ -374,6 +374,7 @@
     display: grid;
     gap: get-d(3px);
     grid-template-columns: max-content;
+    height: max-content;
     &.page {
       justify-content: center;
       &.two-buttons {
