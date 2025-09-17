@@ -314,7 +314,7 @@ body.popup-open {
     margin: auto auto 0;
     padding-top: 20px;
     padding-bottom: 20px;
- padding-bottom: calc(env(safe-area-inset-bottom, 20px) + 0px);
+    padding-bottom: calc(env(safe-area-inset-bottom, 20px) + 0px);
     @supports (-webkit-touch-callout: none) {
       padding-bottom: calc(env(safe-area-inset-bottom, 20px) + 0px);
     }

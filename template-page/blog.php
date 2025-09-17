@@ -6,30 +6,29 @@
 get_header();
 
 $all_posts = new WP_Query([
-    'posts_per_page' => -1,
-    'post_status' => 'publish',
+  'posts_per_page' => -1,
+  'post_status' => 'publish',
 ]);
 $posts_data = [];
 if ($all_posts->have_posts()) {
-    while ($all_posts->have_posts()) {
-        $all_posts->the_post();
-        $cats = wp_get_post_categories(get_the_ID(), ['fields' => 'names']);
-        $posts_data[] = [
-            'id' => get_the_ID(),
-            'title' => get_the_title(),
-            'permalink' => get_permalink(),
-            'date' => get_the_date('F j, Y'),
-            'thumb' => get_the_post_thumbnail_url(get_the_ID(), 'medium'),
-            'excerpt' => get_field('short_text') ?: get_the_excerpt(),
-            'cats' => $cats,
-        ];
-    }
-    wp_reset_postdata();
+  while ($all_posts->have_posts()) {
+    $all_posts->the_post();
+    $cats = wp_get_post_categories(get_the_ID(), ['fields' => 'names']);
+    $posts_data[] = [
+      'id' => get_the_ID(),
+      'title' => get_the_title(),
+      'permalink' => get_permalink(),
+      'date' => get_the_date('F j, Y'),
+      'thumb' => get_the_post_thumbnail_url(get_the_ID(), 'medium'),
+      'excerpt' => get_field('short_text') ?: get_the_excerpt(),
+      'cats' => $cats,
+    ];
+  }
+  wp_reset_postdata();
 }
 
-
 $categories = get_categories([
-    'hide_empty' => true,
+  'hide_empty' => true,
 ]);
 ?>
 
@@ -37,23 +36,21 @@ $categories = get_categories([
     <section class="blog-hero">
         <div class="blog-hero-bg">
             <?php
-
             $page_for_posts = get_option('page_for_posts');
             $post_obj = get_post($page_for_posts);
             if ($post_obj) {
-                $blocks = parse_blocks($post_obj->post_content);
-                if (!empty($blocks)) {
+              $blocks = parse_blocks($post_obj->post_content);
+              if (!empty($blocks)) {
+                $first_block = array_shift($blocks);
+                $first_content = apply_filters('the_content', render_block($first_block));
+                echo '<h1 class="blog-hero-title">' . wp_strip_all_tags($first_content) . '</h1>';
 
-                    $first_block = array_shift($blocks);
-                    $first_content = apply_filters('the_content', render_block($first_block));
-                    echo '<h1 class="blog-hero-title">' . wp_strip_all_tags($first_content) . '</h1>';
-
-                    $rest_content = '';
-                    foreach ($blocks as $block) {
-                        $rest_content .= apply_filters('the_content', render_block($block));
-                    }
-                    echo '<div class="blog-hero-desc">' . $rest_content . '</div>';
+                $rest_content = '';
+                foreach ($blocks as $block) {
+                  $rest_content .= apply_filters('the_content', render_block($block));
                 }
+                echo '<div class="blog-hero-desc">' . $rest_content . '</div>';
+              }
             }
             ?>
         </div>

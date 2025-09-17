@@ -1,57 +1,85 @@
 <?php
 get_header();
-if (have_posts()) :
-    while (have_posts()) : the_post(); ?>
+if (have_posts()):
+  while (have_posts()):
+    the_post(); ?>
         <main class="single-post-main">
             <section class="post-hero">
                 <div class="post-hero-bg">
                     <div class="post-hero-header">
                         <h1 class="post-hero-title"><?php the_title(); ?></h1>
                         <?php if (get_field('short_text')): ?>
-                            <div class="post-hero-short-text"><?php the_field('short_text'); ?></div>
+                            <div class="post-hero-short-text"><?php the_field(
+                              'short_text',
+                            ); ?></div>
                         <?php endif; ?>
                     </div>
                     <div class="post-hero-row">
                         <div class="post-hero-social">
 
                             <div class="icons">
-                                <?php
-                                if (have_rows('post_social', 'option')):
-                                    while (have_rows('post_social', 'option')): the_row();
-                                        $icon = get_sub_field('post_social_icon', 'option');
-                                        $link = get_sub_field('post_social_link', 'option');
+                                <?php if (have_rows('post_social', 'option')):
+                                  while (have_rows('post_social', 'option')):
+                                    the_row();
+                                    $icon = get_sub_field('post_social_icon', 'option');
+                                    $link = get_sub_field('post_social_link', 'option');
 
-                                        if ($icon):
-                                            $current_url = get_permalink();
-                                            $current_title = get_the_title();
-                                            $share_url = '';
+                                    if ($icon):
 
-                                            if ($link) {
-                                                $link_url = is_array($link) ? $link['url'] : $link;
-                                                $link_lower = strtolower($link_url);
+                                      $current_url = get_permalink();
+                                      $current_title = get_the_title();
+                                      $share_url = '';
 
-                                                if (strpos($link_lower, 'facebook.com') !== false) {
-                                                    $share_url = 'https://www.facebook.com/sharer/sharer.php?u=' . urlencode($current_url);
-                                                } elseif (strpos($link_lower, 'linkedin.com') !== false) {
-                                                    $share_url = 'https://www.linkedin.com/shareArticle?mini=true&url=' . urlencode($current_url) . '&title=' . urlencode($current_title);
-                                                } elseif (strpos($link_lower, 'wa.me') !== false || strpos($link_lower, 'whatsapp') !== false) {
-                                                    $share_url = 'https://wa.me/?text=' . urlencode($current_title . ' ' . $current_url);
-                                                } elseif (strpos($link_lower, 'twitter') !== false || strpos($link_lower, 'x.com') !== false) {
-                                                    $share_url = 'https://twitter.com/intent/tweet?url=' . urlencode($current_url) . '&text=' . urlencode($current_title);
-                                                } else {
-                                                    $share_url = $link_url;
-                                                }
-                                            } else {
-                                                $share_url = '#';
-                                            }
-                                ?>
-                                            <a href="<?php echo esc_url($share_url); ?>" target="_blank" rel="noopener" class="social-link">
-                                                <img src="<?php echo esc_url($icon['url']); ?>" alt="<?php echo esc_attr($icon['alt']); ?>" width="32" height="32">
+                                      if ($link) {
+                                        $link_url = is_array($link) ? $link['url'] : $link;
+                                        $link_lower = strtolower($link_url);
+
+                                        if (strpos($link_lower, 'facebook.com') !== false) {
+                                          $share_url =
+                                            'https://www.facebook.com/sharer/sharer.php?u=' .
+                                            urlencode($current_url);
+                                        } elseif (strpos($link_lower, 'linkedin.com') !== false) {
+                                          $share_url =
+                                            'https://www.linkedin.com/shareArticle?mini=true&url=' .
+                                            urlencode($current_url) .
+                                            '&title=' .
+                                            urlencode($current_title);
+                                        } elseif (
+                                          strpos($link_lower, 'wa.me') !== false ||
+                                          strpos($link_lower, 'whatsapp') !== false
+                                        ) {
+                                          $share_url =
+                                            'https://wa.me/?text=' .
+                                            urlencode($current_title . ' ' . $current_url);
+                                        } elseif (
+                                          strpos($link_lower, 'twitter') !== false ||
+                                          strpos($link_lower, 'x.com') !== false
+                                        ) {
+                                          $share_url =
+                                            'https://twitter.com/intent/tweet?url=' .
+                                            urlencode($current_url) .
+                                            '&text=' .
+                                            urlencode($current_title);
+                                        } else {
+                                          $share_url = $link_url;
+                                        }
+                                      } else {
+                                        $share_url = '#';
+                                      }
+                                      ?>
+                                            <a href="<?php echo esc_url(
+                                              $share_url,
+                                            ); ?>" target="_blank" rel="noopener" class="social-link">
+                                                <img src="<?php echo esc_url(
+                                                  $icon['url'],
+                                                ); ?>" alt="<?php echo esc_attr(
+  $icon['alt'],
+); ?>" width="32" height="32">
                                             </a>
-                                <?php endif;
-                                    endwhile;
-                                endif;
-                                ?>
+                                <?php
+                                    endif;
+                                  endwhile;
+                                endif; ?>
                             </div>
                             <button class="copy-link-btn" onclick="copyLinkWithFeedback(this)">
                                 <svg class="copy-icon" width="16" height="17" viewBox="0 0 16 17" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -71,24 +99,35 @@ if (have_posts()) :
                             <?php
                             $author_id = get_the_author_meta('ID');
                             $author_avatar_url = get_avatar_url($author_id, ['size' => 'medium']);
-                            $default_avatar = get_template_directory_uri() . '/assets/img/default-avatar.png';
+                            $default_avatar =
+                              get_template_directory_uri() . '/assets/img/default-avatar.png';
                             $author_name = get_the_author_meta('display_name', $author_id);
                             ?>
                             <span class="author-avatar">
-                                <img src="<?php echo esc_url($author_avatar_url ? $author_avatar_url : $default_avatar); ?>" alt="Author" width="32" height="32" style="border-radius:50%;">
+                                <img src="<?php echo esc_url(
+                                  $author_avatar_url ? $author_avatar_url : $default_avatar,
+                                ); ?>" alt="Author" width="32" height="32" style="border-radius:50%;">
                             </span>
                             <div class="author-info">
                                 <?php
                                 $author_website = get_the_author_meta('user_url', $author_id);
-                                if ($author_website):
-                                ?>
-                                    <a href="<?php echo esc_url($author_website); ?>" target="_blank" class="author-name-link">
-                                        <span class="author-name"><?php echo esc_html($author_name); ?></span>
+                                if ($author_website): ?>
+                                    <a href="<?php echo esc_url(
+                                      $author_website,
+                                    ); ?>" target="_blank" class="author-name-link">
+                                        <span class="author-name"><?php echo esc_html(
+                                          $author_name,
+                                        ); ?></span>
                                     </a>
                                 <?php else: ?>
-                                    <span class="author-name"><?php echo esc_html($author_name); ?></span>
-                                <?php endif; ?>
-                                <span class="post-hero-date"><?php echo get_the_date('F j, Y'); ?></span>
+                                    <span class="author-name"><?php echo esc_html(
+                                      $author_name,
+                                    ); ?></span>
+                                <?php endif;
+                                ?>
+                                <span class="post-hero-date"><?php echo get_the_date(
+                                  'F j, Y',
+                                ); ?></span>
                             </div>
                         </div>
                     </div>
@@ -97,7 +136,7 @@ if (have_posts()) :
             </section>
             <section class="single-post-container">
                 <article class="single-post-article">
-                    <?php if (has_post_thumbnail()) : ?>
+                    <?php if (has_post_thumbnail()): ?>
                         <div class="post-hero-image">
                             <?php the_post_thumbnail('large'); ?>
                         </div>
@@ -105,9 +144,7 @@ if (have_posts()) :
                     <div class="single-post-content">
                         <?php the_content(); ?>
                     </div>
-                    <?php
-                    $post_categories = get_the_category();
-                    ?>
+                    <?php $post_categories = get_the_category(); ?>
                     <div class="blog-categories">
                         <?php foreach ($post_categories as $cat): ?>
                             <span class="blog-category">
@@ -122,7 +159,9 @@ if (have_posts()) :
             $right_img = get_field('coming_soon_post_right_image', 'option');
             $has_images = $left_img || $right_img;
             ?>
-            <section class=" soon-section<?php if ($has_images) echo ' soon-section--with-images'; ?>">
+            <section class=" soon-section<?php if ($has_images) {
+              echo ' soon-section--with-images';
+            } ?>">
                 <div class="container">
                     <h2 class="title"><?php the_field('coming_soon_post_title', 'option'); ?></h2>
                     <div class="paragraph">
@@ -137,27 +176,26 @@ if (have_posts()) :
             $categories = wp_get_post_categories($current_id);
 
             $args = [
-                'post__not_in' => [$current_id],
-                'posts_per_page' => 3,
-                'ignore_sticky_posts' => 1,
+              'post__not_in' => [$current_id],
+              'posts_per_page' => 3,
+              'ignore_sticky_posts' => 1,
             ];
 
             if (!empty($categories)) {
-                $args['category__in'] = $categories;
-                $args['orderby'] = 'rand';
+              $args['category__in'] = $categories;
+              $args['orderby'] = 'rand';
             }
 
             $query = new WP_Query($args);
 
-
             if ($query->post_count < 3) {
-                $args = [
-                    'post__not_in' => [$current_id],
-                    'posts_per_page' => 3,
-                    'orderby' => 'rand',
-                    'ignore_sticky_posts' => 1,
-                ];
-                $query = new WP_Query($args);
+              $args = [
+                'post__not_in' => [$current_id],
+                'posts_per_page' => 3,
+                'orderby' => 'rand',
+                'ignore_sticky_posts' => 1,
+              ];
+              $query = new WP_Query($args);
             }
             ?>
 
@@ -165,12 +203,16 @@ if (have_posts()) :
                 <div class="related-posts-header">
                     <h2 class="related-posts-title">You may like</h2>
 
-                    <a href="<?php echo esc_url(home_url('/blog/')); ?>" class="show-more-btn btn yellow">
+                    <a href="<?php echo esc_url(
+                      home_url('/blog/'),
+                    ); ?>" class="show-more-btn btn yellow">
                         Show more <span class="arrow">→</span>
                     </a>
                 </div>
                 <div class="blog-posts-list">
-                    <?php while ($query->have_posts()): $query->the_post(); ?>
+                    <?php
+                    while ($query->have_posts()):
+                      $query->the_post(); ?>
                         <a href="<?php the_permalink(); ?>" class="blog-post-card">
                             <div class="blog-post-thumb">
                                 <?php if (has_post_thumbnail()): ?>
@@ -183,9 +225,9 @@ if (have_posts()) :
                                 <?php
                                 $short_text = get_field('short_text');
                                 if ($short_text) {
-                                    echo esc_html($short_text);
+                                  echo esc_html($short_text);
                                 } else {
-                                    echo get_the_excerpt();
+                                  echo get_the_excerpt();
                                 }
                                 ?>
                             </div>
@@ -193,7 +235,9 @@ if (have_posts()) :
                                 <?php
                                 $cats = get_the_category();
                                 foreach ($cats as $cat) {
-                                    echo '<span class="blog-post-cat">' . esc_html($cat->name) . '</span> ';
+                                  echo '<span class="blog-post-cat">' .
+                                    esc_html($cat->name) .
+                                    '</span> ';
                                 }
                                 ?>
                             </div>
@@ -203,10 +247,14 @@ if (have_posts()) :
                                 </svg>
                             </div>
                         </a>
-                    <?php endwhile;
-                    wp_reset_postdata(); ?>
+                    <?php
+                    endwhile;
+                    wp_reset_postdata();
+                    ?>
                 </div>
-                <a href="<?php echo esc_url(home_url('/blog/')); ?>" class="show-more-btn mobile btn yellow">
+                <a href="<?php echo esc_url(
+                  home_url('/blog/'),
+                ); ?>" class="show-more-btn mobile btn yellow">
                     Show more <span class="arrow">→</span>
                 </a>
             </section>
@@ -265,6 +313,6 @@ if (have_posts()) :
             }
         </script>
 <?php
-    endwhile;
+  endwhile;
 endif;
 get_footer();

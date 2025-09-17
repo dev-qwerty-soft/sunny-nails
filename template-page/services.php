@@ -47,7 +47,13 @@ if (empty($ordered_category_ids)) {
       <div class="services-content">
         <?php if (empty($categories)): ?>
           <p>No category found.</p>
-        <?php else: ?>
+        <?php
+
+          // Custom sorting function
+          // Custom sorting function
+          // Custom sorting function
+          // Custom sorting function
+          else: ?>
           <?php foreach ($categories as $category): ?>
             <?php
             $services = get_posts([
@@ -71,19 +77,20 @@ if (empty($ordered_category_ids)) {
               continue;
             }
 
-            // Custom sorting function
             usort($services, function ($a, $b) {
               $a_order = (int) $a->menu_order;
               $b_order = (int) $b->menu_order;
-
 
               if ($a_order > 0 && $b_order > 0) {
                 return $a_order - $b_order;
               }
 
-              if ($a_order > 0) return -1;
-              if ($b_order > 0) return 1;
-
+              if ($a_order > 0) {
+                return -1;
+              }
+              if ($b_order > 0) {
+                return 1;
+              }
 
               return strcasecmp($a->post_title, $b->post_title);
             });
