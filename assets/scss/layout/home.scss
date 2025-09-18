@@ -935,3 +935,156 @@
     }
   }
 }
+
+.hero-new-section {
+  height: 100vh;
+  background: #fdc41f;
+  padding: get-d(74px) get-d(60px) get-d(60px) get-d(60px);
+  position: relative;
+  @include respond(lg) {
+    padding: get-lg(74px) get-lg(60px) get-lg(60px) get-lg(60px);
+  }
+  @include respond(md) {
+    padding: 40px 25px 25px 25px;
+    height: 130vh;
+    &::before {
+      content: '';
+      width: 100%;
+      height: 400px;
+      display: block;
+      position: absolute;
+      right: 0;
+      left: 0;
+      bottom: 0;
+      background: url('../svg/Rectangle\ 259.png') center / cover no-repeat;
+      z-index: 1;
+    }
+  }
+  & .container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    justify-content: space-between;
+    position: relative;
+    z-index: 2;
+  }
+  &__title {
+    font-weight: 500;
+    font-size: get-d(76px);
+    line-height: 100%;
+    color: #ffffff;
+    max-width: get-d(730px);
+    @include respond(lg) {
+      font-size: get-lg(76px);
+      max-width: get-lg(730px);
+    }
+    @include respond(md) {
+      font-size: 44px;
+      max-width: none;
+    }
+  }
+  &__image {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    &--desktop {
+      display: block;
+      @include respond(md) {
+        display: none;
+      }
+    }
+    &--mobile {
+      display: none;
+      @include respond(md) {
+        display: block;
+        height: auto;
+        width: 100%;
+        top: auto;
+      }
+    }
+  }
+  &__box {
+    padding: get-d(20px);
+    background: #ffffff;
+    border-radius: get-d(20px);
+    width: get-d(340px);
+    display: grid;
+    grid-template-columns: 100%;
+    @include respond(lg) {
+      padding: get-lg(20px);
+      border-radius: get-lg(20px);
+      width: get-lg(340px);
+    }
+    @include respond(md) {
+      padding: 20px;
+      border-radius: 20px;
+      width: 100%;
+    }
+  }
+  &__fire {
+    border: get-d(1px) solid #f7f1e0;
+    width: get-d(52px);
+    height: get-d(52px);
+    border-radius: 50%;
+    position: relative;
+    @include respond(lg) {
+      border: get-lg(1px) solid #f7f1e0;
+      width: get-lg(52px);
+      height: get-lg(52px);
+    }
+    @include respond(md) {
+      border: 1px solid #f7f1e0;
+      width: 52px;
+      height: 52px;
+    }
+    &::before {
+      content: '';
+      position: absolute;
+      width: get-d(28px);
+      height: get-d(28px);
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: url('../svg/bi_fire.png') center / contain no-repeat;
+      @include respond(lg) {
+        width: get-lg(28px);
+        height: get-lg(28px);
+      }
+      @include respond(md) {
+        width: 28px;
+        height: 28px;
+      }
+    }
+  }
+  &__span {
+    font-weight: 500;
+    font-size: get-d(20px);
+    line-height: 120%;
+    margin: get-d(12px) 0 get-d(24px) 0;
+    @include respond(lg) {
+      font-size: get-lg(20px);
+      margin: get-lg(12px) 0 get-lg(24px) 0;
+    }
+    @include respond(md) {
+      font-size: 16px;
+      margin: 12px 0 24px 0;
+    }
+  }
+  &__buttons {
+    display: grid;
+    grid-template-columns: 100%;
+    width: 100%;
+    grid-gap: get-d(12px);
+    @include respond(lg) {
+      grid-gap: get-lg(12px);
+    }
+    @include respond(md) {
+      grid-gap: 12px;
+    }
+    & .white {
+      background: #f7f1e0;
+    }
+  }
+}
