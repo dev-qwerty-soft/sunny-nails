@@ -1,12 +1,10 @@
 <?php
-class AltegioClient
-{
+class AltegioClient {
   public const BASE_URL = 'https://api.alteg.io/api/v1/';
   public const PARTNER_TOKEN = '89ubt5s6rw7tcamfuuwa';
   public const USER_TOKEN = '194f0b9cd822b74b55ea0f2171357f8b';
   public const COMPANY_ID = '1275515';
   public const USER_ID = '194f0b9cd822b74b55ea0f2171357f8b';
-
 
   private static function request(
     string $endpoint,
@@ -74,7 +72,7 @@ class AltegioClient
     // For successful requests
     return [
       'success' =>
-      in_array($code, [200, 201, 204]) &&
+        in_array($code, [200, 201, 204]) &&
         (!isset($data['success']) || $data['success'] !== false),
       'data' => $data['data'] ?? ($data ?? null),
       'body' => $responseBody,
@@ -84,8 +82,7 @@ class AltegioClient
 
   // ========== READ METHODS ==========
 
-  public static function getServices(): array
-  {
+  public static function getServices(): array {
     $response = self::request('company/' . self::COMPANY_ID . '/services');
 
     if ($response['success'] && isset($response['data'])) {
@@ -102,8 +99,7 @@ class AltegioClient
     ];
   }
 
-  public static function getService($service_id): array
-  {
+  public static function getService($service_id): array {
     $response = self::request('company/' . self::COMPANY_ID . '/services/' . $service_id);
 
     if ($response['success'] && isset($response['data'])) {
@@ -120,8 +116,7 @@ class AltegioClient
     ];
   }
 
-  public static function getStaff($serviceId = null): array
-  {
+  public static function getStaff($serviceId = null): array {
     $params = [];
     if ($serviceId) {
       $params['service_id'] = $serviceId;
@@ -143,8 +138,7 @@ class AltegioClient
     ];
   }
 
-  public static function getStaffMember($staff_id): array
-  {
+  public static function getStaffMember($staff_id): array {
     $response = self::request('company/' . self::COMPANY_ID . '/staff/' . $staff_id);
 
     if ($response['success'] && isset($response['data'])) {
@@ -161,8 +155,7 @@ class AltegioClient
     ];
   }
 
-  public static function getServiceCategories(): array
-  {
+  public static function getServiceCategories(): array {
     $response = self::request('company/' . self::COMPANY_ID . '/service_categories');
 
     if ($response['success'] && isset($response['data'])) {
@@ -179,8 +172,7 @@ class AltegioClient
     ];
   }
 
-  public static function getServiceCategory($category_id): array
-  {
+  public static function getServiceCategory($category_id): array {
     $response = self::request(
       'company/' . self::COMPANY_ID . '/service_categories/' . $category_id,
     );
@@ -201,8 +193,7 @@ class AltegioClient
 
   // ========== CREATE METHODS ==========
 
-  public static function createService(array $data): array
-  {
+  public static function createService(array $data): array {
     // Validate required fields
     if (empty($data['title'])) {
       return [
@@ -243,8 +234,7 @@ class AltegioClient
     ];
   }
 
-  public static function createStaff(array $data): array
-  {
+  public static function createStaff(array $data): array {
     // Validate required fields
     if (empty($data['name'])) {
       return [
@@ -283,8 +273,7 @@ class AltegioClient
     ];
   }
 
-  public static function createServiceCategory(array $data): array
-  {
+  public static function createServiceCategory(array $data): array {
     // Validate required fields
     if (empty($data['title'])) {
       return [
@@ -322,8 +311,7 @@ class AltegioClient
 
   // ========== UPDATE METHODS ==========
 
-  public static function updateService($service_id, array $data): array
-  {
+  public static function updateService($service_id, array $data): array {
     // Prepare service data for update
     $serviceData = [];
 
@@ -372,8 +360,7 @@ class AltegioClient
     ];
   }
 
-  public static function updateStaff($staff_id, array $data): array
-  {
+  public static function updateStaff($staff_id, array $data): array {
     // Prepare staff data for update
     $staffData = [];
 
@@ -419,8 +406,7 @@ class AltegioClient
     ];
   }
 
-  public static function updateServiceCategory($category_id, array $data): array
-  {
+  public static function updateServiceCategory($category_id, array $data): array {
     $categoryData = [];
 
     if (isset($data['title'])) {
@@ -458,8 +444,7 @@ class AltegioClient
 
   // ========== DELETE METHODS ==========
 
-  public static function deleteService($service_id): array
-  {
+  public static function deleteService($service_id): array {
     $response = self::request(
       'company/' . self::COMPANY_ID . '/services/' . $service_id,
       [],
@@ -479,8 +464,7 @@ class AltegioClient
     ];
   }
 
-  public static function deleteStaff($staff_id): array
-  {
+  public static function deleteStaff($staff_id): array {
     $response = self::request('company/' . self::COMPANY_ID . '/staff/' . $staff_id, [], 'DELETE');
 
     if ($response['success'] || $response['status'] === 204) {
@@ -496,8 +480,7 @@ class AltegioClient
     ];
   }
 
-  public static function deleteServiceCategory($category_id): array
-  {
+  public static function deleteServiceCategory($category_id): array {
     $response = self::request(
       'company/' . self::COMPANY_ID . '/service_categories/' . $category_id,
       [],
@@ -521,8 +504,7 @@ class AltegioClient
 
   // ========== EXISTING BOOKING METHODS ==========
 
-  public static function getCategories(): array
-  {
+  public static function getCategories(): array {
     $response = self::request('goods/search/' . self::COMPANY_ID);
 
     if (!isset($response['success']) || !$response['success'] || !isset($response['data'])) {
@@ -560,8 +542,7 @@ class AltegioClient
     return self::request('book_times', $params);
   }
 
-  public static function makeBooking(array $data)
-  {
+  public static function makeBooking(array $data) {
     error_log('Making booking with data: ' . json_encode($data));
 
     // Validate required fields
@@ -591,8 +572,7 @@ class AltegioClient
     return self::request($endpoint, [], 'POST', $data);
   }
 
-  public static function getBookingForm(int $formId = null): array
-  {
+  public static function getBookingForm(int $formId = null): array {
     if ($formId === null) {
       $formId = self::COMPANY_ID;
     }
@@ -600,13 +580,11 @@ class AltegioClient
     return self::request('bookform/' . $formId);
   }
 
-  public static function getI18n(string $langCode = 'en-US'): array
-  {
+  public static function getI18n(string $langCode = 'en-US'): array {
     return self::request('i18n', ['lang' => $langCode]);
   }
 
-  public static function getBookingDates(int $companyId, array $params = []): array
-  {
+  public static function getBookingDates(int $companyId, array $params = []): array {
     $endpoint = 'book_dates/' . $companyId;
 
     if (isset($params['service_ids']) && is_array($params['service_ids'])) {
@@ -639,8 +617,7 @@ class AltegioClient
 
   // ========== BOOKING MANAGEMENT METHODS ==========
 
-  public static function getBookings($date_from = null, $date_to = null, $staff_id = null): array
-  {
+  public static function getBookings($date_from = null, $date_to = null, $staff_id = null): array {
     $params = [];
 
     if ($date_from) {
@@ -669,8 +646,7 @@ class AltegioClient
     ];
   }
 
-  public static function getBooking($record_id): array
-  {
+  public static function getBooking($record_id): array {
     $response = self::request('company/' . self::COMPANY_ID . '/records/' . $record_id);
 
     if ($response['success'] && isset($response['data'])) {
@@ -687,8 +663,7 @@ class AltegioClient
     ];
   }
 
-  public static function updateBooking($record_id, array $data): array
-  {
+  public static function updateBooking($record_id, array $data): array {
     $response = self::request(
       'company/' . self::COMPANY_ID . '/records/' . $record_id,
       [],
@@ -709,8 +684,7 @@ class AltegioClient
     ];
   }
 
-  public static function deleteBooking($record_id): array
-  {
+  public static function deleteBooking($record_id): array {
     $response = self::request(
       'company/' . self::COMPANY_ID . '/records/' . $record_id,
       [],
@@ -732,8 +706,7 @@ class AltegioClient
 
   // ========== UTILITY METHODS ==========
 
-  public static function testConnection(): array
-  {
+  public static function testConnection(): array {
     try {
       $response = self::getServices();
 
@@ -757,8 +730,7 @@ class AltegioClient
     }
   }
 
-  public static function getCompanyInfo(): array
-  {
+  public static function getCompanyInfo(): array {
     $response = self::request('company/' . self::COMPANY_ID);
 
     if ($response['success'] && isset($response['data'])) {
@@ -777,8 +749,7 @@ class AltegioClient
 
   // ========== BATCH OPERATIONS ==========
 
-  public static function batchCreateServices(array $services): array
-  {
+  public static function batchCreateServices(array $services): array {
     $results = [];
     $success_count = 0;
     $error_count = 0;
@@ -805,8 +776,7 @@ class AltegioClient
     ];
   }
 
-  public static function batchUpdateServices(array $services): array
-  {
+  public static function batchUpdateServices(array $services): array {
     $results = [];
     $success_count = 0;
     $error_count = 0;
@@ -833,8 +803,7 @@ class AltegioClient
     ];
   }
 
-  public static function batchCreateStaff(array $staff_members): array
-  {
+  public static function batchCreateStaff(array $staff_members): array {
     $results = [];
     $success_count = 0;
     $error_count = 0;
@@ -861,8 +830,7 @@ class AltegioClient
     ];
   }
 
-  public static function batchUpdateStaff(array $staff_members): array
-  {
+  public static function batchUpdateStaff(array $staff_members): array {
     $results = [];
     $success_count = 0;
     $error_count = 0;
@@ -889,8 +857,7 @@ class AltegioClient
     ];
   }
 
-  public static function getAvailableBookingDays($companyId, $staffId = null, $serviceIds = [])
-  {
+  public static function getAvailableBookingDays($companyId, $staffId = null, $serviceIds = []) {
     $params = [];
     if ($staffId) {
       $params['staff_id'] = $staffId;
@@ -901,9 +868,7 @@ class AltegioClient
     return self::request("book_services/{$companyId}", $params);
   }
 
-
-  public static function getBookDates($company_id, $staff_id, $service_ids, $date_from, $date_to)
-  {
+  public static function getBookDates($company_id, $staff_id, $service_ids, $date_from, $date_to) {
     $url = "https://api.alteg.io/api/v1/book_dates/{$company_id}";
     $params = [
       'staff_id' => $staff_id,
@@ -928,8 +893,7 @@ class AltegioClient
     ];
   }
 
-  public function getNextSeances($staffId)
-  {
+  public function getNextSeances($staffId) {
     $url = "/book_staff_seances/{$this->company_id}/{$staffId}/";
     return $this->request('GET', $url);
   }

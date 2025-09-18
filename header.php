@@ -73,8 +73,8 @@
                 </button>
                 <nav>
                     <?php wp_nav_menu([
-                        'theme_location' => 'main-menu',
-                        'container' => 'ul',
+                      'theme_location' => 'main-menu',
+                      'container' => 'ul',
                     ]); ?>
                 </nav>
                 <?php echo do_shortcode('[sunny_login_icon device="desktop" margin="16"]'); ?>
@@ -87,8 +87,8 @@
     <div class="burger-menu">
         <nav>
             <?php wp_nav_menu([
-                'theme_location' => 'main-menu',
-                'container' => 'ul',
+              'theme_location' => 'main-menu',
+              'container' => 'ul',
             ]); ?>
         </nav>
         <div class="icons"><?php displayIcon(); ?></div>
@@ -97,10 +97,10 @@
     <?php
     $chat_link_url = get_field('chat_link_url', 'option');
     if ($chat_link_url) {
-        echo "<a target='_blank' rel='noopener noreferrer' href='$chat_link_url' class='chat'>
+      echo "<a target='_blank' rel='noopener noreferrer' href='$chat_link_url' class='chat'>
             <span>Chat</span>
         </a>";
     }
 
 
-    ?>
+?>

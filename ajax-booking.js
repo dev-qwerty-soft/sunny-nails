@@ -42,14 +42,16 @@
    * Get master levels configuration from PHP
    */
   function getMasterLevelsConfig() {
-    return window.masterLevelsConfig || {
-      '-1': { title: 'Intern', percent: -50, stars: 0, additional_info: '' },
-      '1': { title: 'Sunny Ray', percent: 0, stars: 1, additional_info: '' },
-      '2': { title: 'Sunny Shine', percent: 10, stars: 2, additional_info: '' },
-      '3': { title: 'Sunny Inferno', percent: 20, stars: 3, additional_info: '' },
-      '4': { title: 'Trainer', percent: 30, stars: 3, additional_info: '' },
-      '5': { title: 'Salon Manager', percent: 30, stars: 4, additional_info: '' }
-    };
+    return (
+      window.masterLevelsConfig || {
+        '-1': { title: 'Intern', percent: -50, stars: 0, additional_info: '' },
+        1: { title: 'Sunny Ray', percent: 0, stars: 1, additional_info: '' },
+        2: { title: 'Sunny Shine', percent: 10, stars: 2, additional_info: '' },
+        3: { title: 'Sunny Inferno', percent: 20, stars: 3, additional_info: '' },
+        4: { title: 'Trainer', percent: 30, stars: 3, additional_info: '' },
+        5: { title: 'Salon Manager', percent: 30, stars: 4, additional_info: '' },
+      }
+    );
   }
 
   /**
@@ -58,17 +60,17 @@
   function getLevelTitle(level, includeAdditionalInfo = false) {
     const config = getMasterLevelsConfig();
     const levelStr = String(level);
-    
+
     if (!config[levelStr]) {
       return 'Unknown Level';
     }
-    
+
     let title = config[levelStr].title;
-    
+
     if (includeAdditionalInfo && config[levelStr].additional_info) {
       title += ', ' + config[levelStr].additional_info;
     }
-    
+
     return title;
   }
 
@@ -2674,7 +2676,9 @@
             <div class="slots">${slotsHtml}</div>
           `);
           } else {
-           $target.html('<div class="no-slots">There are no available time slots with this master. Please check the next one for availability.</div>');
+            $target.html(
+              '<div class="no-slots">There are no available time slots with this master. Please check the next one for availability.</div>',
+            );
           }
         },
         error: function () {

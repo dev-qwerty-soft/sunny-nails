@@ -20,7 +20,6 @@ $level = $master ? max((int) get_field('master_level', $master->ID), -1) : -1;
 $levelName = get_master_level_title($level, true); // Include additional info for gallery
 $adjustmentPercent = get_master_level_percent($level);
 
-
 $adjustment = $adjustmentPercent;
 
 $tags = $args['image']['master_image_work_tag'] ?? [];
@@ -78,8 +77,8 @@ $master_altegio_id = $master ? get_field('altegio_id', $master->ID) : 0;
       <img src='<?= esc_url($url) ?>' alt='<?= esc_attr($customTitle ?: $service_titles_string) ?>'>
     <?php else: ?>
       <img src='<?= esc_url(
-                  get_template_directory_uri() . '/assets/svg/photo-stub.jpg',
-                ) ?>' alt='<?= esc_attr($customTitle ?: $service_titles_string) ?>'>
+        get_template_directory_uri() . '/assets/svg/photo-stub.jpg',
+      ) ?>' alt='<?= esc_attr($customTitle ?: $service_titles_string) ?>'>
     <?php endif; ?>
     <div class='wrapper'>
       <button type='button' aria-label='View' class='view'></button>
@@ -97,8 +96,8 @@ $master_altegio_id = $master ? get_field('altegio_id', $master->ID) : 0;
   <div class='image__back'>
     <span class='image__title'><?= esc_html($customTitle ?: $service_titles_string) ?></span>
     <span class='image__price'>Price: <?= esc_html(number_format($final_price, 2)) ?> <?= esc_html(
-                                                                                        $currency,
-                                                                                      ) ?></span>
+   $currency,
+ ) ?></span>
     <span class='image__master'>Master: <?= esc_html($name) ?></span>
 
     <div class='stars'>

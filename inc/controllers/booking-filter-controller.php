@@ -6,16 +6,14 @@
  * This class implements a full integration with Altegio API for service booking
  * with live availability checks and proper filtering of masters and services.
  */
-class BookingFilterController
-{
-  // Price adjustment percentage per master level above 1  
+class BookingFilterController {
+  // Price adjustment percentage per master level above 1
   const PRICE_ADJUSTMENT_PER_LEVEL = 10;
 
   /**
    * Initialize the controller by registering all AJAX handlers
    */
-  public static function init()
-  {
+  public static function init() {
     // Get all services (optionally filtered by master)
     add_action('wp_ajax_get_services', [self::class, 'getServices']);
     add_action('wp_ajax_nopriv_get_services', [self::class, 'getServices']);
@@ -48,8 +46,7 @@ class BookingFilterController
   /**
    * Get all services, optionally filtered by category
    */
-  public static function getServices()
-  {
+  public static function getServices() {
     check_ajax_referer('booking_nonce', 'nonce');
 
     $category_id = isset($_POST['category_id']) ? intval($_POST['category_id']) : 0;
@@ -128,8 +125,7 @@ class BookingFilterController
   /**
    * Get services that can be performed by a specific master
    */
-  public static function getServicesByMaster()
-  {
+  public static function getServicesByMaster() {
     check_ajax_referer('booking_nonce', 'nonce');
 
     $master_id = isset($_POST['staff_id']) ? sanitize_text_field($_POST['staff_id']) : '';
@@ -183,8 +179,7 @@ class BookingFilterController
   /**
    * Get all masters, optionally filtered by service
    */
-  public static function getMasters()
-  {
+  public static function getMasters() {
     check_ajax_referer('booking_nonce', 'nonce');
 
     $service_id = isset($_POST['service_id']) ? sanitize_text_field($_POST['service_id']) : '';
@@ -209,8 +204,7 @@ class BookingFilterController
 
         // Get specialization - fallback to level title if not specified
         $specialization =
-          get_post_meta($post_id, 'specialization', true) ?:
-          get_master_level_title($level, false);
+          get_post_meta($post_id, 'specialization', true) ?: get_master_level_title($level, false);
 
         // Get related services
         $related_services = [];
@@ -253,8 +247,7 @@ class BookingFilterController
   /**
    * Get master details by ID
    */
-  public static function getMasterDetails()
-  {
+  public static function getMasterDetails() {
     check_ajax_referer('booking_nonce', 'nonce');
 
     $master_id = isset($_POST['staff_id']) ? sanitize_text_field($_POST['staff_id']) : '';
@@ -271,8 +264,7 @@ class BookingFilterController
       $post_id = $master_post->ID;
       $level = (int) get_post_meta($post_id, 'master_level', true) ?: 1;
       $specialization =
-        get_post_meta($post_id, 'specialization', true) ?:
-        get_master_level_title($level, false);
+        get_post_meta($post_id, 'specialization', true) ?: get_master_level_title($level, false);
 
       $master_data = [
         'id' => $master_id,
@@ -312,8 +304,7 @@ class BookingFilterController
   /**
    * Get filtered staff with availability check for the specified services
    */
-  public static function getFilteredStaff()
-  {
+  public static function getFilteredStaff() {
     check_ajax_referer('booking_nonce', 'nonce');
 
     $service_ids_raw = isset($_POST['service_id']) ? sanitize_text_field($_POST['service_id']) : '';
@@ -401,8 +392,7 @@ class BookingFilterController
   /**
    * Get time slots for a specific master and date
    */
-  public static function getTimeSlots()
-  {
+  public static function getTimeSlots() {
     check_ajax_referer('booking_nonce', 'nonce');
 
     $staff_id = isset($_POST['staff_id']) ? sanitize_text_field($_POST['staff_id']) : '';
@@ -445,8 +435,7 @@ class BookingFilterController
   /**
    * Submit booking to Altegio
    */
-  public static function submitBooking()
-  {
+  public static function submitBooking() {
     check_ajax_referer('booking_nonce', 'booking_nonce');
 
     // Validate required fields
@@ -562,8 +551,7 @@ class BookingFilterController
    * @param array $service_ids Array of service WordPress IDs
    * @return bool Whether master can perform all the services
    */
-  private static function masterCanPerformServices($master_post_id, $service_ids)
-  {
+  private static function masterCanPerformServices($master_post_id, $service_ids) {
     // Get master's related services
     $related_services = [];
 
@@ -660,8 +648,7 @@ class BookingFilterController
    * @param string $service_ids Comma-separated service IDs
    * @return string|null Altegio ID of an available master, or null if none found
    */
-  private static function getAvailableMasterForDate($date, $service_ids)
-  {
+  private static function getAvailableMasterForDate($date, $service_ids) {
     if (empty($service_ids) || !class_exists('AltegioClient')) {
       return null;
     }
@@ -720,8 +707,7 @@ class BookingFilterController
    * @param string $date Date for time slots (YYYY-MM-DD)
    * @return array Array of time slots
    */
-  private static function generateFallbackTimeSlots($date)
-  {
+  private static function generateFallbackTimeSlots($date) {
     $slots = [];
     $start_hour = 9; // 9 AM
     $end_hour = 19; // 7 PM
@@ -749,8 +735,7 @@ class BookingFilterController
    * @param array $meta_data Additional metadata
    * @return int|null Post ID of the saved booking, or null on failure
    */
-  private static function saveBookingRecord($booking_data, $meta_data = [])
-  {
+  private static function saveBookingRecord($booking_data, $meta_data = []) {
     // Check if we should save local booking records
     $save_bookings = apply_filters('altegio_save_booking_records', true);
     if (!$save_bookings) {
@@ -804,8 +789,7 @@ class BookingFilterController
    * @param string $altegio_id Altegio ID of the master
    * @return WP_Post|null Master post or null if not found
    */
-  private static function getMasterPostByAltegioId($altegio_id)
-  {
+  private static function getMasterPostByAltegioId($altegio_id) {
     if (empty($altegio_id)) {
       return null;
     }
@@ -839,8 +823,7 @@ class BookingFilterController
    * @param string $altegio_id Altegio ID of the service
    * @return WP_Post|null Service post or null if not found
    */
-  private static function getServicePostByAltegioId($altegio_id)
-  {
+  private static function getServicePostByAltegioId($altegio_id) {
     if (empty($altegio_id)) {
       return null;
     }
@@ -883,8 +866,7 @@ class BookingFilterController
    * @param int $master_level Master level (1, 2, 3)
    * @return float Adjusted price
    */
-  public static function calculateAdjustedPrice($base_price, $master_level)
-  {
+  public static function calculateAdjustedPrice($base_price, $master_level) {
     // No adjustment for level 1
     if ($master_level <= 1) {
       return $base_price;

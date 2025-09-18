@@ -4,33 +4,37 @@ $isPage = $args['isPage'] ?? false;
 
 // Don't generate popups if no posts
 if (empty($posts)) {
-    return;
+  return;
 }
 
 // Generate popups for all masters
 foreach ($posts as $post) {
-    $details_popup = get_field('details_pop_up', $post->ID);
-    $master_description = $details_popup['description'] ?? null;
-    $master_achievements = $details_popup['masters_achievements'] ?? null;
 
-    $has_content = ($master_description && !empty(trim($master_description))) ||
-        ($master_achievements && is_array($master_achievements) && !empty($master_achievements));
+  $details_popup = get_field('details_pop_up', $post->ID);
+  $master_description = $details_popup['description'] ?? null;
+  $master_achievements = $details_popup['masters_achievements'] ?? null;
 
-    if (!$has_content) {
-        continue;
-    }
+  $has_content =
+    ($master_description && !empty(trim($master_description))) ||
+    ($master_achievements && is_array($master_achievements) && !empty($master_achievements));
 
-    // Get master data
-    $level = max((int) get_field('master_level', $post->ID), -1);
-    $levelName = get_master_level_title($level, true);
-    $starsCount = get_master_level_stars($level);
-    $id = get_field('altegio_id', $post->ID);
-    $image = get_the_post_thumbnail_url($post->ID, 'large') ?: '';
-    $name = isset($post->post_title) ? $post->post_title : '';
-    $instagram = get_field('instagram', $post->ID) ?: '';
-?>
+  if (!$has_content) {
+    continue;
+  }
 
-    <div id="master-popup-<?= esc_attr($post->ID) ?>" class="master-popup-backdrop" style="display: none;">
+  // Get master data
+  $level = max((int) get_field('master_level', $post->ID), -1);
+  $levelName = get_master_level_title($level, true);
+  $starsCount = get_master_level_stars($level);
+  $id = get_field('altegio_id', $post->ID);
+  $image = get_the_post_thumbnail_url($post->ID, 'large') ?: '';
+  $name = isset($post->post_title) ? $post->post_title : '';
+  $instagram = get_field('instagram', $post->ID) ?: '';
+  ?>
+
+    <div id="master-popup-<?= esc_attr(
+      $post->ID,
+    ) ?>" class="master-popup-backdrop" style="display: none;">
         <div class="master-popup">
             <button class="master-popup__close">
                 <svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 19 19" fill="none">
@@ -59,7 +63,9 @@ foreach ($posts as $post) {
                     </div>
 
                     <?php if ($instagram): ?>
-                        <a href="<?= esc_url($instagram) ?>" class="instagram-link" target="_blank" rel="noopener">
+                        <a href="<?= esc_url(
+                          $instagram,
+                        ) ?>" class="instagram-link" target="_blank" rel="noopener">
                             <span class="instagram-icon">S</span>
                             Instagram
                         </a>
@@ -96,22 +102,32 @@ foreach ($posts as $post) {
                             <div class="achievement-item">
                                 <div class="achievement-header">
                                     <?php if ($achievement['place']): ?>
-                                        <div class="achievement-place"><?= esc_html($achievement['place']) ?></div>
+                                        <div class="achievement-place"><?= esc_html(
+                                          $achievement['place'],
+                                        ) ?></div>
                                     <?php endif; ?>
                                     <?php if ($achievement['date']): ?>
-                                        <div class="achievement-date"><?= esc_html($achievement['date']) ?></div>
+                                        <div class="achievement-date"><?= esc_html(
+                                          $achievement['date'],
+                                        ) ?></div>
                                     <?php endif; ?>
                                 </div>
                                 <div>
                                     <?php if ($achievement['title']): ?>
-                                        <div class="achievement-title"><?= esc_html($achievement['title']) ?></div>
+                                        <div class="achievement-title"><?= esc_html(
+                                          $achievement['title'],
+                                        ) ?></div>
                                     <?php endif; ?>
                                     <?php if ($achievement['description']): ?>
-                                        <div class="achievement-description"><?= esc_html($achievement['description']) ?></div>
+                                        <div class="achievement-description"><?= esc_html(
+                                          $achievement['description'],
+                                        ) ?></div>
                                     <?php endif; ?>
                                 </div>
                                 <?php if ($achievement['location']): ?>
-                                    <div class="achievement-location"><?= esc_html($achievement['location']) ?></div>
+                                    <div class="achievement-location"><?= esc_html(
+                                      $achievement['location'],
+                                    ) ?></div>
                                 <?php endif; ?>
 
                             </div>
@@ -119,9 +135,12 @@ foreach ($posts as $post) {
                     </div>
                 <?php endif; ?>
 
-                <button data-staff-id="<?= esc_attr($id) ?>" class="btn yellow book-tem master-popup__book">Book an Appointment</button>
+                <button data-staff-id="<?= esc_attr(
+                  $id,
+                ) ?>" class="btn yellow book-tem master-popup__book">Book an Appointment</button>
             </div>
         </div>
     </div>
 
-<?php } ?>
+<?php
+} ?>

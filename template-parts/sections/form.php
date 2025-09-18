@@ -1,6 +1,7 @@
 <?php
 $isPage = $args['page'] ?? false;
-$form_active = get_field('form_active', 'option'); ?>
+$form_active = get_field('form_active', 'option');
+?>
 
 <?php if ($form_active) { ?>
   <section class="promo-form-section">

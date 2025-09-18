@@ -28,8 +28,8 @@ $instagram = get_field('instagram_url', $post->ID);
     <span class='team-card__name'><?= esc_html($name) ?></span>
     <!-- <?php if ($instagram): ?>
       <a href='<?= esc_url(
-                  $instagram,
-                ) ?>' aria-label='Instagram' target='_blank' class='team-card__instagram'></a>
+        $instagram,
+      ) ?>' aria-label='Instagram' target='_blank' class='team-card__instagram'></a>
     <?php endif; ?> -->
     <div class='team-card__rate'>
       <div class='stars yellow'>
@@ -104,17 +104,20 @@ $instagram = get_field('instagram_url', $post->ID);
     $details_popup = get_field('details_pop_up', $post->ID);
     $master_description = $details_popup['description'] ?? null;
     $master_achievements = $details_popup['masters_achievements'] ?? null;
-    $show_learn_more = ($master_description && !empty(trim($master_description))) ||
+    $show_learn_more =
+      ($master_description && !empty(trim($master_description))) ||
       ($master_achievements && is_array($master_achievements) && !empty($master_achievements));
   }
   ?>
 
   <div class='team-card__buttons page<?= $show_learn_more ? ' two-buttons' : '' ?>'>
     <button data-staff-id="<?= esc_attr(
-                              $id,
-                            ) ?>" class='btn yellow book-tem'>Book an Appointment</button>
+      $id,
+    ) ?>" class='btn yellow book-tem'>Book an Appointment</button>
     <?php if ($show_learn_more): ?>
-      <button data-master-id="<?= esc_attr($post->ID) ?>" class="btn master-details-btn">Learn More</button>
+      <button data-master-id="<?= esc_attr(
+        $post->ID,
+      ) ?>" class="btn master-details-btn">Learn More</button>
     <?php endif; ?>
   </div>
 </div>

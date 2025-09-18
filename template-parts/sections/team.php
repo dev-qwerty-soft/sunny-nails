@@ -68,10 +68,8 @@ $array = getPosts('master');
     <?php endif; ?>
   </div>
 
-  <?php
-  get_template_part('template-parts/shared/master-popups', null, [
+  <?php get_template_part('template-parts/shared/master-popups', null, [
     'posts' => $array,
-    'isPage' => $isPage
-  ]);
-  ?>
+    'isPage' => $isPage,
+  ]); ?>
 </section>

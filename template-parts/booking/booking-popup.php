@@ -26,7 +26,9 @@ if (is_user_logged_in()) {
   $cards_table = $wpdb->prefix . 'sunny_cards';
 
   // Check if table exists to avoid SQL errors
-  $table_exists = $wpdb->get_var($wpdb->prepare("SHOW TABLES LIKE %s", $registrations_table)) == $registrations_table;
+  $table_exists =
+    $wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s', $registrations_table)) ==
+    $registrations_table;
 
   if ($table_exists) {
     try {
@@ -36,8 +38,8 @@ if (is_user_logged_in()) {
            FROM $registrations_table c 
            LEFT JOIN $cards_table cards ON c.card_number = cards.card_number 
            WHERE c.user_id = %d",
-          $user_id
-        )
+          $user_id,
+        ),
       );
       $plugin_active = true; // If we can query the table, consider plugin "active"
     } catch (Exception $e) {
@@ -62,54 +64,54 @@ if (is_user_logged_in()) {
 
       // List of country codes to check (longest first)
       $country_codes = [
-        '+65',  // Singapore (first)
-        '+93',  // Afghanistan
+        '+65', // Singapore (first)
+        '+93', // Afghanistan
         '+355', // Albania
         '+213', // Algeria
         '+376', // Andorra
         '+244', // Angola
-        '+54',  // Argentina
+        '+54', // Argentina
         '+374', // Armenia
-        '+61',  // Australia
-        '+43',  // Austria
+        '+61', // Australia
+        '+43', // Austria
         '+994', // Azerbaijan
         '+973', // Bahrain
         '+880', // Bangladesh
         '+375', // Belarus
-        '+32',  // Belgium
+        '+32', // Belgium
         '+501', // Belize
         '+229', // Benin
         '+975', // Bhutan
         '+591', // Bolivia
         '+387', // Bosnia and Herzegovina
         '+267', // Botswana
-        '+55',  // Brazil
+        '+55', // Brazil
         '+673', // Brunei
         '+359', // Bulgaria
         '+226', // Burkina Faso
         '+257', // Burundi
         '+855', // Cambodia
         '+237', // Cameroon
-        '+1',   // Canada
+        '+1', // Canada
         '+238', // Cape Verde
         '+236', // Central African Republic
         '+235', // Chad
-        '+56',  // Chile
-        '+86',  // China
-        '+57',  // Colombia
+        '+56', // Chile
+        '+86', // China
+        '+57', // Colombia
         '+269', // Comoros
         '+242', // Congo
         '+243', // Congo (DRC)
         '+506', // Costa Rica
         '+385', // Croatia
-        '+53',  // Cuba
+        '+53', // Cuba
         '+357', // Cyprus
         '+420', // Czech Republic
-        '+45',  // Denmark
+        '+45', // Denmark
         '+253', // Djibouti
         '+1767', // Dominica
         '+593', // Ecuador
-        '+20',  // Egypt
+        '+20', // Egypt
         '+503', // El Salvador
         '+240', // Equatorial Guinea
         '+291', // Eritrea
@@ -117,13 +119,13 @@ if (is_user_logged_in()) {
         '+251', // Ethiopia
         '+679', // Fiji
         '+358', // Finland
-        '+33',  // France
+        '+33', // France
         '+241', // Gabon
         '+220', // Gambia
         '+995', // Georgia
-        '+49',  // Germany
+        '+49', // Germany
         '+233', // Ghana
-        '+30',  // Greece
+        '+30', // Greece
         '+1473', // Grenada
         '+502', // Guatemala
         '+224', // Guinea
@@ -132,20 +134,20 @@ if (is_user_logged_in()) {
         '+509', // Haiti
         '+504', // Honduras
         '+852', // Hong Kong
-        '+36',  // Hungary
+        '+36', // Hungary
         '+354', // Iceland
-        '+91',  // India
-        '+62',  // Indonesia
-        '+98',  // Iran
+        '+91', // India
+        '+62', // Indonesia
+        '+98', // Iran
         '+964', // Iraq
         '+353', // Ireland
         '+972', // Israel
-        '+39',  // Italy
+        '+39', // Italy
         '+225', // Ivory Coast
         '+1876', // Jamaica
-        '+81',  // Japan
+        '+81', // Japan
         '+962', // Jordan
-        '+7',   // Kazakhstan
+        '+7', // Kazakhstan
         '+254', // Kenya
         '+686', // Kiribati
         '+965', // Kuwait
@@ -163,14 +165,14 @@ if (is_user_logged_in()) {
         '+389', // Macedonia
         '+261', // Madagascar
         '+265', // Malawi
-        '+60',  // Malaysia
+        '+60', // Malaysia
         '+960', // Maldives
         '+223', // Mali
         '+356', // Malta
         '+692', // Marshall Islands
         '+222', // Mauritania
         '+230', // Mauritius
-        '+52',  // Mexico
+        '+52', // Mexico
         '+691', // Micronesia
         '+373', // Moldova
         '+377', // Monaco
@@ -178,31 +180,31 @@ if (is_user_logged_in()) {
         '+382', // Montenegro
         '+212', // Morocco
         '+258', // Mozambique
-        '+95',  // Myanmar
+        '+95', // Myanmar
         '+264', // Namibia
         '+674', // Nauru
         '+977', // Nepal
-        '+31',  // Netherlands
-        '+64',  // New Zealand
+        '+31', // Netherlands
+        '+64', // New Zealand
         '+505', // Nicaragua
         '+227', // Niger
         '+234', // Nigeria
         '+850', // North Korea
-        '+47',  // Norway
+        '+47', // Norway
         '+968', // Oman
-        '+92',  // Pakistan
+        '+92', // Pakistan
         '+680', // Palau
         '+970', // Palestine
         '+507', // Panama
         '+675', // Papua New Guinea
         '+595', // Paraguay
-        '+51',  // Peru
-        '+63',  // Philippines
-        '+48',  // Poland
+        '+51', // Peru
+        '+63', // Philippines
+        '+48', // Poland
         '+351', // Portugal
         '+974', // Qatar
-        '+40',  // Romania
-        '+7',   // Russia
+        '+40', // Romania
+        '+7', // Russia
         '+250', // Rwanda
         '+1869', // Saint Kitts and Nevis
         '+1758', // Saint Lucia
@@ -219,40 +221,40 @@ if (is_user_logged_in()) {
         '+386', // Slovenia
         '+677', // Solomon Islands
         '+252', // Somalia
-        '+27',  // South Africa
-        '+82',  // South Korea
+        '+27', // South Africa
+        '+82', // South Korea
         '+211', // South Sudan
-        '+34',  // Spain
-        '+94',  // Sri Lanka
+        '+34', // Spain
+        '+94', // Sri Lanka
         '+249', // Sudan
         '+597', // Suriname
         '+268', // Swaziland
-        '+46',  // Sweden
-        '+41',  // Switzerland
+        '+46', // Sweden
+        '+41', // Switzerland
         '+963', // Syria
         '+886', // Taiwan
         '+992', // Tajikistan
         '+255', // Tanzania
-        '+66',  // Thailand
+        '+66', // Thailand
         '+228', // Togo
         '+676', // Tonga
         '+1868', // Trinidad and Tobago
         '+216', // Tunisia
-        '+90',  // Turkey
+        '+90', // Turkey
         '+993', // Turkmenistan
         '+688', // Tuvalu
         '+256', // Uganda
         '+380', // Ukraine
         '+971', // United Arab Emirates
-        '+44',  // United Kingdom
+        '+44', // United Kingdom
         '+598', // Uruguay
         '+998', // Uzbekistan
         '+678', // Vanuatu
-        '+58',  // Venezuela
-        '+84',  // Vietnam
+        '+58', // Venezuela
+        '+84', // Vietnam
         '+967', // Yemen
         '+260', // Zambia
-        '+263'  // Zimbabwe
+        '+263', // Zimbabwe
       ];
       foreach ($country_codes as $code) {
         if (strpos($phone_cleaned, $code) === 0) {
@@ -292,54 +294,54 @@ if (is_user_logged_in()) {
 
         // List of country codes to check (longest first)
         $country_codes = [
-          '+65',  // Singapore (first)
-          '+93',  // Afghanistan
+          '+65', // Singapore (first)
+          '+93', // Afghanistan
           '+355', // Albania
           '+213', // Algeria
           '+376', // Andorra
           '+244', // Angola
-          '+54',  // Argentina
+          '+54', // Argentina
           '+374', // Armenia
-          '+61',  // Australia
-          '+43',  // Austria
+          '+61', // Australia
+          '+43', // Austria
           '+994', // Azerbaijan
           '+973', // Bahrain
           '+880', // Bangladesh
           '+375', // Belarus
-          '+32',  // Belgium
+          '+32', // Belgium
           '+501', // Belize
           '+229', // Benin
           '+975', // Bhutan
           '+591', // Bolivia
           '+387', // Bosnia and Herzegovina
           '+267', // Botswana
-          '+55',  // Brazil
+          '+55', // Brazil
           '+673', // Brunei
           '+359', // Bulgaria
           '+226', // Burkina Faso
           '+257', // Burundi
           '+855', // Cambodia
           '+237', // Cameroon
-          '+1',   // Canada
+          '+1', // Canada
           '+238', // Cape Verde
           '+236', // Central African Republic
           '+235', // Chad
-          '+56',  // Chile
-          '+86',  // China
-          '+57',  // Colombia
+          '+56', // Chile
+          '+86', // China
+          '+57', // Colombia
           '+269', // Comoros
           '+242', // Congo
           '+243', // Congo (DRC)
           '+506', // Costa Rica
           '+385', // Croatia
-          '+53',  // Cuba
+          '+53', // Cuba
           '+357', // Cyprus
           '+420', // Czech Republic
-          '+45',  // Denmark
+          '+45', // Denmark
           '+253', // Djibouti
           '+1767', // Dominica
           '+593', // Ecuador
-          '+20',  // Egypt
+          '+20', // Egypt
           '+503', // El Salvador
           '+240', // Equatorial Guinea
           '+291', // Eritrea
@@ -347,13 +349,13 @@ if (is_user_logged_in()) {
           '+251', // Ethiopia
           '+679', // Fiji
           '+358', // Finland
-          '+33',  // France
+          '+33', // France
           '+241', // Gabon
           '+220', // Gambia
           '+995', // Georgia
-          '+49',  // Germany
+          '+49', // Germany
           '+233', // Ghana
-          '+30',  // Greece
+          '+30', // Greece
           '+1473', // Grenada
           '+502', // Guatemala
           '+224', // Guinea
@@ -362,20 +364,20 @@ if (is_user_logged_in()) {
           '+509', // Haiti
           '+504', // Honduras
           '+852', // Hong Kong
-          '+36',  // Hungary
+          '+36', // Hungary
           '+354', // Iceland
-          '+91',  // India
-          '+62',  // Indonesia
-          '+98',  // Iran
+          '+91', // India
+          '+62', // Indonesia
+          '+98', // Iran
           '+964', // Iraq
           '+353', // Ireland
           '+972', // Israel
-          '+39',  // Italy
+          '+39', // Italy
           '+225', // Ivory Coast
           '+1876', // Jamaica
-          '+81',  // Japan
+          '+81', // Japan
           '+962', // Jordan
-          '+7',   // Kazakhstan
+          '+7', // Kazakhstan
           '+254', // Kenya
           '+686', // Kiribati
           '+965', // Kuwait
@@ -393,14 +395,14 @@ if (is_user_logged_in()) {
           '+389', // Macedonia
           '+261', // Madagascar
           '+265', // Malawi
-          '+60',  // Malaysia
+          '+60', // Malaysia
           '+960', // Maldives
           '+223', // Mali
           '+356', // Malta
           '+692', // Marshall Islands
           '+222', // Mauritania
           '+230', // Mauritius
-          '+52',  // Mexico
+          '+52', // Mexico
           '+691', // Micronesia
           '+373', // Moldova
           '+377', // Monaco
@@ -408,31 +410,31 @@ if (is_user_logged_in()) {
           '+382', // Montenegro
           '+212', // Morocco
           '+258', // Mozambique
-          '+95',  // Myanmar
+          '+95', // Myanmar
           '+264', // Namibia
           '+674', // Nauru
           '+977', // Nepal
-          '+31',  // Netherlands
-          '+64',  // New Zealand
+          '+31', // Netherlands
+          '+64', // New Zealand
           '+505', // Nicaragua
           '+227', // Niger
           '+234', // Nigeria
           '+850', // North Korea
-          '+47',  // Norway
+          '+47', // Norway
           '+968', // Oman
-          '+92',  // Pakistan
+          '+92', // Pakistan
           '+680', // Palau
           '+970', // Palestine
           '+507', // Panama
           '+675', // Papua New Guinea
           '+595', // Paraguay
-          '+51',  // Peru
-          '+63',  // Philippines
-          '+48',  // Poland
+          '+51', // Peru
+          '+63', // Philippines
+          '+48', // Poland
           '+351', // Portugal
           '+974', // Qatar
-          '+40',  // Romania
-          '+7',   // Russia
+          '+40', // Romania
+          '+7', // Russia
           '+250', // Rwanda
           '+1869', // Saint Kitts and Nevis
           '+1758', // Saint Lucia
@@ -449,40 +451,40 @@ if (is_user_logged_in()) {
           '+386', // Slovenia
           '+677', // Solomon Islands
           '+252', // Somalia
-          '+27',  // South Africa
-          '+82',  // South Korea
+          '+27', // South Africa
+          '+82', // South Korea
           '+211', // South Sudan
-          '+34',  // Spain
-          '+94',  // Sri Lanka
+          '+34', // Spain
+          '+94', // Sri Lanka
           '+249', // Sudan
           '+597', // Suriname
           '+268', // Swaziland
-          '+46',  // Sweden
-          '+41',  // Switzerland
+          '+46', // Sweden
+          '+41', // Switzerland
           '+963', // Syria
           '+886', // Taiwan
           '+992', // Tajikistan
           '+255', // Tanzania
-          '+66',  // Thailand
+          '+66', // Thailand
           '+228', // Togo
           '+676', // Tonga
           '+1868', // Trinidad and Tobago
           '+216', // Tunisia
-          '+90',  // Turkey
+          '+90', // Turkey
           '+993', // Turkmenistan
           '+688', // Tuvalu
           '+256', // Uganda
           '+380', // Ukraine
           '+971', // United Arab Emirates
-          '+44',  // United Kingdom
+          '+44', // United Kingdom
           '+598', // Uruguay
           '+998', // Uzbekistan
           '+678', // Vanuatu
-          '+58',  // Venezuela
-          '+84',  // Vietnam
+          '+58', // Venezuela
+          '+84', // Vietnam
           '+967', // Yemen
           '+260', // Zambia
-          '+263'  // Zimbabwe
+          '+263', // Zimbabwe
         ];
 
         foreach ($country_codes as $code) {
@@ -527,7 +529,6 @@ if (is_user_logged_in()) {
 
 
 <?php
-
 // Get necessary data
 $staffList = isset($staff_list) && !empty($staff_list['data']) ? $staff_list['data'] : [];
 $ordered_category_ids = function_exists('get_field')
@@ -619,8 +620,8 @@ if (empty($ordered_category_ids)) {
                 isset($category_popup->term_id, $category_popup->name)
               ): ?>
                 <button type="button" class="category-tab<?php echo $i === 0
-                                                            ? ' active'
-                                                            : ''; ?>" data-category-id="<?php echo esc_attr($category_popup->term_id); ?>">
+                  ? ' active'
+                  : ''; ?>" data-category-id="<?php echo esc_attr($category_popup->term_id); ?>">
                   <?php echo esc_html($category_popup->name); ?>
                 </button>
 
@@ -638,8 +639,8 @@ if (empty($ordered_category_ids)) {
               ): ?>
                 <?php $services = get_services_by_category($category_popup->term_id); ?>
                 <div class="category-services" data-category-id="<?php echo esc_attr(
-                                                                    $category_popup->term_id,
-                                                                  ); ?>" style="<?php echo $i === 0 ? '' : 'display:none'; ?>">
+                  $category_popup->term_id,
+                ); ?>" style="<?php echo $i === 0 ? '' : 'display:none'; ?>">
                   <?php
                   foreach ($services as $service):
 
@@ -682,18 +683,18 @@ if (empty($ordered_category_ids)) {
                     }
 
                     // Skip add-ons for now
-                  ?>
+                    ?>
                     <div class="service-item"
                       data-service-id="<?php echo esc_attr($post_id); ?>"
                       data-category-slugs="<?php echo esc_attr($category_slugs); ?>"
                       data-exclude-master-markup="<?php echo $should_exclude_markup
-                                                    ? 'true'
-                                                    : 'false'; ?>">
+                        ? 'true'
+                        : 'false'; ?>">
                       <div class="service-info">
                         <div class="service-title">
                           <h4 class="service-name"><?php echo esc_html(
-                                                      get_the_title($post_id),
-                                                    ); ?></h4>
+                            get_the_title($post_id),
+                          ); ?></h4>
                           <div class="service-checkbox-wrapper">
                             <div class="service-price">
                               <?php echo esc_html($price); ?> <?php echo esc_html($currency); ?>
@@ -707,22 +708,22 @@ if (empty($ordered_category_ids)) {
                               data-service-currency="<?php echo esc_attr($currency); ?>"
                               data-is-addon="false"
                               <?php if ($duration): ?>data-service-duration="<?php echo esc_attr(
-                                                                                $duration,
-                                                                              ); ?>" <?php endif; ?>
+  $duration,
+); ?>" <?php endif; ?>
                               <?php if ($wear_time): ?>data-service-wear-time="<?php echo esc_attr(
-                                                                                  $wear_time,
-                                                                                ); ?>" <?php endif; ?>>
+  $wear_time,
+); ?>" <?php endif; ?>>
                           </div>
                         </div>
                         <?php if ($duration): ?>
                           <div class="service-duration"><strong>Duration:</strong> <?php echo esc_html(
-                                                                                      $duration,
-                                                                                    ); ?> min</div>
+                            $duration,
+                          ); ?> min</div>
                         <?php endif; ?>
                         <?php if ($wear_time): ?>
                           <div class="service-wear-time"><strong>Wear time:</strong> <?php echo esc_html(
-                                                                                        $wear_time,
-                                                                                      ); ?></div>
+                            $wear_time,
+                          ); ?></div>
                         <?php endif; ?>
 
                         <?php if ($desc): ?>
@@ -733,8 +734,8 @@ if (empty($ordered_category_ids)) {
                       $related_addons = get_field('addons', $post_id);
                       if (!empty($related_addons)): ?>
                         <div class="core-related-addons" data-core-id="<?php echo esc_attr(
-                                                                          $post_id,
-                                                                        ); ?>">
+                          $post_id,
+                        ); ?>">
                           <?php foreach ($related_addons as $addon):
 
                             $addon_post = is_object($addon) ? $addon : get_post($addon);
@@ -753,7 +754,7 @@ if (empty($ordered_category_ids)) {
                             $a_wear = get_post_meta($a_id, 'wear_time', true);
                             $a_desc = get_post_meta($a_id, 'description', true);
                             $a_altegio = get_post_meta($a_id, 'altegio_id', true);
-                          ?>
+                            ?>
                             <div class="service-item addon-item"
                               data-service-id="<?php echo esc_attr($a_id); ?>"
                               data-core-linked="<?php echo esc_attr($post_id); ?>">
@@ -763,8 +764,8 @@ if (empty($ordered_category_ids)) {
                                   <h4 class="service-name"><?php echo esc_html($a_title); ?></h4>
                                   <div class="service-checkbox-wrapper">
                                     <div class="service-price"><?php echo esc_html(
-                                                                  $a_price,
-                                                                ); ?> <?php echo esc_html($a_currency); ?></div>
+                                      $a_price,
+                                    ); ?> <?php echo esc_html($a_currency); ?></div>
                                     <input type="checkbox"
                                       class="service-checkbox"
                                       data-service-id="<?php echo esc_attr($a_id); ?>"
@@ -776,30 +777,30 @@ if (empty($ordered_category_ids)) {
                                       <?php if (
                                         $a_duration
                                       ): ?>data-service-duration="<?php echo esc_attr(
-                                                                    $a_duration,
-                                                                  ); ?>" <?php endif; ?>
+  $a_duration,
+); ?>" <?php endif; ?>
                                       <?php if (
                                         $a_wear
                                       ): ?>data-service-wear-time="<?php echo esc_attr(
-                                                                      $a_wear,
-                                                                    ); ?>" <?php endif; ?>>
+  $a_wear,
+); ?>" <?php endif; ?>>
                                   </div>
                                 </div>
                                 <?php if (
                                   $a_duration
                                 ): ?><div class="service-duration"><strong>Duration:</strong> <?php echo esc_html(
-                                                                                                $a_duration,
-                                                                                              ); ?> min</div><?php endif; ?>
+  $a_duration,
+); ?> min</div><?php endif; ?>
                                 <?php if (
                                   $a_wear
                                 ): ?><div class="service-wear-time"><strong>Wear time:</strong> <?php echo esc_html(
-                                                                                                  $a_wear,
-                                                                                                ); ?></div><?php endif; ?>
+  $a_wear,
+); ?></div><?php endif; ?>
                                 <?php if (
                                   $a_desc
                                 ): ?><div class="service-description"><?php echo esc_html(
-                                                                        $a_desc,
-                                                                      ); ?></div><?php endif; ?>
+  $a_desc,
+); ?></div><?php endif; ?>
                               </div>
                             </div>
                           <?php
@@ -893,7 +894,7 @@ if (empty($ordered_category_ids)) {
 
                 $avatar = get_the_post_thumbnail_url(get_the_ID(), 'thumbnail');
                 $specialization = get_field('master_specialization');
-            ?>
+                ?>
                 <label class="staff-item level-<?php echo esc_attr($level); ?>"
                   data-staff-id="<?php echo esc_attr(get_field('altegio_id')); ?>"
                   data-staff-level="<?php echo esc_attr($level); ?>"
@@ -903,8 +904,8 @@ if (empty($ordered_category_ids)) {
                     <div class="staff-avatar">
                       <?php if ($avatar): ?>
                         <img src="<?php echo esc_url(
-                                    $avatar,
-                                  ); ?>" alt="<?php the_title_attribute(); ?>">
+                          $avatar,
+                        ); ?>" alt="<?php the_title_attribute(); ?>">
                       <?php endif; ?>
                     </div>
                     <div class="staff-info">
@@ -918,7 +919,9 @@ if (empty($ordered_category_ids)) {
                         <?php endif; ?>
                       </div>
                       <?php if ($markup): ?>
-                        <div class="staff-price-modifier mobile"><?php echo esc_html($markup); ?></div>
+                        <div class="staff-price-modifier mobile"><?php echo esc_html(
+                          $markup,
+                        ); ?></div>
                       <?php endif; ?>
                       <div class="nearest-seances"></div>
                     </div>
@@ -932,7 +935,7 @@ if (empty($ordered_category_ids)) {
               endwhile;
               wp_reset_postdata();
             else:
-              ?>
+               ?>
               <p class="no-items-message">No specialists available at the moment.</p>
             <?php
             endif;
@@ -1093,8 +1096,13 @@ if (empty($ordered_category_ids)) {
                 </div>
 
 
-                <div class="summary-item personal-discount" <?php echo !is_user_logged_in() || empty($user_discount_value) ? 'style="display:none;"' : ''; ?>>
-                  <span>Your personal discount (<?php echo esc_html($user_discount_value); ?>)</span>
+                <div class="summary-item personal-discount" <?php echo !is_user_logged_in() ||
+                empty($user_discount_value)
+                  ? 'style="display:none;"'
+                  : ''; ?>>
+                  <span>Your personal discount (<?php echo esc_html(
+                    $user_discount_value,
+                  ); ?>)</span>
                   <span class="summary-discount-amount">-5 SGD</span>
                 </div>
                 <div class="summary-item total"><span>Total</span> <span class="summary-total-amount">0.00 SGD</span></div>
@@ -1109,11 +1117,15 @@ if (empty($ordered_category_ids)) {
                 <h3>Personal Information</h3>
 
                 <div class="form-group">
-                  <input type="text" id="client-name" name="client[name]" placeholder="Name*" value="<?php echo is_user_logged_in() ? esc_attr($user_name) : ''; ?>" required />
+                  <input type="text" id="client-name" name="client[name]" placeholder="Name*" value="<?php echo is_user_logged_in()
+                    ? esc_attr($user_name)
+                    : ''; ?>" required />
                 </div>
 
                 <div class="form-group">
-                  <input type="email" id="client-email" name="client[email]" placeholder="Email*" value="<?php echo is_user_logged_in() ? esc_attr($user_email) : ''; ?>" required />
+                  <input type="email" id="client-email" name="client[email]" placeholder="Email*" value="<?php echo is_user_logged_in()
+                    ? esc_attr($user_email)
+                    : ''; ?>" required />
                 </div>
 
                 <div class="form-group">
@@ -1361,7 +1373,8 @@ if (empty($ordered_category_ids)) {
                               ? $country_names[$user_phone_country] . ' ' . $user_phone_country
                               : 'Singapore +65';
                           }
-                          echo esc_html($selected_country);                          ?>
+                          echo esc_html($selected_country);
+                          ?>
                         </span>
                         <svg class="country-select-arrow" viewBox="0 0 24 24">
                           <polyline points="6,9 12,15 18,9"></polyline>
@@ -1602,21 +1615,40 @@ if (empty($ordered_category_ids)) {
                           '+263' => 'Zimbabwe',
                         ];
                         $singapore_code = '+65';
-                        $user_code = is_user_logged_in() && $user_phone_country ? $user_phone_country : $singapore_code;
+                        $user_code =
+                          is_user_logged_in() && $user_phone_country
+                            ? $user_phone_country
+                            : $singapore_code;
 
-                        echo '<div class="country-option' . ($user_code === $singapore_code ? ' selected' : '') . '" data-value="' . $singapore_code . '" data-country="Singapore">Singapore +65</div>';
+                        echo '<div class="country-option' .
+                          ($user_code === $singapore_code ? ' selected' : '') .
+                          '" data-value="' .
+                          $singapore_code .
+                          '" data-country="Singapore">Singapore +65</div>';
 
                         $other_countries = $countries;
                         unset($other_countries[$singapore_code]);
                         asort($other_countries);
                         foreach ($other_countries as $code => $name) {
-                          $selected = ($user_code === $code) ? ' selected' : '';
-                          echo '<div class="country-option' . $selected . '" data-value="' . $code . '" data-country="' . $name . '">' . $name . ' ' . $code . '</div>';
+                          $selected = $user_code === $code ? ' selected' : '';
+                          echo '<div class="country-option' .
+                            $selected .
+                            '" data-value="' .
+                            $code .
+                            '" data-country="' .
+                            $name .
+                            '">' .
+                            $name .
+                            ' ' .
+                            $code .
+                            '</div>';
                         }
                         ?>
                       </div>
                     </div>
-                    <input type="tel" id="client-phone" name="client[phone]" placeholder="Phone number*" value="<?php echo is_user_logged_in() ? esc_attr($user_phone) : ''; ?>" required />
+                    <input type="tel" id="client-phone" name="client[phone]" placeholder="Phone number*" value="<?php echo is_user_logged_in()
+                      ? esc_attr($user_phone)
+                      : ''; ?>" required />
                   </div>
                 </div>
 
@@ -1629,13 +1661,13 @@ if (empty($ordered_category_ids)) {
                   <span>
                     By clicking Book an appointment, you agree to our
                     <a href="<?= esc_url(
-                                home_url('/privacy-policy/'),
-                              ) ?>" target="_blank" rel="noopener noreferrer">
+                      home_url('/privacy-policy/'),
+                    ) ?>" target="_blank" rel="noopener noreferrer">
                       Privacy Policy
                     </a> &
                     <a href="<?= esc_url(
-                                home_url('/terms-of-services/'),
-                              ) ?>" target="_blank" rel="noopener noreferrer">
+                      home_url('/terms-of-services/'),
+                    ) ?>" target="_blank" rel="noopener noreferrer">
                       Terms of Services
                     </a>.
                   </span>
@@ -1739,8 +1771,13 @@ if (empty($ordered_category_ids)) {
 
                 </div>
 
-                <div class="summary-item personal-discount" <?php echo !is_user_logged_in() || empty($user_discount_value) ? 'style="display:none;"' : ''; ?>>
-                  <span>Your personal discount (<?php echo esc_html($user_discount_value); ?>)</span>
+                <div class="summary-item personal-discount" <?php echo !is_user_logged_in() ||
+                empty($user_discount_value)
+                  ? 'style="display:none;"'
+                  : ''; ?>>
+                  <span>Your personal discount (<?php echo esc_html(
+                    $user_discount_value,
+                  ); ?>)</span>
                   <span class="summary-discount-amount">-5 SGD</span>
                 </div>
 
@@ -1776,7 +1813,7 @@ if (empty($ordered_category_ids)) {
     email: '<?php echo esc_js($user_email); ?>',
     phone: '<?php echo esc_js($user_phone); ?>',
     phoneCountry: '<?php echo esc_js($user_phone_country); ?>',
-    discountPercentage: <?php echo (int)$user_discount_percentage; ?>,
+    discountPercentage: <?php echo (int) $user_discount_percentage; ?>,
     discountValue: '<?php echo esc_js($user_discount_value); ?>'
   };
 
