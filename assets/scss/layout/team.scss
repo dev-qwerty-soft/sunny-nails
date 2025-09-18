@@ -1,5 +1,5 @@
 .team-section {
-  padding: get-d(150px) 0 get-d(75px) 0;
+  padding: get-d(75px) 0 get-d(75px) 0;
   &.page {
     padding-top: get-d(40px);
     @include respond(lg) {
@@ -10,7 +10,7 @@
     }
   }
   @include respond(lg) {
-    padding: get-lg(150px) 0 get-lg(75px) 0;
+    padding: get-lg(75px) 0 get-lg(75px) 0;
   }
   @include respond(md) {
     padding: 75px 0;
@@ -104,7 +104,10 @@
     }
   }
 }
-
+.team-section__wrapper .swiper-button-next.swiper-button-disabled,
+.team-section__wrapper .swiper-button-prev.swiper-button-disabled {
+  display: none !important;
+}
 .team-swiper {
   width: 100%;
   & .swiper-wrapper {

@@ -1,24 +1,16 @@
 .burger {
   position: relative;
-  width: 22px;
+  width: 36px;
+  height: 36px;
   cursor: pointer;
-  height: calc(2px * 3 + 5px * 2);
   z-index: 102;
   display: none;
+  background: $bg-yellow;
+  border-radius: 50%;
   @include respond(lg) {
     display: block;
   }
-  &::before {
-    content: '';
-    width: 36px;
-    height: 36px;
-    background: $bg-yellow;
-    border-radius: 50%;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-  }
+
   @media screen and (max-width: 768px) {
     &.active {
       width: 24px;
@@ -29,10 +21,11 @@
 
 .bar {
   position: absolute;
-  left: 0;
-  right: 0;
+  left: 50%;
+  transform: translateX(-50%);
   height: 0.8px;
   background: #000;
+  width: 22px;
   color: inherit;
   opacity: 1;
   transition: none 0.35s cubic-bezier(0.5, -0.35, 0.35, 1.5) 0s;
@@ -58,7 +51,7 @@
 
 .burger.active .bar--top {
   bottom: calc(50% - 1px / 2);
-  transform: rotate(135deg);
+  transform: translateX(-50%) rotate(135deg);
   transition-delay: 0s, calc(0s + 0.35s);
 }
 
@@ -70,7 +63,7 @@
 
 .burger.active .bar--bottom {
   top: calc(50% - 1px / 2);
-  transform: rotate(225deg);
+  transform: translateX(-50%) rotate(225deg);
   transition-delay: 0s, calc(0s + 0.35s);
 }
 
@@ -85,10 +78,10 @@
   opacity: 0;
   pointer-events: none;
   transition: all 0.5s;
-  padding: 145px min(get-md(30px), 30px) min(get-md(152px), 152px) min(get-md(30px), 30px);
+  padding: 100px min(get-md(30px), 30px) min(get-md(45px), 45px) min(get-md(45px), 45px);
   grid-template-columns: 1fr;
   grid-template-rows: repeat(3, max-content);
-  gap: 33px;
+  gap: 32px;
   justify-items: end;
   // align-items: end;
 
@@ -100,7 +93,9 @@
   @include respond(lg) {
     display: grid;
   }
-
+  @include respond(md) {
+    padding-right: 25px;
+  }
   // & nav {
   //   height: 100%;
   // }
@@ -111,7 +106,7 @@
     // justify-content: space-between;
     list-style: none;
     // height: 100%;
-    gap: max(get-md(33px), 33px);
+    gap: max(get-md(28px), 28px);
     align-items: flex-end;
     & a {
       font-weight: 500;

@@ -25,9 +25,7 @@ if (empty($ordered_category_ids)) {
       $service_categories[] = $term;
     }
   }
-}
 ?>
-
 <main>
     <?php get_template_part('template-parts/sections/hero/new'); ?>
     <?php $choose_section_active = get_field('choose_section_active'); ?>
@@ -131,7 +129,7 @@ if (empty($ordered_category_ids)) {
                         }
                       endforeach;
                     else:
-                      echo 'No data in category_selection_right';
+                      echo "<p style='color: #999; font-style: italic; padding: 20px 0;'>Please select categories in ACF field 'category_selection_right' in admin panel</p>";
                     endif;
                     ?>
                 </div>

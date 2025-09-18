@@ -48,23 +48,6 @@ if (empty($ordered_category_ids)) {
         <?php if (empty($categories)): ?>
           <p>No category found.</p>
         <?php
-
-          // Custom sorting function
-          // Custom sorting function
-          // Custom sorting function
-          // Custom sorting function
-          // Custom sorting function
-          // Custom sorting function
-          // Custom sorting function
-          // Custom sorting function
-          // Custom sorting function
-          // Custom sorting function
-          // Custom sorting function
-          // Custom sorting function
-          // Custom sorting function
-          // Custom sorting function
-          // Custom sorting function
-          // Custom sorting function
           else: ?>
           <?php foreach ($categories as $category): ?>
             <?php

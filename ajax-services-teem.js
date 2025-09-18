@@ -382,6 +382,7 @@
 
       const $button = $(this);
       const $masterCard = $button.closest('.team-card');
+      const $masterPopup = $button.closest('.master-popup');
       const masterId =
         $button.data('staff-id') ||
         $masterCard.data('staff-id') ||
@@ -391,7 +392,13 @@
         $masterCard.attr('data-staff-id');
       if (!masterId) return;
 
-      const masterName = $masterCard.find('.team-card__name').text().trim();
+      let masterName = '';
+      if ($masterCard.length) {
+        masterName = $masterCard.find('.team-card__name').text().trim();
+      } else if ($masterPopup.length) {
+        masterName = $masterPopup.find('.master-popup__title').first().text().trim();
+      }
+
       sessionStorage.setItem('selected_master_id', masterId);
       sessionStorage.setItem('selected_master_name', masterName);
 

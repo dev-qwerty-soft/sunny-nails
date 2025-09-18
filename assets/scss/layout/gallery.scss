@@ -101,6 +101,11 @@
         background: $bg-yellow;
         border-color: $bg-yellow;
       }
+      &:hover {
+        background: #f1e3be;
+        transition: all 0.5s ease;
+        cursor: pointer;
+      }
     }
   }
 
@@ -162,12 +167,12 @@
         }
 
         & .btn {
-          padding: get-d(10px) get-d(40px) get-d(10px) get-d(15px);
+          padding: get-d(10px) get-d(40px) get-d(10px) get-d(15px) !important;
           @include respond(lg) {
-            padding: get-lg(10px) get-lg(40px) get-lg(10px) get-lg(15px);
+            padding: get-lg(10px) get-lg(40px) get-lg(10px) get-lg(15px) !important;
           }
           @include respond(md) {
-            padding: 5px 30px 5px 12px;
+            padding: 5px 30px 5px 12px !important;
             font-size: 14px;
           }
         }

@@ -1,9 +1,9 @@
 {
-    "key": "group_682602730725a",
-    "title": "Sunny friends settings",
+    "key": "group_68b9d5a8b75d6",
+    "title": "Personal Cabinet",
     "fields": [
         {
-            "key": "field_68260273c45bd",
+            "key": "field_68b9d5a8bfc07",
             "label": "Sunny friends tabs",
             "name": "sunny_friends_tabs",
             "aria-label": "",
@@ -25,7 +25,7 @@
             "rows_per_page": 20,
             "sub_fields": [
                 {
-                    "key": "field_682602a2559c1",
+                    "key": "field_68b9d5a8e915d",
                     "label": "Sunny friends tab name",
                     "name": "sunny_friends_tab_name",
                     "aria-label": "",
@@ -43,10 +43,10 @@
                     "placeholder": "",
                     "prepend": "",
                     "append": "",
-                    "parent_repeater": "field_68260273c45bd"
+                    "parent_repeater": "field_68b9d5a8bfc07"
                 },
                 {
-                    "key": "field_682602b34b6ff",
+                    "key": "field_68b9d5a8ecdd3",
                     "label": "Sunny friends tab content",
                     "name": "sunny_friends_tab_content",
                     "aria-label": "",
@@ -66,10 +66,10 @@
                     "collapsed": "",
                     "button_label": "Add Row",
                     "rows_per_page": 20,
-                    "parent_repeater": "field_68260273c45bd",
+                    "parent_repeater": "field_68b9d5a8bfc07",
                     "sub_fields": [
                         {
-                            "key": "field_682602d04b700",
+                            "key": "field_68b9d5a8f087e",
                             "label": "Sunny friends tab content image",
                             "name": "sunny_friends_tab_content_image",
                             "aria-label": "",
@@ -92,10 +92,10 @@
                             "max_size": "",
                             "mime_types": "",
                             "preview_size": "medium",
-                            "parent_repeater": "field_682602b34b6ff"
+                            "parent_repeater": "field_68b9d5a8ecdd3"
                         },
                         {
-                            "key": "field_682602df4b701",
+                            "key": "field_68b9d5a9002e1",
                             "label": "Sunny friends tab content text",
                             "name": "sunny_friends_tab_content_text",
                             "aria-label": "",
@@ -113,14 +113,14 @@
                             "placeholder": "",
                             "prepend": "",
                             "append": "",
-                            "parent_repeater": "field_682602b34b6ff"
+                            "parent_repeater": "field_68b9d5a8ecdd3"
                         }
                     ]
                 }
             ]
         },
         {
-            "key": "field_6826033ea50d9",
+            "key": "field_68b9d5a8c38ec",
             "label": "Sunny friends title",
             "name": "sunny_friends_title",
             "aria-label": "",
@@ -140,7 +140,7 @@
             "append": ""
         },
         {
-            "key": "field_6826034fa50da",
+            "key": "field_68b9d5a8c75fa",
             "label": "Sunny friends text",
             "name": "sunny_friends_text",
             "aria-label": "",
@@ -160,7 +160,7 @@
             "append": ""
         },
         {
-            "key": "field_6826035da50db",
+            "key": "field_68b9d5a8cb140",
             "label": "Sunny friends image",
             "name": "sunny_friends_image",
             "aria-label": "",
@@ -185,7 +185,7 @@
             "preview_size": "medium"
         },
         {
-            "key": "field_682b2a8b3c084",
+            "key": "field_68b9d5a8ceba2",
             "label": "Sunny friends table column",
             "name": "sunny_friends_table_column",
             "aria-label": "",
@@ -207,7 +207,7 @@
             "rows_per_page": 20,
             "sub_fields": [
                 {
-                    "key": "field_682b2ab73c085",
+                    "key": "field_68b9d5a90b613",
                     "label": "Sunny friends table column title",
                     "name": "sunny_friends_table_column_title",
                     "aria-label": "",
@@ -225,10 +225,10 @@
                     "placeholder": "",
                     "prepend": "",
                     "append": "",
-                    "parent_repeater": "field_682b2a8b3c084"
+                    "parent_repeater": "field_68b9d5a8ceba2"
                 },
                 {
-                    "key": "field_682b2abd3c086",
+                    "key": "field_68b9d5a90f127",
                     "label": "Sunny friends table column field",
                     "name": "sunny_friends_table_column_field",
                     "aria-label": "",
@@ -248,10 +248,10 @@
                     "collapsed": "",
                     "button_label": "Add Row",
                     "rows_per_page": 20,
-                    "parent_repeater": "field_682b2a8b3c084",
+                    "parent_repeater": "field_68b9d5a8ceba2",
                     "sub_fields": [
                         {
-                            "key": "field_682b2ad03c087",
+                            "key": "field_68b9d5a912df8",
                             "label": "Sunny friends table column text",
                             "name": "sunny_friends_table_column_text",
                             "aria-label": "",
@@ -269,10 +269,10 @@
                             "placeholder": "",
                             "prepend": "",
                             "append": "",
-                            "parent_repeater": "field_682b2abd3c086"
+                            "parent_repeater": "field_68b9d5a90f127"
                         },
                         {
-                            "key": "field_682b3ca03c088",
+                            "key": "field_68b9d5a916aac",
                             "label": "Sunny friends table column check mark",
                             "name": "sunny_friends_table_column_check_mark",
                             "aria-label": "",
@@ -290,14 +290,14 @@
                             "ui": 0,
                             "ui_on_text": "",
                             "ui_off_text": "",
-                            "parent_repeater": "field_682b2abd3c086"
+                            "parent_repeater": "field_68b9d5a90f127"
                         }
                     ]
                 }
             ]
         },
         {
-            "key": "field_682b5151b9f80",
+            "key": "field_68b9d5a8d2852",
             "label": "Sunny friends join link text",
             "name": "sunny_friends_join_text",
             "aria-label": "",
@@ -317,7 +317,7 @@
             "append": ""
         },
         {
-            "key": "field_682b2a553c082",
+            "key": "field_68b9d5a8d6555",
             "label": "Sunny friends table",
             "name": "",
             "aria-label": "",
@@ -334,7 +334,7 @@
             "endpoint": 0
         },
         {
-            "key": "field_682b2a6b3c083",
+            "key": "field_68b9d5a8da1b1",
             "label": "Sunny friends table title",
             "name": "sunny_friends_table_title",
             "aria-label": "",
@@ -354,7 +354,7 @@
             "append": ""
         },
         {
-            "key": "field_682b29f63c080",
+            "key": "field_68b9d5a8ddcde",
             "label": "Sunny friends main column table",
             "name": "sunny_friends_main_column_table",
             "aria-label": "",
@@ -376,7 +376,7 @@
             "rows_per_page": 20,
             "sub_fields": [
                 {
-                    "key": "field_682b2a2b3c081",
+                    "key": "field_68b9d5a921f5a",
                     "label": "Sunny friends main column table text",
                     "name": "sunny_friends_main_column_table_text",
                     "aria-label": "",
@@ -394,12 +394,12 @@
                     "toolbar": "full",
                     "media_upload": 1,
                     "delay": 0,
-                    "parent_repeater": "field_682b29f63c080"
+                    "parent_repeater": "field_68b9d5a8ddcde"
                 }
             ]
         },
         {
-            "key": "field_689b3f3e2d2ed",
+            "key": "field_68b9d5a8e19e0",
             "label": "Sunny friends join link active",
             "name": "sunny_friends_join_link_active",
             "aria-label": "",
@@ -419,7 +419,7 @@
             "append": ""
         },
         {
-            "key": "field_682b5147b9f7f",
+            "key": "field_68b9d5a8e5466",
             "label": "Sunny friends join link",
             "name": "sunny_friends_join_link",
             "aria-label": "",
@@ -442,9 +442,9 @@
     "location": [
         [
             {
-                "param": "page_template",
+                "param": "page",
                 "operator": "==",
-                "value": "template-page\/sunny-friends.php"
+                "value": "1255"
             }
         ]
     ],
@@ -457,5 +457,5 @@
     "active": true,
     "description": "",
     "show_in_rest": 0,
-    "modified": 1757010854
+    "modified": 1757009354
 }

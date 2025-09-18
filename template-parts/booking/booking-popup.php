@@ -6,6 +6,529 @@
  * This template is included in the footer and displays the booking popup.
  */
 
+// Get user data for pre-filling the form if user is logged in
+$user_name = '';
+$user_email = '';
+$user_phone = '';
+$user_phone_country = '+65'; // Default to Singapore
+
+if (is_user_logged_in()) {
+  $current_user = wp_get_current_user();
+  $user_id = get_current_user_id();
+
+  // Check if plugin is active and table exists
+  $plugin_active = false;
+  $user_data = null;
+
+  // Try to get data from sunny_friends_customers table directly
+  global $wpdb;
+  $registrations_table = $wpdb->prefix . 'sunny_friends_customers';
+  $cards_table = $wpdb->prefix . 'sunny_cards';
+
+  // Check if table exists to avoid SQL errors
+  $table_exists =
+    $wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s', $registrations_table)) ==
+    $registrations_table;
+
+  if ($table_exists) {
+    try {
+      $user_data = $wpdb->get_row(
+        $wpdb->prepare(
+          "SELECT c.*, cards.discount 
+           FROM $registrations_table c 
+           LEFT JOIN $cards_table cards ON c.card_number = cards.card_number 
+           WHERE c.user_id = %d",
+          $user_id,
+        ),
+      );
+      $plugin_active = true; // If we can query the table, consider plugin "active"
+    } catch (Exception $e) {
+      // If there's any error, fall back to WordPress data
+      $plugin_active = false;
+    }
+  }
+
+  if ($plugin_active && $user_data) {
+    // Use plugin data
+    $user_name = trim($user_data->first_name . ' ' . $user_data->last_name);
+    $user_email = $user_data->email;
+    $phone = $user_data->phone;
+
+    // Parse phone number to get country code and number (same logic as personal-info.php)
+    $user_phone_country = '+65'; // Default to Singapore
+    $user_phone = '';
+
+    if ($phone) {
+      // Parse country code from phone number
+      $phone_cleaned = preg_replace('/[^\d+]/', '', $phone);
+
+      // List of country codes to check (longest first)
+      $country_codes = [
+        '+65', // Singapore (first)
+        '+93', // Afghanistan
+        '+355', // Albania
+        '+213', // Algeria
+        '+376', // Andorra
+        '+244', // Angola
+        '+54', // Argentina
+        '+374', // Armenia
+        '+61', // Australia
+        '+43', // Austria
+        '+994', // Azerbaijan
+        '+973', // Bahrain
+        '+880', // Bangladesh
+        '+375', // Belarus
+        '+32', // Belgium
+        '+501', // Belize
+        '+229', // Benin
+        '+975', // Bhutan
+        '+591', // Bolivia
+        '+387', // Bosnia and Herzegovina
+        '+267', // Botswana
+        '+55', // Brazil
+        '+673', // Brunei
+        '+359', // Bulgaria
+        '+226', // Burkina Faso
+        '+257', // Burundi
+        '+855', // Cambodia
+        '+237', // Cameroon
+        '+1', // Canada
+        '+238', // Cape Verde
+        '+236', // Central African Republic
+        '+235', // Chad
+        '+56', // Chile
+        '+86', // China
+        '+57', // Colombia
+        '+269', // Comoros
+        '+242', // Congo
+        '+243', // Congo (DRC)
+        '+506', // Costa Rica
+        '+385', // Croatia
+        '+53', // Cuba
+        '+357', // Cyprus
+        '+420', // Czech Republic
+        '+45', // Denmark
+        '+253', // Djibouti
+        '+1767', // Dominica
+        '+593', // Ecuador
+        '+20', // Egypt
+        '+503', // El Salvador
+        '+240', // Equatorial Guinea
+        '+291', // Eritrea
+        '+372', // Estonia
+        '+251', // Ethiopia
+        '+679', // Fiji
+        '+358', // Finland
+        '+33', // France
+        '+241', // Gabon
+        '+220', // Gambia
+        '+995', // Georgia
+        '+49', // Germany
+        '+233', // Ghana
+        '+30', // Greece
+        '+1473', // Grenada
+        '+502', // Guatemala
+        '+224', // Guinea
+        '+245', // Guinea-Bissau
+        '+592', // Guyana
+        '+509', // Haiti
+        '+504', // Honduras
+        '+852', // Hong Kong
+        '+36', // Hungary
+        '+354', // Iceland
+        '+91', // India
+        '+62', // Indonesia
+        '+98', // Iran
+        '+964', // Iraq
+        '+353', // Ireland
+        '+972', // Israel
+        '+39', // Italy
+        '+225', // Ivory Coast
+        '+1876', // Jamaica
+        '+81', // Japan
+        '+962', // Jordan
+        '+7', // Kazakhstan
+        '+254', // Kenya
+        '+686', // Kiribati
+        '+965', // Kuwait
+        '+996', // Kyrgyzstan
+        '+856', // Laos
+        '+371', // Latvia
+        '+961', // Lebanon
+        '+266', // Lesotho
+        '+231', // Liberia
+        '+218', // Libya
+        '+423', // Liechtenstein
+        '+370', // Lithuania
+        '+352', // Luxembourg
+        '+853', // Macau
+        '+389', // Macedonia
+        '+261', // Madagascar
+        '+265', // Malawi
+        '+60', // Malaysia
+        '+960', // Maldives
+        '+223', // Mali
+        '+356', // Malta
+        '+692', // Marshall Islands
+        '+222', // Mauritania
+        '+230', // Mauritius
+        '+52', // Mexico
+        '+691', // Micronesia
+        '+373', // Moldova
+        '+377', // Monaco
+        '+976', // Mongolia
+        '+382', // Montenegro
+        '+212', // Morocco
+        '+258', // Mozambique
+        '+95', // Myanmar
+        '+264', // Namibia
+        '+674', // Nauru
+        '+977', // Nepal
+        '+31', // Netherlands
+        '+64', // New Zealand
+        '+505', // Nicaragua
+        '+227', // Niger
+        '+234', // Nigeria
+        '+850', // North Korea
+        '+47', // Norway
+        '+968', // Oman
+        '+92', // Pakistan
+        '+680', // Palau
+        '+970', // Palestine
+        '+507', // Panama
+        '+675', // Papua New Guinea
+        '+595', // Paraguay
+        '+51', // Peru
+        '+63', // Philippines
+        '+48', // Poland
+        '+351', // Portugal
+        '+974', // Qatar
+        '+40', // Romania
+        '+7', // Russia
+        '+250', // Rwanda
+        '+1869', // Saint Kitts and Nevis
+        '+1758', // Saint Lucia
+        '+1784', // Saint Vincent and the Grenadines
+        '+685', // Samoa
+        '+378', // San Marino
+        '+239', // São Tomé and Príncipe
+        '+966', // Saudi Arabia
+        '+221', // Senegal
+        '+381', // Serbia
+        '+248', // Seychelles
+        '+232', // Sierra Leone
+        '+421', // Slovakia
+        '+386', // Slovenia
+        '+677', // Solomon Islands
+        '+252', // Somalia
+        '+27', // South Africa
+        '+82', // South Korea
+        '+211', // South Sudan
+        '+34', // Spain
+        '+94', // Sri Lanka
+        '+249', // Sudan
+        '+597', // Suriname
+        '+268', // Swaziland
+        '+46', // Sweden
+        '+41', // Switzerland
+        '+963', // Syria
+        '+886', // Taiwan
+        '+992', // Tajikistan
+        '+255', // Tanzania
+        '+66', // Thailand
+        '+228', // Togo
+        '+676', // Tonga
+        '+1868', // Trinidad and Tobago
+        '+216', // Tunisia
+        '+90', // Turkey
+        '+993', // Turkmenistan
+        '+688', // Tuvalu
+        '+256', // Uganda
+        '+380', // Ukraine
+        '+971', // United Arab Emirates
+        '+44', // United Kingdom
+        '+598', // Uruguay
+        '+998', // Uzbekistan
+        '+678', // Vanuatu
+        '+58', // Venezuela
+        '+84', // Vietnam
+        '+967', // Yemen
+        '+260', // Zambia
+        '+263', // Zimbabwe
+      ];
+      foreach ($country_codes as $code) {
+        if (strpos($phone_cleaned, $code) === 0) {
+          $user_phone_country = $code;
+          $user_phone = substr($phone_cleaned, strlen($code));
+          break;
+        }
+      }
+
+      // If no country code found, treat as local number
+      if ($user_phone === '' && $phone_cleaned) {
+        $user_phone = ltrim($phone_cleaned, '+');
+      }
+    }
+  }
+
+  // Fallback to WordPress user data if plugin is not active or no custom data
+  if (!$plugin_active || !$user_data) {
+    $user_name = trim($current_user->first_name . ' ' . $current_user->last_name);
+    if (empty($user_name)) {
+      $user_name = $current_user->display_name;
+    }
+    $user_email = $current_user->user_email;
+
+    // Try to get phone from user meta as fallback
+    $user_phone_meta = get_user_meta($user_id, 'phone', true);
+    if ($user_phone_meta) {
+      $phone = $user_phone_meta;
+
+      // Use the same parsing logic as above
+      $user_phone_country = '+65'; // Default to Singapore
+      $user_phone = '';
+
+      if ($phone) {
+        // Parse country code from phone number
+        $phone_cleaned = preg_replace('/[^\d+]/', '', $phone);
+
+        // List of country codes to check (longest first)
+        $country_codes = [
+          '+65', // Singapore (first)
+          '+93', // Afghanistan
+          '+355', // Albania
+          '+213', // Algeria
+          '+376', // Andorra
+          '+244', // Angola
+          '+54', // Argentina
+          '+374', // Armenia
+          '+61', // Australia
+          '+43', // Austria
+          '+994', // Azerbaijan
+          '+973', // Bahrain
+          '+880', // Bangladesh
+          '+375', // Belarus
+          '+32', // Belgium
+          '+501', // Belize
+          '+229', // Benin
+          '+975', // Bhutan
+          '+591', // Bolivia
+          '+387', // Bosnia and Herzegovina
+          '+267', // Botswana
+          '+55', // Brazil
+          '+673', // Brunei
+          '+359', // Bulgaria
+          '+226', // Burkina Faso
+          '+257', // Burundi
+          '+855', // Cambodia
+          '+237', // Cameroon
+          '+1', // Canada
+          '+238', // Cape Verde
+          '+236', // Central African Republic
+          '+235', // Chad
+          '+56', // Chile
+          '+86', // China
+          '+57', // Colombia
+          '+269', // Comoros
+          '+242', // Congo
+          '+243', // Congo (DRC)
+          '+506', // Costa Rica
+          '+385', // Croatia
+          '+53', // Cuba
+          '+357', // Cyprus
+          '+420', // Czech Republic
+          '+45', // Denmark
+          '+253', // Djibouti
+          '+1767', // Dominica
+          '+593', // Ecuador
+          '+20', // Egypt
+          '+503', // El Salvador
+          '+240', // Equatorial Guinea
+          '+291', // Eritrea
+          '+372', // Estonia
+          '+251', // Ethiopia
+          '+679', // Fiji
+          '+358', // Finland
+          '+33', // France
+          '+241', // Gabon
+          '+220', // Gambia
+          '+995', // Georgia
+          '+49', // Germany
+          '+233', // Ghana
+          '+30', // Greece
+          '+1473', // Grenada
+          '+502', // Guatemala
+          '+224', // Guinea
+          '+245', // Guinea-Bissau
+          '+592', // Guyana
+          '+509', // Haiti
+          '+504', // Honduras
+          '+852', // Hong Kong
+          '+36', // Hungary
+          '+354', // Iceland
+          '+91', // India
+          '+62', // Indonesia
+          '+98', // Iran
+          '+964', // Iraq
+          '+353', // Ireland
+          '+972', // Israel
+          '+39', // Italy
+          '+225', // Ivory Coast
+          '+1876', // Jamaica
+          '+81', // Japan
+          '+962', // Jordan
+          '+7', // Kazakhstan
+          '+254', // Kenya
+          '+686', // Kiribati
+          '+965', // Kuwait
+          '+996', // Kyrgyzstan
+          '+856', // Laos
+          '+371', // Latvia
+          '+961', // Lebanon
+          '+266', // Lesotho
+          '+231', // Liberia
+          '+218', // Libya
+          '+423', // Liechtenstein
+          '+370', // Lithuania
+          '+352', // Luxembourg
+          '+853', // Macau
+          '+389', // Macedonia
+          '+261', // Madagascar
+          '+265', // Malawi
+          '+60', // Malaysia
+          '+960', // Maldives
+          '+223', // Mali
+          '+356', // Malta
+          '+692', // Marshall Islands
+          '+222', // Mauritania
+          '+230', // Mauritius
+          '+52', // Mexico
+          '+691', // Micronesia
+          '+373', // Moldova
+          '+377', // Monaco
+          '+976', // Mongolia
+          '+382', // Montenegro
+          '+212', // Morocco
+          '+258', // Mozambique
+          '+95', // Myanmar
+          '+264', // Namibia
+          '+674', // Nauru
+          '+977', // Nepal
+          '+31', // Netherlands
+          '+64', // New Zealand
+          '+505', // Nicaragua
+          '+227', // Niger
+          '+234', // Nigeria
+          '+850', // North Korea
+          '+47', // Norway
+          '+968', // Oman
+          '+92', // Pakistan
+          '+680', // Palau
+          '+970', // Palestine
+          '+507', // Panama
+          '+675', // Papua New Guinea
+          '+595', // Paraguay
+          '+51', // Peru
+          '+63', // Philippines
+          '+48', // Poland
+          '+351', // Portugal
+          '+974', // Qatar
+          '+40', // Romania
+          '+7', // Russia
+          '+250', // Rwanda
+          '+1869', // Saint Kitts and Nevis
+          '+1758', // Saint Lucia
+          '+1784', // Saint Vincent and the Grenadines
+          '+685', // Samoa
+          '+378', // San Marino
+          '+239', // São Tomé and Príncipe
+          '+966', // Saudi Arabia
+          '+221', // Senegal
+          '+381', // Serbia
+          '+248', // Seychelles
+          '+232', // Sierra Leone
+          '+421', // Slovakia
+          '+386', // Slovenia
+          '+677', // Solomon Islands
+          '+252', // Somalia
+          '+27', // South Africa
+          '+82', // South Korea
+          '+211', // South Sudan
+          '+34', // Spain
+          '+94', // Sri Lanka
+          '+249', // Sudan
+          '+597', // Suriname
+          '+268', // Swaziland
+          '+46', // Sweden
+          '+41', // Switzerland
+          '+963', // Syria
+          '+886', // Taiwan
+          '+992', // Tajikistan
+          '+255', // Tanzania
+          '+66', // Thailand
+          '+228', // Togo
+          '+676', // Tonga
+          '+1868', // Trinidad and Tobago
+          '+216', // Tunisia
+          '+90', // Turkey
+          '+993', // Turkmenistan
+          '+688', // Tuvalu
+          '+256', // Uganda
+          '+380', // Ukraine
+          '+971', // United Arab Emirates
+          '+44', // United Kingdom
+          '+598', // Uruguay
+          '+998', // Uzbekistan
+          '+678', // Vanuatu
+          '+58', // Venezuela
+          '+84', // Vietnam
+          '+967', // Yemen
+          '+260', // Zambia
+          '+263', // Zimbabwe
+        ];
+
+        foreach ($country_codes as $code) {
+          if (strpos($phone_cleaned, $code) === 0) {
+            $user_phone_country = $code;
+            $user_phone = substr($phone_cleaned, strlen($code));
+            break;
+          }
+        }
+
+        // If no country code found, treat as local number
+        if ($user_phone === '' && $phone_cleaned) {
+          $user_phone = ltrim($phone_cleaned, '+');
+        }
+      }
+    }
+  }
+} else {
+  // For non-logged-in users, ensure all fields are empty
+  $user_name = '';
+  $user_email = '';
+  $user_phone = '';
+  $user_phone_country = '+65'; // Default to Singapore
+}
+
+// Get user discount
+$user_discount_percentage = 0;
+$user_discount_value = '';
+
+if (is_user_logged_in()) {
+  if ($plugin_active && $user_data && !empty($user_data->discount)) {
+    $user_discount_percentage = intval($user_data->discount);
+    $user_discount_value = '-' . $user_discount_percentage . '%';
+  } else {
+    $user_discount_percentage = 5; // Default fallback
+    $user_discount_value = '-5%';
+  }
+}
+
+// Pass user data to JavaScript
+?>
+
+
+<?php
 // Get necessary data
 $staffList = isset($staff_list) && !empty($staff_list['data']) ? $staff_list['data'] : [];
 $ordered_category_ids = function_exists('get_field')
@@ -339,23 +862,8 @@ if (empty($ordered_category_ids)) {
               'post_status' => 'publish',
             ]);
 
-            $levelTitles = [
-              -1 => 'Intern',
-              1 => 'Sunny Ray',
-              2 => 'Sunny Shine',
-              3 => 'Sunny Inferno',
-              4 => 'Trainer',
-              5 => 'Sunny Inferno, Supervisor',
-            ];
-
-            $markupMap = [
-              -1 => '-50% to price',
-              1 => '+0% to price',
-              2 => '+10% to price',
-              3 => '+20% to price',
-              4 => '+30% to price',
-              5 => '+30% to price',
-            ];
+            // Get master levels from admin configuration
+            $masterLevelsConfig = get_master_levels_config();
 
             $starSvg = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M20.8965 18.008L18.6085 15.7L19.2965 15.012L21.6045 17.3L20.8965 18.008ZM17.7005 6.373L17.0125 5.685L19.3005 3.396L20.0085 4.085L17.7005 6.373ZM6.30048 6.393L4.01148 4.084L4.70048 3.395L7.00848 5.684L6.30048 6.393ZM3.08548 18.007L2.39648 17.299L4.68548 15.01L5.39248 15.699L3.08548 18.007ZM6.44048 20L7.91048 13.725L3.00048 9.481L9.47048 8.933L12.0005 3L14.5505 8.933L21.0205 9.481L16.1085 13.725L17.5785 20L12.0005 16.66L6.44048 20Z" fill="#FDC41F"/>
@@ -372,20 +880,20 @@ if (empty($ordered_category_ids)) {
                 }
                 $level = (int) get_field('master_level');
 
-                $starsCount = match (true) {
-                  $level === -1 => 0,
-                  $level === 1 => 1,
-                  $level === 2 => 2,
-                  $level === 3 => 3,
-                  $level === 4, $level === 5 => 4,
-                  default => 0,
-                };
+                $starsCount = get_master_level_stars($level);
                 $stars = str_repeat($starSvg, $starsCount);
 
-                $markup = $markupMap[$level] ?? '';
+                // Use new master levels functions
+                $levelTitle = get_master_level_title($level, true); // Include additional info
+                $markup = get_master_level_percent($level) . '% to price';
+                if (get_master_level_percent($level) > 0) {
+                  $markup = '+' . $markup;
+                } elseif (get_master_level_percent($level) < 0) {
+                  // Markup already includes the minus sign
+                }
+
                 $avatar = get_the_post_thumbnail_url(get_the_ID(), 'thumbnail');
                 $specialization = get_field('master_specialization');
-                $levelTitle = $levelTitles[$level] ?? '';
                 ?>
                 <label class="staff-item level-<?php echo esc_attr($level); ?>"
                   data-staff-id="<?php echo esc_attr(get_field('altegio_id')); ?>"
@@ -410,10 +918,15 @@ if (empty($ordered_category_ids)) {
                           <span class="studio-name">(<?php echo esc_html($levelTitle); ?>)</span>
                         <?php endif; ?>
                       </div>
+                      <?php if ($markup): ?>
+                        <div class="staff-price-modifier mobile"><?php echo esc_html(
+                          $markup,
+                        ); ?></div>
+                      <?php endif; ?>
                       <div class="nearest-seances"></div>
                     </div>
                     <?php if ($markup): ?>
-                      <div class="staff-price-modifier"><?php echo esc_html($markup); ?></div>
+                      <div class="staff-price-modifier desc"><?php echo esc_html($markup); ?></div>
                     <?php endif; ?>
                     <span class="radio-indicator"></span>
                   </div>
@@ -500,6 +1013,14 @@ if (empty($ordered_category_ids)) {
           <div class="booking-details-content">
 
             <div class="booking-summary-box">
+              <!-- Floating Check booking details button -->
+              <div class="booking-details-notification">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                  <path d="M12.5879 7.52654L8.08789 2.91116L3.58789 7.52654M8.08789 3.55218V12.9112" stroke="#302F34" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+                Check booking details
+              </div>
+
               <div class="summary-master-date">
                 <div class="summary-master">
                   <div class="master-info">
@@ -574,6 +1095,16 @@ if (empty($ordered_category_ids)) {
                   <div class="coupon-feedback" style="display: none;"></div>
                 </div>
 
+
+                <div class="summary-item personal-discount" <?php echo !is_user_logged_in() ||
+                empty($user_discount_value)
+                  ? 'style="display:none;"'
+                  : ''; ?>>
+                  <span>Your personal discount (<?php echo esc_html(
+                    $user_discount_value,
+                  ); ?>)</span>
+                  <span class="summary-discount-amount">-5 SGD</span>
+                </div>
                 <div class="summary-item total"><span>Total</span> <span class="summary-total-amount">0.00 SGD</span></div>
                 <?php
                 $price_notice = get_field('booking_price_note', 'option');
@@ -586,276 +1117,558 @@ if (empty($ordered_category_ids)) {
                 <h3>Personal Information</h3>
 
                 <div class="form-group">
-                  <input type="text" id="client-name" name="client[name]" placeholder="Name*" required />
+                  <input type="text" id="client-name" name="client[name]" placeholder="Name*" value="<?php echo is_user_logged_in()
+                    ? esc_attr($user_name)
+                    : ''; ?>" required />
                 </div>
 
                 <div class="form-group">
-                  <input type="email" id="client-email" name="client[email]" placeholder="Email*" required />
+                  <input type="email" id="client-email" name="client[email]" placeholder="Email*" value="<?php echo is_user_logged_in()
+                    ? esc_attr($user_email)
+                    : ''; ?>" required />
                 </div>
 
                 <div class="form-group">
                   <div class="phone-input-wrapper">
                     <div class="custom-country-select">
                       <button type="button" class="country-select-button" id="countrySelectButton">
-                        <span class="selected-country">Singapore +65</span>
+                        <span class="selected-country">
+                          <?php
+                          // Set default selected country based on user data
+                          $selected_country = 'Singapore +65'; // Default
+                          if (is_user_logged_in() && $user_phone_country) {
+                            $country_names = [
+                              '+65' => 'Singapore',
+                              '+93' => 'Afghanistan',
+                              '+355' => 'Albania',
+                              '+213' => 'Algeria',
+                              '+1684' => 'American Samoa',
+                              '+376' => 'Andorra',
+                              '+244' => 'Angola',
+                              '+1264' => 'Anguilla',
+                              '+54' => 'Argentina',
+                              '+374' => 'Armenia',
+                              '+297' => 'Aruba',
+                              '+61' => 'Australia',
+                              '+43' => 'Austria',
+                              '+994' => 'Azerbaijan',
+                              '+1242' => 'Bahamas',
+                              '+973' => 'Bahrain',
+                              '+880' => 'Bangladesh',
+                              '+1246' => 'Barbados',
+                              '+375' => 'Belarus',
+                              '+32' => 'Belgium',
+                              '+501' => 'Belize',
+                              '+229' => 'Benin',
+                              '+1441' => 'Bermuda',
+                              '+975' => 'Bhutan',
+                              '+591' => 'Bolivia',
+                              '+387' => 'Bosnia and Herzegovina',
+                              '+267' => 'Botswana',
+                              '+55' => 'Brazil',
+                              '+673' => 'Brunei',
+                              '+359' => 'Bulgaria',
+                              '+226' => 'Burkina Faso',
+                              '+257' => 'Burundi',
+                              '+855' => 'Cambodia',
+                              '+237' => 'Cameroon',
+                              '+1' => 'Canada',
+                              '+238' => 'Cape Verde',
+                              '+1345' => 'Cayman Islands',
+                              '+236' => 'Central African Republic',
+                              '+235' => 'Chad',
+                              '+56' => 'Chile',
+                              '+86' => 'China',
+                              '+57' => 'Colombia',
+                              '+269' => 'Comoros',
+                              '+682' => 'Cook Islands',
+                              '+506' => 'Costa Rica',
+                              '+385' => 'Croatia',
+                              '+53' => 'Cuba',
+                              '+599' => 'Curacao',
+                              '+357' => 'Cyprus',
+                              '+420' => 'Czech Republic',
+                              '+243' => 'Congo (DRC)',
+                              '+45' => 'Denmark',
+                              '+253' => 'Djibouti',
+                              '+1767' => 'Dominica',
+                              '+1809' => 'Dominican Republic',
+                              '+670' => 'East Timor',
+                              '+593' => 'Ecuador',
+                              '+20' => 'Egypt',
+                              '+503' => 'El Salvador',
+                              '+240' => 'Equatorial Guinea',
+                              '+291' => 'Eritrea',
+                              '+372' => 'Estonia',
+                              '+268' => 'Eswatini',
+                              '+251' => 'Ethiopia',
+                              '+298' => 'Faroe Islands',
+                              '+679' => 'Fiji',
+                              '+358' => 'Finland',
+                              '+33' => 'France',
+                              '+594' => 'French Guiana',
+                              '+689' => 'French Polynesia',
+                              '+241' => 'Gabon',
+                              '+220' => 'Gambia',
+                              '+995' => 'Georgia',
+                              '+49' => 'Germany',
+                              '+233' => 'Ghana',
+                              '+350' => 'Gibraltar',
+                              '+30' => 'Greece',
+                              '+299' => 'Greenland',
+                              '+1473' => 'Grenada',
+                              '+590' => 'Guadeloupe',
+                              '+1671' => 'Guam',
+                              '+502' => 'Guatemala',
+                              '+44' => 'Guernsey',
+                              '+224' => 'Guinea',
+                              '+245' => 'Guinea-Bissau',
+                              '+592' => 'Guyana',
+                              '+509' => 'Haiti',
+                              '+504' => 'Honduras',
+                              '+852' => 'Hong Kong',
+                              '+36' => 'Hungary',
+                              '+354' => 'Iceland',
+                              '+91' => 'India',
+                              '+62' => 'Indonesia',
+                              '+98' => 'Iran',
+                              '+964' => 'Iraq',
+                              '+353' => 'Ireland',
+                              '+44' => 'Isle of Man',
+                              '+972' => 'Israel',
+                              '+39' => 'Italy',
+                              '+225' => 'Ivory Coast',
+                              '+1876' => 'Jamaica',
+                              '+81' => 'Japan',
+                              '+44' => 'Jersey',
+                              '+962' => 'Jordan',
+                              '+7' => 'Kazakhstan',
+                              '+254' => 'Kenya',
+                              '+686' => 'Kiribati',
+                              '+383' => 'Kosovo',
+                              '+965' => 'Kuwait',
+                              '+996' => 'Kyrgyzstan',
+                              '+856' => 'Laos',
+                              '+371' => 'Latvia',
+                              '+961' => 'Lebanon',
+                              '+266' => 'Lesotho',
+                              '+231' => 'Liberia',
+                              '+218' => 'Libya',
+                              '+423' => 'Liechtenstein',
+                              '+370' => 'Lithuania',
+                              '+352' => 'Luxembourg',
+                              '+853' => 'Macau',
+                              '+389' => 'Macedonia',
+                              '+261' => 'Madagascar',
+                              '+265' => 'Malawi',
+                              '+60' => 'Malaysia',
+                              '+960' => 'Maldives',
+                              '+223' => 'Mali',
+                              '+356' => 'Malta',
+                              '+692' => 'Marshall Islands',
+                              '+596' => 'Martinique',
+                              '+222' => 'Mauritania',
+                              '+230' => 'Mauritius',
+                              '+262' => 'Mayotte',
+                              '+52' => 'Mexico',
+                              '+691' => 'Micronesia',
+                              '+373' => 'Moldova',
+                              '+377' => 'Monaco',
+                              '+976' => 'Mongolia',
+                              '+382' => 'Montenegro',
+                              '+1664' => 'Montserrat',
+                              '+212' => 'Morocco',
+                              '+258' => 'Mozambique',
+                              '+95' => 'Myanmar',
+                              '+264' => 'Namibia',
+                              '+674' => 'Nauru',
+                              '+977' => 'Nepal',
+                              '+31' => 'Netherlands',
+                              '+687' => 'New Caledonia',
+                              '+64' => 'New Zealand',
+                              '+505' => 'Nicaragua',
+                              '+227' => 'Niger',
+                              '+234' => 'Nigeria',
+                              '+683' => 'Niue',
+                              '+850' => 'North Korea',
+                              '+1670' => 'Northern Mariana Islands',
+                              '+47' => 'Norway',
+                              '+968' => 'Oman',
+                              '+92' => 'Pakistan',
+                              '+680' => 'Palau',
+                              '+970' => 'Palestine',
+                              '+507' => 'Panama',
+                              '+675' => 'Papua New Guinea',
+                              '+595' => 'Paraguay',
+                              '+51' => 'Peru',
+                              '+63' => 'Philippines',
+                              '+48' => 'Poland',
+                              '+351' => 'Portugal',
+                              '+1787' => 'Puerto Rico',
+                              '+974' => 'Qatar',
+                              '+242' => 'Republic of the Congo',
+                              '+262' => 'Reunion',
+                              '+40' => 'Romania',
+                              '+7' => 'Russia',
+                              '+250' => 'Rwanda',
+                              '+590' => 'Saint Barthelemy',
+                              '+1869' => 'Saint Kitts and Nevis',
+                              '+1758' => 'Saint Lucia',
+                              '+590' => 'Saint Martin',
+                              '+1784' => 'St. Vincent & Grenadines',
+                              '+685' => 'Samoa',
+                              '+378' => 'San Marino',
+                              '+239' => 'Sao Tome and Principe',
+                              '+966' => 'Saudi Arabia',
+                              '+221' => 'Senegal',
+                              '+381' => 'Serbia',
+                              '+248' => 'Seychelles',
+                              '+232' => 'Sierra Leone',
+                              '+1721' => 'Sint Maarten',
+                              '+421' => 'Slovakia',
+                              '+386' => 'Slovenia',
+                              '+677' => 'Solomon Islands',
+                              '+252' => 'Somalia',
+                              '+27' => 'South Africa',
+                              '+82' => 'South Korea',
+                              '+211' => 'South Sudan',
+                              '+34' => 'Spain',
+                              '+94' => 'Sri Lanka',
+                              '+249' => 'Sudan',
+                              '+597' => 'Suriname',
+                              '+47' => 'Svalbard and Jan Mayen',
+                              '+46' => 'Sweden',
+                              '+41' => 'Switzerland',
+                              '+963' => 'Syria',
+                              '+886' => 'Taiwan',
+                              '+992' => 'Tajikistan',
+                              '+255' => 'Tanzania',
+                              '+66' => 'Thailand',
+                              '+228' => 'Togo',
+                              '+676' => 'Tonga',
+                              '+1868' => 'Trinidad and Tobago',
+                              '+216' => 'Tunisia',
+                              '+90' => 'Turkey',
+                              '+993' => 'Turkmenistan',
+                              '+1649' => 'Turks and Caicos Islands',
+                              '+688' => 'Tuvalu',
+                              '+1340' => 'U.S. Virgin Islands',
+                              '+256' => 'Uganda',
+                              '+380' => 'Ukraine',
+                              '+971' => 'United Arab Emirates',
+                              '+44' => 'United Kingdom',
+                              '+1' => 'United States',
+                              '+598' => 'Uruguay',
+                              '+998' => 'Uzbekistan',
+                              '+678' => 'Vanuatu',
+                              '+39' => 'Vatican',
+                              '+58' => 'Venezuela',
+                              '+84' => 'Vietnam',
+                              '+212' => 'Western Sahara',
+                              '+967' => 'Yemen',
+                              '+260' => 'Zambia',
+                              '+263' => 'Zimbabwe',
+                            ];
+                            $selected_country = isset($country_names[$user_phone_country])
+                              ? $country_names[$user_phone_country] . ' ' . $user_phone_country
+                              : 'Singapore +65';
+                          }
+                          echo esc_html($selected_country);
+                          ?>
+                        </span>
                         <svg class="country-select-arrow" viewBox="0 0 24 24">
                           <polyline points="6,9 12,15 18,9"></polyline>
                         </svg>
                       </button>
                       <div class="country-dropdown" id="countryDropdown">
-                        <div class="country-option selected" data-value="+65" data-country="Singapore">Singapore +65</div>
-                        <div class="country-option" data-value="+93" data-country="Afghanistan">Afghanistan +93</div>
-                        <div class="country-option" data-value="+355" data-country="Albania">Albania +355</div>
-                        <div class="country-option" data-value="+213" data-country="Algeria">Algeria +213</div>
-                        <div class="country-option" data-value="+1684" data-country="American Samoa">American Samoa +1684</div>
-                        <div class="country-option" data-value="+376" data-country="Andorra">Andorra +376</div>
-                        <div class="country-option" data-value="+244" data-country="Angola">Angola +244</div>
-                        <div class="country-option" data-value="+1264" data-country="Anguilla">Anguilla +1264</div>
-                        <div class="country-option" data-value="+54" data-country="Argentina">Argentina +54</div>
-                        <div class="country-option" data-value="+374" data-country="Armenia">Armenia +374</div>
-                        <div class="country-option" data-value="+297" data-country="Aruba">Aruba +297</div>
-                        <div class="country-option" data-value="+61" data-country="Australia">Australia +61</div>
-                        <div class="country-option" data-value="+43" data-country="Austria">Austria +43</div>
-                        <div class="country-option" data-value="+994" data-country="Azerbaijan">Azerbaijan +994</div>
-                        <div class="country-option" data-value="+1242" data-country="Bahamas">Bahamas +1242</div>
-                        <div class="country-option" data-value="+973" data-country="Bahrain">Bahrain +973</div>
-                        <div class="country-option" data-value="+880" data-country="Bangladesh">Bangladesh +880</div>
-                        <div class="country-option" data-value="+1246" data-country="Barbados">Barbados +1246</div>
-                        <div class="country-option" data-value="+375" data-country="Belarus">Belarus +375</div>
-                        <div class="country-option" data-value="+32" data-country="Belgium">Belgium +32</div>
-                        <div class="country-option" data-value="+501" data-country="Belize">Belize +501</div>
-                        <div class="country-option" data-value="+229" data-country="Benin">Benin +229</div>
-                        <div class="country-option" data-value="+1441" data-country="Bermuda">Bermuda +1441</div>
-                        <div class="country-option" data-value="+975" data-country="Bhutan">Bhutan +975</div>
-                        <div class="country-option" data-value="+591" data-country="Bolivia">Bolivia +591</div>
-                        <div class="country-option" data-value="+387" data-country="Bosnia and Herzegovina">Bosnia and Herzegovina +387</div>
-                        <div class="country-option" data-value="+267" data-country="Botswana">Botswana +267</div>
-                        <div class="country-option" data-value="+55" data-country="Brazil">Brazil +55</div>
-                        <div class="country-option" data-value="+673" data-country="Brunei">Brunei +673</div>
-                        <div class="country-option" data-value="+359" data-country="Bulgaria">Bulgaria +359</div>
-                        <div class="country-option" data-value="+226" data-country="Burkina Faso">Burkina Faso +226</div>
-                        <div class="country-option" data-value="+257" data-country="Burundi">Burundi +257</div>
-                        <div class="country-option" data-value="+855" data-country="Cambodia">Cambodia +855</div>
-                        <div class="country-option" data-value="+237" data-country="Cameroon">Cameroon +237</div>
-                        <div class="country-option" data-value="+1" data-country="Canada">Canada +1</div>
-                        <div class="country-option" data-value="+238" data-country="Cape Verde">Cape Verde +238</div>
-                        <div class="country-option" data-value="+1345" data-country="Cayman Islands">Cayman Islands +1345</div>
-                        <div class="country-option" data-value="+236" data-country="Central African Republic">Central African Republic +236</div>
-                        <div class="country-option" data-value="+235" data-country="Chad">Chad +235</div>
-                        <div class="country-option" data-value="+56" data-country="Chile">Chile +56</div>
-                        <div class="country-option" data-value="+86" data-country="China">China +86</div>
-                        <div class="country-option" data-value="+57" data-country="Colombia">Colombia +57</div>
-                        <div class="country-option" data-value="+269" data-country="Comoros">Comoros +269</div>
-                        <div class="country-option" data-value="+682" data-country="Cook Islands">Cook Islands +682</div>
-                        <div class="country-option" data-value="+506" data-country="Costa Rica">Costa Rica +506</div>
-                        <div class="country-option" data-value="+385" data-country="Croatia">Croatia +385</div>
-                        <div class="country-option" data-value="+53" data-country="Cuba">Cuba +53</div>
-                        <div class="country-option" data-value="+599" data-country="Curacao">Curacao +599</div>
-                        <div class="country-option" data-value="+357" data-country="Cyprus">Cyprus +357</div>
-                        <div class="country-option" data-value="+420" data-country="Czech Republic">Czech Republic +420</div>
-                        <div class="country-option" data-value="+243" data-country="Congo (DRC)">Congo (DRC) +243</div>
-                        <div class="country-option" data-value="+45" data-country="Denmark">Denmark +45</div>
-                        <div class="country-option" data-value="+253" data-country="Djibouti">Djibouti +253</div>
-                        <div class="country-option" data-value="+1767" data-country="Dominica">Dominica +1767</div>
-                        <div class="country-option" data-value="+1809" data-country="Dominican Republic">Dominican Republic +1809</div>
-                        <div class="country-option" data-value="+670" data-country="East Timor">East Timor +670</div>
-                        <div class="country-option" data-value="+593" data-country="Ecuador">Ecuador +593</div>
-                        <div class="country-option" data-value="+20" data-country="Egypt">Egypt +20</div>
-                        <div class="country-option" data-value="+503" data-country="El Salvador">El Salvador +503</div>
-                        <div class="country-option" data-value="+240" data-country="Equatorial Guinea">Equatorial Guinea +240</div>
-                        <div class="country-option" data-value="+291" data-country="Eritrea">Eritrea +291</div>
-                        <div class="country-option" data-value="+372" data-country="Estonia">Estonia +372</div>
-                        <div class="country-option" data-value="+268" data-country="Eswatini">Eswatini +268</div>
-                        <div class="country-option" data-value="+251" data-country="Ethiopia">Ethiopia +251</div>
-                        <div class="country-option" data-value="+298" data-country="Faroe Islands">Faroe Islands +298</div>
-                        <div class="country-option" data-value="+679" data-country="Fiji">Fiji +679</div>
-                        <div class="country-option" data-value="+358" data-country="Finland">Finland +358</div>
-                        <div class="country-option" data-value="+33" data-country="France">France +33</div>
-                        <div class="country-option" data-value="+594" data-country="French Guiana">French Guiana +594</div>
-                        <div class="country-option" data-value="+689" data-country="French Polynesia">French Polynesia +689</div>
-                        <div class="country-option" data-value="+241" data-country="Gabon">Gabon +241</div>
-                        <div class="country-option" data-value="+220" data-country="Gambia">Gambia +220</div>
-                        <div class="country-option" data-value="+995" data-country="Georgia">Georgia +995</div>
-                        <div class="country-option" data-value="+49" data-country="Germany">Germany +49</div>
-                        <div class="country-option" data-value="+233" data-country="Ghana">Ghana +233</div>
-                        <div class="country-option" data-value="+350" data-country="Gibraltar">Gibraltar +350</div>
-                        <div class="country-option" data-value="+30" data-country="Greece">Greece +30</div>
-                        <div class="country-option" data-value="+299" data-country="Greenland">Greenland +299</div>
-                        <div class="country-option" data-value="+1473" data-country="Grenada">Grenada +1473</div>
-                        <div class="country-option" data-value="+590" data-country="Guadeloupe">Guadeloupe +590</div>
-                        <div class="country-option" data-value="+1671" data-country="Guam">Guam +1671</div>
-                        <div class="country-option" data-value="+502" data-country="Guatemala">Guatemala +502</div>
-                        <div class="country-option" data-value="+44" data-country="Guernsey">Guernsey +44</div>
-                        <div class="country-option" data-value="+224" data-country="Guinea">Guinea +224</div>
-                        <div class="country-option" data-value="+245" data-country="Guinea-Bissau">Guinea-Bissau +245</div>
-                        <div class="country-option" data-value="+592" data-country="Guyana">Guyana +592</div>
-                        <div class="country-option" data-value="+509" data-country="Haiti">Haiti +509</div>
-                        <div class="country-option" data-value="+504" data-country="Honduras">Honduras +504</div>
-                        <div class="country-option" data-value="+852" data-country="Hong Kong">Hong Kong +852</div>
-                        <div class="country-option" data-value="+36" data-country="Hungary">Hungary +36</div>
-                        <div class="country-option" data-value="+354" data-country="Iceland">Iceland +354</div>
-                        <div class="country-option" data-value="+91" data-country="India">India +91</div>
-                        <div class="country-option" data-value="+62" data-country="Indonesia">Indonesia +62</div>
-                        <div class="country-option" data-value="+98" data-country="Iran">Iran +98</div>
-                        <div class="country-option" data-value="+964" data-country="Iraq">Iraq +964</div>
-                        <div class="country-option" data-value="+353" data-country="Ireland">Ireland +353</div>
-                        <div class="country-option" data-value="+44" data-country="Isle of Man">Isle of Man +44</div>
-                        <div class="country-option" data-value="+972" data-country="Israel">Israel +972</div>
-                        <div class="country-option" data-value="+39" data-country="Italy">Italy +39</div>
-                        <div class="country-option" data-value="+225" data-country="Ivory Coast">Ivory Coast +225</div>
-                        <div class="country-option" data-value="+1876" data-country="Jamaica">Jamaica +1876</div>
-                        <div class="country-option" data-value="+81" data-country="Japan">Japan +81</div>
-                        <div class="country-option" data-value="+44" data-country="Jersey">Jersey +44</div>
-                        <div class="country-option" data-value="+962" data-country="Jordan">Jordan +962</div>
-                        <div class="country-option" data-value="+7" data-country="Kazakhstan">Kazakhstan +7</div>
-                        <div class="country-option" data-value="+254" data-country="Kenya">Kenya +254</div>
-                        <div class="country-option" data-value="+686" data-country="Kiribati">Kiribati +686</div>
-                        <div class="country-option" data-value="+383" data-country="Kosovo">Kosovo +383</div>
-                        <div class="country-option" data-value="+965" data-country="Kuwait">Kuwait +965</div>
-                        <div class="country-option" data-value="+996" data-country="Kyrgyzstan">Kyrgyzstan +996</div>
-                        <div class="country-option" data-value="+856" data-country="Laos">Laos +856</div>
-                        <div class="country-option" data-value="+371" data-country="Latvia">Latvia +371</div>
-                        <div class="country-option" data-value="+961" data-country="Lebanon">Lebanon +961</div>
-                        <div class="country-option" data-value="+266" data-country="Lesotho">Lesotho +266</div>
-                        <div class="country-option" data-value="+231" data-country="Liberia">Liberia +231</div>
-                        <div class="country-option" data-value="+218" data-country="Libya">Libya +218</div>
-                        <div class="country-option" data-value="+423" data-country="Liechtenstein">Liechtenstein +423</div>
-                        <div class="country-option" data-value="+370" data-country="Lithuania">Lithuania +370</div>
-                        <div class="country-option" data-value="+352" data-country="Luxembourg">Luxembourg +352</div>
-                        <div class="country-option" data-value="+853" data-country="Macau">Macau +853</div>
-                        <div class="country-option" data-value="+389" data-country="Macedonia">Macedonia +389</div>
-                        <div class="country-option" data-value="+261" data-country="Madagascar">Madagascar +261</div>
-                        <div class="country-option" data-value="+265" data-country="Malawi">Malawi +265</div>
-                        <div class="country-option" data-value="+60" data-country="Malaysia">Malaysia +60</div>
-                        <div class="country-option" data-value="+960" data-country="Maldives">Maldives +960</div>
-                        <div class="country-option" data-value="+223" data-country="Mali">Mali +223</div>
-                        <div class="country-option" data-value="+356" data-country="Malta">Malta +356</div>
-                        <div class="country-option" data-value="+692" data-country="Marshall Islands">Marshall Islands +692</div>
-                        <div class="country-option" data-value="+596" data-country="Martinique">Martinique +596</div>
-                        <div class="country-option" data-value="+222" data-country="Mauritania">Mauritania +222</div>
-                        <div class="country-option" data-value="+230" data-country="Mauritius">Mauritius +230</div>
-                        <div class="country-option" data-value="+262" data-country="Mayotte">Mayotte +262</div>
-                        <div class="country-option" data-value="+52" data-country="Mexico">Mexico +52</div>
-                        <div class="country-option" data-value="+691" data-country="Micronesia">Micronesia +691</div>
-                        <div class="country-option" data-value="+373" data-country="Moldova">Moldova +373</div>
-                        <div class="country-option" data-value="+377" data-country="Monaco">Monaco +377</div>
-                        <div class="country-option" data-value="+976" data-country="Mongolia">Mongolia +976</div>
-                        <div class="country-option" data-value="+382" data-country="Montenegro">Montenegro +382</div>
-                        <div class="country-option" data-value="+1664" data-country="Montserrat">Montserrat +1664</div>
-                        <div class="country-option" data-value="+212" data-country="Morocco">Morocco +212</div>
-                        <div class="country-option" data-value="+258" data-country="Mozambique">Mozambique +258</div>
-                        <div class="country-option" data-value="+95" data-country="Myanmar">Myanmar +95</div>
-                        <div class="country-option" data-value="+264" data-country="Namibia">Namibia +264</div>
-                        <div class="country-option" data-value="+674" data-country="Nauru">Nauru +674</div>
-                        <div class="country-option" data-value="+977" data-country="Nepal">Nepal +977</div>
-                        <div class="country-option" data-value="+31" data-country="Netherlands">Netherlands +31</div>
-                        <div class="country-option" data-value="+687" data-country="New Caledonia">New Caledonia +687</div>
-                        <div class="country-option" data-value="+64" data-country="New Zealand">New Zealand +64</div>
-                        <div class="country-option" data-value="+505" data-country="Nicaragua">Nicaragua +505</div>
-                        <div class="country-option" data-value="+227" data-country="Niger">Niger +227</div>
-                        <div class="country-option" data-value="+234" data-country="Nigeria">Nigeria +234</div>
-                        <div class="country-option" data-value="+683" data-country="Niue">Niue +683</div>
-                        <div class="country-option" data-value="+850" data-country="North Korea">North Korea +850</div>
-                        <div class="country-option" data-value="+1670" data-country="Northern Mariana Islands">Northern Mariana Islands +1670</div>
-                        <div class="country-option" data-value="+47" data-country="Norway">Norway +47</div>
-                        <div class="country-option" data-value="+968" data-country="Oman">Oman +968</div>
-                        <div class="country-option" data-value="+92" data-country="Pakistan">Pakistan +92</div>
-                        <div class="country-option" data-value="+680" data-country="Palau">Palau +680</div>
-                        <div class="country-option" data-value="+970" data-country="Palestine">Palestine +970</div>
-                        <div class="country-option" data-value="+507" data-country="Panama">Panama +507</div>
-                        <div class="country-option" data-value="+675" data-country="Papua New Guinea">Papua New Guinea +675</div>
-                        <div class="country-option" data-value="+595" data-country="Paraguay">Paraguay +595</div>
-                        <div class="country-option" data-value="+51" data-country="Peru">Peru +51</div>
-                        <div class="country-option" data-value="+63" data-country="Philippines">Philippines +63</div>
-                        <div class="country-option" data-value="+48" data-country="Poland">Poland +48</div>
-                        <div class="country-option" data-value="+351" data-country="Portugal">Portugal +351</div>
-                        <div class="country-option" data-value="+1787" data-country="Puerto Rico">Puerto Rico +1787</div>
-                        <div class="country-option" data-value="+974" data-country="Qatar">Qatar +974</div>
-                        <div class="country-option" data-value="+242" data-country="Republic of the Congo">Republic of the Congo +242</div>
-                        <div class="country-option" data-value="+262" data-country="Reunion">Reunion +262</div>
-                        <div class="country-option" data-value="+40" data-country="Romania">Romania +40</div>
-                        <div class="country-option" data-value="+7" data-country="Russia">Russia +7</div>
-                        <div class="country-option" data-value="+250" data-country="Rwanda">Rwanda +250</div>
-                        <div class="country-option" data-value="+590" data-country="Saint Barthelemy">Saint Barthelemy +590</div>
-                        <div class="country-option" data-value="+1869" data-country="Saint Kitts and Nevis">Saint Kitts and Nevis +1869</div>
-                        <div class="country-option" data-value="+1758" data-country="Saint Lucia">Saint Lucia +1758</div>
-                        <div class="country-option" data-value="+590" data-country="Saint Martin">Saint Martin +590</div>
-                        <div class="country-option" data-value="+1784" data-country="St. Vincent & Grenadines">St. Vincent & Grenadines +1784</div>
-                        <div class="country-option" data-value="+685" data-country="Samoa">Samoa +685</div>
-                        <div class="country-option" data-value="+378" data-country="San Marino">San Marino +378</div>
-                        <div class="country-option" data-value="+239" data-country="Sao Tome and Principe">Sao Tome and Principe +239</div>
-                        <div class="country-option" data-value="+966" data-country="Saudi Arabia">Saudi Arabia +966</div>
-                        <div class="country-option" data-value="+221" data-country="Senegal">Senegal +221</div>
-                        <div class="country-option" data-value="+381" data-country="Serbia">Serbia +381</div>
-                        <div class="country-option" data-value="+248" data-country="Seychelles">Seychelles +248</div>
-                        <div class="country-option" data-value="+232" data-country="Sierra Leone">Sierra Leone +232</div>
-                        <div class="country-option" data-value="+1721" data-country="Sint Maarten">Sint Maarten +1721</div>
-                        <div class="country-option" data-value="+421" data-country="Slovakia">Slovakia +421</div>
-                        <div class="country-option" data-value="+386" data-country="Slovenia">Slovenia +386</div>
-                        <div class="country-option" data-value="+677" data-country="Solomon Islands">Solomon Islands +677</div>
-                        <div class="country-option" data-value="+252" data-country="Somalia">Somalia +252</div>
-                        <div class="country-option" data-value="+27" data-country="South Africa">South Africa +27</div>
-                        <div class="country-option" data-value="+82" data-country="South Korea">South Korea +82</div>
-                        <div class="country-option" data-value="+211" data-country="South Sudan">South Sudan +211</div>
-                        <div class="country-option" data-value="+34" data-country="Spain">Spain +34</div>
-                        <div class="country-option" data-value="+94" data-country="Sri Lanka">Sri Lanka +94</div>
-                        <div class="country-option" data-value="+249" data-country="Sudan">Sudan +249</div>
-                        <div class="country-option" data-value="+597" data-country="Suriname">Suriname +597</div>
-                        <div class="country-option" data-value="+47" data-country="Svalbard and Jan Mayen">Svalbard and Jan Mayen +47</div>
-                        <div class="country-option" data-value="+46" data-country="Sweden">Sweden +46</div>
-                        <div class="country-option" data-value="+41" data-country="Switzerland">Switzerland +41</div>
-                        <div class="country-option" data-value="+963" data-country="Syria">Syria +963</div>
-                        <div class="country-option" data-value="+886" data-country="Taiwan">Taiwan +886</div>
-                        <div class="country-option" data-value="+992" data-country="Tajikistan">Tajikistan +992</div>
-                        <div class="country-option" data-value="+255" data-country="Tanzania">Tanzania +255</div>
-                        <div class="country-option" data-value="+66" data-country="Thailand">Thailand +66</div>
-                        <div class="country-option" data-value="+228" data-country="Togo">Togo +228</div>
-                        <div class="country-option" data-value="+676" data-country="Tonga">Tonga +676</div>
-                        <div class="country-option" data-value="+1868" data-country="Trinidad and Tobago">Trinidad and Tobago +1868</div>
-                        <div class="country-option" data-value="+216" data-country="Tunisia">Tunisia +216</div>
-                        <div class="country-option" data-value="+90" data-country="Turkey">Turkey +90</div>
-                        <div class="country-option" data-value="+993" data-country="Turkmenistan">Turkmenistan +993</div>
-                        <div class="country-option" data-value="+1649" data-country="Turks and Caicos Islands">Turks and Caicos Islands +1649</div>
-                        <div class="country-option" data-value="+688" data-country="Tuvalu">Tuvalu +688</div>
-                        <div class="country-option" data-value="+1340" data-country="U.S. Virgin Islands">U.S. Virgin Islands +1340</div>
-                        <div class="country-option" data-value="+256" data-country="Uganda">Uganda +256</div>
-                        <div class="country-option" data-value="+380" data-country="Ukraine">Ukraine +380</div>
-                        <div class="country-option" data-value="+971" data-country="United Arab Emirates">United Arab Emirates +971</div>
-                        <div class="country-option" data-value="+44" data-country="United Kingdom">United Kingdom +44</div>
-                        <div class="country-option" data-value="+1" data-country="United States">United States +1</div>
-                        <div class="country-option" data-value="+598" data-country="Uruguay">Uruguay +598</div>
-                        <div class="country-option" data-value="+998" data-country="Uzbekistan">Uzbekistan +998</div>
-                        <div class="country-option" data-value="+678" data-country="Vanuatu">Vanuatu +678</div>
-                        <div class="country-option" data-value="+39" data-country="Vatican">Vatican +39</div>
-                        <div class="country-option" data-value="+58" data-country="Venezuela">Venezuela +58</div>
-                        <div class="country-option" data-value="+84" data-country="Vietnam">Vietnam +84</div>
-                        <div class="country-option" data-value="+212" data-country="Western Sahara">Western Sahara +212</div>
-                        <div class="country-option" data-value="+967" data-country="Yemen">Yemen +967</div>
-                        <div class="country-option" data-value="+260" data-country="Zambia">Zambia +260</div>
-                        <div class="country-option" data-value="+263" data-country="Zimbabwe">Zimbabwe +263</div>
+                        <?php
+                        $countries = [
+                          '+65' => 'Singapore',
+                          '+93' => 'Afghanistan',
+                          '+355' => 'Albania',
+                          '+213' => 'Algeria',
+                          '+1684' => 'American Samoa',
+                          '+376' => 'Andorra',
+                          '+244' => 'Angola',
+                          '+1264' => 'Anguilla',
+                          '+54' => 'Argentina',
+                          '+374' => 'Armenia',
+                          '+297' => 'Aruba',
+                          '+61' => 'Australia',
+                          '+43' => 'Austria',
+                          '+994' => 'Azerbaijan',
+                          '+1242' => 'Bahamas',
+                          '+973' => 'Bahrain',
+                          '+880' => 'Bangladesh',
+                          '+1246' => 'Barbados',
+                          '+375' => 'Belarus',
+                          '+32' => 'Belgium',
+                          '+501' => 'Belize',
+                          '+229' => 'Benin',
+                          '+1441' => 'Bermuda',
+                          '+975' => 'Bhutan',
+                          '+591' => 'Bolivia',
+                          '+387' => 'Bosnia and Herzegovina',
+                          '+267' => 'Botswana',
+                          '+55' => 'Brazil',
+                          '+673' => 'Brunei',
+                          '+359' => 'Bulgaria',
+                          '+226' => 'Burkina Faso',
+                          '+257' => 'Burundi',
+                          '+855' => 'Cambodia',
+                          '+237' => 'Cameroon',
+                          '+1' => 'Canada',
+                          '+238' => 'Cape Verde',
+                          '+1345' => 'Cayman Islands',
+                          '+236' => 'Central African Republic',
+                          '+235' => 'Chad',
+                          '+56' => 'Chile',
+                          '+86' => 'China',
+                          '+57' => 'Colombia',
+                          '+269' => 'Comoros',
+                          '+682' => 'Cook Islands',
+                          '+506' => 'Costa Rica',
+                          '+385' => 'Croatia',
+                          '+53' => 'Cuba',
+                          '+599' => 'Curacao',
+                          '+357' => 'Cyprus',
+                          '+420' => 'Czech Republic',
+                          '+243' => 'Congo (DRC)',
+                          '+45' => 'Denmark',
+                          '+253' => 'Djibouti',
+                          '+1767' => 'Dominica',
+                          '+1809' => 'Dominican Republic',
+                          '+670' => 'East Timor',
+                          '+593' => 'Ecuador',
+                          '+20' => 'Egypt',
+                          '+503' => 'El Salvador',
+                          '+240' => 'Equatorial Guinea',
+                          '+291' => 'Eritrea',
+                          '+372' => 'Estonia',
+                          '+268' => 'Eswatini',
+                          '+251' => 'Ethiopia',
+                          '+298' => 'Faroe Islands',
+                          '+679' => 'Fiji',
+                          '+358' => 'Finland',
+                          '+33' => 'France',
+                          '+594' => 'French Guiana',
+                          '+689' => 'French Polynesia',
+                          '+241' => 'Gabon',
+                          '+220' => 'Gambia',
+                          '+995' => 'Georgia',
+                          '+49' => 'Germany',
+                          '+233' => 'Ghana',
+                          '+350' => 'Gibraltar',
+                          '+30' => 'Greece',
+                          '+299' => 'Greenland',
+                          '+1473' => 'Grenada',
+                          '+590' => 'Guadeloupe',
+                          '+1671' => 'Guam',
+                          '+502' => 'Guatemala',
+                          '+44' => 'Guernsey',
+                          '+224' => 'Guinea',
+                          '+245' => 'Guinea-Bissau',
+                          '+592' => 'Guyana',
+                          '+509' => 'Haiti',
+                          '+504' => 'Honduras',
+                          '+852' => 'Hong Kong',
+                          '+36' => 'Hungary',
+                          '+354' => 'Iceland',
+                          '+91' => 'India',
+                          '+62' => 'Indonesia',
+                          '+98' => 'Iran',
+                          '+964' => 'Iraq',
+                          '+353' => 'Ireland',
+                          '+44' => 'Isle of Man',
+                          '+972' => 'Israel',
+                          '+39' => 'Italy',
+                          '+225' => 'Ivory Coast',
+                          '+1876' => 'Jamaica',
+                          '+81' => 'Japan',
+                          '+44' => 'Jersey',
+                          '+962' => 'Jordan',
+                          '+7' => 'Kazakhstan',
+                          '+254' => 'Kenya',
+                          '+686' => 'Kiribati',
+                          '+383' => 'Kosovo',
+                          '+965' => 'Kuwait',
+                          '+996' => 'Kyrgyzstan',
+                          '+856' => 'Laos',
+                          '+371' => 'Latvia',
+                          '+961' => 'Lebanon',
+                          '+266' => 'Lesotho',
+                          '+231' => 'Liberia',
+                          '+218' => 'Libya',
+                          '+423' => 'Liechtenstein',
+                          '+370' => 'Lithuania',
+                          '+352' => 'Luxembourg',
+                          '+853' => 'Macau',
+                          '+389' => 'Macedonia',
+                          '+261' => 'Madagascar',
+                          '+265' => 'Malawi',
+                          '+60' => 'Malaysia',
+                          '+960' => 'Maldives',
+                          '+223' => 'Mali',
+                          '+356' => 'Malta',
+                          '+692' => 'Marshall Islands',
+                          '+596' => 'Martinique',
+                          '+222' => 'Mauritania',
+                          '+230' => 'Mauritius',
+                          '+262' => 'Mayotte',
+                          '+52' => 'Mexico',
+                          '+691' => 'Micronesia',
+                          '+373' => 'Moldova',
+                          '+377' => 'Monaco',
+                          '+976' => 'Mongolia',
+                          '+382' => 'Montenegro',
+                          '+1664' => 'Montserrat',
+                          '+212' => 'Morocco',
+                          '+258' => 'Mozambique',
+                          '+95' => 'Myanmar',
+                          '+264' => 'Namibia',
+                          '+674' => 'Nauru',
+                          '+977' => 'Nepal',
+                          '+31' => 'Netherlands',
+                          '+687' => 'New Caledonia',
+                          '+64' => 'New Zealand',
+                          '+505' => 'Nicaragua',
+                          '+227' => 'Niger',
+                          '+234' => 'Nigeria',
+                          '+683' => 'Niue',
+                          '+850' => 'North Korea',
+                          '+1670' => 'Northern Mariana Islands',
+                          '+47' => 'Norway',
+                          '+968' => 'Oman',
+                          '+92' => 'Pakistan',
+                          '+680' => 'Palau',
+                          '+970' => 'Palestine',
+                          '+507' => 'Panama',
+                          '+675' => 'Papua New Guinea',
+                          '+595' => 'Paraguay',
+                          '+51' => 'Peru',
+                          '+63' => 'Philippines',
+                          '+48' => 'Poland',
+                          '+351' => 'Portugal',
+                          '+1787' => 'Puerto Rico',
+                          '+974' => 'Qatar',
+                          '+242' => 'Republic of the Congo',
+                          '+262' => 'Reunion',
+                          '+40' => 'Romania',
+                          '+7' => 'Russia',
+                          '+250' => 'Rwanda',
+                          '+590' => 'Saint Barthelemy',
+                          '+1869' => 'Saint Kitts and Nevis',
+                          '+1758' => 'Saint Lucia',
+                          '+590' => 'Saint Martin',
+                          '+1784' => 'St. Vincent & Grenadines',
+                          '+685' => 'Samoa',
+                          '+378' => 'San Marino',
+                          '+239' => 'Sao Tome and Principe',
+                          '+966' => 'Saudi Arabia',
+                          '+221' => 'Senegal',
+                          '+381' => 'Serbia',
+                          '+248' => 'Seychelles',
+                          '+232' => 'Sierra Leone',
+                          '+1721' => 'Sint Maarten',
+                          '+421' => 'Slovakia',
+                          '+386' => 'Slovenia',
+                          '+677' => 'Solomon Islands',
+                          '+252' => 'Somalia',
+                          '+27' => 'South Africa',
+                          '+82' => 'South Korea',
+                          '+211' => 'South Sudan',
+                          '+34' => 'Spain',
+                          '+94' => 'Sri Lanka',
+                          '+249' => 'Sudan',
+                          '+597' => 'Suriname',
+                          '+47' => 'Svalbard and Jan Mayen',
+                          '+46' => 'Sweden',
+                          '+41' => 'Switzerland',
+                          '+963' => 'Syria',
+                          '+886' => 'Taiwan',
+                          '+992' => 'Tajikistan',
+                          '+255' => 'Tanzania',
+                          '+66' => 'Thailand',
+                          '+228' => 'Togo',
+                          '+676' => 'Tonga',
+                          '+1868' => 'Trinidad and Tobago',
+                          '+216' => 'Tunisia',
+                          '+90' => 'Turkey',
+                          '+993' => 'Turkmenistan',
+                          '+1649' => 'Turks and Caicos Islands',
+                          '+688' => 'Tuvalu',
+                          '+1340' => 'U.S. Virgin Islands',
+                          '+256' => 'Uganda',
+                          '+380' => 'Ukraine',
+                          '+971' => 'United Arab Emirates',
+                          '+44' => 'United Kingdom',
+                          '+1' => 'United States',
+                          '+598' => 'Uruguay',
+                          '+998' => 'Uzbekistan',
+                          '+678' => 'Vanuatu',
+                          '+39' => 'Vatican',
+                          '+58' => 'Venezuela',
+                          '+84' => 'Vietnam',
+                          '+212' => 'Western Sahara',
+                          '+967' => 'Yemen',
+                          '+260' => 'Zambia',
+                          '+263' => 'Zimbabwe',
+                        ];
+                        $singapore_code = '+65';
+                        $user_code =
+                          is_user_logged_in() && $user_phone_country
+                            ? $user_phone_country
+                            : $singapore_code;
+
+                        echo '<div class="country-option' .
+                          ($user_code === $singapore_code ? ' selected' : '') .
+                          '" data-value="' .
+                          $singapore_code .
+                          '" data-country="Singapore">Singapore +65</div>';
+
+                        $other_countries = $countries;
+                        unset($other_countries[$singapore_code]);
+                        asort($other_countries);
+                        foreach ($other_countries as $code => $name) {
+                          $selected = $user_code === $code ? ' selected' : '';
+                          echo '<div class="country-option' .
+                            $selected .
+                            '" data-value="' .
+                            $code .
+                            '" data-country="' .
+                            $name .
+                            '">' .
+                            $name .
+                            ' ' .
+                            $code .
+                            '</div>';
+                        }
+                        ?>
                       </div>
                     </div>
-                    <input type="tel" id="client-phone" name="client[phone]" placeholder="Phone number*" required />
+                    <input type="tel" id="client-phone" name="client[phone]" placeholder="Phone number*" value="<?php echo is_user_logged_in()
+                      ? esc_attr($user_phone)
+                      : ''; ?>" required />
                   </div>
                 </div>
 
                 <div class="form-group">
                   <textarea id="client-comment" name="client_comment" placeholder="Comment"></textarea>
                 </div>
-
-                <div class="form-group checkbox">
-                  <label for="privacy-policy">
-                    <input type="checkbox" id="privacy-policy" required />
-                    <span>
-                      I confirm that I have read and accepted the
-                      <a href="<?= esc_url(
-                        home_url('/terms-of-services/'),
-                      ) ?>" target="_blank" rel="noopener noreferrer">
-                        Privacy Policy & Terms of Services
-                      </a>.
-                    </span>
-                  </label>
-                  <div class="input-error" data-for="privacy-policy"></div>
+                <div class="form-group agreement-text">
+                  <span>
+                    By clicking Book an appointment, you agree to our
+                    <a href="<?= esc_url(
+                      home_url('/privacy-policy/'),
+                    ) ?>" target="_blank" rel="noopener noreferrer">
+                      Privacy Policy
+                    </a> &
+                    <a href="<?= esc_url(
+                      home_url('/terms-of-services/'),
+                    ) ?>" target="_blank" rel="noopener noreferrer">
+                      Terms of Services
+                    </a>.
+                  </span>
                 </div>
                 <div class="form-errors global-form-error" style="display:none;">
 
@@ -868,19 +1681,12 @@ if (empty($ordered_category_ids)) {
 
                 </div>
               </form>
-
-
             </div>
-
-
-
             <div class="step-actions">
               <button type="button" class="btn yellow next-btn  confirm-booking-btn">Book an appointment </button>
             </div>
           </div>
-
         </div>
-
 
         <!-- Step 6: Confirmation -->
         <div class="booking-step confirm" data-step="confirm">
@@ -954,6 +1760,15 @@ if (empty($ordered_category_ids)) {
 
                 </div>
 
+                <div class="summary-item personal-discount" <?php echo !is_user_logged_in() ||
+                empty($user_discount_value)
+                  ? 'style="display:none;"'
+                  : ''; ?>>
+                  <span>Your personal discount (<?php echo esc_html(
+                    $user_discount_value,
+                  ); ?>)</span>
+                  <span class="summary-discount-amount">-5 SGD</span>
+                </div>
 
                 <div class="summary-item total"><span>Total</span> <span class="summary-total-amount">0.00 SGD</span></div>
                 <?php
@@ -980,3 +1795,17 @@ if (empty($ordered_category_ids)) {
     </div>
   </div>
 </div>
+
+<script>
+  window.bookingUserData = {
+    name: '<?php echo esc_js($user_name); ?>',
+    email: '<?php echo esc_js($user_email); ?>',
+    phone: '<?php echo esc_js($user_phone); ?>',
+    phoneCountry: '<?php echo esc_js($user_phone_country); ?>',
+    discountPercentage: <?php echo (int) $user_discount_percentage; ?>,
+    discountValue: '<?php echo esc_js($user_discount_value); ?>'
+  };
+
+  // Master levels configuration for JavaScript
+  window.masterLevelsConfig = <?php echo json_encode($masterLevelsConfig); ?>;
+</script>

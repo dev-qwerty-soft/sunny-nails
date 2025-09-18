@@ -43,7 +43,7 @@ $array = getPosts('master');
           if ($isPage) {
             get_template_part('template-parts/shared/card-master', null, [
               'post' => $post,
-              'isPage' => true,
+              'isPage' => false, // Allow Learn More button on page too
             ]);
           }
         } ?>
@@ -67,4 +67,9 @@ $array = getPosts('master');
       </div>
     <?php endif; ?>
   </div>
+
+  <?php get_template_part('template-parts/shared/master-popups', null, [
+    'posts' => $array,
+    'isPage' => $isPage,
+  ]); ?>
 </section>

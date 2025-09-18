@@ -16,26 +16,11 @@ if (!$master || !get_field('is_bookable', $master->ID)) {
 $name = $master ? get_the_title($master) : '';
 $level = $master ? max((int) get_field('master_level', $master->ID), -1) : -1;
 
-$levelTitles = [
-  -1 => 'Intern',
-  1 => 'Sunny Ray',
-  2 => 'Sunny Shine',
-  3 => 'Sunny Inferno',
-  4 => 'Trainer',
-  5 => 'Sunny Inferno, Supervisor',
-];
+// Use helper functions to get level data
+$levelName = get_master_level_title($level, true); // Include additional info for gallery
+$adjustmentPercent = get_master_level_percent($level);
 
-$adjustmentPercents = [
-  -1 => -50,
-  1 => 0,
-  2 => 10,
-  3 => 20,
-  4 => 30,
-  5 => 30,
-];
-
-$levelName = $levelTitles[$level] ?? '';
-$adjustment = $adjustmentPercents[$level] ?? 0;
+$adjustment = $adjustmentPercent;
 
 $tags = $args['image']['master_image_work_tag'] ?? [];
 $tagSlugs = [];
@@ -75,14 +60,7 @@ $service_ids_string = implode(',', $service_ids);
 
 $final_price = $total_price + ($total_price * $adjustment) / 100;
 
-$starsCount = match (true) {
-  $level === -1 => 0,
-  $level === 1 => 1,
-  $level === 2 => 2,
-  $level === 3 => 3,
-  $level === 4, $level === 5 => 4,
-  default => 0,
-};
+$starsCount = get_master_level_stars($level);
 
 $avatar_url = $master ? get_the_post_thumbnail_url($master->ID, 'medium') : '';
 if (!$avatar_url) {

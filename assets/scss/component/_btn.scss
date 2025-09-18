@@ -46,7 +46,7 @@
       padding-right: get-lg(25px + 47px);
     }
     @include respond(md) {
-      padding-right: 25px + 47px;
+      padding-right: 25px + 47px !important;
     }
     &::before {
       position: absolute;
@@ -218,7 +218,7 @@
 
 .chat {
   position: fixed;
-  bottom: get-d(180px);
+  bottom: get-d(50px);
   right: get-d(60px);
   background: $bg-white;
   z-index: 100;
@@ -238,14 +238,14 @@
     transform: scale(1.1);
   }
   @include respond(lg) {
-    bottom: get-lg(180px);
+    bottom: get-lg(50px);
     right: get-lg(60px);
     font-size: get-lg(16px);
     gap: get-lg(4px);
     padding: get-lg(14px) get-lg(20px);
   }
   @include respond(md) {
-    bottom: 180px;
+    bottom: 20px;
     right: 30px;
     font-size: 14px;
     gap: 4px;
@@ -291,6 +291,8 @@
     }
     @include respond(md) {
       height: 250px;
+      width: 100%;
+      aspect-ratio: 1 / 1;
       border-radius: 10px;
     }
   }
@@ -322,6 +324,11 @@
       }
       & .swiper-scrollbar-drag {
         background: $bg-yellow;
+      }
+    }
+    &.no-images {
+      @include respond(md) {
+        display: none;
       }
     }
   }
@@ -365,10 +372,20 @@
   &__buttons {
     width: 100%;
     display: grid;
-    grid-template-columns: 3fr 2fr;
+    gap: get-d(3px);
+    grid-template-columns: max-content;
+    height: max-content;
     &.page {
-      grid-template-columns: max-content;
       justify-content: center;
+      &.two-buttons {
+        grid-template-columns: 3fr 2fr;
+        @include respond(lg) {
+          grid-template-columns: 3fr 1fr;
+          .master-details-btn {
+            padding: 14px;
+          }
+        }
+      }
     }
   }
 }
@@ -760,16 +777,16 @@
   }
 
   & .star {
-    width: get-d(24px);
+    min-width: get-d(24px);
     height: get-d(24px);
     background: url('../svg/material-symbols-light_star-shine.svg') center / cover no-repeat;
 
     @include respond(lg) {
-      width: get-lg(24px);
+      min-width: get-lg(24px);
       height: get-lg(24px);
     }
     @include respond(md) {
-      width: 24px;
+      min-width: 24px;
       height: 24px;
     }
   }

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Template Name: Sunny friends
  */
@@ -120,11 +121,29 @@ get_template_part('template-parts/shared/popup-join');
           }
           ?>
         </div>
+        <div class="sunny-friends-table-section__qualifying-spend">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="24" height="24" rx="6" fill="white" />
+            <g clip-path="url(#clip0_3282_24019)">
+              <path d="M11.9997 9.33325H12.005M11.9997 14.6666V11.3333M18.6663 11.9999C18.6663 15.6819 15.6817 18.6666 11.9997 18.6666C8.31767 18.6666 5.33301 15.6819 5.33301 11.9999C5.33301 8.31792 8.31767 5.33325 11.9997 5.33325C15.6817 5.33325 18.6663 8.31792 18.6663 11.9999Z" stroke="#85754F" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round" />
+            </g>
+            <defs>
+              <clipPath id="clip0_3282_24019">
+                <rect width="16" height="16" fill="white" transform="translate(4 4)" />
+              </clipPath>
+            </defs>
+          </svg>
+          <p>
+            Qualifying Spend means spending for manicure/pedicure services and not incldes gift cards and other goods
+          </p>
+        </div>
       </div>
+
       <?php
       $link = get_field('sunny_friends_join_link');
       $text = get_field('sunny_friends_join_text');
-      if ($link && $text) {
+      $active = get_field('sunny_friends_join_link_active');
+      if ($link && $text && $active) {
         echo "<a data-popup='$link' href='$link' class='btn yellow'>$text</a>";
       }
       ?>

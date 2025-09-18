@@ -1,9 +1,26 @@
 {
-    "key": "group_682602730725a",
-    "title": "Sunny friends settings",
+    "key": "group_68b809ab4f46e",
+    "title": "Personal Cabinet",
     "fields": [
         {
-            "key": "field_68260273c45bd",
+            "key": "field_68b9df2924836",
+            "label": "Sunny friends tabs",
+            "name": "",
+            "aria-label": "",
+            "type": "tab",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "placement": "top",
+            "endpoint": 0
+        },
+        {
+            "key": "field_68b809ab62050",
             "label": "Sunny friends tabs",
             "name": "sunny_friends_tabs",
             "aria-label": "",
@@ -25,7 +42,7 @@
             "rows_per_page": 20,
             "sub_fields": [
                 {
-                    "key": "field_682602a2559c1",
+                    "key": "field_68b809ab6ba17",
                     "label": "Sunny friends tab name",
                     "name": "sunny_friends_tab_name",
                     "aria-label": "",
@@ -43,10 +60,10 @@
                     "placeholder": "",
                     "prepend": "",
                     "append": "",
-                    "parent_repeater": "field_68260273c45bd"
+                    "parent_repeater": "field_68b809ab62050"
                 },
                 {
-                    "key": "field_682602b34b6ff",
+                    "key": "field_68b809ab6ba52",
                     "label": "Sunny friends tab content",
                     "name": "sunny_friends_tab_content",
                     "aria-label": "",
@@ -66,10 +83,10 @@
                     "collapsed": "",
                     "button_label": "Add Row",
                     "rows_per_page": 20,
-                    "parent_repeater": "field_68260273c45bd",
+                    "parent_repeater": "field_68b809ab62050",
                     "sub_fields": [
                         {
-                            "key": "field_682602d04b700",
+                            "key": "field_68b809ab770ca",
                             "label": "Sunny friends tab content image",
                             "name": "sunny_friends_tab_content_image",
                             "aria-label": "",
@@ -92,10 +109,10 @@
                             "max_size": "",
                             "mime_types": "",
                             "preview_size": "medium",
-                            "parent_repeater": "field_682602b34b6ff"
+                            "parent_repeater": "field_68b809ab6ba52"
                         },
                         {
-                            "key": "field_682602df4b701",
+                            "key": "field_68b809ab77129",
                             "label": "Sunny friends tab content text",
                             "name": "sunny_friends_tab_content_text",
                             "aria-label": "",
@@ -113,211 +130,14 @@
                             "placeholder": "",
                             "prepend": "",
                             "append": "",
-                            "parent_repeater": "field_682602b34b6ff"
+                            "parent_repeater": "field_68b809ab6ba52"
                         }
                     ]
                 }
             ]
         },
         {
-            "key": "field_6826033ea50d9",
-            "label": "Sunny friends title",
-            "name": "sunny_friends_title",
-            "aria-label": "",
-            "type": "text",
-            "instructions": "",
-            "required": 0,
-            "conditional_logic": 0,
-            "wrapper": {
-                "width": "",
-                "class": "",
-                "id": ""
-            },
-            "default_value": "",
-            "maxlength": "",
-            "placeholder": "",
-            "prepend": "",
-            "append": ""
-        },
-        {
-            "key": "field_6826034fa50da",
-            "label": "Sunny friends text",
-            "name": "sunny_friends_text",
-            "aria-label": "",
-            "type": "text",
-            "instructions": "",
-            "required": 0,
-            "conditional_logic": 0,
-            "wrapper": {
-                "width": "",
-                "class": "",
-                "id": ""
-            },
-            "default_value": "",
-            "maxlength": "",
-            "placeholder": "",
-            "prepend": "",
-            "append": ""
-        },
-        {
-            "key": "field_6826035da50db",
-            "label": "Sunny friends image",
-            "name": "sunny_friends_image",
-            "aria-label": "",
-            "type": "image",
-            "instructions": "",
-            "required": 0,
-            "conditional_logic": 0,
-            "wrapper": {
-                "width": "",
-                "class": "",
-                "id": ""
-            },
-            "return_format": "array",
-            "library": "all",
-            "min_width": "",
-            "min_height": "",
-            "min_size": "",
-            "max_width": "",
-            "max_height": "",
-            "max_size": "",
-            "mime_types": "",
-            "preview_size": "medium"
-        },
-        {
-            "key": "field_682b2a8b3c084",
-            "label": "Sunny friends table column",
-            "name": "sunny_friends_table_column",
-            "aria-label": "",
-            "type": "repeater",
-            "instructions": "",
-            "required": 0,
-            "conditional_logic": 0,
-            "wrapper": {
-                "width": "",
-                "class": "",
-                "id": ""
-            },
-            "layout": "table",
-            "pagination": 0,
-            "min": 0,
-            "max": 0,
-            "collapsed": "",
-            "button_label": "Add Row",
-            "rows_per_page": 20,
-            "sub_fields": [
-                {
-                    "key": "field_682b2ab73c085",
-                    "label": "Sunny friends table column title",
-                    "name": "sunny_friends_table_column_title",
-                    "aria-label": "",
-                    "type": "text",
-                    "instructions": "",
-                    "required": 0,
-                    "conditional_logic": 0,
-                    "wrapper": {
-                        "width": "",
-                        "class": "",
-                        "id": ""
-                    },
-                    "default_value": "",
-                    "maxlength": "",
-                    "placeholder": "",
-                    "prepend": "",
-                    "append": "",
-                    "parent_repeater": "field_682b2a8b3c084"
-                },
-                {
-                    "key": "field_682b2abd3c086",
-                    "label": "Sunny friends table column field",
-                    "name": "sunny_friends_table_column_field",
-                    "aria-label": "",
-                    "type": "repeater",
-                    "instructions": "",
-                    "required": 0,
-                    "conditional_logic": 0,
-                    "wrapper": {
-                        "width": "",
-                        "class": "",
-                        "id": ""
-                    },
-                    "layout": "table",
-                    "pagination": 0,
-                    "min": 0,
-                    "max": 0,
-                    "collapsed": "",
-                    "button_label": "Add Row",
-                    "rows_per_page": 20,
-                    "parent_repeater": "field_682b2a8b3c084",
-                    "sub_fields": [
-                        {
-                            "key": "field_682b2ad03c087",
-                            "label": "Sunny friends table column text",
-                            "name": "sunny_friends_table_column_text",
-                            "aria-label": "",
-                            "type": "text",
-                            "instructions": "",
-                            "required": 0,
-                            "conditional_logic": 0,
-                            "wrapper": {
-                                "width": "",
-                                "class": "",
-                                "id": ""
-                            },
-                            "default_value": "",
-                            "maxlength": "",
-                            "placeholder": "",
-                            "prepend": "",
-                            "append": "",
-                            "parent_repeater": "field_682b2abd3c086"
-                        },
-                        {
-                            "key": "field_682b3ca03c088",
-                            "label": "Sunny friends table column check mark",
-                            "name": "sunny_friends_table_column_check_mark",
-                            "aria-label": "",
-                            "type": "true_false",
-                            "instructions": "",
-                            "required": 0,
-                            "conditional_logic": 0,
-                            "wrapper": {
-                                "width": "",
-                                "class": "",
-                                "id": ""
-                            },
-                            "message": "",
-                            "default_value": 0,
-                            "ui": 0,
-                            "ui_on_text": "",
-                            "ui_off_text": "",
-                            "parent_repeater": "field_682b2abd3c086"
-                        }
-                    ]
-                }
-            ]
-        },
-        {
-            "key": "field_682b5151b9f80",
-            "label": "Sunny friends join link text",
-            "name": "sunny_friends_join_text",
-            "aria-label": "",
-            "type": "text",
-            "instructions": "",
-            "required": 0,
-            "conditional_logic": 0,
-            "wrapper": {
-                "width": "",
-                "class": "",
-                "id": ""
-            },
-            "default_value": "",
-            "maxlength": "",
-            "placeholder": "",
-            "prepend": "",
-            "append": ""
-        },
-        {
-            "key": "field_682b2a553c082",
+            "key": "field_68b809ab621b5",
             "label": "Sunny friends table",
             "name": "",
             "aria-label": "",
@@ -334,7 +154,7 @@
             "endpoint": 0
         },
         {
-            "key": "field_682b2a6b3c083",
+            "key": "field_68b809ab621ee",
             "label": "Sunny friends table title",
             "name": "sunny_friends_table_title",
             "aria-label": "",
@@ -354,7 +174,7 @@
             "append": ""
         },
         {
-            "key": "field_682b29f63c080",
+            "key": "field_68b809ab62226",
             "label": "Sunny friends main column table",
             "name": "sunny_friends_main_column_table",
             "aria-label": "",
@@ -376,7 +196,7 @@
             "rows_per_page": 20,
             "sub_fields": [
                 {
-                    "key": "field_682b2a2b3c081",
+                    "key": "field_68b809abdd4c1",
                     "label": "Sunny friends main column table text",
                     "name": "sunny_friends_main_column_table_text",
                     "aria-label": "",
@@ -394,57 +214,146 @@
                     "toolbar": "full",
                     "media_upload": 1,
                     "delay": 0,
-                    "parent_repeater": "field_682b29f63c080"
+                    "parent_repeater": "field_68b809ab62226"
                 }
             ]
         },
         {
-            "key": "field_689b3f3e2d2ed",
-            "label": "Sunny friends join link active",
-            "name": "sunny_friends_join_link_active",
+            "key": "field_68b9df3e24837",
+            "label": "Sunny friends table column",
+            "name": "",
             "aria-label": "",
-            "type": "text",
+            "type": "tab",
             "instructions": "",
             "required": 0,
             "conditional_logic": 0,
             "wrapper": {
-                "width": "50",
+                "width": "",
                 "class": "",
                 "id": ""
             },
-            "default_value": "",
-            "maxlength": "",
-            "placeholder": "",
-            "prepend": "",
-            "append": ""
+            "placement": "top",
+            "endpoint": 0
         },
         {
-            "key": "field_682b5147b9f7f",
-            "label": "Sunny friends join link",
-            "name": "sunny_friends_join_link",
+            "key": "field_68b809ab6213f",
+            "label": "Sunny friends table column",
+            "name": "sunny_friends_table_column",
             "aria-label": "",
-            "type": "text",
+            "type": "repeater",
             "instructions": "",
             "required": 0,
             "conditional_logic": 0,
             "wrapper": {
-                "width": "50",
+                "width": "",
                 "class": "",
                 "id": ""
             },
-            "default_value": "",
-            "maxlength": "",
-            "placeholder": "",
-            "prepend": "",
-            "append": ""
+            "layout": "table",
+            "pagination": 0,
+            "min": 0,
+            "max": 0,
+            "collapsed": "",
+            "button_label": "Add Row",
+            "rows_per_page": 20,
+            "sub_fields": [
+                {
+                    "key": "field_68b809aba5be0",
+                    "label": "Sunny friends table column title",
+                    "name": "sunny_friends_table_column_title",
+                    "aria-label": "",
+                    "type": "text",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "maxlength": "",
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "parent_repeater": "field_68b809ab6213f"
+                },
+                {
+                    "key": "field_68b809aba5c1b",
+                    "label": "Sunny friends table column field",
+                    "name": "sunny_friends_table_column_field",
+                    "aria-label": "",
+                    "type": "repeater",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "layout": "table",
+                    "pagination": 0,
+                    "min": 0,
+                    "max": 0,
+                    "collapsed": "",
+                    "button_label": "Add Row",
+                    "rows_per_page": 20,
+                    "parent_repeater": "field_68b809ab6213f",
+                    "sub_fields": [
+                        {
+                            "key": "field_68b809abaf4ac",
+                            "label": "Sunny friends table column text",
+                            "name": "sunny_friends_table_column_text",
+                            "aria-label": "",
+                            "type": "text",
+                            "instructions": "",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
+                            "default_value": "",
+                            "maxlength": "",
+                            "placeholder": "",
+                            "prepend": "",
+                            "append": "",
+                            "parent_repeater": "field_68b809aba5c1b"
+                        },
+                        {
+                            "key": "field_68b809abaf4e4",
+                            "label": "Sunny friends table column check mark",
+                            "name": "sunny_friends_table_column_check_mark",
+                            "aria-label": "",
+                            "type": "true_false",
+                            "instructions": "",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
+                            "message": "",
+                            "default_value": 0,
+                            "ui_on_text": "",
+                            "ui_off_text": "",
+                            "ui": 1,
+                            "parent_repeater": "field_68b809aba5c1b"
+                        }
+                    ]
+                }
+            ]
         }
     ],
     "location": [
         [
             {
-                "param": "page_template",
+                "param": "page",
                 "operator": "==",
-                "value": "template-page\/sunny-friends.php"
+                "value": "1272"
             }
         ]
     ],
@@ -457,5 +366,5 @@
     "active": true,
     "description": "",
     "show_in_rest": 0,
-    "modified": 1757010854
+    "modified": 1757011934
 }

@@ -219,6 +219,26 @@
             "endpoint": 0
         },
         {
+            "key": "field_68c011921ebc1",
+            "label": "Partner Program active",
+            "name": "partner_program_active",
+            "aria-label": "",
+            "type": "true_false",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "25",
+                "class": "",
+                "id": ""
+            },
+            "message": "",
+            "default_value": 0,
+            "ui_on_text": "",
+            "ui_off_text": "",
+            "ui": 1
+        },
+        {
             "key": "field_688231ee82fe2",
             "label": "Partner Program image",
             "name": "partner_program_image",
@@ -228,7 +248,7 @@
             "required": 0,
             "conditional_logic": 0,
             "wrapper": {
-                "width": "50",
+                "width": "25",
                 "class": "",
                 "id": ""
             },
@@ -359,5 +379,5 @@
     "active": true,
     "description": "",
     "show_in_rest": 0,
-    "modified": 1753439571
+    "modified": 1757417902
 }
