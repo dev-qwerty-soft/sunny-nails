@@ -39,4 +39,26 @@
       </div>
     </div>
   </div>
+  <div class="hero-new-section__items">
+      <?php
+      $items = get_field('hero_new_items');
+      if ($items && is_array($items) && count($items) > 0) {
+        foreach ($items as $item) {
+          $text = isset($item['text']) ? $item['text'] : null;
+          $location = isset($item['location']) ? $item['location'] : null;
+          $label = isset($item['label']) ? $item['label'] : null;
+          $str = "<div class='item'>";
+          if ($label) {
+            $str .= "<span class='label'>$label</span>";
+          }
+          $str .= "<span class='text'>$text</span>";
+          if ($location) {
+            $str .= "<span class='location'>$location</span>";
+          }
+          $str .= '</div>';
+          echo $str;
+        }
+      }
+      ?>
+  </div>
 </section>
