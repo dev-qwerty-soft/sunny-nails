@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', function () {
   const partnersData = JSON.parse(partnersDataElement.textContent);
   const partnersList = document.querySelector('.partners-list');
   const showMoreBtn = document.querySelector('.partners-show-more');
-  const partnersPerPage = 8;
+  const partnersPerPage = 12;
   let currentPage = 1;
   let currentCat = 'all';
   let filteredPartners = partnersData;

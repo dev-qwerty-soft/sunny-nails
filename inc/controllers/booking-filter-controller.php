@@ -7,13 +7,6 @@
  * with live availability checks and proper filtering of masters and services.
  */
 class BookingFilterController {
-  // Constants for master levels and corresponding titles
-  const MASTER_LEVELS = [
-    1 => 'Sunny Ray',
-    2 => 'Sunny Shine',
-    3 => 'Sunny Inferno',
-  ];
-
   // Price adjustment percentage per master level above 1
   const PRICE_ADJUSTMENT_PER_LEVEL = 10;
 
@@ -211,10 +204,7 @@ class BookingFilterController {
 
         // Get specialization - fallback to level title if not specified
         $specialization =
-          get_post_meta($post_id, 'specialization', true) ?:
-          (isset(self::MASTER_LEVELS[$level])
-            ? self::MASTER_LEVELS[$level]
-            : '');
+          get_post_meta($post_id, 'specialization', true) ?: get_master_level_title($level, false);
 
         // Get related services
         $related_services = [];
@@ -274,10 +264,7 @@ class BookingFilterController {
       $post_id = $master_post->ID;
       $level = (int) get_post_meta($post_id, 'master_level', true) ?: 1;
       $specialization =
-        get_post_meta($post_id, 'specialization', true) ?:
-        (isset(self::MASTER_LEVELS[$level])
-          ? self::MASTER_LEVELS[$level]
-          : '');
+        get_post_meta($post_id, 'specialization', true) ?: get_master_level_title($level, false);
 
       $master_data = [
         'id' => $master_id,
@@ -384,7 +371,7 @@ class BookingFilterController {
 
         // Get master level and other details
         $level = (int) get_post_meta($post_id, 'master_level', true) ?: 1;
-        $level_title = isset(self::MASTER_LEVELS[$level]) ? self::MASTER_LEVELS[$level] : '';
+        $level_title = get_master_level_title($level, false);
         $specialization = get_post_meta($post_id, 'specialization', true) ?: $level_title;
 
         // Add to available masters

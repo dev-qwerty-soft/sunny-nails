@@ -1,0 +1,400 @@
+.master-popup-backdrop {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgb(0 0 0 / 0.5);
+  z-index: 999;
+  display: none;
+  align-items: center;
+  justify-content: center;
+
+  .master-popup {
+    position: relative;
+    border-radius: 10px;
+    background: #f7f1e0;
+    display: flex;
+    padding: get-d(50px);
+    width: 100%;
+    max-width: get-d(929px);
+    min-height: get-d(500px);
+    max-height: 90vh;
+    gap: get-d(30px);
+    align-items: flex-start;
+    overflow-y: auto;
+
+    &::-webkit-scrollbar {
+      width: 5px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.5);
+      border-radius: 10px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: rgba(253, 196, 31, 0.7);
+      border-radius: 10px;
+    }
+
+    @media screen and (max-width: 1024px) {
+      max-width: 90%;
+    }
+
+    @media (max-width: 768px) {
+      flex-direction: column;
+      max-width: 100vw;
+      height: 100vh;
+      max-height: 100vh;
+      padding: 20px 16px;
+      gap: 16px;
+      border-radius: 0;
+    }
+
+    &__img {
+      position: sticky;
+      top: 0;
+      width: 40%;
+      height: 100%;
+      min-height: get-d(500px);
+      @include respond(md) {
+        position: static;
+        width: 100%;
+        height: auto;
+        max-width: 100%;
+        min-height: 250px;
+        aspect-ratio: 1 / 1;
+      }
+
+      img {
+        width: 100%;
+        height: 100%;
+        min-height: get-d(500px);
+        object-fit: cover;
+        border-radius: 8px;
+        display: block;
+
+        @include respond(md) {
+          aspect-ratio: 1 / 1;
+          width: 100%;
+          height: 100%;
+          min-height: 250px;
+          max-width: 100%;
+          margin-bottom: 20px;
+        }
+      }
+
+      &__placeholder {
+        width: 100%;
+        height: 100%;
+        min-height: get-d(500px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #f0f0f0;
+        border-radius: 8px;
+        color: #999;
+        font-family: $font-family;
+      }
+    }
+
+    &__content {
+      flex: 1 1 0;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      padding: get-d(12px) 0;
+      @include respond(md) {
+        gap: 16px;
+        padding: 0;
+      }
+    }
+
+    &__title {
+      font-size: get-d(36px);
+      color: #302f34;
+      font-style: normal;
+      font-weight: 500;
+      line-height: 120%;
+      letter-spacing: -1.08px;
+      text-transform: capitalize;
+      font-family: $font-family;
+      &.mob {
+        display: none;
+      }
+      @include respond(md) {
+        display: none;
+        font-size: 28px;
+        line-height: 1.2;
+        font-weight: 500;
+        letter-spacing: -0.84px;
+        text-transform: capitalize;
+        &.mob {
+          text-align: center;
+          width: 100%;
+          display: block;
+          font-size: 28px;
+          line-height: 1.2;
+          font-weight: 500;
+          letter-spacing: -0.84px;
+          text-transform: capitalize;
+        }
+      }
+    }
+
+    &__level {
+      .stars {
+        display: flex;
+        align-items: center;
+        gap: get-d(8px);
+
+        span {
+          font-size: get-d(14px);
+          color: #302f34;
+          font-family: $font-family;
+          @include respond(md) {
+            font-size: 14px;
+          }
+        }
+      }
+
+      .instagram-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        color: #302f34;
+        text-decoration: none;
+        font-size: get-d(14px);
+        font-family: $font-family;
+        margin-top: get-d(8px);
+        padding: 4px 8px;
+        border-radius: 20px;
+        background: rgba(255, 255, 255, 0.5);
+        transition: background-color 0.2s;
+
+        &:hover {
+          background: rgba(255, 255, 255, 0.8);
+        }
+
+        .instagram-icon {
+          width: 16px;
+          height: 16px;
+          background: #e4405f;
+          border-radius: 4px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: white;
+          font-size: 10px;
+          font-weight: bold;
+        }
+      }
+    }
+
+    &__desc {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+
+      p {
+        color: #302f34;
+        font-size: get-d(14px);
+        font-weight: 400;
+        line-height: 140%;
+        font-family: $font-family;
+        margin: 0;
+        @include respond(md) {
+          font-size: 14px;
+        }
+      }
+    }
+
+    &__achievements {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 4px;
+      align-self: stretch;
+      border-radius: 14px;
+      background: var(--white, #fff);
+      padding: get-d(4px);
+      margin-bottom: get-d(20px);
+      @include respond(md) {
+        margin-bottom: 20px;
+        padding: 4px;
+      }
+
+      h3 {
+        width: 100%;
+        padding: get-d(8px) get-d(10px);
+        font-size: get-d(16px);
+        border-radius: 10px;
+        background: var(--beige, #f7f1e0);
+        font-weight: 600;
+        color: #302f34;
+        font-family: $font-family;
+        display: flex;
+        align-items: center;
+        gap: get-d(6px);
+        @include respond(md) {
+          padding: 8px 10px;
+          font-size: 16px;
+          gap: 6px;
+        }
+      }
+
+      .achievement-item {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: get-d(8px);
+        padding: get-d(8px) get-d(8px) get-d(12px);
+        padding-bottom: get-d(12px);
+        border-bottom: 1px solid hsla(42, 25%, 42%, 0.12);
+        @include respond(md) {
+          padding: 8px 8px 12px;
+          gap: 8px;
+        }
+
+        &:last-child {
+          border-bottom: none;
+          padding-bottom: 0;
+        }
+
+        &:first-child {
+          padding-top: 0;
+        }
+        .achievement-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          gap: 10px;
+        }
+        .achievement-place {
+          display: inline-block;
+          display: flex;
+          padding: 2px 8px;
+          justify-content: center;
+          align-items: center;
+          gap: 2px;
+          font-size: get-d(10px);
+          font-weight: 600;
+          border-radius: 50px;
+          background: var(--gold, #85754f);
+          color: var(--white, #fff);
+          font-family: $font-family;
+          text-transform: uppercase;
+          @include respond(md) {
+            font-size: 10px;
+            padding: 2px 6px;
+          }
+        }
+
+        .achievement-title {
+          color: #302f34;
+          font-size: get-d(12px);
+          font-weight: 600;
+          line-height: 120%;
+          font-family: $font-family;
+          margin-bottom: get-d(2px);
+          @include respond(md) {
+            font-size: 12px;
+            margin-bottom: 2px;
+          }
+        }
+
+        .achievement-description {
+          color: #302f34;
+          font-size: get-d(12px);
+          font-weight: 400;
+          line-height: 140%;
+          font-family: $font-family;
+          @include respond(md) {
+            font-size: 12px;
+          }
+        }
+
+        .achievement-location {
+          color: var(--gray, #9a9a9a);
+          font-size: get-d(12px);
+          font-weight: 400;
+          font-family: $font-family;
+          display: flex;
+          align-items: center;
+          gap: 4px;
+          @include respond(md) {
+            font-size: 12px;
+          }
+
+          &:before {
+            content: '';
+            width: 16px;
+            height: 16px;
+            display: inline-block;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16' fill='none'%3E%3Cpath fill-rule='evenodd' clip-rule='evenodd' d='M7.60143 14.1672L8.06434 13.6456C8.58961 13.0445 9.06231 12.4725 9.48243 11.9296L9.82943 11.4718C11.2786 9.51993 12.0031 7.97126 12.0031 6.82583C12.0031 4.38141 10.0326 2.3999 7.60143 2.3999C5.17021 2.3999 3.19971 4.38141 3.19971 6.82583C3.19971 7.97126 3.92428 9.52017 5.37342 11.4726L5.72043 11.9304C6.3202 12.6987 6.94761 13.4443 7.60143 14.1672Z' stroke='%239A9A9A' stroke-width='1.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M7.60163 8.63587C8.61455 8.63587 9.43568 7.81474 9.43568 6.80182C9.43568 5.78891 8.61455 4.96777 7.60163 4.96777C6.58871 4.96777 5.76758 5.78891 5.76758 6.80182C5.76758 7.81474 6.58871 8.63587 7.60163 8.63587Z' stroke='%239A9A9A' stroke-width='1.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: contain;
+            flex-shrink: 0;
+          }
+        }
+
+        .achievement-date {
+          color: #9a9a9a;
+          font-size: get-d(12px);
+          font-weight: 400;
+          font-family: $font-family;
+          text-align: right;
+          @include respond(md) {
+            font-size: 11px;
+          }
+        }
+      }
+    }
+
+    &__book {
+      margin-top: auto;
+      width: fit-content;
+      margin-top: get-d(20px);
+      @include respond(md) {
+        margin: auto auto 0 auto;
+      }
+    }
+
+    &__close {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: absolute;
+      top: get-d(20px);
+      right: get-d(20px);
+      width: get-d(29px);
+      height: get-d(29px);
+      background: none;
+      border: none;
+      font-size: 2rem;
+      color: #85754f;
+      cursor: pointer;
+      line-height: 1;
+      transition: color 0.2s;
+      z-index: 2;
+      padding: 0;
+
+      @include respond(md) {
+        width: 24px;
+        height: 24px;
+        top: 27px;
+        right: 20px;
+
+        svg {
+          width: 12px;
+          height: 12px;
+        }
+      }
+
+      &:hover {
+        color: #b89c5a;
+      }
+    }
+  }
+}

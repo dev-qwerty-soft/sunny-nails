@@ -1,5 +1,6 @@
 .site-header {
-  padding: get-d(15px) get-d(60px) 0 get-d(60px);
+  padding: get-d(15px) get-d(60px);
+  padding-bottom: 0;
   position: static;
   top: 0;
   right: 0;
@@ -9,7 +10,7 @@
   transition: transform 0.5s ease;
   --border-color: transparent;
   position: fixed;
-  height: get-d($header-height);
+  min-height: get-d($header-height);
   &.hidden {
     transform: translateY(-100%);
   }
@@ -23,24 +24,27 @@
     }
   }
   @include respond(lg) {
-    padding: 28px 25px 16px 25px;
+    padding: 28px 25px 0 25px;
     // border-bottom: 2px solid var(--border-color);
-    height: $header-height;
+    min-height: $header-height;
     & .buttons {
       display: none;
     }
   }
-
+  @include respond(md) {
+    padding: 24px 25px 12px;
+  }
   & .container {
-    display: grid;
-    grid-template-columns: max-content 1fr max-content;
-    grid-gap: get-d(40px);
+    display: flex;
+    grid-gap: get-d(20px);
     align-items: center;
     border-bottom: get-d(2px) solid var(--border-color);
     // padding-bottom: get-d(15px);
     height: 100%;
     @include respond(lg) {
+      display: grid;
       grid-gap: 16px;
+      grid-template-columns: max-content 1fr max-content;
       // padding-bottom: 0;
       border-bottom: 0;
     }
@@ -51,6 +55,9 @@
       list-style: none;
       @include respond(lg) {
         display: none;
+      }
+      li {
+        display: flex;
       }
       & .current_page_item a {
         background: $bg-yellow;
@@ -65,11 +72,20 @@
         font-size: get-d(12px);
         line-height: 100%;
         text-transform: uppercase;
-        padding: get-d(10px) get-d(14px);
+        padding: get-d(10px) get-d(8px);
         color: rgba($bg-grey, 90%);
         @include respond(lg) {
           font-size: 20px;
           padding: 0;
+        }
+        &:hover {
+          transition: all 0.3s ease;
+          background: $bg-yellow;
+          border-radius: 100px;
+          @include respond(lg) {
+            background: none;
+            border-radius: none;
+          }
         }
       }
     }
@@ -82,6 +98,7 @@
       position: relative;
       display: flex;
       align-items: center;
+      width: fit-content;
       gap: get-d(4px);
       @include respond(lg) {
         font-size: 14px;
@@ -101,6 +118,7 @@
   }
 
   & .menu-container {
+    margin-left: auto;
     grid-column: -2 / -1;
   }
 }

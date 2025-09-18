@@ -81,6 +81,7 @@
   flex-shrink: 0;
   width: 55px;
   height: 55px;
+  margin-bottom: auto;
   border-radius: 50%;
   overflow: hidden;
   background-color: #f5f5f5;
@@ -99,8 +100,7 @@
   }
   @media screen and (max-width: 768px) {
     position: absolute;
-    // top: 50%;
-    // transform: translateY(-50%);
+    top: 0%;
     left: 0;
   }
 }
@@ -167,6 +167,18 @@
     margin-left: 65px;
     padding-right: 40px;
   }
+  &.mobile {
+    display: none;
+    @include respond(md) {
+      display: block;
+      margin-left: 0;
+    }
+  }
+  &.desc {
+    @include respond(md) {
+      display: none;
+    }
+  }
 }
 .studio-name {
   color: var(--black, #302f34);
@@ -185,6 +197,7 @@
   flex-shrink: 0;
   @media screen and (max-width: 768px) {
     position: absolute;
+    top: 0;
     // top: 50%;
     // transform: translateY(-50%);
     right: 0;
@@ -219,6 +232,10 @@
 
 .nearest-seances {
   margin-top: 10px;
+  @include respond(md) {
+    margin-left: -65px;
+    width: 140%;
+  }
   .slots {
     display: flex;
     flex-wrap: wrap;
