@@ -25,6 +25,7 @@ if (empty($ordered_category_ids)) {
       $service_categories[] = $term;
     }
   }
+}
 ?>
 <main>
     <?php get_template_part('template-parts/sections/hero/new'); ?>
