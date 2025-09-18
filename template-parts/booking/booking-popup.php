@@ -1655,8 +1655,6 @@ if (empty($ordered_category_ids)) {
                 <div class="form-group">
                   <textarea id="client-comment" name="client_comment" placeholder="Comment"></textarea>
                 </div>
-
-
                 <div class="form-group agreement-text">
                   <span>
                     By clicking Book an appointment, you agree to our
@@ -1683,21 +1681,12 @@ if (empty($ordered_category_ids)) {
 
                 </div>
               </form>
-
-
-
-
             </div>
-
-
-
             <div class="step-actions">
               <button type="button" class="btn yellow next-btn  confirm-booking-btn">Book an appointment </button>
             </div>
           </div>
-
         </div>
-
 
         <!-- Step 6: Confirmation -->
         <div class="booking-step confirm" data-step="confirm">

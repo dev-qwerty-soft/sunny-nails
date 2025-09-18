@@ -110,7 +110,6 @@ $benefits = get_field('benefit_item');
                 </div>
             </div>
         </section>
-
     <?php endif;
     ?>
 
