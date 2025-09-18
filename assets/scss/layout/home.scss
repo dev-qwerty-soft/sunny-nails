@@ -948,7 +948,7 @@
   }
   @include respond(md) {
     padding: 40px 25px 25px 25px;
-    height: 123vh;
+    height: auto;
     max-height: initial;
     &::before {
       content: '';
@@ -984,6 +984,7 @@
     @include respond(md) {
       font-size: 44px;
       max-width: none;
+      margin-bottom: 440px;
     }
   }
   &__image {
@@ -1222,11 +1223,11 @@
         @include respond(md) {
           grid-column: 1 / 2;
           grid-row: 1 / 2;
-          transform: translateX(33%) translateY(14%);
+          transform: translateX(30%) translateY(12%);
         }
       }
       &:nth-of-type(3) {
-        transform: translateX(2%);
+        transform: translateX(-5%);
       }
     }
   }
