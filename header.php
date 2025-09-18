@@ -13,7 +13,6 @@
     <meta property="og:type" content="website">
     <meta property="og:url" content="<?php echo esc_url(get_permalink()); ?>">
     <meta property="og:image" content="<?php echo get_site_icon_url(); ?>">
-
     <link rel="icon" type="image/png" sizes="32x32" href="<?= get_template_directory_uri() ?>/assets/svg/favicon_32x32.png">
     <link rel="shortcut icon" href="<?= get_template_directory_uri() ?>/assets/svg/favicon_32x32.png">
     <script type="application/ld+json">
@@ -53,7 +52,6 @@
     <title><?= wp_get_document_title() ?></title>
     <?php wp_head(); ?>
 </head>
-
 <body <?php body_class(); ?>>
     <header id="masthead" class="site-header header-three">
         <div class="container">
