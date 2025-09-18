@@ -47,8 +47,7 @@ if (empty($ordered_category_ids)) {
       <div class="services-content">
         <?php if (empty($categories)): ?>
           <p>No category found.</p>
-        <?php
-          else: ?>
+        <?php else: ?>
           <?php foreach ($categories as $category): ?>
             <?php
             $services = get_posts([
