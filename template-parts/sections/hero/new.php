@@ -32,7 +32,9 @@
             $url = isset($button['url']) ? $button['url'] : null;
             $text = isset($button['title']) ? $button['title'] : null;
             $target = isset($button['target']) ? $button['target'] : null;
-            echo "<a class='btn $type' href='$url' target='$target'>$text</a>";
+            $isBook = $url === '#book';
+            $class = $isBook ? ' open-popup' : '';
+            echo "<a class='btn $type$class' href='$url' target='$target'>$text</a>";
           }
         }
         ?>
