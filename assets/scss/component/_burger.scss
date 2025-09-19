@@ -115,3 +115,72 @@
     }
   }
 }
+.cmplz-cookiebanner {
+  max-width: 420px !important;
+  min-width: 320px !important;
+  display: block !important;
+  &.cmplz-dismissed {
+    display: none !important;
+  }
+  .cmplz-header {
+    display: flex !important;
+    align-items: center !important;
+    margin-bottom: 8px;
+    .cmplz-logo {
+      display: none !important;
+      width: 0 !important;
+    }
+    .cmplz-title {
+      display: block !important;
+      justify-self: start !important;
+    }
+    .cmplz-close {
+      border: none !important;
+      background: none !important;
+      margin-left: auto !important;
+      &::after {
+        content: '';
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20' fill='none'%3E%3Cpath d='M9.11631 9.99981L3.93256 4.81731C3.87445 4.7592 3.82835 4.69022 3.7969 4.61429C3.76545 4.53837 3.74927 4.45699 3.74927 4.37481C3.74927 4.29263 3.76545 4.21126 3.7969 4.13533C3.82835 4.05941 3.87445 3.99042 3.93256 3.93231C3.99067 3.8742 4.05965 3.82811 4.13558 3.79666C4.2115 3.76521 4.29288 3.74902 4.37506 3.74902C4.45724 3.74902 4.53861 3.76521 4.61454 3.79666C4.69046 3.82811 4.75945 3.8742 4.81756 3.93231L10.0001 9.11606L15.1826 3.93231C15.2999 3.81495 15.4591 3.74902 15.6251 3.74902C15.791 3.74902 15.9502 3.81495 16.0676 3.93231C16.1849 4.04967 16.2508 4.20884 16.2508 4.37481C16.2508 4.54078 16.1849 4.69995 16.0676 4.81731L10.8838 9.99981L16.0676 15.1823C16.1849 15.2997 16.2508 15.4588 16.2508 15.6248C16.2508 15.7908 16.1849 15.95 16.0676 16.0673C15.9502 16.1847 15.791 16.2506 15.6251 16.2506C15.4591 16.2506 15.2999 16.1847 15.1826 16.0673L10.0001 10.8836L4.81756 16.0673C4.7002 16.1847 4.54103 16.2506 4.37506 16.2506C4.20909 16.2506 4.04992 16.1847 3.93256 16.0673C3.8152 15.95 3.74927 15.7908 3.74927 15.6248C3.74927 15.4588 3.8152 15.2997 3.93256 15.1823L9.11631 9.99981Z' fill='%239A9A9A'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-size: contain;
+      }
+      svg {
+        display: none;
+      }
+    }
+  }
+  .cmplz-message,
+  .cmplz-categories {
+    width: 100% !important;
+    margin-bottom: 20px !important;
+  }
+  .cmplz-buttons {
+    display: flex !important;
+    flex-direction: row-reverse !important;
+    align-items: center;
+    margin-bottom: 10px !important;
+    .cmplz-accept {
+      background: #fdc41f !important;
+      transition: all 0.3s !important;
+      &:hover {
+        background: #eeb614 !important;
+      }
+    }
+
+    .cmplz-view-preferences {
+      background: transparent !important;
+      border: 1px solid #dbd6cb !important;
+      transition: all 0.3s !important;
+      &:hover {
+        background: #f1e3be !important;
+      }
+    }
+  }
+  .cmplz-links.cmplz-documents {
+    justify-content: start !important;
+    margin-bottom: 0 !important;
+  }
+}
