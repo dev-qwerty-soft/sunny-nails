@@ -1,0 +1,457 @@
+document.addEventListener('DOMContentLoaded', function () {
+  // Form elements
+  const form = document.getElementById('partner-apply-form');
+  if (!form) return; // Exit if form doesn't exist on this page
+
+  const fileInput = document.getElementById('partner_photo');
+  const fileUploadArea = document.querySelector('.file-upload-area');
+  const submitButton = form.querySelector('.btn-continue');
+  const spinner = submitButton ? submitButton.querySelector('.spinner') : null;
+
+  // Initialize floating labels
+  initFloatingLabels();
+
+  // Initialize file upload
+  initFileUpload();
+
+  // Initialize custom selects
+  initCustomSelects();
+
+  // Add form submit handler
+  if (form) {
+    form.addEventListener('submit', handleFormSubmit);
+  }
+
+  function initFloatingLabels() {
+    if (!form) return;
+
+    const inputs = form.querySelectorAll('.form-input, .form-textarea');
+
+    inputs.forEach((input) => {
+      const label = input.nextElementSibling;
+
+      if (label && label.classList.contains('form-label')) {
+        // Check initial state
+        checkFloatState(input, label);
+
+        // Add event listeners
+        input.addEventListener('focus', () => {
+          label.classList.add('float-active');
+        });
+
+        input.addEventListener('blur', () => {
+          checkFloatState(input, label);
+        });
+
+        input.addEventListener('input', () => {
+          checkFloatState(input, label);
+        });
+      }
+    });
+  }
+
+  function checkFloatState(input, label) {
+    if (input.value.trim() !== '') {
+      label.classList.add('float-active');
+    } else {
+      label.classList.remove('float-active');
+    }
+  }
+
+  function initFileUpload() {
+    if (!fileUploadArea || !fileInput) return;
+
+    // Click to upload
+    fileUploadArea.addEventListener('click', () => {
+      fileInput.click();
+    });
+
+    // File selection
+    fileInput.addEventListener('change', handleFileSelect);
+
+    // Drag and drop
+    fileUploadArea.addEventListener('dragover', handleDragOver);
+    fileUploadArea.addEventListener('dragleave', handleDragLeave);
+    fileUploadArea.addEventListener('drop', handleFileDrop);
+  }
+
+  function handleFileSelect(e) {
+    const file = e.target.files[0];
+    if (file) {
+      displaySelectedFile(file);
+      clearFieldError('partner-photo');
+    }
+  }
+
+  function handleDragOver(e) {
+    e.preventDefault();
+    fileUploadArea.classList.add('dragover');
+  }
+
+  function handleDragLeave(e) {
+    e.preventDefault();
+    fileUploadArea.classList.remove('dragover');
+  }
+
+  function handleFileDrop(e) {
+    e.preventDefault();
+    fileUploadArea.classList.remove('dragover');
+
+    const files = e.dataTransfer.files;
+    if (files.length > 0) {
+      const file = files[0];
+
+      // Check if it's an image
+      if (file.type.startsWith('image/')) {
+        fileInput.files = files;
+        displaySelectedFile(file);
+        clearFieldError('partner-photo');
+      } else {
+        showFieldError('partner-photo', 'Please select an image file');
+      }
+    }
+  }
+
+  function displaySelectedFile(file) {
+    const filePreview = fileUploadArea.querySelector('.file-preview');
+    const previewImage = fileUploadArea.querySelector('.file-preview-image');
+    const previewName = fileUploadArea.querySelector('.file-preview-name');
+    const uploadIcon = fileUploadArea.querySelector('.upload-icon');
+    const fileUploadText = fileUploadArea.querySelector('.file-upload-text');
+
+    if (previewImage && previewName && filePreview) {
+      // Create object URL for image preview
+      const imageUrl = URL.createObjectURL(file);
+
+      previewImage.src = imageUrl;
+      previewName.textContent = file.name;
+
+      // Show preview and hide upload UI
+      filePreview.classList.add('show');
+      if (uploadIcon) uploadIcon.style.display = 'none';
+      if (fileUploadText) fileUploadText.style.display = 'none';
+
+      // Setup delete and change buttons
+      const deleteBtn = fileUploadArea.querySelector('.delete-btn');
+      const changeBtn = fileUploadArea.querySelector('.change-btn');
+
+      if (deleteBtn) {
+        deleteBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          resetFileUpload();
+          fileInput.value = '';
+        });
+      }
+
+      if (changeBtn) {
+        changeBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          fileInput.click();
+        });
+      }
+    }
+  }
+
+  async function handleFormSubmit(e) {
+    e.preventDefault();
+
+    // Clear previous errors
+    clearAllErrors();
+
+    // Validate form
+    if (!validateForm()) {
+      return;
+    }
+
+    // Show loading state
+    setLoadingState(true);
+
+    try {
+      const formData = new FormData(form);
+      formData.append('action', 'submit_partner_application');
+      formData.append('nonce', apply_ajax.nonce);
+
+      const response = await fetch(apply_ajax.ajax_url, {
+        method: 'POST',
+        body: formData,
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        showSuccessMessage(data.data.message || 'Application submitted successfully!');
+        form.reset();
+        resetFileUpload();
+        resetFloatingLabels();
+      } else {
+        showErrorMessage(data.data || 'An error occurred. Please try again.');
+      }
+    } catch (error) {
+      console.error('Form submission error:', error);
+      showErrorMessage('Network error. Please check your connection and try again.');
+    } finally {
+      setLoadingState(false);
+    }
+  }
+
+  function validateForm() {
+    let isValid = true;
+
+    // Required fields validation
+    const requiredFields = [
+      { id: 'partner_title', name: 'Partner Title' },
+      { id: 'partner_description', name: 'Partner description' },
+      { id: 'benefit_title', name: 'Benefit title' },
+      { id: 'benefit_description', name: 'Benefit description' },
+      { id: 'benefit_icon_type', name: 'Benefit icon type' },
+    ];
+
+    requiredFields.forEach((fieldData) => {
+      const field = document.getElementById(fieldData.id);
+
+      if (!field) return;
+
+      if (fieldData.id === 'partner_photo') {
+        if (!field.files || field.files.length === 0) {
+          showFieldError(fieldData.id, 'Please select a photo');
+          isValid = false;
+        }
+      } else {
+        if (!field.value.trim()) {
+          showFieldError(fieldData.id, `${fieldData.name} is required`);
+          isValid = false;
+        }
+      }
+    });
+
+    // Validate photo separately
+    if (fileInput && (!fileInput.files || fileInput.files.length === 0)) {
+      showFieldError('partner_photo', 'Please select a photo');
+      isValid = false;
+    }
+
+    // Validate URL format
+    const linkField = document.getElementById('link_card');
+    if (linkField && linkField.value.trim()) {
+      if (!isValidUrl(linkField.value.trim())) {
+        showFieldError('link_card', 'Please enter a valid URL');
+        isValid = false;
+      }
+    }
+
+    return isValid;
+  }
+
+  function isValidUrl(string) {
+    try {
+      new URL(string);
+      return true;
+    } catch (_) {
+      return false;
+    }
+  }
+
+  function showFieldError(fieldName, message) {
+    const field = document.getElementById(fieldName);
+    if (field) {
+      field.classList.add('error');
+
+      const errorElement =
+        document.getElementById(fieldName + '_error') ||
+        field.parentNode.querySelector('.field-error');
+
+      if (errorElement) {
+        errorElement.textContent = message;
+        errorElement.classList.add('show');
+      }
+    }
+  }
+
+  function clearFieldError(fieldName) {
+    const field = document.getElementById(fieldName);
+    if (field) {
+      field.classList.remove('error');
+
+      const errorElement =
+        document.getElementById(fieldName + '_error') ||
+        field.parentNode.querySelector('.field-error');
+
+      if (errorElement) {
+        errorElement.textContent = '';
+        errorElement.classList.remove('show');
+      }
+    }
+  }
+
+  function clearAllErrors() {
+    if (!form) return;
+
+    // Clear field errors
+    const errorElements = form.querySelectorAll('.field-error');
+    errorElements.forEach((element) => {
+      element.textContent = '';
+      element.classList.remove('show');
+    });
+
+    // Remove error classes
+    const fields = form.querySelectorAll('.form-input, .form-textarea');
+    fields.forEach((field) => {
+      field.classList.remove('error');
+    });
+
+    // Clear form messages
+    const messageContainer = form.querySelector('.apply-messages');
+    if (messageContainer) {
+      messageContainer.innerHTML = '';
+    }
+  }
+
+  function showSuccessMessage(message) {
+    const messageContainer = getOrCreateMessageContainer();
+    messageContainer.innerHTML = `
+            <div class="message success-message">
+                ${message}
+            </div>
+        `;
+  }
+
+  function showErrorMessage(message) {
+    const messageContainer = getOrCreateMessageContainer();
+    messageContainer.innerHTML = `
+            <div class="message error-message">
+                <div class="error-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                        <path d="M7.99998 1.33331C11.682 1.33331 14.6666 4.31865 14.6666 7.99998C14.6666 11.6813 11.682 14.6666 7.99998 14.6666C4.31798 14.6666 1.33331 11.6813 1.33331 7.99998C1.33331 4.31865 4.31798 1.33331 7.99998 1.33331ZM7.99998 2.44465C4.93665 2.44465 2.44465 4.93665 2.44465 7.99998C2.44465 11.0633 4.93665 13.5553 7.99998 13.5553C11.0633 13.5553 13.5553 11.0633 13.5553 7.99998C13.5553 4.93665 11.0633 2.44465 7.99998 2.44465ZM7.99931 9.66798C8.17595 9.66798 8.34535 9.73815 8.47025 9.86305C8.59515 9.98795 8.66531 10.1573 8.66531 10.334C8.66531 10.5106 8.59515 10.68 8.47025 10.8049C8.34535 10.9298 8.17595 11 7.99931 11C7.82268 11 7.65328 10.9298 7.52838 10.8049C7.40348 10.68 7.33331 10.5106 7.33331 10.334C7.33331 10.1573 7.40348 9.98795 7.52838 9.86305C7.65328 9.73815 7.82268 9.66798 7.99931 9.66798ZM7.99598 4.66665C8.11692 4.66649 8.23382 4.71017 8.32502 4.78961C8.41621 4.86904 8.47553 4.97883 8.49198 5.09865L8.49665 5.16598L8.49931 8.16731C8.49944 8.29405 8.45144 8.41611 8.36501 8.50881C8.27857 8.60151 8.16017 8.65792 8.03373 8.66664C7.90729 8.67537 7.78225 8.63575 7.68391 8.5558C7.58557 8.47585 7.52125 8.36154 7.50398 8.23598L7.49931 8.16798L7.49665 5.16731C7.49656 5.1016 7.50943 5.03651 7.53451 4.97577C7.5596 4.91503 7.59642 4.85983 7.64286 4.81333C7.6893 4.76683 7.74444 4.72994 7.80515 4.70477C7.86586 4.6796 7.93026 4.66665 7.99598 4.66665Z" fill="#DC3232" />
+                    </svg>
+                </div>
+                <span class="error-text">${message}</span>
+            </div>
+        `;
+  }
+
+  function getOrCreateMessageContainer() {
+    let messageContainer = form.querySelector('.apply-messages');
+
+    if (!messageContainer) {
+      messageContainer = document.createElement('div');
+      messageContainer.className = 'apply-messages';
+
+      const formTitle = form.querySelector('.form-title');
+      if (formTitle) {
+        formTitle.parentNode.insertBefore(messageContainer, formTitle.nextSibling);
+      }
+    }
+
+    return messageContainer;
+  }
+
+  function setLoadingState(loading) {
+    if (!submitButton) return;
+
+    if (loading) {
+      submitButton.disabled = true;
+      const btnSpinner = submitButton.querySelector('.btn-spinner');
+      if (btnSpinner) btnSpinner.style.display = 'inline-block';
+      const btnText = submitButton.querySelector('.btn-text');
+      if (btnText) btnText.textContent = 'Submitting...';
+    } else {
+      submitButton.disabled = false;
+      const btnSpinner = submitButton.querySelector('.btn-spinner');
+      if (btnSpinner) btnSpinner.style.display = 'none';
+      const btnText = submitButton.querySelector('.btn-text');
+      if (btnText) btnText.textContent = 'Become a Partner';
+    }
+  }
+
+  function resetFileUpload() {
+    if (fileUploadArea) {
+      const filePreview = fileUploadArea.querySelector('.file-preview');
+      const uploadIcon = fileUploadArea.querySelector('.upload-icon');
+      const fileUploadText = fileUploadArea.querySelector('.file-upload-text');
+
+      if (filePreview) filePreview.classList.remove('show');
+      if (uploadIcon) uploadIcon.style.display = 'block';
+      if (fileUploadText) fileUploadText.style.display = 'block';
+    }
+  }
+
+  function resetFloatingLabels() {
+    const labels = form.querySelectorAll('.form-label');
+    labels.forEach((label) => {
+      label.classList.remove('float-active');
+    });
+  }
+
+  // Custom Select functionality
+  function initCustomSelects() {
+    const customSelects = document.querySelectorAll('.custom-select');
+
+    customSelects.forEach((select) => {
+      const trigger = select.querySelector('.custom-select-trigger');
+      const options = select.querySelectorAll('.custom-select-option');
+      const hiddenInput = select.parentElement.querySelector('input[type="hidden"]');
+      const textSpan = trigger.querySelector('.custom-select-text');
+
+      // Toggle dropdown
+      trigger.addEventListener('click', (e) => {
+        e.preventDefault();
+        closeAllSelects();
+        select.classList.toggle('open');
+      });
+
+      // Handle option selection
+      options.forEach((option) => {
+        option.addEventListener('click', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+
+          // Remove selected class from all options
+          options.forEach((opt) => opt.classList.remove('selected'));
+
+          // Add selected class to clicked option
+          option.classList.add('selected');
+
+          // Update display text and icon
+          const content = option.querySelector('.custom-select-option-content');
+          if (content && textSpan) {
+            // Clone the content (icon + text)
+            const contentClone = content.cloneNode(true);
+
+            // Clear current content and add the selected content
+            textSpan.innerHTML = '';
+            textSpan.appendChild(contentClone);
+            textSpan.classList.remove('placeholder');
+
+            // Add selected styling to the trigger
+            trigger.classList.add('selected');
+          }
+
+          // Update hidden input value
+          if (hiddenInput) {
+            hiddenInput.value = option.dataset.value;
+
+            // Clear validation error if exists
+            clearFieldError('benefit_icon_type');
+          }
+
+          // Close dropdown
+          select.classList.remove('open');
+          select.classList.add('selected');
+        });
+      });
+    });
+
+    // Close selects when clicking outside
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('.custom-select')) {
+        closeAllSelects();
+      }
+    });
+
+    function closeAllSelects() {
+      customSelects.forEach((select) => {
+        select.classList.remove('open');
+      });
+    }
+  }
+});

@@ -25,7 +25,7 @@
         {
             "key": "field_68823d5628860",
             "label": "Partner benefit icon",
-            "name": "partner_benefit",
+            "name": "partner_benefit_icon",
             "aria-label": "",
             "type": "image",
             "instructions": "",
@@ -140,5 +140,5 @@
     "active": true,
     "description": "",
     "show_in_rest": 0,
-    "modified": 1753803634
+    "modified": 1758740934
 }

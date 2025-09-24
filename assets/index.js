@@ -3,6 +3,7 @@ import './js/gsap.js';
 import './js/services-validation.js';
 import './js/services.js';
 import './js/parnters.js';
+import './js/apply-form.js';
 import 'swiper/css';
 import 'swiper/css/pagination';
 import 'swiper/css/scrollbar';
