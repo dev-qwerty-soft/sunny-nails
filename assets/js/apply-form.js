@@ -1,4 +1,8 @@
 document.addEventListener('DOMContentLoaded', function () {
+  // Prevent double initialization
+  if (window.applyFormInitialized) return;
+  window.applyFormInitialized = true;
+
   const form = document.getElementById('partner-apply-form');
   if (!form) return;
 
@@ -13,7 +17,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
   initCustomSelects();
 
-  if (form) {
+  if (form && !form.hasAttribute('data-submit-initialized')) {
+    form.setAttribute('data-submit-initialized', 'true');
     form.addEventListener('submit', handleFormSubmit);
   }
 
@@ -58,6 +63,10 @@ document.addEventListener('DOMContentLoaded', function () {
   function initFileUpload() {
     if (!fileUploadArea || !fileInput) return;
 
+    // Prevent double initialization
+    if (fileUploadArea.hasAttribute('data-initialized')) return;
+    fileUploadArea.setAttribute('data-initialized', 'true');
+
     fileInput.addEventListener('change', function (e) {
       const file = e.target.files[0];
       if (file) {
@@ -67,6 +76,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     fileUploadArea.addEventListener('click', (e) => {
+      console.log('FileUploadArea clicked');
       const filePreview = fileUploadArea.querySelector('.file-preview');
 
       if (
@@ -74,9 +84,11 @@ document.addEventListener('DOMContentLoaded', function () {
         e.target.closest('.file-preview-actions') ||
         (filePreview && filePreview.classList.contains('show'))
       ) {
+        console.log('Click ignored - preview is shown or action button clicked');
         return;
       }
 
+      console.log('Triggering file input click');
       fileInput.click();
     });
 
@@ -129,38 +141,46 @@ document.addEventListener('DOMContentLoaded', function () {
       previewImage.src = imageUrl;
       previewName.textContent = file.name;
 
-      filePreview.classList.add('show');
+      // Hide upload elements first
       if (uploadIcon) uploadIcon.style.display = 'none';
       if (fileUploadText) fileUploadText.style.display = 'none';
 
-      const deleteBtn = fileUploadArea.querySelector('.delete-btn');
-      const changeBtn = fileUploadArea.querySelector('.change-btn');
+      // Force reflow before showing preview
+      filePreview.offsetHeight;
 
-      if (deleteBtn) {
-        deleteBtn.replaceWith(deleteBtn.cloneNode(true));
-        const newDeleteBtn = fileUploadArea.querySelector('.delete-btn');
-        newDeleteBtn.addEventListener('click', (e) => {
-          e.stopPropagation();
-          resetFileUpload();
-        });
-      }
+      // Show file preview
+      filePreview.classList.add('show');
 
-      if (changeBtn) {
-        changeBtn.replaceWith(changeBtn.cloneNode(true));
-        const newChangeBtn = fileUploadArea.querySelector('.change-btn');
-        newChangeBtn.addEventListener('click', (e) => {
-          e.stopPropagation();
+      // Initialize buttons only once
+      initFileActionButtons();
+    }
+  }
 
-          const currentFileInput = document.getElementById('partner_photo');
-          if (currentFileInput) {
-            currentFileInput.value = '';
+  function initFileActionButtons() {
+    const deleteBtn = fileUploadArea.querySelector('.delete-btn');
+    const changeBtn = fileUploadArea.querySelector('.change-btn');
 
-            setTimeout(() => {
-              currentFileInput.click();
-            }, 10);
-          }
-        });
-      }
+    // Remove existing event listeners and add new ones
+    if (deleteBtn && !deleteBtn.hasAttribute('data-initialized')) {
+      deleteBtn.setAttribute('data-initialized', 'true');
+      deleteBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        resetFileUpload();
+      });
+    }
+
+    if (changeBtn && !changeBtn.hasAttribute('data-initialized')) {
+      changeBtn.setAttribute('data-initialized', 'true');
+      changeBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const currentFileInput = document.getElementById('partner_photo');
+        if (currentFileInput) {
+          currentFileInput.value = '';
+          setTimeout(() => {
+            currentFileInput.click();
+          }, 10);
+        }
+      });
     }
   }
 

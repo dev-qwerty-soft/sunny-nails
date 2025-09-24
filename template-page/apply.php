@@ -126,7 +126,7 @@ get_header(); ?>
 
                 <div class="form-group">
                     <label class="field-label">Choose a photo*</label>
-                    <div class="file-upload-area" onclick="document.getElementById('partner_photo').click()">
+                    <div class="file-upload-area">
                         <svg class="upload-icon" width="19" height="19" viewBox="0 0 19 19" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <g opacity="0.8">
                                 <path d="M16.1952 7.9925C11.2377 7.3115 6.96275 10.9925 7.25 15.875M5.375 6.5C5.375 6.89782 5.53304 7.27936 5.81434 7.56066C6.09564 7.84196 6.47718 8 6.875 8C7.27282 8 7.65436 7.84196 7.93566 7.56066C8.21696 7.27936 8.375 6.89782 8.375 6.5C8.375 6.10218 8.21696 5.72064 7.93566 5.43934C7.65436 5.15804 7.27282 5 6.875 5C6.47718 5 6.09564 5.15804 5.81434 5.43934C5.53304 5.72064 5.375 6.10218 5.375 6.5Z" stroke="#302F34" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" />

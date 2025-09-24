@@ -609,9 +609,15 @@
       }
 
       &.show {
-        display: flex;
+        display: flex !important;
         align-items: center;
         justify-content: space-between;
+      }
+
+      // Hide upload elements when preview is shown
+      &.show ~ .upload-icon,
+      &.show ~ .file-upload-text {
+        display: none !important;
       }
 
       .file-preview-info {
