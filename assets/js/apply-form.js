@@ -41,10 +41,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
         input.addEventListener('blur', () => {
           checkFloatState(input, label);
+          // Validate on blur
+          validateField(input);
         });
 
         input.addEventListener('input', () => {
           checkFloatState(input, label);
+          // Clear errors on input
+          clearFieldError(input.id);
         });
       }
     });
@@ -61,26 +65,40 @@ document.addEventListener('DOMContentLoaded', function () {
   function initFileUpload() {
     if (!fileUploadArea || !fileInput) return;
 
-    // Click to upload
-    fileUploadArea.addEventListener('click', () => {
-      fileInput.click();
+    // File input change handler - direct listener for immediate response
+    fileInput.addEventListener('change', function (e) {
+      console.log('File input changed', e.target.files);
+      const file = e.target.files[0];
+      if (file) {
+        displaySelectedFile(file);
+        clearFieldError('partner_photo');
+      }
     });
 
-    // File selection
-    fileInput.addEventListener('change', handleFileSelect);
+    // Click handler for upload area
+    fileUploadArea.addEventListener('click', (e) => {
+      console.log('Upload area clicked', e.target);
+      const filePreview = fileUploadArea.querySelector('.file-preview');
+
+      // Don't trigger file input if clicking on buttons or in preview actions area
+      if (
+        e.target.closest('.file-action-btn') ||
+        e.target.closest('.file-preview-actions') ||
+        (filePreview && filePreview.classList.contains('show'))
+      ) {
+        console.log('Click blocked - inside preview or button area');
+        return;
+      }
+
+      // Trigger file input
+      console.log('Triggering file input click');
+      fileInput.click();
+    });
 
     // Drag and drop
     fileUploadArea.addEventListener('dragover', handleDragOver);
     fileUploadArea.addEventListener('dragleave', handleDragLeave);
     fileUploadArea.addEventListener('drop', handleFileDrop);
-  }
-
-  function handleFileSelect(e) {
-    const file = e.target.files[0];
-    if (file) {
-      displaySelectedFile(file);
-      clearFieldError('partner-photo');
-    }
   }
 
   function handleDragOver(e) {
@@ -103,11 +121,15 @@ document.addEventListener('DOMContentLoaded', function () {
 
       // Check if it's an image
       if (file.type.startsWith('image/')) {
-        fileInput.files = files;
+        // Update the file input directly
+        const dataTransfer = new DataTransfer();
+        dataTransfer.items.add(file);
+        fileInput.files = dataTransfer.files;
+
         displaySelectedFile(file);
-        clearFieldError('partner-photo');
+        clearFieldError('partner_photo');
       } else {
-        showFieldError('partner-photo', 'Please select an image file');
+        showFieldError('partner_photo', 'Please select an image file');
       }
     }
   }
@@ -131,35 +153,64 @@ document.addEventListener('DOMContentLoaded', function () {
       if (uploadIcon) uploadIcon.style.display = 'none';
       if (fileUploadText) fileUploadText.style.display = 'none';
 
-      // Setup delete and change buttons
+      // Setup delete and change buttons with proper event handling
       const deleteBtn = fileUploadArea.querySelector('.delete-btn');
       const changeBtn = fileUploadArea.querySelector('.change-btn');
 
       if (deleteBtn) {
-        deleteBtn.addEventListener('click', (e) => {
+        // Remove existing handler and add new one
+        deleteBtn.replaceWith(deleteBtn.cloneNode(true));
+        const newDeleteBtn = fileUploadArea.querySelector('.delete-btn');
+        newDeleteBtn.addEventListener('click', (e) => {
           e.stopPropagation();
           resetFileUpload();
-          fileInput.value = '';
         });
       }
 
       if (changeBtn) {
-        changeBtn.addEventListener('click', (e) => {
+        // Remove existing handler and add new one
+        changeBtn.replaceWith(changeBtn.cloneNode(true));
+        const newChangeBtn = fileUploadArea.querySelector('.change-btn');
+        newChangeBtn.addEventListener('click', (e) => {
           e.stopPropagation();
-          fileInput.click();
+          console.log('Change button clicked');
+          // Clear current file value first
+          const currentFileInput = document.getElementById('partner_photo');
+          if (currentFileInput) {
+            currentFileInput.value = '';
+            console.log('File input cleared, triggering click');
+            // Small delay to ensure clearing is processed
+            setTimeout(() => {
+              currentFileInput.click();
+            }, 10);
+          }
         });
       }
     }
   }
 
+  // Track form submission state with more aggressive blocking
+  let isSubmitting = false;
+  let hasSubmittedSuccessfully = false;
+
   async function handleFormSubmit(e) {
     e.preventDefault();
 
-    // Clear previous errors
+    // Prevent double submission - check both flags
+    if (isSubmitting || hasSubmittedSuccessfully) {
+      console.log('Form submission blocked:', { isSubmitting, hasSubmittedSuccessfully });
+      return;
+    }
+
+    isSubmitting = true;
+
+    // Clear previous errors and messages
     clearAllErrors();
+    clearMessages();
 
     // Validate form
     if (!validateForm()) {
+      isSubmitting = false;
       return;
     }
 
@@ -179,10 +230,19 @@ document.addEventListener('DOMContentLoaded', function () {
       const data = await response.json();
 
       if (data.success) {
+        hasSubmittedSuccessfully = true; // Block future submissions permanently
         showSuccessMessage(data.data.message || 'Application submitted successfully!');
         form.reset();
         resetFileUpload();
         resetFloatingLabels();
+
+        // Disable form completely after successful submission
+        if (submitButton) {
+          submitButton.disabled = true;
+          submitButton.textContent = 'Application Submitted';
+          submitButton.style.opacity = '0.6';
+          submitButton.style.cursor = 'not-allowed';
+        }
       } else {
         showErrorMessage(data.data || 'An error occurred. Please try again.');
       }
@@ -191,6 +251,10 @@ document.addEventListener('DOMContentLoaded', function () {
       showErrorMessage('Network error. Please check your connection and try again.');
     } finally {
       setLoadingState(false);
+      // Only reset isSubmitting flag if submission was not successful
+      if (!hasSubmittedSuccessfully) {
+        isSubmitting = false;
+      }
     }
   }
 
@@ -235,6 +299,47 @@ document.addEventListener('DOMContentLoaded', function () {
     if (linkField && linkField.value.trim()) {
       if (!isValidUrl(linkField.value.trim())) {
         showFieldError('link_card', 'Please enter a valid URL');
+        isValid = false;
+      }
+    }
+
+    return isValid;
+  }
+
+  function validateField(field) {
+    if (!field) return true;
+
+    const fieldId = field.id;
+    const fieldValue = field.value.trim();
+    let isValid = true;
+
+    // Required fields validation
+    const requiredFields = [
+      'partner_title',
+      'partner_description',
+      'benefit_title',
+      'benefit_description',
+      'benefit_icon_type',
+    ];
+
+    if (requiredFields.includes(fieldId)) {
+      if (!fieldValue) {
+        const fieldNames = {
+          partner_title: 'Partner Title',
+          partner_description: 'Partner description',
+          benefit_title: 'Benefit title',
+          benefit_description: 'Benefit description',
+          benefit_icon_type: 'Benefit icon type',
+        };
+        showFieldError(fieldId, `${fieldNames[fieldId]} is required`);
+        isValid = false;
+      }
+    }
+
+    // URL validation
+    if (fieldId === 'link_card' && fieldValue) {
+      if (!isValidUrl(fieldValue)) {
+        showFieldError(fieldId, 'Please enter a valid URL');
         isValid = false;
       }
     }
@@ -307,42 +412,73 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   function showSuccessMessage(message) {
-    const messageContainer = getOrCreateMessageContainer();
-    messageContainer.innerHTML = `
-            <div class="message success-message">
-                ${message}
-            </div>
-        `;
+    const messageContainer = document.getElementById('form-messages');
+    if (messageContainer) {
+      messageContainer.innerHTML = `
+        <div class="message success-message">
+          <div class="message-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M8 1.33331C11.682 1.33331 14.6667 4.31798 14.6667 7.99998C14.6667 11.682 11.682 14.6666 8 14.6666C4.318 14.6666 1.33334 11.682 1.33334 7.99998C1.33334 4.31798 4.318 1.33331 8 1.33331ZM11.0587 5.724L7.33334 9.44998L4.94134 7.058L4.058 7.94131L7.33334 11.216L11.942 6.608L11.0587 5.724Z" fill="#00C853" />
+            </svg>
+          </div>
+          <div class="message-text">${message}</div>
+        </div>
+      `;
+      messageContainer.style.display = 'block';
+
+      // Auto-hide after 5 seconds
+      setTimeout(() => {
+        messageContainer.style.transition = 'opacity 0.5s ease-out';
+        messageContainer.style.opacity = '0';
+        setTimeout(() => {
+          messageContainer.style.display = 'none';
+          messageContainer.style.opacity = '1';
+          messageContainer.style.transition = '';
+        }, 500);
+      }, 5000);
+
+      // Scroll to message
+      messageContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
   }
 
   function showErrorMessage(message) {
-    const messageContainer = getOrCreateMessageContainer();
-    messageContainer.innerHTML = `
-            <div class="message error-message">
-                <div class="error-icon">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
-                        <path d="M7.99998 1.33331C11.682 1.33331 14.6666 4.31865 14.6666 7.99998C14.6666 11.6813 11.682 14.6666 7.99998 14.6666C4.31798 14.6666 1.33331 11.6813 1.33331 7.99998C1.33331 4.31865 4.31798 1.33331 7.99998 1.33331ZM7.99998 2.44465C4.93665 2.44465 2.44465 4.93665 2.44465 7.99998C2.44465 11.0633 4.93665 13.5553 7.99998 13.5553C11.0633 13.5553 13.5553 11.0633 13.5553 7.99998C13.5553 4.93665 11.0633 2.44465 7.99998 2.44465ZM7.99931 9.66798C8.17595 9.66798 8.34535 9.73815 8.47025 9.86305C8.59515 9.98795 8.66531 10.1573 8.66531 10.334C8.66531 10.5106 8.59515 10.68 8.47025 10.8049C8.34535 10.9298 8.17595 11 7.99931 11C7.82268 11 7.65328 10.9298 7.52838 10.8049C7.40348 10.68 7.33331 10.5106 7.33331 10.334C7.33331 10.1573 7.40348 9.98795 7.52838 9.86305C7.65328 9.73815 7.82268 9.66798 7.99931 9.66798ZM7.99598 4.66665C8.11692 4.66649 8.23382 4.71017 8.32502 4.78961C8.41621 4.86904 8.47553 4.97883 8.49198 5.09865L8.49665 5.16598L8.49931 8.16731C8.49944 8.29405 8.45144 8.41611 8.36501 8.50881C8.27857 8.60151 8.16017 8.65792 8.03373 8.66664C7.90729 8.67537 7.78225 8.63575 7.68391 8.5558C7.58557 8.47585 7.52125 8.36154 7.50398 8.23598L7.49931 8.16798L7.49665 5.16731C7.49656 5.1016 7.50943 5.03651 7.53451 4.97577C7.5596 4.91503 7.59642 4.85983 7.64286 4.81333C7.6893 4.76683 7.74444 4.72994 7.80515 4.70477C7.86586 4.6796 7.93026 4.66665 7.99598 4.66665Z" fill="#DC3232" />
-                    </svg>
-                </div>
-                <span class="error-text">${message}</span>
-            </div>
-        `;
+    const messageContainer = document.getElementById('form-messages');
+    if (messageContainer) {
+      messageContainer.innerHTML = `
+        <div class="message error-message">
+          <div class="message-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M7.99998 1.33331C11.682 1.33331 14.6666 4.31865 14.6666 7.99998C14.6666 11.6813 11.682 14.6666 7.99998 14.6666C4.31798 14.6666 1.33331 11.6813 1.33331 7.99998C1.33331 4.31865 4.31798 1.33331 7.99998 1.33331ZM7.99998 2.44465C4.93665 2.44465 2.44465 4.93665 2.44465 7.99998C2.44465 11.0633 4.93665 13.5553 7.99998 13.5553C11.0633 13.5553 13.5553 11.0633 13.5553 7.99998C13.5553 4.93665 11.0633 2.44465 7.99998 2.44465ZM7.99931 9.66798C8.17595 9.66798 8.34535 9.73815 8.47025 9.86305C8.59515 9.98795 8.66531 10.1573 8.66531 10.334C8.66531 10.5106 8.59515 10.68 8.47025 10.8049C8.34535 10.9298 8.17595 11 7.99931 11C7.82268 11 7.65328 10.9298 7.52838 10.8049C7.40348 10.68 7.33331 10.5106 7.33331 10.334C7.33331 10.1573 7.40348 9.98795 7.52838 9.86305C7.65328 9.73815 7.82268 9.66798 7.99931 9.66798ZM7.99598 4.66665C8.11692 4.66649 8.23382 4.71017 8.32502 4.78961C8.41621 4.86904 8.47553 4.97883 8.49198 5.09865L8.49665 5.16598L8.49931 8.16731C8.49944 8.29405 8.45144 8.41611 8.36501 8.50881C8.27857 8.60151 8.16017 8.65792 8.03373 8.66664C7.90729 8.67537 7.78225 8.63575 7.68391 8.5558C7.58557 8.47585 7.52125 8.36154 7.50398 8.23598L7.49931 8.16798L7.49665 5.16731C7.49656 5.1016 7.50943 5.03651 7.53451 4.97577C7.5596 4.91503 7.59642 4.85983 7.64286 4.81333C7.6893 4.76683 7.74444 4.72994 7.80515 4.70477C7.86586 4.6796 7.93026 4.66665 7.99598 4.66665Z" fill="#dc3232" />
+            </svg>
+          </div>
+          <div class="message-text">${message}</div>
+        </div>
+      `;
+      messageContainer.style.display = 'block';
+
+      // Auto-hide after 5 seconds
+      setTimeout(() => {
+        messageContainer.style.transition = 'opacity 0.5s ease-out';
+        messageContainer.style.opacity = '0';
+        setTimeout(() => {
+          messageContainer.style.display = 'none';
+          messageContainer.style.opacity = '1';
+          messageContainer.style.transition = '';
+        }, 500);
+      }, 5000);
+
+      // Scroll to message
+      messageContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
   }
 
-  function getOrCreateMessageContainer() {
-    let messageContainer = form.querySelector('.apply-messages');
-
-    if (!messageContainer) {
-      messageContainer = document.createElement('div');
-      messageContainer.className = 'apply-messages';
-
-      const formTitle = form.querySelector('.form-title');
-      if (formTitle) {
-        formTitle.parentNode.insertBefore(messageContainer, formTitle.nextSibling);
-      }
+  function clearMessages() {
+    const messageContainer = document.getElementById('form-messages');
+    if (messageContainer) {
+      messageContainer.style.display = 'none';
+      messageContainer.innerHTML = '';
     }
-
-    return messageContainer;
   }
 
   function setLoadingState(loading) {
@@ -368,10 +504,35 @@ document.addEventListener('DOMContentLoaded', function () {
       const filePreview = fileUploadArea.querySelector('.file-preview');
       const uploadIcon = fileUploadArea.querySelector('.upload-icon');
       const fileUploadText = fileUploadArea.querySelector('.file-upload-text');
+      const previewImage = fileUploadArea.querySelector('.file-preview-image');
 
+      // Always get fresh reference to file input for clearing
+      const currentFileInput = document.getElementById('partner_photo');
+
+      // Clear file input value
+      if (currentFileInput) {
+        currentFileInput.value = '';
+      }
+      if (fileInput) {
+        fileInput.value = '';
+      }
+
+      // Hide preview and show upload UI
       if (filePreview) filePreview.classList.remove('show');
       if (uploadIcon) uploadIcon.style.display = 'block';
       if (fileUploadText) fileUploadText.style.display = 'block';
+
+      // Clear image preview src to free memory
+      if (previewImage && previewImage.src) {
+        if (previewImage.src.startsWith('blob:')) {
+          URL.revokeObjectURL(previewImage.src);
+        }
+        previewImage.src = '';
+        previewImage.alt = '';
+      }
+
+      // Clear any field errors
+      clearFieldError('partner_photo');
     }
   }
 

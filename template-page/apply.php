@@ -6,112 +6,18 @@ Template Name: Apply Page
 if (!defined('ABSPATH')) {
     exit;
 }
-if ($_POST && isset($_POST['apply_nonce']) && wp_verify_nonce($_POST['apply_nonce'], 'sunny_partner_apply')) {
-    $errors = [];
 
-    // Validate required fields
-    $partner_title = sanitize_text_field($_POST['partner_title'] ?? '');
-    $partner_description = wp_kses_post($_POST['partner_description'] ?? '');
-    $benefit_title = sanitize_text_field($_POST['benefit_title'] ?? '');
-    $benefit_description = wp_kses_post($_POST['benefit_description'] ?? '');
-    $benefit_icon_type = sanitize_text_field($_POST['benefit_icon_type'] ?? '');
-    $link_card = esc_url_raw($_POST['link_card'] ?? '');
+// Initialize variables for messages
+$success_message = '';
+$errors = array();
 
-    if (empty($partner_title)) {
-        $errors[] = 'Partner Title is required.';
-    }
-    if (empty($partner_description)) {
-        $errors[] = 'Partner description is required.';
-    }
-    if (empty($benefit_title)) {
-        $errors[] = 'Benefit title is required.';
-    }
-    if (empty($benefit_description)) {
-        $errors[] = 'Benefit description is required.';
-    }
-    if (empty($benefit_icon_type)) {
-        $errors[] = 'Benefit icon type is required.';
-    }
+// Check for success/error messages from session or query params
+if (isset($_GET['success']) && $_GET['success'] == '1') {
+    $success_message = 'Your partner application has been submitted successfully! We will review it and get back to you soon.';
+}
 
-    if (empty($errors)) {
-        // Get icon ID based on selected type
-        $benefit_icon_id = get_benefit_icon_id($benefit_icon_type);
-
-        $partner_images = [];
-
-        // Handle partner photo upload
-        if (!empty($_FILES['partner_photo']['name'])) {
-            foreach ($_FILES['partner_images']['name'] as $key => $filename) {
-                if (!empty($filename)) {
-                    $file = array(
-                        'name' => $_FILES['partner_images']['name'][$key],
-                        'type' => $_FILES['partner_images']['type'][$key],
-                        'tmp_name' => $_FILES['partner_images']['tmp_name'][$key],
-                        'error' => $_FILES['partner_images']['error'][$key],
-                        'size' => $_FILES['partner_images']['size'][$key]
-                    );
-
-                    $uploaded_image = wp_handle_upload($file, array('test_form' => false));
-                    if ($uploaded_image && !isset($uploaded_image['error'])) {
-                        $image_id = wp_insert_attachment(array(
-                            'post_title' => sanitize_file_name($filename),
-                            'post_content' => '',
-                            'post_status' => 'inherit',
-                            'post_mime_type' => $file['type']
-                        ), $uploaded_image['file']);
-
-                        if ($image_id) {
-                            wp_generate_attachment_metadata($image_id, $uploaded_image['file']);
-                            $partner_images[] = $image_id;
-                        }
-                    }
-                }
-            }
-        }
-
-        // Create draft partner post
-        $partner_post = array(
-            'post_title' => $partner_title,
-            'post_content' => $partner_description,
-            'post_status' => 'draft',
-            'post_type' => 'partner',
-            'meta_input' => array(
-                'partner_description' => $partner_description,
-                'partner_benefit_title' => $benefit_title,
-                'partner_benefit_description' => $benefit_description,
-                'partner_benefit_icon' => $benefit_icon_type, // Add benefit icon type
-                'partners_link_card' => $link_card,
-                'partners_link_popup' => sanitize_text_field($_POST['link_popup'] ?? ''),
-                'application_date' => current_time('mysql'),
-            )
-        );
-
-        $post_id = wp_insert_post($partner_post);
-
-        if ($post_id && !is_wp_error($post_id)) {
-            // Save benefit icon (if selected and exists)
-            if ($benefit_icon_id) {
-                update_field('partner_benefit_icon', $benefit_icon_id, $post_id);
-            }
-
-            // Save partner photo
-            if (!empty($_FILES['partner_photo']['name'])) {
-                // Handle partner photo upload logic here
-            }
-
-            // Save partner images as gallery
-            if (!empty($partner_images)) {
-                update_field('partner_images', $partner_images, $post_id);
-
-                // Set first partner image as Featured Image
-                set_post_thumbnail($post_id, $partner_images[0]);
-            }
-
-            $success_message = 'Your partner application has been submitted successfully! We will review it and get back to you soon.';
-        } else {
-            $errors[] = 'Failed to submit application. Please try again.';
-        }
-    }
+if (isset($_GET['error'])) {
+    $errors[] = sanitize_text_field($_GET['error']);
 }
 
 $apply_image = get_field('apply_image') ?: '';
@@ -123,31 +29,15 @@ get_header(); ?>
 <main class="sunny-apply-page">
     <div class="sunny-apply-container">
         <div class="apply-section">
-            <form id="partner-apply-form" class="partner-apply-form" method="post" enctype="multipart/form-data">
+            <form id="partner-apply-form" class="partner-apply-form" enctype="multipart/form-data">
                 <?php wp_nonce_field('sunny_partner_apply', 'apply_nonce'); ?>
+
+                <!-- Hidden field to track submission status -->
+                <input type="hidden" id="form-submitted" value="false">
 
                 <h2 class="form-title"><?php echo esc_html($apply_form_title); ?></h2>
 
-                <?php if (!empty($success_message)): ?>
-                    <div class="apply-messages">
-                        <div class="message success-message">
-                            <?php echo esc_html($success_message); ?>
-                        </div>
-                    </div>
-                <?php endif; ?>
-
-                <?php if (!empty($errors)): ?>
-                    <div class="apply-messages">
-                        <div class="message error-message">
-                            <div class="error-icon">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
-                                    <path d="M7.99998 1.33331C11.682 1.33331 14.6666 4.31865 14.6666 7.99998C14.6666 11.6813 11.682 14.6666 7.99998 14.6666C4.31798 14.6666 1.33331 11.6813 1.33331 7.99998C1.33331 4.31865 4.31798 1.33331 7.99998 1.33331ZM7.99998 2.44465C4.93665 2.44465 2.44465 4.93665 2.44465 7.99998C2.44465 11.0633 4.93665 13.5553 7.99998 13.5553C11.0633 13.5553 13.5553 11.0633 13.5553 7.99998C13.5553 4.93665 11.0633 2.44465 7.99998 2.44465ZM7.99931 9.66798C8.17595 9.66798 8.34535 9.73815 8.47025 9.86305C8.59515 9.98795 8.66531 10.1573 8.66531 10.334C8.66531 10.5106 8.59515 10.68 8.47025 10.8049C8.34535 10.9298 8.17595 11 7.99931 11C7.82268 11 7.65328 10.9298 7.52838 10.8049C7.40348 10.68 7.33331 10.5106 7.33331 10.334C7.33331 10.1573 7.40348 9.98795 7.52838 9.86305C7.65328 9.73815 7.82268 9.66798 7.99931 9.66798ZM7.99598 4.66665C8.11692 4.66649 8.23382 4.71017 8.32502 4.78961C8.41621 4.86904 8.47553 4.97883 8.49198 5.09865L8.49665 5.16598L8.49931 8.16731C8.49944 8.29405 8.45144 8.41611 8.36501 8.50881C8.27857 8.60151 8.16017 8.65792 8.03373 8.66664C7.90729 8.67537 7.78225 8.63575 7.68391 8.5558C7.58557 8.47585 7.52125 8.36154 7.50398 8.23598L7.49931 8.16798L7.49665 5.16731C7.49656 5.1016 7.50943 5.03651 7.53451 4.97577C7.5596 4.91503 7.59642 4.85983 7.64286 4.81333C7.6893 4.76683 7.74444 4.72994 7.80515 4.70477C7.86586 4.6796 7.93026 4.66665 7.99598 4.66665Z" fill="#DC3232" />
-                                </svg>
-                            </div>
-                            <span class="error-text"><?php echo esc_html(implode(', ', $errors)); ?></span>
-                        </div>
-                    </div>
-                <?php endif; ?>
+                <p class="form-description"><?php echo esc_html($apply_form_description); ?></p>
 
                 <div class="form-group">
                     <input type="text" id="partner_title" name="partner_title" required class="form-input" placeholder=" " value="<?php echo esc_attr($_POST['partner_title'] ?? ''); ?>">
@@ -216,9 +106,10 @@ get_header(); ?>
                         <div class="form-col">
                             <input type="text" id="benefit_title" name="benefit_title" required class="form-input" placeholder=" " value="<?php echo esc_attr($_POST['benefit_title'] ?? ''); ?>">
                             <label for="benefit_title" class="form-label">Benefit title*</label>
-                            <div class="field-error" id="benefit_title_error"></div>
+
                         </div>
                     </div>
+                    <div class="field-error" id="benefit_title_error"></div>
                 </div>
 
                 <div class="form-group">
@@ -263,6 +154,38 @@ get_header(); ?>
                     <div class="field-error" id="partner_photo_error"></div>
                 </div>
 
+                <!-- Messages container for AJAX responses -->
+                <div class="apply-messages" id="form-messages" style="display: none;">
+                    <!-- Messages will be dynamically inserted here -->
+                </div>
+
+                <!-- Static PHP messages (for non-AJAX fallback) -->
+                <?php if (!empty($success_message)): ?>
+                    <div class="apply-messages auto-hide-message">
+                        <div class="message success-message">
+                            <div class="message-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                    <path d="M8.00004 1.3335C11.682 1.3335 14.6667 4.31883 14.6667 8.00016C14.6667 11.6815 11.682 14.6668 8.00004 14.6668C4.31804 14.6668 1.33337 11.6815 1.33337 8.00016C1.33337 4.31883 4.31804 1.3335 8.00004 1.3335ZM8.00004 2.44483C4.93671 2.44483 2.44471 4.93683 2.44471 8.00016C2.44471 11.0635 4.93671 13.5555 8.00004 13.5555C11.0634 13.5555 13.5554 11.0635 13.5554 8.00016C13.5554 4.93683 11.0634 2.44483 8.00004 2.44483Z" fill="#00c853" />
+                                    <path fill-rule="evenodd" clip-rule="evenodd" d="M11.1868 5.4978C11.2806 5.60291 11.3333 5.74545 11.3333 5.89408C11.3333 6.04271 11.2806 6.18526 11.1868 6.29037L7.43711 10.4917C7.38756 10.5472 7.32873 10.5912 7.26398 10.6213C7.19923 10.6514 7.12983 10.6668 7.05974 10.6668C6.98965 10.6668 6.92025 10.6514 6.8555 10.6213C6.79075 10.5912 6.73192 10.5472 6.68237 10.4917L4.81935 8.40466C4.77157 8.35295 4.73346 8.2911 4.70724 8.22271C4.68102 8.15433 4.66722 8.08078 4.66664 8.00635C4.66607 7.93193 4.67873 7.85812 4.70388 7.78923C4.72903 7.72035 4.76618 7.65776 4.81315 7.60513C4.86012 7.5525 4.91598 7.51088 4.97746 7.4827C5.03894 7.45452 5.10482 7.44033 5.17125 7.44098C5.23767 7.44163 5.30332 7.45709 5.36435 7.48647C5.42539 7.51584 5.48059 7.55855 5.52674 7.61208L7.05957 9.32952L10.4791 5.4978C10.5256 5.44571 10.5807 5.40439 10.6414 5.3762C10.7022 5.34801 10.7672 5.3335 10.833 5.3335C10.8987 5.3335 10.9638 5.34801 11.0245 5.3762C11.0852 5.40439 11.1404 5.44571 11.1868 5.4978Z" fill="#00c853" />
+                                </svg>
+                            </div>
+                            <div class="message-text"><?php echo esc_html($success_message); ?></div>
+                        </div>
+                    </div>
+                <?php endif; ?>
+
+                <?php if (!empty($errors)): ?>
+                    <div class="apply-messages auto-hide-message">
+                        <div class="message error-message">
+                            <div class="message-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                    <path d="M7.99998 1.33331C11.682 1.33331 14.6666 4.31865 14.6666 7.99998C14.6666 11.6813 11.682 14.6666 7.99998 14.6666C4.31798 14.6666 1.33331 11.6813 1.33331 7.99998C1.33331 4.31865 4.31798 1.33331 7.99998 1.33331ZM7.99998 2.44465C4.93665 2.44465 2.44465 4.93665 2.44465 7.99998C2.44465 11.0633 4.93665 13.5553 7.99998 13.5553C11.0633 13.5553 13.5553 11.0633 13.5553 7.99998C13.5553 4.93665 11.0633 2.44465 7.99998 2.44465ZM7.99931 9.66798C8.17595 9.66798 8.34535 9.73815 8.47025 9.86305C8.59515 9.98795 8.66531 10.1573 8.66531 10.334C8.66531 10.5106 8.59515 10.68 8.47025 10.8049C8.34535 10.9298 8.17595 11 7.99931 11C7.82268 11 7.65328 10.9298 7.52838 10.8049C7.40348 10.68 7.33331 10.5106 7.33331 10.334C7.33331 10.1573 7.40348 9.98795 7.52838 9.86305C7.65328 9.73815 7.82268 9.66798 7.99931 9.66798ZM7.99598 4.66665C8.11692 4.66649 8.23382 4.71017 8.32502 4.78961C8.41621 4.86904 8.47553 4.97883 8.49198 5.09865L8.49665 5.16598L8.49931 8.16731C8.49944 8.29405 8.45144 8.41611 8.36501 8.50881C8.27857 8.60151 8.16017 8.65792 8.03373 8.66664C7.90729 8.67537 7.78225 8.63575 7.68391 8.5558C7.58557 8.47585 7.52125 8.36154 7.50398 8.23598L7.49931 8.16798L7.49665 5.16731C7.49656 5.1016 7.50943 5.03651 7.53451 4.97577C7.5596 4.91503 7.59642 4.85983 7.64286 4.81333C7.6893 4.76683 7.74444 4.72994 7.80515 4.70477C7.86586 4.6796 7.93026 4.66665 7.99598 4.66665Z" fill="#dc3232" />
+                                </svg>
+                            </div>
+                            <div class="message-text"><?php echo esc_html(implode(', ', $errors)); ?></div>
+                        </div>
+                    </div>
+                <?php endif; ?>
                 <div class="form-actions">
                     <button type="submit" class="btn yellow btn-continue" id="apply-btn">
                         <span class="btn-text">Become a Partner</span>
@@ -278,5 +201,21 @@ get_header(); ?>
         </div>
     </div>
 </main>
+
+<script>
+    // Auto-hide messages after 5 seconds
+    document.addEventListener('DOMContentLoaded', function() {
+        const messages = document.querySelectorAll('.auto-hide-message');
+        messages.forEach(function(message) {
+            setTimeout(function() {
+                message.style.transition = 'opacity 0.5s ease-out';
+                message.style.opacity = '0';
+                setTimeout(function() {
+                    message.style.display = 'none';
+                }, 500);
+            }, 5000);
+        });
+    });
+</script>
 
 <?php get_footer(); ?>
