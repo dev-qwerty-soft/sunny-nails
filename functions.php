@@ -63,6 +63,7 @@ require_once get_template_directory() . '/inc/admin/altegio-cron-sync.php';
 require_once get_template_directory() . '/inc/api/altegio-client.php';
 require_once get_template_directory() . '/inc/helpers/api.php';
 require_once get_template_directory() . '/inc/helpers/master-levels.php';
+require_once get_template_directory() . '/inc/helpers/benefit-icons.php';
 require_once get_template_directory() . '/inc/controllers/booking-controller.php';
 require_once get_template_directory() . '/inc/controllers/booking-popup-controller.php';
 require_once get_template_directory() . '/inc/controllers/booking-filter-controller.php';
@@ -93,3 +94,51 @@ add_action('wp_head', function () {
     echo '<link rel="icon" href="' . $favicon_light . '" media="(prefers-color-scheme: light)">';
   }
 });
+
+// TEMPORARY: Auto-setup benefit icons (uncomment and visit site, then comment back)
+/*
+add_action('init', function() {
+    if (!get_option('benefit_icons_setup_done')) {
+        // Find icons by filename
+        $discount_icon = get_posts(array(
+            'post_type' => 'attachment',
+            's' => 'benefit-discount-icon',
+            'posts_per_page' => 1
+        ));
+        
+        $complimentary_icon = get_posts(array(
+            'post_type' => 'attachment',
+            's' => 'benefit-complimentary-icon',
+            'posts_per_page' => 1
+        ));
+        
+        $gift_icon = get_posts(array(
+            'post_type' => 'attachment',
+            's' => 'benefit-gift-icon',
+            'posts_per_page' => 1
+        ));
+        
+        if (!empty($discount_icon)) {
+            update_option('benefit_discount_icon_id', $discount_icon[0]->ID);
+        }
+        if (!empty($complimentary_icon)) {
+            update_option('benefit_complimentary_icon_id', $complimentary_icon[0]->ID);
+        }
+        if (!empty($gift_icon)) {
+            update_option('benefit_gift_icon_id', $gift_icon[0]->ID);
+        }
+        
+        update_option('benefit_icons_setup_done', true);
+        
+        // Show debug info
+        add_action('wp_footer', function() {
+            if (current_user_can('manage_options')) {
+                echo '<!-- Benefit Icons Setup Complete -->';
+                echo '<!-- Discount: ' . get_option('benefit_discount_icon_id') . ' -->';
+                echo '<!-- Complimentary: ' . get_option('benefit_complimentary_icon_id') . ' -->';
+                echo '<!-- Gift: ' . get_option('benefit_gift_icon_id') . ' -->';
+            }
+        });
+    }
+});
+*/

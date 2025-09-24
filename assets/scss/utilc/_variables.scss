@@ -3,12 +3,25 @@ $footer-height: 194px;
 $footer-height-mobile: 146px;
 
 $bg-color: #f7f1e0;
+$bg-light: #f9f9f9;
 $bg-grey: #302f34;
 $bg-yellow: #fdc41f;
 $bg-white: #fff;
 $red: #dc3232;
 $font-family: 'Montserrat', sans-serif;
 $font-family-inter: 'Inter', sans-serif;
+
+// Colors for forms (based on registration form)
+$white: #ffffff;
+$text-dark: #302f34;
+$gray: #9a9a9a;
+$yellow: #fdc41f;
+$yellow-hover: #f1c40f;
+$error: #dc3232;
+$success: #06b569;
+$border: rgba(48, 47, 52, 0.5);
+$gold: #85754f;
+$accent-gold: #f4d03f;
 
 @mixin respond($breakpoint) {
   @if $breakpoint == xs {
@@ -36,7 +49,7 @@ $font-family-inter: 'Inter', sans-serif;
   }
 
   @if $breakpoint == xl {
-    @media (max-width: 1280px) {
+    @media (max-width: 1440px) {
       @content;
     }
   }
@@ -46,6 +59,16 @@ $font-family-inter: 'Inter', sans-serif;
       @content;
     }
   }
+}
+
+@mixin transition($properties: all, $duration: 0.2s, $easing: ease) {
+  transition: $properties $duration $easing;
+}
+
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 @mixin textGradient($gradientColor) {
   background: $gradientColor;

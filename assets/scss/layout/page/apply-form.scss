@@ -1,0 +1,846 @@
+@import '../../utilc/variables';
+
+// Apply Page Container
+.sunny-apply-page {
+  display: flex;
+  min-height: calc(100vh - $header-height);
+  font-family: $font-family;
+
+  @include respond(lg) {
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 80vh;
+    height: 100%;
+  }
+
+  .sunny-apply-container {
+    display: flex;
+    width: 100%;
+    height: calc(100vh - 72px);
+    margin: 0 auto;
+    background: var(--bg-light);
+    font-family: 'Montserrat', sans-serif;
+
+    @include respond(lg) {
+      flex-direction: column;
+      height: auto;
+      min-height: 80vh;
+    }
+  }
+
+  .apply-section {
+    width: 50%;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: get-d(40px);
+    font-family: $font-family;
+
+    @include respond(xl) {
+      padding: 40px;
+    }
+
+    @include respond(lg) {
+      width: 100%;
+      justify-content: start;
+      padding: 20px 16px;
+      min-height: 80vh;
+      max-width: 600px;
+      padding-top: 40px;
+      margin: 0 auto;
+    }
+  }
+
+  .hero-section {
+    width: 50%;
+    position: relative;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    display: flex;
+    align-items: flex-end;
+
+    img {
+      width: 100%;
+      height: auto;
+    }
+
+    @include respond(lg) {
+      display: none;
+    }
+  }
+}
+
+.partner-apply-form {
+  background: rgba(255, 255, 255, 0.75);
+  border-radius: 20px;
+  padding: get-d(20px);
+  width: 100%;
+  max-width: get-d(568px);
+
+  @include respond(xl) {
+    padding: 20px;
+    max-width: 568px;
+    margin: auto;
+    background: rgba(255, 255, 255, 0.9);
+  }
+
+  .form-title {
+    margin-bottom: 12px;
+    font-size: get-d(24px);
+    font-weight: 600;
+    line-height: 120%;
+    letter-spacing: -0.72px;
+    text-transform: capitalize;
+    color: $bg-grey;
+    text-align: center;
+
+    @include respond(xl) {
+      font-size: 24px;
+    }
+  }
+
+  .form-group {
+    margin-bottom: get-d(20px);
+    position: relative;
+
+    @include respond(xl) {
+      margin-bottom: 20px;
+    }
+
+    &.benefit-fields {
+      .form-row {
+        display: grid;
+        grid-template-columns: 1fr 2fr;
+        gap: get-d(16px);
+        align-items: end;
+
+        @include respond(xl) {
+          gap: 16px;
+        }
+
+        @include respond(lg) {
+          grid-template-columns: 1fr;
+          gap: 0;
+        }
+
+        .form-col {
+          position: relative;
+
+          @include respond(lg) {
+            margin-bottom: get-d(20px);
+
+            @include respond(xl) {
+              margin-bottom: 20px;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .form-input {
+    width: 100%;
+    padding: 18px 0 6px 0;
+    border: none;
+    border-bottom: 1px solid rgba(48, 47, 52, 0.5);
+    color: $bg-grey;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 16px;
+    transition: all 0.2s ease;
+    background: transparent;
+    box-sizing: border-box;
+    border-radius: 0;
+
+    @media (min-width: 1440px) {
+      padding: get-d(18px) 0 get-d(6px) 0;
+      font-size: get-d(14px);
+    }
+
+    &:focus {
+      outline: none;
+      border-color: $bg-yellow;
+    }
+
+    &.error {
+      border-color: $red;
+    }
+
+    &::placeholder {
+      color: transparent;
+    }
+
+    @include respond(xl) {
+      padding: 18px 0 6px 0;
+      font-size: 14px;
+      line-height: 26px;
+    }
+  }
+
+  .form-textarea {
+    width: 100%;
+    min-height: 32px;
+    padding: 18px 0 6px 0;
+    border: none;
+    border-bottom: 1px solid rgba(48, 47, 52, 0.5);
+    color: $bg-grey;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 16px;
+    transition: all 0.2s ease;
+    background: transparent;
+    box-sizing: border-box;
+    border-radius: 0;
+    min-height: 100px;
+    resize: vertical;
+    font-family: $font-family;
+
+    @media (min-width: 1440px) {
+      padding: get-d(18px) 0 get-d(6px) 0;
+      font-size: get-d(14px);
+    }
+
+    &:focus {
+      outline: none;
+      border-color: $bg-yellow;
+    }
+
+    &.error {
+      border-color: $red;
+    }
+
+    &::placeholder {
+      color: transparent;
+    }
+
+    @include respond(xl) {
+      padding: 18px 0 6px 0;
+      font-size: 14px;
+      line-height: 26px;
+    }
+  }
+
+  .form-label {
+    position: absolute;
+    left: 0;
+    top: get-d(24px);
+    font-size: get-d(14px);
+    color: #9a9a9a;
+    font-weight: 500;
+    pointer-events: none;
+    transition: all 0.3s ease;
+    transform-origin: left top;
+
+    .form-input:focus + &,
+    .form-input:not(:placeholder-shown) + &,
+    .form-textarea:focus + &,
+    .form-textarea:not(:placeholder-shown) + &,
+    &.float-active {
+      transform: translateY(get-d(-22px)) scale(0.85);
+      font-size: get-d(12px);
+      color: #9a9a9a;
+    }
+
+    @media screen and (min-width: 1980px) {
+      top: get-d(16px);
+    }
+
+    @include respond(xl) {
+      top: 24px;
+      font-size: 14px;
+
+      .form-input:focus + &,
+      .form-input:not(:placeholder-shown) + &,
+      .form-textarea:focus + &,
+      .form-textarea:not(:placeholder-shown) + &,
+      &.float-active {
+        transform: translateY(-22px) scale(0.85);
+        font-size: 12px;
+      }
+    }
+  }
+
+  // Custom Select Component
+  .custom-select-wrapper {
+    position: relative;
+    width: 100%;
+  }
+
+  .custom-select {
+    position: relative;
+    width: 100%;
+    cursor: pointer;
+
+    &.open .custom-select-arrow {
+      transform: rotate(180deg);
+    }
+
+    &.open .custom-select-options {
+      display: block;
+    }
+  }
+
+  .custom-select-trigger {
+    width: 100%;
+    padding: get-d(12px) 0 get-d(6px);
+    border: none;
+    border-bottom: 1px solid rgba(48, 47, 52, 0.5);
+    background: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: all 0.2s ease;
+    cursor: pointer;
+
+    @include respond(xl) {
+      padding: 12px 0 6px;
+    }
+
+    &:focus {
+      outline: none;
+      border-color: $bg-yellow;
+    }
+  }
+
+  .custom-select-text {
+    color: $bg-grey;
+    font-size: get-d(14px);
+    font-weight: 500;
+    flex: 1;
+    text-align: left;
+    display: flex;
+    align-items: center;
+
+    @include respond(xl) {
+      font-size: 14px;
+    }
+
+    &.placeholder {
+      color: rgba(48, 47, 52, 0.7);
+    }
+
+    // Styling for selected content with icon
+    .custom-select-option-content {
+      display: flex;
+      align-items: center;
+      gap: get-d(8px);
+      color: #85754f; // Gold color for selected text
+
+      @include respond(xl) {
+        gap: 8px;
+      }
+
+      svg {
+        width: get-d(16px);
+        height: get-d(16px);
+        flex-shrink: 0;
+
+        @include respond(xl) {
+          width: 16px;
+          height: 16px;
+        }
+
+        path {
+          fill: #85754f; // Gold color for selected icon
+        }
+      }
+
+      span {
+        font-weight: 500;
+        color: #85754f; // Gold color for selected text
+      }
+    }
+  }
+
+  .custom-select-arrow {
+    width: 16px;
+    height: 16px;
+    color: rgba(48, 47, 52, 0.7);
+    transition: transform 0.3s ease;
+    flex-shrink: 0;
+  }
+
+  .custom-select-options {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    width: get-d(248px);
+    background: $bg-white;
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    max-height: get-d(212px);
+    overflow-y: auto;
+    display: none;
+    margin-top: get-d(4px);
+    padding: get-d(4px);
+
+    @include respond(xl) {
+      max-height: 212px;
+      width: 248px;
+      margin-top: 4px;
+      padding: 4px;
+    }
+
+    // Custom scrollbar
+    &::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    &::-webkit-scrollbar-track {
+      border-radius: 30px;
+      background: rgba(154, 154, 154, 0.4);
+    }
+
+    &::-webkit-scrollbar-thumb {
+      border-radius: 30px;
+      background: rgba(154, 154, 154, 0.4);
+    }
+
+    &::-webkit-scrollbar-thumb:hover {
+      background: #a1a1a1;
+    }
+  }
+
+  .custom-select-option {
+    padding: get-d(8px);
+    color: $bg-grey;
+    font-size: get-d(14px);
+    font-weight: 500;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    @include respond(xl) {
+      font-size: 14px;
+      padding: 8px;
+    }
+
+    &:hover {
+      background: $bg-color;
+    }
+
+    &.highlighted {
+      background: $bg-color;
+    }
+
+    .custom-select-option-content {
+      display: flex;
+      align-items: center;
+      gap: get-d(8px);
+
+      @include respond(xl) {
+        gap: 8px;
+      }
+
+      svg {
+        width: get-d(16px);
+        height: get-d(16px);
+        flex-shrink: 0;
+
+        @include respond(xl) {
+          width: 16px;
+          height: 16px;
+        }
+      }
+
+      .benefit-icon {
+        width: get-d(16px);
+        height: get-d(16px);
+        flex-shrink: 0;
+        object-fit: contain;
+        border-radius: get-d(2px);
+
+        @include respond(xl) {
+          width: 16px;
+          height: 16px;
+          border-radius: 2px;
+        }
+      }
+
+      .icon-placeholder {
+        width: get-d(16px);
+        height: get-d(16px);
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: get-d(12px);
+
+        @include respond(xl) {
+          width: 16px;
+          height: 16px;
+          font-size: 12px;
+        }
+      }
+    }
+
+    .custom-select-option-check {
+      width: get-d(16px);
+      height: get-d(16px);
+      opacity: 0;
+      transition: opacity 0.2s ease;
+
+      @include respond(xl) {
+        width: 16px;
+        height: 16px;
+      }
+
+      path {
+        fill: #85754f; // Gold color for check icon
+      }
+    }
+
+    &.selected {
+      background: transparent !important;
+      .custom-select-option-check {
+        opacity: 1;
+      }
+
+      .custom-select-option-content {
+        svg path {
+          fill: #85754f; // Gold color for selected icon
+        }
+
+        span {
+          color: #85754f; // Gold color for selected text
+        }
+      }
+    }
+  }
+
+  // File upload area
+  .file-upload-area {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: get-d(6px);
+    border-radius: 10px;
+    border: 1px dashed rgba(154, 154, 154, 0.4);
+    padding: get-d(12px);
+    height: get-d(82px);
+    text-align: center;
+    background: transparent;
+    transition: all 0.3s ease;
+    cursor: pointer;
+
+    @include respond(xl) {
+      height: 82px;
+      gap: 6px;
+      padding: 12px;
+    }
+
+    &:hover,
+    &.dragover {
+      border-color: $bg-yellow;
+      background: rgba(253, 196, 31, 0.05);
+    }
+
+    .upload-icon {
+      width: get-d(18px);
+      height: get-d(18px);
+      color: rgba(48, 47, 52, 0.7);
+
+      @include respond(xl) {
+        width: 18px;
+        height: 18px;
+      }
+    }
+
+    .file-upload-text {
+      font-size: get-d(14px);
+      color: $text-dark;
+      font-weight: 500;
+      line-height: 16px;
+      @include respond(xl) {
+        font-size: 16px;
+      }
+
+      .upload-link {
+        color: $gold;
+        text-decoration: underline;
+        cursor: pointer;
+      }
+    }
+
+    .upload-note {
+      font-size: get-d(14px);
+      color: rgba(48, 47, 52, 0.7);
+
+      @include respond(xl) {
+        font-size: 14px;
+      }
+    }
+
+    .file-input {
+      display: none;
+    }
+
+    // File Preview
+    .file-preview {
+      display: none;
+      width: 100%;
+      justify-content: space-between;
+      align-items: center;
+      gap: get-d(16px);
+
+      @include respond(xl) {
+        gap: 16px;
+      }
+
+      &.show {
+        display: flex;
+      }
+
+      .file-preview-image {
+        width: get-d(52px);
+        height: get-d(52px);
+        object-fit: cover;
+        border-radius: 8px;
+
+        @include respond(xl) {
+          width: 52px;
+          height: 52px;
+        }
+      }
+
+      .file-preview-info {
+        display: flex;
+        align-items: center;
+        gap: get-d(10px);
+        text-align: center;
+        @include respond(xl) {
+          gap: 10px;
+        }
+
+        .file-preview-name {
+          font-size: get-d(14px);
+          font-weight: 500;
+          color: $bg-grey;
+          margin-bottom: get-d(4px);
+
+          @include respond(xl) {
+            font-size: 14px;
+            margin-bottom: 4px;
+          }
+        }
+      }
+    }
+
+    .file-preview-actions {
+      display: flex;
+      gap: get-d(12px);
+
+      @include respond(xl) {
+        gap: 12px;
+      }
+
+      .file-action-btn {
+        padding: get-d(8px) get-d(16px);
+        border-radius: 50px;
+        border: 1px solid #dbd6cb;
+        background: transparent;
+        font-size: get-d(14px);
+        font-weight: 500;
+        color: $text-dark;
+        text-align: center;
+        font-weight: 500;
+        line-height: 20px; /* 142.857% */
+        cursor: pointer;
+        transition: all 0.2s ease;
+
+        @include respond(xl) {
+          padding: 8px 16px;
+          font-size: 14px;
+        }
+
+        &:hover {
+          background: #f1e3be;
+        }
+      }
+    }
+  }
+}
+
+// Field errors
+.field-error {
+  margin-top: get-d(4px);
+  font-size: get-d(12px);
+  color: $red;
+  font-weight: 500;
+  line-height: 12px;
+  display: none;
+
+  @include respond(xl) {
+    margin-top: 4px;
+    font-size: 12px;
+  }
+
+  &.show {
+    display: block;
+  }
+}
+
+// Field labels for file upload
+.field-label {
+  display: block;
+  font-size: get-d(14px);
+  color: #9a9a9a;
+  font-weight: 500;
+  margin-bottom: get-d(8px);
+
+  @include respond(xl) {
+    font-size: 14px;
+    margin-bottom: 8px;
+  }
+}
+
+// Messages
+.apply-messages {
+  margin-bottom: get-d(24px);
+
+  @include respond(xl) {
+    margin-bottom: 24px;
+  }
+}
+
+.message {
+  padding: get-d(8px);
+  border-radius: get-d(8px);
+  font-size: get-d(14px);
+  margin-bottom: get-d(8px);
+
+  @include respond(xl) {
+    padding: 8px;
+    border-radius: 8px;
+    font-size: 14px;
+    margin-bottom: 8px;
+  }
+
+  &.success-message {
+    color: #06b569;
+    border: 1px solid #06b569;
+    background: rgba(6, 181, 105, 0.1);
+  }
+
+  &.error-message {
+    display: flex;
+    align-items: center;
+    gap: get-d(8px);
+    margin: get-d(20px) 0;
+    padding: get-d(8px);
+    color: $red;
+    font-size: get-d(14px);
+    font-weight: 400;
+    line-height: 120%;
+    border-radius: 12px;
+    background: rgba(220, 50, 50, 0.07);
+    border: 1px solid rgba(220, 50, 50, 0.2);
+
+    @include respond(xl) {
+      padding: 8px;
+      border-radius: 8px;
+      font-size: 14px;
+      margin: 20px 0;
+      gap: 8px;
+    }
+
+    .error-icon {
+      display: flex;
+      align-items: center;
+      flex-shrink: 0;
+      border-radius: 6px;
+      padding: get-d(4px);
+      background: $bg-white;
+
+      @include respond(xl) {
+        padding: 4px;
+      }
+
+      svg {
+        width: get-d(16px);
+        height: get-d(16px);
+        flex-shrink: 0;
+
+        @include respond(xl) {
+          width: 16px;
+          height: 16px;
+        }
+      }
+    }
+  }
+}
+
+// Form Actions
+.form-actions {
+  margin-top: get-d(32px);
+
+  @include respond(xl) {
+    margin-top: 32px;
+  }
+}
+
+.btn {
+  width: fit-content;
+  padding: get-d(16px);
+  border: none;
+  border-radius: 50px;
+  font-size: get-d(16px);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: get-d(8px);
+  text-decoration: none;
+  text-align: center;
+
+  @include respond(xl) {
+    padding: 16px;
+    font-size: 16px;
+    gap: 8px;
+  }
+
+  &.yellow {
+    background: $bg-yellow;
+    color: $bg-grey;
+
+    &:hover:not(:disabled) {
+      background: #f1c40f;
+      transform: translateY(-1px);
+    }
+  }
+
+  &:disabled {
+    background: #ccc;
+    color: #999;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  .btn-spinner {
+    .spinner {
+      width: 20px;
+      height: 20px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      border-top-color: $bg-grey;
+      animation: spin 1s ease-in-out infinite;
+    }
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
