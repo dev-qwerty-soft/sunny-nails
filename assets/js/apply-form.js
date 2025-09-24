@@ -1,23 +1,18 @@
 document.addEventListener('DOMContentLoaded', function () {
-  // Form elements
   const form = document.getElementById('partner-apply-form');
-  if (!form) return; // Exit if form doesn't exist on this page
+  if (!form) return;
 
   const fileInput = document.getElementById('partner_photo');
   const fileUploadArea = document.querySelector('.file-upload-area');
   const submitButton = form.querySelector('.btn-continue');
   const spinner = submitButton ? submitButton.querySelector('.spinner') : null;
 
-  // Initialize floating labels
   initFloatingLabels();
 
-  // Initialize file upload
   initFileUpload();
 
-  // Initialize custom selects
   initCustomSelects();
 
-  // Add form submit handler
   if (form) {
     form.addEventListener('submit', handleFormSubmit);
   }
@@ -31,23 +26,21 @@ document.addEventListener('DOMContentLoaded', function () {
       const label = input.nextElementSibling;
 
       if (label && label.classList.contains('form-label')) {
-        // Check initial state
         checkFloatState(input, label);
 
-        // Add event listeners
         input.addEventListener('focus', () => {
           label.classList.add('float-active');
         });
 
         input.addEventListener('blur', () => {
           checkFloatState(input, label);
-          // Validate on blur
+
           validateField(input);
         });
 
         input.addEventListener('input', () => {
           checkFloatState(input, label);
-          // Clear errors on input
+
           clearFieldError(input.id);
         });
       }
@@ -65,9 +58,7 @@ document.addEventListener('DOMContentLoaded', function () {
   function initFileUpload() {
     if (!fileUploadArea || !fileInput) return;
 
-    // File input change handler - direct listener for immediate response
     fileInput.addEventListener('change', function (e) {
-      console.log('File input changed', e.target.files);
       const file = e.target.files[0];
       if (file) {
         displaySelectedFile(file);
@@ -75,27 +66,20 @@ document.addEventListener('DOMContentLoaded', function () {
       }
     });
 
-    // Click handler for upload area
     fileUploadArea.addEventListener('click', (e) => {
-      console.log('Upload area clicked', e.target);
       const filePreview = fileUploadArea.querySelector('.file-preview');
 
-      // Don't trigger file input if clicking on buttons or in preview actions area
       if (
         e.target.closest('.file-action-btn') ||
         e.target.closest('.file-preview-actions') ||
         (filePreview && filePreview.classList.contains('show'))
       ) {
-        console.log('Click blocked - inside preview or button area');
         return;
       }
 
-      // Trigger file input
-      console.log('Triggering file input click');
       fileInput.click();
     });
 
-    // Drag and drop
     fileUploadArea.addEventListener('dragover', handleDragOver);
     fileUploadArea.addEventListener('dragleave', handleDragLeave);
     fileUploadArea.addEventListener('drop', handleFileDrop);
@@ -119,9 +103,7 @@ document.addEventListener('DOMContentLoaded', function () {
     if (files.length > 0) {
       const file = files[0];
 
-      // Check if it's an image
       if (file.type.startsWith('image/')) {
-        // Update the file input directly
         const dataTransfer = new DataTransfer();
         dataTransfer.items.add(file);
         fileInput.files = dataTransfer.files;
@@ -142,23 +124,19 @@ document.addEventListener('DOMContentLoaded', function () {
     const fileUploadText = fileUploadArea.querySelector('.file-upload-text');
 
     if (previewImage && previewName && filePreview) {
-      // Create object URL for image preview
       const imageUrl = URL.createObjectURL(file);
 
       previewImage.src = imageUrl;
       previewName.textContent = file.name;
 
-      // Show preview and hide upload UI
       filePreview.classList.add('show');
       if (uploadIcon) uploadIcon.style.display = 'none';
       if (fileUploadText) fileUploadText.style.display = 'none';
 
-      // Setup delete and change buttons with proper event handling
       const deleteBtn = fileUploadArea.querySelector('.delete-btn');
       const changeBtn = fileUploadArea.querySelector('.change-btn');
 
       if (deleteBtn) {
-        // Remove existing handler and add new one
         deleteBtn.replaceWith(deleteBtn.cloneNode(true));
         const newDeleteBtn = fileUploadArea.querySelector('.delete-btn');
         newDeleteBtn.addEventListener('click', (e) => {
@@ -168,18 +146,15 @@ document.addEventListener('DOMContentLoaded', function () {
       }
 
       if (changeBtn) {
-        // Remove existing handler and add new one
         changeBtn.replaceWith(changeBtn.cloneNode(true));
         const newChangeBtn = fileUploadArea.querySelector('.change-btn');
         newChangeBtn.addEventListener('click', (e) => {
           e.stopPropagation();
-          console.log('Change button clicked');
-          // Clear current file value first
+
           const currentFileInput = document.getElementById('partner_photo');
           if (currentFileInput) {
             currentFileInput.value = '';
-            console.log('File input cleared, triggering click');
-            // Small delay to ensure clearing is processed
+
             setTimeout(() => {
               currentFileInput.click();
             }, 10);
@@ -189,32 +164,49 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   }
 
-  // Track form submission state with more aggressive blocking
   let isSubmitting = false;
   let hasSubmittedSuccessfully = false;
+  let lastSubmissionTime = 0;
 
   async function handleFormSubmit(e) {
     e.preventDefault();
 
-    // Prevent double submission - check both flags
-    if (isSubmitting || hasSubmittedSuccessfully) {
-      console.log('Form submission blocked:', { isSubmitting, hasSubmittedSuccessfully });
+    // Prevent rapid consecutive submissions
+    const now = Date.now();
+    if (now - lastSubmissionTime < 3000) {
+      showErrorMessage('Please wait before submitting again.');
       return;
     }
 
+    if (isSubmitting || hasSubmittedSuccessfully) {
+      return;
+    }
+
+    lastSubmissionTime = now;
     isSubmitting = true;
 
-    // Clear previous errors and messages
+    if (submitButton) {
+      submitButton.disabled = true;
+      submitButton.textContent = 'Submitting...';
+      submitButton.style.opacity = '0.6';
+      submitButton.style.cursor = 'not-allowed';
+    }
+
     clearAllErrors();
     clearMessages();
 
-    // Validate form
     if (!validateForm()) {
       isSubmitting = false;
+
+      if (submitButton) {
+        submitButton.disabled = false;
+        submitButton.textContent = 'Submit Application';
+        submitButton.style.opacity = '1';
+        submitButton.style.cursor = 'pointer';
+      }
       return;
     }
 
-    // Show loading state
     setLoadingState(true);
 
     try {
@@ -230,13 +222,12 @@ document.addEventListener('DOMContentLoaded', function () {
       const data = await response.json();
 
       if (data.success) {
-        hasSubmittedSuccessfully = true; // Block future submissions permanently
+        hasSubmittedSuccessfully = true;
         showSuccessMessage(data.data.message || 'Application submitted successfully!');
         form.reset();
         resetFileUpload();
         resetFloatingLabels();
 
-        // Disable form completely after successful submission
         if (submitButton) {
           submitButton.disabled = true;
           submitButton.textContent = 'Application Submitted';
@@ -247,13 +238,19 @@ document.addEventListener('DOMContentLoaded', function () {
         showErrorMessage(data.data || 'An error occurred. Please try again.');
       }
     } catch (error) {
-      console.error('Form submission error:', error);
       showErrorMessage('Network error. Please check your connection and try again.');
     } finally {
       setLoadingState(false);
-      // Only reset isSubmitting flag if submission was not successful
+
       if (!hasSubmittedSuccessfully) {
         isSubmitting = false;
+
+        if (submitButton) {
+          submitButton.disabled = false;
+          submitButton.textContent = 'Submit Application';
+          submitButton.style.opacity = '1';
+          submitButton.style.cursor = 'pointer';
+        }
       }
     }
   }
@@ -261,7 +258,6 @@ document.addEventListener('DOMContentLoaded', function () {
   function validateForm() {
     let isValid = true;
 
-    // Required fields validation
     const requiredFields = [
       { id: 'partner_title', name: 'Partner Title' },
       { id: 'partner_description', name: 'Partner description' },
@@ -288,13 +284,11 @@ document.addEventListener('DOMContentLoaded', function () {
       }
     });
 
-    // Validate photo separately
     if (fileInput && (!fileInput.files || fileInput.files.length === 0)) {
       showFieldError('partner_photo', 'Please select a photo');
       isValid = false;
     }
 
-    // Validate URL format
     const linkField = document.getElementById('link_card');
     if (linkField && linkField.value.trim()) {
       if (!isValidUrl(linkField.value.trim())) {
@@ -313,7 +307,6 @@ document.addEventListener('DOMContentLoaded', function () {
     const fieldValue = field.value.trim();
     let isValid = true;
 
-    // Required fields validation
     const requiredFields = [
       'partner_title',
       'partner_description',
@@ -336,7 +329,6 @@ document.addEventListener('DOMContentLoaded', function () {
       }
     }
 
-    // URL validation
     if (fieldId === 'link_card' && fieldValue) {
       if (!isValidUrl(fieldValue)) {
         showFieldError(fieldId, 'Please enter a valid URL');
@@ -391,20 +383,17 @@ document.addEventListener('DOMContentLoaded', function () {
   function clearAllErrors() {
     if (!form) return;
 
-    // Clear field errors
     const errorElements = form.querySelectorAll('.field-error');
     errorElements.forEach((element) => {
       element.textContent = '';
       element.classList.remove('show');
     });
 
-    // Remove error classes
     const fields = form.querySelectorAll('.form-input, .form-textarea');
     fields.forEach((field) => {
       field.classList.remove('error');
     });
 
-    // Clear form messages
     const messageContainer = form.querySelector('.apply-messages');
     if (messageContainer) {
       messageContainer.innerHTML = '';
@@ -417,7 +406,7 @@ document.addEventListener('DOMContentLoaded', function () {
       messageContainer.innerHTML = `
         <div class="message success-message">
           <div class="message-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <svg xmlns="http:
               <path d="M8 1.33331C11.682 1.33331 14.6667 4.31798 14.6667 7.99998C14.6667 11.682 11.682 14.6666 8 14.6666C4.318 14.6666 1.33334 11.682 1.33334 7.99998C1.33334 4.31798 4.318 1.33331 8 1.33331ZM11.0587 5.724L7.33334 9.44998L4.94134 7.058L4.058 7.94131L7.33334 11.216L11.942 6.608L11.0587 5.724Z" fill="#00C853" />
             </svg>
           </div>
@@ -426,7 +415,6 @@ document.addEventListener('DOMContentLoaded', function () {
       `;
       messageContainer.style.display = 'block';
 
-      // Auto-hide after 5 seconds
       setTimeout(() => {
         messageContainer.style.transition = 'opacity 0.5s ease-out';
         messageContainer.style.opacity = '0';
@@ -437,7 +425,6 @@ document.addEventListener('DOMContentLoaded', function () {
         }, 500);
       }, 5000);
 
-      // Scroll to message
       messageContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
   }
@@ -448,7 +435,7 @@ document.addEventListener('DOMContentLoaded', function () {
       messageContainer.innerHTML = `
         <div class="message error-message">
           <div class="message-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <svg xmlns="http:
               <path d="M7.99998 1.33331C11.682 1.33331 14.6666 4.31865 14.6666 7.99998C14.6666 11.6813 11.682 14.6666 7.99998 14.6666C4.31798 14.6666 1.33331 11.6813 1.33331 7.99998C1.33331 4.31865 4.31798 1.33331 7.99998 1.33331ZM7.99998 2.44465C4.93665 2.44465 2.44465 4.93665 2.44465 7.99998C2.44465 11.0633 4.93665 13.5553 7.99998 13.5553C11.0633 13.5553 13.5553 11.0633 13.5553 7.99998C13.5553 4.93665 11.0633 2.44465 7.99998 2.44465ZM7.99931 9.66798C8.17595 9.66798 8.34535 9.73815 8.47025 9.86305C8.59515 9.98795 8.66531 10.1573 8.66531 10.334C8.66531 10.5106 8.59515 10.68 8.47025 10.8049C8.34535 10.9298 8.17595 11 7.99931 11C7.82268 11 7.65328 10.9298 7.52838 10.8049C7.40348 10.68 7.33331 10.5106 7.33331 10.334C7.33331 10.1573 7.40348 9.98795 7.52838 9.86305C7.65328 9.73815 7.82268 9.66798 7.99931 9.66798ZM7.99598 4.66665C8.11692 4.66649 8.23382 4.71017 8.32502 4.78961C8.41621 4.86904 8.47553 4.97883 8.49198 5.09865L8.49665 5.16598L8.49931 8.16731C8.49944 8.29405 8.45144 8.41611 8.36501 8.50881C8.27857 8.60151 8.16017 8.65792 8.03373 8.66664C7.90729 8.67537 7.78225 8.63575 7.68391 8.5558C7.58557 8.47585 7.52125 8.36154 7.50398 8.23598L7.49931 8.16798L7.49665 5.16731C7.49656 5.1016 7.50943 5.03651 7.53451 4.97577C7.5596 4.91503 7.59642 4.85983 7.64286 4.81333C7.6893 4.76683 7.74444 4.72994 7.80515 4.70477C7.86586 4.6796 7.93026 4.66665 7.99598 4.66665Z" fill="#dc3232" />
             </svg>
           </div>
@@ -457,7 +444,6 @@ document.addEventListener('DOMContentLoaded', function () {
       `;
       messageContainer.style.display = 'block';
 
-      // Auto-hide after 5 seconds
       setTimeout(() => {
         messageContainer.style.transition = 'opacity 0.5s ease-out';
         messageContainer.style.opacity = '0';
@@ -468,7 +454,6 @@ document.addEventListener('DOMContentLoaded', function () {
         }, 500);
       }, 5000);
 
-      // Scroll to message
       messageContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
   }
@@ -506,10 +491,8 @@ document.addEventListener('DOMContentLoaded', function () {
       const fileUploadText = fileUploadArea.querySelector('.file-upload-text');
       const previewImage = fileUploadArea.querySelector('.file-preview-image');
 
-      // Always get fresh reference to file input for clearing
       const currentFileInput = document.getElementById('partner_photo');
 
-      // Clear file input value
       if (currentFileInput) {
         currentFileInput.value = '';
       }
@@ -517,12 +500,10 @@ document.addEventListener('DOMContentLoaded', function () {
         fileInput.value = '';
       }
 
-      // Hide preview and show upload UI
       if (filePreview) filePreview.classList.remove('show');
       if (uploadIcon) uploadIcon.style.display = 'block';
       if (fileUploadText) fileUploadText.style.display = 'block';
 
-      // Clear image preview src to free memory
       if (previewImage && previewImage.src) {
         if (previewImage.src.startsWith('blob:')) {
           URL.revokeObjectURL(previewImage.src);
@@ -531,7 +512,6 @@ document.addEventListener('DOMContentLoaded', function () {
         previewImage.alt = '';
       }
 
-      // Clear any field errors
       clearFieldError('partner_photo');
     }
   }
@@ -543,7 +523,6 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
-  // Custom Select functionality
   function initCustomSelects() {
     const customSelects = document.querySelectorAll('.custom-select');
 
@@ -553,56 +532,44 @@ document.addEventListener('DOMContentLoaded', function () {
       const hiddenInput = select.parentElement.querySelector('input[type="hidden"]');
       const textSpan = trigger.querySelector('.custom-select-text');
 
-      // Toggle dropdown
       trigger.addEventListener('click', (e) => {
         e.preventDefault();
         closeAllSelects();
         select.classList.toggle('open');
       });
 
-      // Handle option selection
       options.forEach((option) => {
         option.addEventListener('click', (e) => {
           e.preventDefault();
           e.stopPropagation();
 
-          // Remove selected class from all options
           options.forEach((opt) => opt.classList.remove('selected'));
 
-          // Add selected class to clicked option
           option.classList.add('selected');
 
-          // Update display text and icon
           const content = option.querySelector('.custom-select-option-content');
           if (content && textSpan) {
-            // Clone the content (icon + text)
             const contentClone = content.cloneNode(true);
 
-            // Clear current content and add the selected content
             textSpan.innerHTML = '';
             textSpan.appendChild(contentClone);
             textSpan.classList.remove('placeholder');
 
-            // Add selected styling to the trigger
             trigger.classList.add('selected');
           }
 
-          // Update hidden input value
           if (hiddenInput) {
             hiddenInput.value = option.dataset.value;
 
-            // Clear validation error if exists
             clearFieldError('benefit_icon_type');
           }
 
-          // Close dropdown
           select.classList.remove('open');
           select.classList.add('selected');
         });
       });
     });
 
-    // Close selects when clicking outside
     document.addEventListener('click', (e) => {
       if (!e.target.closest('.custom-select')) {
         closeAllSelects();
