@@ -551,7 +551,9 @@
       gap: 6px;
       padding: 12px;
     }
-
+    @include respond(md) {
+      height: 110px;
+    }
     &:hover,
     &.dragover {
       border-color: $bg-yellow;
@@ -664,7 +666,9 @@
         @include respond(xl) {
           gap: 12px;
         }
-
+        @include respond(md) {
+          flex-direction: column;
+        }
         .file-action-btn {
           padding: get-d(8px) get-d(16px);
           border-radius: 50px;
