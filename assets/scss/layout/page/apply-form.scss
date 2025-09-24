@@ -904,10 +904,16 @@
   }
 
   &:disabled {
-    background: #ccc;
-    color: #999;
+    opacity: 0.6;
     cursor: not-allowed;
     transform: none;
+  }
+
+  &.submitting {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+    pointer-events: none;
   }
 
   .btn-spinner {

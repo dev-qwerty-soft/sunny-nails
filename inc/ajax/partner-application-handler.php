@@ -37,20 +37,17 @@ function handle_partner_application_submission()
     $user_ip = $_SERVER['REMOTE_ADDR'] ?? '';
     $partner_title = sanitize_text_field($_POST['partner_title']);
 
-    // Create multiple session keys for stronger duplicate prevention
-    $session_key = 'partner_submit_' . md5($user_ip . $partner_title);
+    // Simple rate limiting - only for very rapid submissions
     $user_session_key = 'partner_user_' . md5($user_ip);
-    $title_session_key = 'partner_title_' . md5($partner_title);
 
-    // Check for any existing submissions
-    if (get_transient($session_key) || get_transient($user_session_key) || get_transient($title_session_key)) {
-        wp_send_json_error('Please wait before submitting another application');
+    // Only block if submitted within last 10 seconds (anti-spam)
+    $last_submit = get_transient($user_session_key);
+    if ($last_submit && (time() - $last_submit) < 10) {
+        wp_send_json_error('Please wait a moment before submitting again');
     }
 
-    // Set multiple locks for 60 seconds
-    set_transient($session_key, time(), 60);
+    // Set rate limiting
     set_transient($user_session_key, time(), 60);
-    set_transient($title_session_key, time(), 60);
 
     // Validate required fields
     $required_fields = [
@@ -69,25 +66,16 @@ function handle_partner_application_submission()
     }
 
     if (!empty($errors)) {
-        // Remove locks on validation error
-        delete_transient($session_key);
+        // Remove rate limiting on validation error
         delete_transient($user_session_key);
-        delete_transient($title_session_key);
         wp_send_json_error(implode(', ', $errors));
     }
 
     global $wpdb;
 
-    // Use database locks to prevent race conditions
+    // Use database locks to prevent race conditions (but don't fail if can't acquire)
     $lock_name = 'partner_application_' . md5($partner_title);
-    $lock_acquired = $wpdb->get_var($wpdb->prepare("SELECT GET_LOCK(%s, 10)", $lock_name));
-
-    if (!$lock_acquired) {
-        delete_transient($session_key);
-        delete_transient($user_session_key);
-        delete_transient($title_session_key);
-        wp_send_json_error('System is busy, please try again');
-    }
+    $lock_acquired = $wpdb->get_var($wpdb->prepare("SELECT GET_LOCK(%s, 2)", $lock_name));
 
     // Start database transaction
     $wpdb->query('START TRANSACTION');
@@ -100,13 +88,8 @@ function handle_partner_application_submission()
         ));
 
         if ($existing_posts) {
-            // If posts exist, we might be dealing with a duplicate
+            // Silently remove duplicates, don't show error to user
             foreach ($existing_posts as $post) {
-                $post_time = get_post_time('U', false, $post->ID);
-                // If post was created within last 5 minutes, likely duplicate
-                if (time() - $post_time < 300) {
-                    throw new Exception('Application with this title was recently submitted');
-                }
                 wp_delete_post($post->ID, true);
             }
         }
@@ -122,7 +105,11 @@ function handle_partner_application_submission()
         $post_id = wp_insert_post($post_data);
 
         if (is_wp_error($post_id)) {
-            throw new Exception('Failed to create post');
+            throw new Exception('Could not save application: ' . $post_id->get_error_message());
+        }
+
+        if (!$post_id) {
+            throw new Exception('Could not save application to database');
         }
 
         // Handle benefit icon selection
@@ -151,11 +138,11 @@ function handle_partner_application_submission()
             }
         }
 
-        // Commit transaction
+        // Commit transaction and release lock (if acquired)
         $wpdb->query('COMMIT');
-
-        // Release database lock
-        $wpdb->get_var($wpdb->prepare("SELECT RELEASE_LOCK(%s)", $lock_name));
+        if ($lock_acquired) {
+            $wpdb->get_var($wpdb->prepare("SELECT RELEASE_LOCK(%s)", $lock_name));
+        }
 
         wp_send_json_success(array(
             'message' => 'Your partner application has been submitted successfully! We will review it and get back to you soon.',
@@ -164,16 +151,28 @@ function handle_partner_application_submission()
     } catch (Exception $e) {
         // Rollback transaction on error
         $wpdb->query('ROLLBACK');
+        if ($lock_acquired) {
+            $wpdb->get_var($wpdb->prepare("SELECT RELEASE_LOCK(%s)", $lock_name));
+        }
 
-        // Release database lock
-        $wpdb->get_var($wpdb->prepare("SELECT RELEASE_LOCK(%s)", $lock_name));
+        // Determine user-friendly error message based on error type
+        $error_message = $e->getMessage();
 
-        // Remove session locks on error
-        delete_transient($session_key);
-        delete_transient($user_session_key);
-        delete_transient($title_session_key);
+        // Convert technical errors to user-friendly ones
+        if (strpos($error_message, 'Could not save application') !== false) {
+            $user_message = 'Unable to save your application. Please try again.';
+        } elseif (strpos($error_message, 'database') !== false) {
+            $user_message = 'Database error. Please try again later.';
+        } elseif (strpos($error_message, 'upload') !== false) {
+            $user_message = 'File upload failed. Please try again with a different image.';
+        } else {
+            $user_message = 'Something went wrong. Please try again.';
+        }
 
-        wp_send_json_error('Failed to create partner application: ' . $e->getMessage());
+        // Log the real error for debugging
+        error_log('Partner application error: ' . $error_message);
+
+        wp_send_json_error($user_message);
     }
 }
 

@@ -165,7 +165,6 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   let isSubmitting = false;
-  let hasSubmittedSuccessfully = false;
   let lastSubmissionTime = 0;
 
   async function handleFormSubmit(e) {
@@ -178,7 +177,7 @@ document.addEventListener('DOMContentLoaded', function () {
       return;
     }
 
-    if (isSubmitting || hasSubmittedSuccessfully) {
+    if (isSubmitting) {
       return;
     }
 
@@ -188,8 +187,7 @@ document.addEventListener('DOMContentLoaded', function () {
     if (submitButton) {
       submitButton.disabled = true;
       submitButton.textContent = 'Submitting...';
-      submitButton.style.opacity = '0.6';
-      submitButton.style.cursor = 'not-allowed';
+      submitButton.classList.add('submitting');
     }
 
     clearAllErrors();
@@ -200,9 +198,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
       if (submitButton) {
         submitButton.disabled = false;
-        submitButton.textContent = 'Submit Application';
-        submitButton.style.opacity = '1';
-        submitButton.style.cursor = 'pointer';
+        submitButton.textContent = 'Become a Partner';
+        submitButton.classList.remove('submitting');
       }
       return;
     }
@@ -222,17 +219,15 @@ document.addEventListener('DOMContentLoaded', function () {
       const data = await response.json();
 
       if (data.success) {
-        hasSubmittedSuccessfully = true;
         showSuccessMessage(data.data.message || 'Application submitted successfully!');
         form.reset();
         resetFileUpload();
         resetFloatingLabels();
 
         if (submitButton) {
-          submitButton.disabled = true;
-          submitButton.textContent = 'Application Submitted';
-          submitButton.style.opacity = '0.6';
-          submitButton.style.cursor = 'not-allowed';
+          submitButton.disabled = false;
+          submitButton.textContent = 'Become a Partner';
+          submitButton.classList.remove('submitting');
         }
       } else {
         showErrorMessage(data.data || 'An error occurred. Please try again.');
@@ -241,16 +236,12 @@ document.addEventListener('DOMContentLoaded', function () {
       showErrorMessage('Network error. Please check your connection and try again.');
     } finally {
       setLoadingState(false);
+      isSubmitting = false;
 
-      if (!hasSubmittedSuccessfully) {
-        isSubmitting = false;
-
-        if (submitButton) {
-          submitButton.disabled = false;
-          submitButton.textContent = 'Submit Application';
-          submitButton.style.opacity = '1';
-          submitButton.style.cursor = 'pointer';
-        }
+      if (submitButton) {
+        submitButton.disabled = false;
+        submitButton.textContent = 'Become a Partner';
+        submitButton.classList.remove('submitting');
       }
     }
   }
