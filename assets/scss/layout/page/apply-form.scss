@@ -881,63 +881,6 @@
   }
 }
 
-.btn {
-  width: fit-content;
-  padding: get-d(16px);
-  border: none;
-  border-radius: 50px;
-  font-size: get-d(16px);
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: get-d(8px);
-  text-decoration: none;
-  text-align: center;
-
-  @include respond(xl) {
-    padding: 16px;
-    font-size: 16px;
-    gap: 8px;
-  }
-
-  &.yellow {
-    background: $bg-yellow;
-    color: $bg-grey;
-
-    &:hover:not(:disabled) {
-      background: #f1c40f;
-      transform: translateY(-1px);
-    }
-  }
-
-  &:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-    transform: none;
-  }
-
-  &.submitting {
-    opacity: 0.6;
-    cursor: not-allowed;
-    transform: none;
-    pointer-events: none;
-  }
-
-  .btn-spinner {
-    .spinner {
-      width: 20px;
-      height: 20px;
-      border: 2px solid rgba(255, 255, 255, 0.3);
-      border-radius: 50%;
-      border-top-color: $bg-grey;
-      animation: spin 1s ease-in-out infinite;
-    }
-  }
-}
-
 @keyframes spin {
   to {
     transform: rotate(360deg);

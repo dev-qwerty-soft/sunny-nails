@@ -6,7 +6,7 @@
   line-height: 100%;
   color: $bg-grey;
   border: get-d(1px) solid $bg-grey;
-  border-radius: 100px;
+  border-radius: get-d(100px);
   transition:
     background 0.3s,
     border-color 0.3s,
@@ -18,11 +18,13 @@
     padding: get-lg(20px) get-lg(24px);
     font-size: get-lg(14px);
     border-width: get-lg(1px);
+    border-radius: get-lg(100px);
   }
   @include respond(md) {
     padding: 14px 24px;
     font-size: 14px;
     border-width: 1px;
+    border-radius: 100px;
   }
   &:hover {
     background: #f1e3be;
