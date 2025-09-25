@@ -230,12 +230,19 @@
   align-items: center;
   gap: get-d(4px);
   padding: get-d(14px) get-d(20px);
+  box-shadow:
+    0 4px 20px rgba(0, 0, 0, 0.1),
+    0 2px 8px rgba(0, 0, 0, 0.05);
   transition:
     background 0.5s,
-    transform 0.5s;
+    transform 0.5s,
+    box-shadow 0.3s;
   &:hover {
     background: #f1e3be;
     transform: scale(1.1);
+    box-shadow:
+      0 8px 30px rgba(0, 0, 0, 0.15),
+      0 4px 12px rgba(0, 0, 0, 0.08);
   }
   @include respond(lg) {
     bottom: get-lg(50px);
@@ -250,6 +257,9 @@
     font-size: 14px;
     gap: 4px;
     padding: 14px 20px;
+    box-shadow:
+      0 3px 15px rgba(0, 0, 0, 0.08),
+      0 1px 6px rgba(0, 0, 0, 0.04);
   }
   &::before {
     background: url('../svg/fluent_chat-12-filled.svg') center / contain no-repeat;
