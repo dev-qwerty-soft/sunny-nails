@@ -64,8 +64,8 @@ if (empty($ordered_category_ids)) {
         <h2 class="title"><?php the_field('services_title', 'option'); ?></h2>
         <?php if ($services_link_url && $services_link_title): ?>
           <a href="<?= esc_url($services_link_url) ?>" target="<?= esc_attr(
-                                                                  $services_link_target,
-                                                                ) ?>" class="btn yellow">
+  $services_link_target,
+) ?>" class="btn yellow">
             <?= esc_html($services_link_title) ?>
           </a>
         <?php endif; ?>
@@ -145,17 +145,11 @@ if (empty($ordered_category_ids)) {
   <section class="place-section">
     <div class="container">
       <div class="place-section__top">
-        <h2 class="title"><?php the_field(
-                            'slider_section_title',
-                            $interior_id_page,
-                          ); ?></h2>
-        <p class="paragraph"><?php the_field(
-                                'slider_section_small_text',
-                                $interior_id_page,
-                              ); ?></p>
+        <h2 class="title"><?php the_field('slider_section_title', $interior_id_page); ?></h2>
+        <p class="paragraph"><?php the_field('slider_section_small_text', $interior_id_page); ?></p>
         <a rel='noopener noreferrer' href='<?= esc_url(
-                                              get_page_link($interior_id_page),
-                                            ) ?>' class='btn yellow'>Show more</a>
+          get_page_link($interior_id_page),
+        ) ?>' class='btn yellow'>Show more</a>
       </div>
       <div class="place-section__images">
         <?php
@@ -205,8 +199,7 @@ if (empty($ordered_category_ids)) {
               $stars = str_repeat("<div class='star'></div>", $rating);
 
               $char_limit = 150;
-              $short_text =
-                strlen($text) > $char_limit ? substr($text, 0, $char_limit) : $text;
+              $short_text = strlen($text) > $char_limit ? substr($text, 0, $char_limit) : $text;
               $needs_expand = strlen($text) > $char_limit;
 
               echo "<div class='swiper-slide'>
