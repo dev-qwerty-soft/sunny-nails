@@ -44,7 +44,7 @@ if ($categories && is_array($categories) && !empty($categories)) {
       echo "<span class='course-card--date'>$date</span>";
     }
     if ($is_discount) {
-      echo "<span class='course-card--discount'>-$discount $discount_type_symbol</span>";
+      echo "<span class='course-card--discount'>-$discount$discount_type_symbol</span>";
     }
     if ($url_image) {
       echo "<div class='course-card--image'><img loading='eager' fetchpriority='high' decoding='async' width='380' height='200' src='$url_image' alt='$title'></div>";
