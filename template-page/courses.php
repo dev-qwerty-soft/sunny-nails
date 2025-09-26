@@ -32,8 +32,6 @@ $categories = get_terms(['taxonomy' => 'course_cat', 'hide_empty' => false]);
         <?php if ($posts && is_array($posts) && !empty($posts)) {
           foreach ($posts as $post) {
             get_template_part('template-parts/shared/course-card', null, ['post' => $post]);
-            get_template_part('template-parts/shared/course-card', null, ['post' => $post]);
-            get_template_part('template-parts/shared/course-card', null, ['post' => $post]);
           }
         } ?>
       </div>
