@@ -2,21 +2,9 @@
 add_action('wp_enqueue_scripts', function () {
   wp_enqueue_style('style', cache_busted_url('dist/main.css'));
 
-  wp_enqueue_script(
-    'index',
-    cache_busted_url('dist/main.bundle.js'),
-    ['jquery'],
-    null,
-    true,
-  );
+  wp_enqueue_script('index', cache_busted_url('dist/main.bundle.js'), ['jquery'], null, true);
 
-  wp_enqueue_script(
-    'booking-js',
-    cache_busted_url('ajax-booking.js'),
-    ['jquery'],
-    null,
-    true,
-  );
+  wp_enqueue_script('booking-js', cache_busted_url('ajax-booking.js'), ['jquery'], null, true);
 
   wp_enqueue_script(
     'ajax-services-teem',
