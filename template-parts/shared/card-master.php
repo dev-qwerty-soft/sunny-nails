@@ -7,8 +7,7 @@ if (!$post) {
 
 $level = max((int) get_field('master_level', $post->ID), -1);
 
-// Use helper functions to get data from ACF fields
-$levelName = get_master_level_title($level, true); // Include additional info
+$levelName = get_master_level_title($level, true);
 $starsCount = get_master_level_stars($level);
 
 $id = get_field('altegio_id', $post->ID);

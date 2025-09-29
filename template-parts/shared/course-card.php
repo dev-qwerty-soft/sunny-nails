@@ -21,6 +21,7 @@ if ($categories && is_array($categories) && !empty($categories)) {
     $categories_slugs[] = $category->slug;
   }
 }
+$master = get_field('related_master', $id);
 ?>
 <div class="course-card" data-id="<?= $id ?>" data-categories="<?= implode(
   ' ',
@@ -34,9 +35,9 @@ if ($categories && is_array($categories) && !empty($categories)) {
     $is_certificated = get_field('is_certificated', $id);
     $url_image = get_the_post_thumbnail_url($id, 'large');
     if ($is_certificated) {
-      $class = "course-card--certificated";
-      if($is_discount) {
-        $class .= " is_discount";
+      $class = 'course-card--certificated';
+      if ($is_discount) {
+        $class .= ' is_discount';
       }
       echo "<span class='$class'>Certificate included</span>";
     }
@@ -55,6 +56,35 @@ if ($categories && is_array($categories) && !empty($categories)) {
     <h3 class="course-card--title"><?= $title ?></h3>
     <p class="course-card--description"><?= get_field('description', $id) ?></p>
   </div>
+  <?php if ($master) {
+    $master_id = $master ? $master->ID : null;
+    $master_level = max((int) get_field('master_level', $master_id), -1);
+    $master_levelName = get_master_level_title($master_level, true);
+    $master_starsCount = get_master_level_stars($master_level);
+    $master_id_altegio = get_field('altegio_id', $master_id);
+    $master_image = get_the_post_thumbnail_url($master_id, 'large') ?: '';
+    $master_name = isset($master->post_title) ? $master->post_title : '';
+    $days = get_field('duration_days', $id);
+    $seats = get_field('seats_available', $id);
+    echo "<div data-id='$master_id' data-altegio-id='$master_id_altegio' class='course-card__master'>";
+    echo "<div class='course-card__master--wrapper'>";
+    echo "<img src='$master_image' class='course-card__master--image' width='50' height='50' decoding='async' loading='eager' fetchpriority='high' alt='$master_name'>";
+    echo "<span class='course-card__master--name'>$master_name</span>";
+    echo "<div class='course-card--rate'>
+        <div class='stars yellow'>
+          " .
+      str_repeat("<div class='star'></div>", $master_starsCount) .
+      "
+          <span>($master_levelName)</span>
+        </div>
+      </div>";
+    echo '</div>';
+    echo "<div class='course-card__master--info'>";
+    echo "<span class='course-card--days'>$days</span>";
+    echo "<span class='course-card--seats'>$seats</span>";
+    echo '</div>';
+    echo '</div>';
+  } ?>
   <div class="course-card__footer">
     <span class="course-card--info"><?= get_field('info', $id) ?></span>
     <?php if ($new_price && $new_price > 0) {

@@ -119,11 +119,11 @@
     font-weight: 700;
     font-size: get-d(14px);
     line-height: 120%;
-    color: #08AE66;
+    color: #08ae66;
     text-align: center;
     border-radius: 100vw;
     padding: get-d(6.5px) get-d(12px);
-    background: #FFFFFF;
+    background: #ffffff;
     width: max-content;
     grid-column: 1 / 2;
     grid-row: 1 / 2;
@@ -134,7 +134,7 @@
       content: '';
       width: get-d(16px);
       height: get-d(16px);
-      background: url("../svg/discount.svg") center / contain no-repeat;
+      background: url('../svg/discount.svg') center / contain no-repeat;
       display: block;
     }
     @include respond(lg) {
@@ -165,7 +165,7 @@
     font-size: get-d(14px);
     line-height: 120%;
     text-align: center;
-    color: #FFFFFF;
+    color: #ffffff;
     width: max-content;
     grid-column: 2 / 3;
     grid-row: 1 / 2;
@@ -181,13 +181,13 @@
   &--certificated {
     border-radius: 100vw;
     padding: get-d(6.5px) get-d(12px);
-    background: #FDC41F;
+    background: #fdc41f;
     backdrop-filter: blur(44px);
     font-weight: 500;
     font-size: get-d(14px);
     line-height: 120%;
     text-align: center;
-    color: #302F34;
+    color: #302f34;
     width: max-content;
     display: grid;
     grid-template-columns: repeat(2, max-content);
@@ -196,7 +196,7 @@
       content: '';
       width: get-d(16px);
       height: get-d(16px);
-      background: url("../svg/Certificate.svg") center / contain no-repeat;
+      background: url('../svg/Certificate.svg') center / contain no-repeat;
       display: block;
     }
     @include respond(lg) {
@@ -264,7 +264,7 @@
     font-size: get-d(20px);
     line-height: 100%;
     margin-top: get-d(12px);
-    color: #302F34;
+    color: #302f34;
     display: inline-block;
     @include respond(lg) {
       font-size: get-lg(20px);
@@ -279,7 +279,7 @@
     font-weight: 400;
     font-size: get-d(14px);
     line-height: 140%;
-    color: #302F34;
+    color: #302f34;
     margin-top: get-d(4px);
     display: inline-block;
     @include respond(lg) {
@@ -296,15 +296,15 @@
     grid-template-columns: 1fr max-content max-content;
     grid-gap: get-d(8px);
     width: 100%;
-    padding: get-d(10px) 0;
+    margin: get-d(10px) 0;
     align-items: center;
     @include respond(lg) {
       grid-gap: get-lg(8px);
-      padding: get-lg(10px) 0;
+      margin: get-lg(10px) 0;
     }
     @include respond(md) {
       grid-gap: 8px;
-      padding: 10px 0;
+      margin: 10px 0;
       grid-template-rows: repeat(2, max-content);
     }
   }
@@ -312,21 +312,21 @@
     font-weight: 400;
     font-size: get-d(14px);
     line-height: 120%;
-    color: #302F34;
-    margin: get-d(12px) 0;
+    color: #302f34;
+    padding: get-d(12px) 0;
     display: flex;
     align-items: center;
     &::before {
       content: '';
       width: get-d(16px);
       height: get-d(16px);
-      background: url("../svg/info.svg") center / contain no-repeat;
+      background: url('../svg/info.svg') center / contain no-repeat;
       display: block;
       margin-right: get-d(4px);
     }
     @include respond(lg) {
       font-size: get-lg(14px);
-      margin: get-lg(12px) 0;
+      padding: get-lg(12px) 0;
       &::before {
         width: get-lg(16px);
         height: get-lg(16px);
@@ -335,12 +335,13 @@
     }
     @include respond(md) {
       font-size: 14px;
-      margin: 12px 0;
-      grid-column: 1 / -1;
+      padding: 12px 0;
       &::before {
         width: 16px;
         height: 16px;
         margin-right: 4px;
+        min-width: 16px;
+        min-height: 16px;
       }
     }
   }
@@ -349,26 +350,24 @@
     font-size: get-d(18px);
     line-height: 120%;
     text-decoration: line-through;
-    color: #9A9A9A;
+    color: #9a9a9a;
     @include respond(lg) {
       font-size: get-lg(18px);
     }
     @include respond(md) {
       font-size: 18px;
-      grid-column: 2 / 3;
     }
   }
   &--price {
     font-weight: 600;
     font-size: get-d(22px);
     line-height: 120%;
-    color: #302F34;
+    color: #302f34;
     @include respond(lg) {
       font-size: get-lg(22px);
     }
     @include respond(md) {
       font-size: 22px;
-      grid-column: 3 / 4;
     }
   }
   &--button {
@@ -406,16 +405,158 @@
         display: none;
       }
       &.white {
-        border: get-d(1px) solid #DBD6CB;
-        color: #302F34;
+        border: get-d(1px) solid #dbd6cb;
+        color: #302f34;
         background: #fff;
         @include respond(lg) {
-          border: get-lg(1px) solid #DBD6CB;
+          border: get-lg(1px) solid #dbd6cb;
         }
         @include respond(md) {
-          border: 1px solid #DBD6CB;
+          border: 1px solid #dbd6cb;
         }
       }
+    }
+  }
+  &__master {
+    padding: get-d(12px);
+    background: #f7f1e0;
+    border-radius: get-d(10px);
+    width: 100%;
+    margin-top: get-d(12px);
+    & .stars {
+      gap: get-d(4px);
+      @include respond(lg) {
+        gap: get-lg(4px);
+      }
+      @include respond(md) {
+        gap: 4px;
+      }
+      & span {
+        margin: 0 !important;
+      }
+    }
+    & .star {
+      width: get-d(16px);
+      height: get-d(16px);
+      min-width: get-d(16px);
+      min-height: get-d(16px);
+      background-image: url('../svg/material-symbols-light_star-shine\ copy\ 2.svg');
+      @include respond(lg) {
+        width: get-lg(16px);
+        height: get-lg(16px);
+        min-width: get-lg(16px);
+        min-height: get-lg(16px);
+      }
+      @include respond(md) {
+        width: 16px;
+        height: 16px;
+        min-width: 16px;
+        min-height: 16px;
+      }
+    }
+    &--info {
+      width: 100%;
+      display: flex;
+      flex-wrap: wrap;
+      gap: get-d(24px);
+      align-items: center;
+    }
+    &--name {
+      font-weight: 500;
+      font-size: get-d(16px);
+      line-height: 120%;
+    }
+    &--wrapper {
+      display: grid;
+      grid-template-columns: max-content 1fr;
+      grid-template-rows: repeat(2, max-content);
+      grid-gap: get-d(4px) get-d(10px);
+      margin-bottom: get-d(12px);
+      & img,
+      & picture {
+        width: get-d(44px);
+        height: get-d(44px);
+        border-radius: 50%;
+        grid-row: 1 / 3;
+        grid-column: 1 / 2;
+      }
+    }
+    @include respond(lg) {
+      padding: get-lg(12px);
+      border-radius: get-lg(10px);
+      margin-top: get-lg(12px);
+      &--info {
+        gap: get-lg(24px);
+      }
+      &--name {
+        font-size: get-lg(16px);
+      }
+      &--wrapper {
+        grid-gap: get-lg(4px) get-lg(10px);
+        margin-bottom: get-lg(12px);
+        & img,
+        & picture {
+          width: get-lg(44px);
+          height: get-lg(44px);
+        }
+      }
+    }
+    @include respond(md) {
+      padding: 12px;
+      border-radius: 10px;
+      margin-top: 12px;
+      &--info {
+        gap: 24px;
+      }
+      &--name {
+        font-size: 16px;
+      }
+      &--wrapper {
+        grid-gap: 4px 10px;
+        margin-bottom: 12px;
+        & img,
+        & picture {
+          width: 44px;
+          height: 44px;
+        }
+      }
+    }
+  }
+  &--days,
+  &--seats {
+    font-weight: 500;
+    font-size: get-d(16px);
+    line-height: 120%;
+    display: inline-flex;
+    align-items: center;
+    gap: get-d(6px);
+    @include respond(lg) {
+      font-size: get-lg(16px);
+      gap: get-lg(6px);
+    }
+    @include respond(md) {
+      font-size: 16px;
+      gap: 6px;
+    }
+    &::before {
+      content: '';
+      width: get-d(20px);
+      height: get-d(20px);
+      background: url('../svg/calendar.svg') center / contain no-repeat;
+      display: block;
+      @include respond(lg) {
+        width: get-lg(20px);
+        height: get-lg(20px);
+      }
+      @include respond(md) {
+        width: 20px;
+        height: 20px;
+      }
+    }
+  }
+  &--seats {
+    &::before {
+      background: url('../svg/people.svg') center / contain no-repeat;
     }
   }
 }
