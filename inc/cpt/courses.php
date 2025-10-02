@@ -13,6 +13,7 @@ add_action('init', function () {
     'supports' => ['title', 'thumbnail'],
     'menu_icon' => 'dashicons-book-alt',
   ]);
+  
   register_taxonomy('course_cat', 'course', [
     'label' => 'Categories',
     'hierarchical' => true,
