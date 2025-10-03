@@ -4,27 +4,31 @@ Template Name: Apply Page
 */
 
 if (!defined('ABSPATH')) {
-    exit;
+  exit();
 }
 
 // Initialize variables for messages
 $success_message = '';
-$errors = array();
+$errors = [];
 
 // Check for success/error messages from session or query params
 if (isset($_GET['success']) && $_GET['success'] == '1') {
-    $success_message = 'Your partner application has been submitted successfully! We will review it and get back to you soon.';
+  $success_message =
+    'Your partner application has been submitted successfully! We will review it and get back to you soon.';
 }
 
 if (isset($_GET['error'])) {
-    $errors[] = sanitize_text_field($_GET['error']);
+  $errors[] = sanitize_text_field($_GET['error']);
 }
 
 $apply_image = get_field('apply_image') ?: '';
 $apply_form_title = get_field('apply_form_title') ?: 'Become Our Partner';
-$apply_form_description = get_field('apply_form_description') ?: 'Expand your opportunities by collaborating with our salon.';
+$apply_form_description =
+  get_field('apply_form_description') ?:
+  'Expand your opportunities by collaborating with our salon.';
 
-get_header(); ?>
+get_header();
+?>
 
 <main class="sunny-apply-page">
     <div class="sunny-apply-container">
@@ -40,13 +44,17 @@ get_header(); ?>
                 <p class="form-description"><?php echo esc_html($apply_form_description); ?></p>
 
                 <div class="form-group">
-                    <input type="text" id="partner_title" name="partner_title" required class="form-input" placeholder=" " value="<?php echo esc_attr($_POST['partner_title'] ?? ''); ?>">
+                    <input type="text" id="partner_title" name="partner_title" required class="form-input" placeholder=" " value="<?php echo esc_attr(
+                      $_POST['partner_title'] ?? '',
+                    ); ?>">
                     <label for="partner_title" class="form-label">Partner Title*</label>
                     <div class="field-error" id="partner_title_error"></div>
                 </div>
 
                 <div class="form-group">
-                    <textarea id="partner_description" name="partner_description" required class="form-input" placeholder=" " rows="4"><?php echo esc_textarea($_POST['partner_description'] ?? ''); ?></textarea>
+                    <textarea id="partner_description" name="partner_description" required class="form-input" placeholder=" " rows="4"><?php echo esc_textarea(
+                      $_POST['partner_description'] ?? '',
+                    ); ?></textarea>
                     <label for="partner_description" class="form-label">Partner description*</label>
                     <div class="field-error" id="partner_description_error"></div>
                 </div>
@@ -65,14 +73,15 @@ get_header(); ?>
                                     <div class="custom-select-options">
                                         <?php
                                         $benefit_types = [
-                                            'discount' => 'Discount for clients',
-                                            'complimentary' => 'Complimentary service',
-                                            'gift' => 'Gift with service'
+                                          'discount' => 'Discount for clients',
+                                          'complimentary' => 'Complimentary service',
+                                          'gift' => 'Gift with service',
                                         ];
 
-                                        foreach ($benefit_types as $value => $label):
-                                        ?>
-                                            <div class="custom-select-option" data-value="<?php echo esc_attr($value); ?>">
+                                        foreach ($benefit_types as $value => $label): ?>
+                                            <div class="custom-select-option" data-value="<?php echo esc_attr(
+                                              $value,
+                                            ); ?>">
                                                 <div class="custom-select-option-content">
                                                     <?php if ($value === 'discount'): ?>
                                                         <svg width="16" height="17" viewBox="0 0 16 17" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -93,7 +102,8 @@ get_header(); ?>
                                                 </div>
 
                                             </div>
-                                        <?php endforeach; ?>
+                                        <?php endforeach;
+                                        ?>
                                     </div>
                                 </div>
                                 <input type="hidden" id="benefit_icon_type" name="benefit_icon_type" required>
@@ -101,7 +111,9 @@ get_header(); ?>
                             <div class="field-error" id="benefit_icon_type_error"></div>
                         </div>
                         <div class="form-col">
-                            <input type="text" id="benefit_title" name="benefit_title" required class="form-input" placeholder=" " value="<?php echo esc_attr($_POST['benefit_title'] ?? ''); ?>">
+                            <input type="text" id="benefit_title" name="benefit_title" required class="form-input" placeholder=" " value="<?php echo esc_attr(
+                              $_POST['benefit_title'] ?? '',
+                            ); ?>">
                             <label for="benefit_title" class="form-label">Benefit title*</label>
 
                         </div>
@@ -110,13 +122,17 @@ get_header(); ?>
                 </div>
 
                 <div class="form-group">
-                    <textarea id="benefit_description" name="benefit_description" required class="form-input" placeholder=" " rows="4"><?php echo esc_textarea($_POST['benefit_description'] ?? ''); ?></textarea>
+                    <textarea id="benefit_description" name="benefit_description" required class="form-input" placeholder=" " rows="4"><?php echo esc_textarea(
+                      $_POST['benefit_description'] ?? '',
+                    ); ?></textarea>
                     <label for="benefit_description" class="form-label">Benefit description*</label>
                     <div class="field-error" id="benefit_description_error"></div>
                 </div>
 
                 <div class="form-group">
-                    <input type="url" id="link_card" name="link_card" class="form-input" placeholder=" " value="<?php echo esc_attr($_POST['link_card'] ?? ''); ?>">
+                    <input type="url" id="link_card" name="link_card" class="form-input" placeholder=" " value="<?php echo esc_attr(
+                      $_POST['link_card'] ?? '',
+                    ); ?>">
                     <label for="link_card" class="form-label">Link to read about us more</label>
                     <div class="field-error" id="link_card_error"></div>
                 </div>
@@ -166,7 +182,9 @@ get_header(); ?>
                                     <path fill-rule="evenodd" clip-rule="evenodd" d="M11.1868 5.4978C11.2806 5.60291 11.3333 5.74545 11.3333 5.89408C11.3333 6.04271 11.2806 6.18526 11.1868 6.29037L7.43711 10.4917C7.38756 10.5472 7.32873 10.5912 7.26398 10.6213C7.19923 10.6514 7.12983 10.6668 7.05974 10.6668C6.98965 10.6668 6.92025 10.6514 6.8555 10.6213C6.79075 10.5912 6.73192 10.5472 6.68237 10.4917L4.81935 8.40466C4.77157 8.35295 4.73346 8.2911 4.70724 8.22271C4.68102 8.15433 4.66722 8.08078 4.66664 8.00635C4.66607 7.93193 4.67873 7.85812 4.70388 7.78923C4.72903 7.72035 4.76618 7.65776 4.81315 7.60513C4.86012 7.5525 4.91598 7.51088 4.97746 7.4827C5.03894 7.45452 5.10482 7.44033 5.17125 7.44098C5.23767 7.44163 5.30332 7.45709 5.36435 7.48647C5.42539 7.51584 5.48059 7.55855 5.52674 7.61208L7.05957 9.32952L10.4791 5.4978C10.5256 5.44571 10.5807 5.40439 10.6414 5.3762C10.7022 5.34801 10.7672 5.3335 10.833 5.3335C10.8987 5.3335 10.9638 5.34801 11.0245 5.3762C11.0852 5.40439 11.1404 5.44571 11.1868 5.4978Z" fill="#00c853" />
                                 </svg>
                             </div>
-                            <div class="message-text"><?php echo esc_html($success_message); ?></div>
+                            <div class="message-text"><?php echo esc_html(
+                              $success_message,
+                            ); ?></div>
                         </div>
                     </div>
                 <?php endif; ?>
@@ -179,7 +197,9 @@ get_header(); ?>
                                     <path d="M7.99998 1.33331C11.682 1.33331 14.6666 4.31865 14.6666 7.99998C14.6666 11.6813 11.682 14.6666 7.99998 14.6666C4.31798 14.6666 1.33331 11.6813 1.33331 7.99998C1.33331 4.31865 4.31798 1.33331 7.99998 1.33331ZM7.99998 2.44465C4.93665 2.44465 2.44465 4.93665 2.44465 7.99998C2.44465 11.0633 4.93665 13.5553 7.99998 13.5553C11.0633 13.5553 13.5553 11.0633 13.5553 7.99998C13.5553 4.93665 11.0633 2.44465 7.99998 2.44465ZM7.99931 9.66798C8.17595 9.66798 8.34535 9.73815 8.47025 9.86305C8.59515 9.98795 8.66531 10.1573 8.66531 10.334C8.66531 10.5106 8.59515 10.68 8.47025 10.8049C8.34535 10.9298 8.17595 11 7.99931 11C7.82268 11 7.65328 10.9298 7.52838 10.8049C7.40348 10.68 7.33331 10.5106 7.33331 10.334C7.33331 10.1573 7.40348 9.98795 7.52838 9.86305C7.65328 9.73815 7.82268 9.66798 7.99931 9.66798ZM7.99598 4.66665C8.11692 4.66649 8.23382 4.71017 8.32502 4.78961C8.41621 4.86904 8.47553 4.97883 8.49198 5.09865L8.49665 5.16598L8.49931 8.16731C8.49944 8.29405 8.45144 8.41611 8.36501 8.50881C8.27857 8.60151 8.16017 8.65792 8.03373 8.66664C7.90729 8.67537 7.78225 8.63575 7.68391 8.5558C7.58557 8.47585 7.52125 8.36154 7.50398 8.23598L7.49931 8.16798L7.49665 5.16731C7.49656 5.1016 7.50943 5.03651 7.53451 4.97577C7.5596 4.91503 7.59642 4.85983 7.64286 4.81333C7.6893 4.76683 7.74444 4.72994 7.80515 4.70477C7.86586 4.6796 7.93026 4.66665 7.99598 4.66665Z" fill="#dc3232" />
                                 </svg>
                             </div>
-                            <div class="message-text"><?php echo esc_html(implode(', ', $errors)); ?></div>
+                            <div class="message-text"><?php echo esc_html(
+                              implode(', ', $errors),
+                            ); ?></div>
                         </div>
                     </div>
                 <?php endif; ?>
@@ -194,7 +214,11 @@ get_header(); ?>
             </form>
         </div>
 
-        <div class="hero-section" style="background-image: url('<?php echo esc_url(get_field('apply_image') ? get_field('apply_image')['url'] : get_template_directory_uri() . '/assets/svg/illustration2.png'); ?>');">
+        <div class="hero-section" style="background-image: url('<?php echo esc_url(
+          get_field('apply_image')
+            ? get_field('apply_image')['url']
+            : get_template_directory_uri() . '/assets/svg/illustration2.png',
+        ); ?>');">
         </div>
     </div>
 </main>
