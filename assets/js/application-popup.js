@@ -22,9 +22,7 @@ class ApplicationPopup {
 
     inputs?.forEach((input) => {
       // Check initial values
-      this.updateInputState(input);
-
-      // Handle input changes
+      this.updateInputState(input); // Handle input changes
       input.addEventListener('input', () => {
         this.updateInputState(input);
         this.updateSubmitButtonState();
