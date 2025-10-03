@@ -205,9 +205,10 @@
 
       .custom-country-select {
         position: relative;
-        width: get-d(124px);
+        min-width: get-d(124px);
+        width: fit-content;
         @include respond(md) {
-          width: 124px;
+          min-width: 124px;
         }
       }
 
