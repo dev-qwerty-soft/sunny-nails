@@ -115,6 +115,15 @@ class ApplicationPopup {
       this.handleSubmit();
     });
 
+    // Submit button click (backup for disabled button issue)
+    const submitBtn = this.form?.querySelector('.submit-application-btn');
+    submitBtn?.addEventListener('click', (e) => {
+      if (!submitBtn.disabled) {
+        e.preventDefault();
+        this.handleSubmit();
+      }
+    });
+
     // Escape key
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') {
@@ -413,7 +422,6 @@ class ApplicationPopup {
         this.showGlobalError(result.data?.message || 'Something went wrong. Please try again.');
       }
     } catch (error) {
-      console.error('Submit error:', error);
       this.showGlobalError('Network error. Please check your connection and try again.');
     } finally {
       // Reset button state
@@ -425,5 +433,5 @@ class ApplicationPopup {
 
 // Initialize when DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
-  new ApplicationPopup();
+  const popup = new ApplicationPopup();
 });
