@@ -186,13 +186,6 @@ function display_course_applications_page()
     </div>
 
     <style>
-        .wrap form {
-            background: #f9f9f9;
-            padding: 15px;
-            border-radius: 5px;
-            border: 1px solid #ddd;
-        }
-
         .wrap form label {
             margin-right: 5px;
             margin-left: 15px;
@@ -215,6 +208,10 @@ function display_course_applications_page()
 
             .wp-list-table th,
             .wp-list-table td {
+                padding: 8px 6px;
+            }
+
+            .wp-list-table td:last-child {
                 padding: 8px 6px;
             }
         }
@@ -307,6 +304,25 @@ function display_course_applications_page()
             .wp-list-table {
                 min-width: 800px;
             }
+        }
+
+        /* Actions column alignment */
+        .wp-list-table th:last-child,
+        .wp-list-table td:last-child {
+            text-align: right;
+            padding-right: 15px;
+        }
+
+        .wp-list-table td:last-child {
+            white-space: nowrap;
+        }
+
+        /* ID column - make it smallest */
+        .wp-list-table th:first-child,
+        .wp-list-table td:first-child {
+            width: 50px;
+            min-width: 50px;
+            text-align: center;
         }
         }
 

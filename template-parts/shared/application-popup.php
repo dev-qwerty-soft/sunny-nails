@@ -28,7 +28,18 @@ if (is_user_logged_in()) {
 
         if ($user_data) {
             $plugin_active = true;
-            $user_name = $user_data->name;
+            // Try different name fields from Sunny Friends plugin
+            if (!empty($user_data->name)) {
+                $user_name = $user_data->name;
+            } elseif (!empty($user_data->first_name) && !empty($user_data->last_name)) {
+                $user_name = trim($user_data->first_name . ' ' . $user_data->last_name);
+            } elseif (!empty($user_data->first_name)) {
+                $user_name = $user_data->first_name;
+            } elseif (!empty($user_data->full_name)) {
+                $user_name = $user_data->full_name;
+            } else {
+                $user_name = '';
+            }
             $user_email = $user_data->email;
             $phone = $user_data->phone;
 
@@ -64,6 +75,10 @@ if (is_user_logged_in()) {
         $user_name = trim($current_user->first_name . ' ' . $current_user->last_name);
         if (empty($user_name)) {
             $user_name = $current_user->display_name;
+        }
+        // If still empty, try user_login as last resort
+        if (empty($user_name)) {
+            $user_name = $current_user->user_login;
         }
         $user_email = $current_user->user_email;
 
