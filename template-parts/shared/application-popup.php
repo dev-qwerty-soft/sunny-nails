@@ -3,7 +3,7 @@
 $user_name = '';
 $user_email = '';
 $user_phone = '';
-$user_phone_country = '+65'; // Default to Singapore
+$user_phone_country = '+380'; // Default to Ukraine
 
 if (is_user_logged_in()) {
     $current_user = wp_get_current_user();
@@ -28,6 +28,7 @@ if (is_user_logged_in()) {
 
         if ($user_data) {
             $plugin_active = true;
+
             // Try different name fields from Sunny Friends plugin
             if (!empty($user_data->name)) {
                 $user_name = $user_data->name;
@@ -40,19 +41,98 @@ if (is_user_logged_in()) {
             } else {
                 $user_name = '';
             }
+
             $user_email = $user_data->email;
             $phone = $user_data->phone;
 
             // Parse country code and phone number
-            $user_phone_country = '+65'; // Default to Singapore
+            $user_phone_country = '+380'; // Default to Ukraine
             $user_phone = '';
 
             if ($phone) {
                 // Parse country code from phone number
                 $phone_cleaned = preg_replace('/[^\d+]/', '', $phone);
 
-                // List of common country codes (longest first)
-                $country_codes = ['+65', '+1', '+7', '+44', '+49', '+33', '+86', '+81', '+82', '+91'];
+                // List of country codes to check (longest first)
+                $country_codes = [
+                    '+380',  // Ukraine
+                    '+1',    // USA/Canada
+                    '+7',    // Russia/Kazakhstan
+                    '+44',   // UK
+                    '+49',   // Germany
+                    '+33',   // France
+                    '+39',   // Italy
+                    '+34',   // Spain
+                    '+31',   // Netherlands
+                    '+48',   // Poland
+                    '+86',   // China
+                    '+81',   // Japan
+                    '+82',   // South Korea
+                    '+91',   // India
+                    '+55',   // Brazil
+                    '+52',   // Mexico
+                    '+61',   // Australia
+                    '+64',   // New Zealand
+                    '+27',   // South Africa
+                    '+20',   // Egypt
+                    '+90',   // Turkey
+                    '+98',   // Iran
+                    '+92',   // Pakistan
+                    '+63',   // Philippines
+                    '+66',   // Thailand
+                    '+84',   // Vietnam
+                    '+62',   // Indonesia
+                    '+60',   // Malaysia
+                    '+65',   // Singapore
+                    '+852',  // Hong Kong
+                    '+853',  // Macau
+                    '+886',  // Taiwan
+                    '+972',  // Israel
+                    '+971',  // UAE
+                    '+966',  // Saudi Arabia
+                    '+974',  // Qatar
+                    '+965',  // Kuwait
+                    '+973',  // Bahrain
+                    '+968',  // Oman
+                    '+962',  // Jordan
+                    '+961',  // Lebanon
+                    '+963',  // Syria
+                    '+964',  // Iraq
+                    '+98',   // Iran
+                    '+93',   // Afghanistan
+                    '+994',  // Azerbaijan
+                    '+995',  // Georgia
+                    '+374',  // Armenia
+                    '+375',  // Belarus
+                    '+371',  // Latvia
+                    '+372',  // Estonia
+                    '+370',  // Lithuania
+                    '+373',  // Moldova
+                    '+381',  // Serbia
+                    '+382',  // Montenegro
+                    '+385',  // Croatia
+                    '+386',  // Slovenia
+                    '+387',  // Bosnia and Herzegovina
+                    '+389',  // North Macedonia
+                    '+420',  // Czech Republic
+                    '+421',  // Slovakia
+                    '+36',   // Hungary
+                    '+40',   // Romania
+                    '+359',  // Bulgaria
+                    '+30',   // Greece
+                    '+357',  // Cyprus
+                    '+356',  // Malta
+                    '+351',  // Portugal
+                    '+32',   // Belgium
+                    '+352',  // Luxembourg
+                    '+41',   // Switzerland
+                    '+43',   // Austria
+                    '+45',   // Denmark
+                    '+46',   // Sweden
+                    '+47',   // Norway
+                    '+358',  // Finland
+                    '+354',  // Iceland
+                ];
 
                 foreach ($country_codes as $code) {
                     if (strpos($phone_cleaned, $code) === 0) {
@@ -62,7 +142,7 @@ if (is_user_logged_in()) {
                     }
                 }
 
-                // If no country code found, assume it's Singapore and the whole number is phone
+                // If no country code found, assume it's Ukraine and the whole number is phone
                 if (empty($user_phone)) {
                     $user_phone = $phone_cleaned;
                 }
@@ -71,14 +151,10 @@ if (is_user_logged_in()) {
     }
 
     // Fallback to WordPress user data if plugin is not active or no custom data
-    if (!$plugin_active || !$user_data) {
+    if (!$plugin_active) {
         $user_name = trim($current_user->first_name . ' ' . $current_user->last_name);
         if (empty($user_name)) {
             $user_name = $current_user->display_name;
-        }
-        // If still empty, try user_login as last resort
-        if (empty($user_name)) {
-            $user_name = $current_user->user_login;
         }
         $user_email = $current_user->user_email;
 
@@ -88,7 +164,7 @@ if (is_user_logged_in()) {
             $phone = $user_phone_meta;
 
             // Use the same parsing logic as above
-            $user_phone_country = '+65'; // Default to Singapore
+            $user_phone_country = '+380'; // Default to Ukraine
             $user_phone = '';
 
             if ($phone) {
@@ -96,7 +172,85 @@ if (is_user_logged_in()) {
                 $phone_cleaned = preg_replace('/[^\d+]/', '', $phone);
 
                 // List of country codes to check (longest first)
-                $country_codes = ['+65', '+1', '+7', '+44', '+49', '+33', '+86', '+81', '+82', '+91'];
+                $country_codes = [
+                    '+380',  // Ukraine
+                    '+1',    // USA/Canada
+                    '+7',    // Russia/Kazakhstan
+                    '+44',   // UK
+                    '+49',   // Germany
+                    '+33',   // France
+                    '+39',   // Italy
+                    '+34',   // Spain
+                    '+31',   // Netherlands
+                    '+48',   // Poland
+                    '+86',   // China
+                    '+81',   // Japan
+                    '+82',   // South Korea
+                    '+91',   // India
+                    '+55',   // Brazil
+                    '+52',   // Mexico
+                    '+61',   // Australia
+                    '+64',   // New Zealand
+                    '+27',   // South Africa
+                    '+20',   // Egypt
+                    '+90',   // Turkey
+                    '+98',   // Iran
+                    '+92',   // Pakistan
+                    '+63',   // Philippines
+                    '+66',   // Thailand
+                    '+84',   // Vietnam
+                    '+62',   // Indonesia
+                    '+60',   // Malaysia
+                    '+65',   // Singapore
+                    '+852',  // Hong Kong
+                    '+853',  // Macau
+                    '+886',  // Taiwan
+                    '+972',  // Israel
+                    '+971',  // UAE
+                    '+966',  // Saudi Arabia
+                    '+974',  // Qatar
+                    '+965',  // Kuwait
+                    '+973',  // Bahrain
+                    '+968',  // Oman
+                    '+962',  // Jordan
+                    '+961',  // Lebanon
+                    '+963',  // Syria
+                    '+964',  // Iraq
+                    '+98',   // Iran
+                    '+93',   // Afghanistan
+                    '+994',  // Azerbaijan
+                    '+995',  // Georgia
+                    '+374',  // Armenia
+                    '+375',  // Belarus
+                    '+371',  // Latvia
+                    '+372',  // Estonia
+                    '+370',  // Lithuania
+                    '+373',  // Moldova
+                    '+381',  // Serbia
+                    '+382',  // Montenegro
+                    '+385',  // Croatia
+                    '+386',  // Slovenia
+                    '+387',  // Bosnia and Herzegovina
+                    '+389',  // North Macedonia
+                    '+420',  // Czech Republic
+                    '+421',  // Slovakia
+                    '+36',   // Hungary
+                    '+40',   // Romania
+                    '+359',  // Bulgaria
+                    '+30',   // Greece
+                    '+357',  // Cyprus
+                    '+356',  // Malta
+                    '+351',  // Portugal
+                    '+32',   // Belgium
+                    '+352',  // Luxembourg
+                    '+41',   // Switzerland
+                    '+43',   // Austria
+                    '+45',   // Denmark
+                    '+46',   // Sweden
+                    '+47',   // Norway
+                    '+358',  // Finland
+                    '+354',  // Iceland
+                ];
 
                 foreach ($country_codes as $code) {
                     if (strpos($phone_cleaned, $code) === 0) {
@@ -106,7 +260,7 @@ if (is_user_logged_in()) {
                     }
                 }
 
-                // If no country code found, assume it's Singapore and the whole number is phone
+                // If no country code found, assume it's Ukraine and the whole number is phone
                 if (empty($user_phone)) {
                     $user_phone = $phone_cleaned;
                 }
@@ -157,7 +311,7 @@ if (is_user_logged_in()) {
                                         <span class="selected-country">
                                             <?php
                                             // Set default selected country based on user data
-                                            $selected_country = 'Singapore +65'; // Default
+                                            $selected_country = 'Ukraine +380'; // Default
                                             if (is_user_logged_in() && $user_phone_country) {
                                                 $country_names = [
                                                     '+65' => 'Singapore',
