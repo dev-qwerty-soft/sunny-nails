@@ -4,7 +4,10 @@
     padding: get-lg(40px) get-lg(60px) get-lg(150px) get-lg(60px);
   }
   @include respond(md) {
-    padding: 40px 25px 75px 25px;
+    padding: 50px 25px 25px 25px;
+    & .title {
+      max-width: 350px;
+    }
   }
   & .container {
     display: grid;
@@ -37,12 +40,13 @@
     align-items: center;
     @include respond(md) {
       grid-template-columns: 100%;
-      grid-gap: 12px;
+      grid-gap: 8px;
     }
     & .paragraph {
       text-align: right;
       @include respond(md) {
         text-align: left;
+        max-width: 400px;
       }
     }
   }
@@ -59,6 +63,7 @@
 
     @include respond(md) {
       gap: 4px;
+      margin-top: 1px;
     }
 
     & .filter {
@@ -83,7 +88,7 @@
       }
 
       @include respond(md) {
-        padding: 9.5px 20px;
+        padding: 9.5px 12px;
         font-size: 14px;
         border-width: 1px;
       }
@@ -147,8 +152,8 @@
       }
     }
     @include respond(md) {
-      font-size: 14px;
-      padding: 6.5px 12px;
+      font-size: 12px;
+      padding: 6px 10px;
       grid-gap: 4px;
       &::before {
         width: 16px;
@@ -174,11 +179,14 @@
       padding: get-lg(6.5px) get-lg(12px);
     }
     @include respond(md) {
-      font-size: 14px;
-      padding: 6.5px 12px;
+      font-size: 12px;
+      padding: 6px 10px;
+      grid-column: 1 / 2;
+      grid-row: 3 / 4;
     }
   }
   &--certificated {
+    align-items: center;
     border-radius: 100vw;
     padding: get-d(6.5px) get-d(12px);
     background: #fdc41f;
@@ -209,8 +217,8 @@
       }
     }
     @include respond(md) {
-      font-size: 14px;
-      padding: 6.5px 12px;
+      font-size: 12px;
+      padding: 6px 10px;
       grid-gap: 4px;
       &::before {
         width: 16px;
@@ -253,10 +261,12 @@
       border-radius: get-lg(10px);
     }
     @include respond(md) {
-      height: 200px;
+      height: 160px;
       padding: 12px;
       grid-gap: 8px;
       border-radius: 10px;
+      grid-template-rows: max-content 1fr max-content;
+      align-items: start;
     }
   }
   &--title {
@@ -271,7 +281,7 @@
       margin-top: get-lg(12px);
     }
     @include respond(md) {
-      font-size: 20px;
+      font-size: 18px;
       margin-top: 12px;
     }
   }
@@ -304,7 +314,7 @@
     }
     @include respond(md) {
       grid-gap: 8px;
-      margin: 10px 0;
+      margin: 8px 0;
       grid-template-rows: repeat(2, max-content);
     }
   }
@@ -335,7 +345,7 @@
     }
     @include respond(md) {
       font-size: 14px;
-      padding: 12px 0;
+      padding: 4px 0;
       &::before {
         width: 16px;
         height: 16px;
@@ -367,7 +377,7 @@
       font-size: get-lg(22px);
     }
     @include respond(md) {
-      font-size: 22px;
+      font-size: 20px;
     }
   }
   &--button {
@@ -379,7 +389,7 @@
       grid-gap: get-lg(12px);
     }
     @include respond(md) {
-      grid-gap: 12px;
+      grid-gap: 10px;
     }
     & .btn {
       padding: get-d(10px) get-d(20px);
@@ -425,6 +435,7 @@
     margin-top: get-d(12px);
     & .stars {
       gap: get-d(4px);
+      flex-wrap: wrap;
       @include respond(lg) {
         gap: get-lg(4px);
       }
@@ -502,9 +513,9 @@
       }
     }
     @include respond(md) {
-      padding: 12px;
+      padding: 10px;
       border-radius: 10px;
-      margin-top: 12px;
+      margin-top: 8px;
       &--info {
         gap: 24px;
       }
@@ -513,11 +524,11 @@
       }
       &--wrapper {
         grid-gap: 4px 10px;
-        margin-bottom: 12px;
+        margin-bottom: 8px;
         & img,
         & picture {
-          width: 44px;
-          height: 44px;
+          width: 40px;
+          height: 40px;
         }
       }
     }
@@ -535,7 +546,7 @@
       gap: get-lg(6px);
     }
     @include respond(md) {
-      font-size: 16px;
+      font-size: 14px;
       gap: 6px;
     }
     &::before {
@@ -558,5 +569,24 @@
     &::before {
       background: url('../svg/people.svg') center / contain no-repeat;
     }
+  }
+}
+
+.popup-details {
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
+  opacity: 0;
+  pointer-events: none;
+  background: #f7f1e0;
+  z-index: 10;
+  inset: 0;
+  padding: get-d(50px);
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-gap: get-d(30px);
+  &.active {
+    opacity: 1;
+    pointer-events: all;
   }
 }

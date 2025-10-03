@@ -95,7 +95,7 @@ $master = get_field('related_master', $id);
     } ?>
   </div>
   <div class="course-card--button">
-    <button type="button" class="btn white">View Details</button>
-    <button type="button" class="btn yellow">Submit application </button>
+    <button type="button" class="btn white open-popup-details">View Details</button>
+    <button type="button" class="btn yellow">Submit application</button>
   </div>
 </div>
