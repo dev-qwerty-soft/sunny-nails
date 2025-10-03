@@ -31,4 +31,9 @@ add_action('wp_enqueue_scripts', function () {
     'ajax_url' => admin_url('admin-ajax.php'),
     'nonce' => wp_create_nonce('booking_nonce'),
   ]);
+
+  wp_localize_script('index', 'application_popup_params', [
+    'ajax_url' => admin_url('admin-ajax.php'),
+    'nonce' => wp_create_nonce('ajax_nonce'),
+  ]);
 });
