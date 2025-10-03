@@ -3,14 +3,101 @@
 $user_name = '';
 $user_email = '';
 $user_phone = '';
-$user_phone_country = '';
+$user_phone_country = '+65'; // Default to Singapore
 
 if (is_user_logged_in()) {
     $current_user = wp_get_current_user();
-    $user_name = $current_user->display_name;
-    $user_email = $current_user->user_email;
-    $user_phone = get_user_meta($current_user->ID, 'phone', true);
-    $user_phone_country = get_user_meta($current_user->ID, 'phone_country', true);
+    $user_id = get_current_user_id();
+
+    // Check if plugin is active and table exists
+    $plugin_active = false;
+    $user_data = null;
+
+    // Try to get data from sunny_friends_customers table directly
+    global $wpdb;
+    $registrations_table = $wpdb->prefix . 'sunny_friends_customers';
+
+    // Check if table exists to avoid SQL errors
+    $table_exists = $wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s', $registrations_table)) == $registrations_table;
+
+    if ($table_exists) {
+        $user_data = $wpdb->get_row($wpdb->prepare(
+            "SELECT * FROM $registrations_table WHERE user_id = %d",
+            $user_id
+        ));
+
+        if ($user_data) {
+            $plugin_active = true;
+            $user_name = $user_data->name;
+            $user_email = $user_data->email;
+            $phone = $user_data->phone;
+
+            // Parse country code and phone number
+            $user_phone_country = '+65'; // Default to Singapore
+            $user_phone = '';
+
+            if ($phone) {
+                // Parse country code from phone number
+                $phone_cleaned = preg_replace('/[^\d+]/', '', $phone);
+
+                // List of common country codes (longest first)
+                $country_codes = ['+65', '+1', '+7', '+44', '+49', '+33', '+86', '+81', '+82', '+91'];
+
+                foreach ($country_codes as $code) {
+                    if (strpos($phone_cleaned, $code) === 0) {
+                        $user_phone_country = $code;
+                        $user_phone = substr($phone_cleaned, strlen($code));
+                        break;
+                    }
+                }
+
+                // If no country code found, assume it's Singapore and the whole number is phone
+                if (empty($user_phone)) {
+                    $user_phone = $phone_cleaned;
+                }
+            }
+        }
+    }
+
+    // Fallback to WordPress user data if plugin is not active or no custom data
+    if (!$plugin_active || !$user_data) {
+        $user_name = trim($current_user->first_name . ' ' . $current_user->last_name);
+        if (empty($user_name)) {
+            $user_name = $current_user->display_name;
+        }
+        $user_email = $current_user->user_email;
+
+        // Try to get phone from user meta as fallback
+        $user_phone_meta = get_user_meta($user_id, 'phone', true);
+        if ($user_phone_meta) {
+            $phone = $user_phone_meta;
+
+            // Use the same parsing logic as above
+            $user_phone_country = '+65'; // Default to Singapore
+            $user_phone = '';
+
+            if ($phone) {
+                // Parse country code from phone number
+                $phone_cleaned = preg_replace('/[^\d+]/', '', $phone);
+
+                // List of country codes to check (longest first)
+                $country_codes = ['+65', '+1', '+7', '+44', '+49', '+33', '+86', '+81', '+82', '+91'];
+
+                foreach ($country_codes as $code) {
+                    if (strpos($phone_cleaned, $code) === 0) {
+                        $user_phone_country = $code;
+                        $user_phone = substr($phone_cleaned, strlen($code));
+                        break;
+                    }
+                }
+
+                // If no country code found, assume it's Singapore and the whole number is phone
+                if (empty($user_phone)) {
+                    $user_phone = $phone_cleaned;
+                }
+            }
+        }
+    }
 }
 ?>
 
@@ -36,12 +123,14 @@ if (is_user_logged_in()) {
                     <div class="form-fields">
                         <div class="form-group">
                             <input type="text" id="applicant-name" name="applicant[name]" placeholder=" "
+                                value="<?php echo is_user_logged_in() ? esc_attr($user_name) : ''; ?>"
                                 required />
                             <label for="applicant-name">Name</label>
                         </div>
 
                         <div class="form-group">
                             <input type="email" id="applicant-email" name="applicant[email]" placeholder=" "
+                                value="<?php echo is_user_logged_in() ? esc_attr($user_email) : ''; ?>"
                                 required />
                             <label for="applicant-email">Email</label>
                         </div>
@@ -551,6 +640,7 @@ if (is_user_logged_in()) {
                                     </div>
                                 </div>
                                 <input type="tel" id="applicant-phone" name="applicant[phone]" placeholder=" Enter Phone Number"
+                                    value="<?php echo is_user_logged_in() ? esc_attr($user_phone) : ''; ?>"
                                     required />
                             </div>
                             <label class="phone-label" for="applicant-phone">Phone Number</label>
