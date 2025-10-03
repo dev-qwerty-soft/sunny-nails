@@ -261,7 +261,7 @@ class ApplicationPopup {
   }
 
   openThankYouPopup() {
-    this.thankYouPopup.style.display = 'block';
+    this.thankYouPopup.style.display = 'flex';
     setTimeout(() => {
       this.thankYouPopup.classList.add('active');
       document.body.style.overflow = 'hidden';

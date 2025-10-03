@@ -530,6 +530,9 @@
   }
 
   &__overlay {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     position: absolute;
     top: 0;
     left: 0;
@@ -542,95 +545,75 @@
     position: relative;
     width: get-d(400px);
     max-width: 90vw;
-    background: #f7f1e0;
+    background: #ffffff;
     border-radius: get-d(20px);
-    padding: get-d(40px) get-d(30px);
+    padding: get-d(25px);
     text-align: center;
     z-index: 1;
     @include respond(md) {
       width: 90vw;
       border-radius: 20px;
-      padding: 40px 30px;
+      padding: 25px;
     }
-
+    .success-icon {
+      margin-bottom: 0;
+    }
+    .thank-you-popup__content {
+      display: flex;
+      gap: get-d(16px);
+      margin-bottom: get-d(25px);
+      @include respond(md) {
+        gap: 16px;
+        margin-bottom: 25px;
+      }
+    }
     h2 {
       margin: 0 0 get-d(16px) 0;
-      color: #302f34;
-      font-size: get-d(24px);
+      color: var(--black, #302f34);
+      font-size: get-d(16px);
       font-weight: 600;
       line-height: 120%;
       font-family: $font-family;
+      margin-bottom: get-d(4px);
       @include respond(md) {
         margin-bottom: 16px;
-        font-size: 20px;
+        font-size: 16px;
+        margin-bottom: 4px;
       }
     }
 
     p {
-      margin: 0 0 get-d(24px) 0;
-      color: #302f34;
-      font-size: get-d(16px);
+      margin: 0;
+      color: #9a9a9a;
+      font-size: get-d(14px);
       font-weight: 400;
       line-height: 140%;
       font-family: $font-family;
       @include respond(md) {
-        margin-bottom: 24px;
         font-size: 14px;
       }
     }
   }
-
-  &__close {
-    position: absolute;
-    top: get-d(15px);
-    right: get-d(15px);
-    background: none;
-    border: none;
-    padding: 0;
-    cursor: pointer;
-    width: get-d(24px);
-    height: get-d(24px);
+  .thank-you-btn {
     display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #302f34;
-    transition: color 0.3s ease;
-    @include respond(md) {
-      top: 15px;
-      right: 15px;
-      width: 24px;
-      height: 24px;
-    }
-
-    &:hover {
-      color: #85754f;
-    }
-  }
-
-  .close-btn {
-    display: flex;
+    margin-left: auto;
+    min-width: get-d(90px);
+    padding: get-d(8px) get-d(20px);
     justify-content: center;
     align-items: center;
-    padding: get-d(12px) get-d(24px);
     border-radius: get-d(50px);
     background: var(--yellow, #fdc41f);
     color: var(--black, #302f34);
-    font-size: get-d(16px);
+    text-align: center;
+    font-family: 'Montserrat', sans-serif;
+    font-size: get-d(14px);
     font-weight: 500;
-    line-height: get-d(20px);
-    border: none;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    font-family: $font-family;
-    @include respond(md) {
-      padding: 12px 24px;
-      border-radius: 50px;
-      font-size: 16px;
+    line-height: get-d(20px); /* 142.857% */
+    @include respond(xl) {
+      min-width: 90px;
+      padding: 8px 20px;
+      font-size: 14px;
       line-height: 20px;
-    }
-
-    &:hover {
-      background: #ffe066;
     }
   }
 }

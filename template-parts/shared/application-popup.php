@@ -589,15 +589,21 @@ if (is_user_logged_in()) {
         <div class="thank-you-popup__container">
             <div class="thank-you-popup__content">
                 <div class="success-icon">
-                    <svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <circle cx="40" cy="40" r="40" fill="#A7E8BD" />
-                        <path d="M28 40L36 48L52 32" stroke="#1B5E20" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+                    <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="4" y="4" width="40" height="40" rx="20" fill="#B4E6CD" />
+                        <rect x="4" y="4" width="40" height="40" rx="20" stroke="#E9F8F0" stroke-width="8" />
+                        <path d="M24.001 16.1667C28.3272 16.1667 31.8348 19.6743 31.835 23.9997C31.835 28.3252 28.3273 31.8336 24.001 31.8336C19.6748 31.8335 16.168 28.3251 16.168 23.9997C16.1681 19.6744 19.6749 16.1668 24.001 16.1667ZM24.001 16.5563C19.8959 16.5565 16.5578 19.8946 16.5576 23.9997C16.5576 28.1049 19.8958 31.4438 24.001 31.444C28.1063 31.444 31.4453 28.105 31.4453 23.9997C31.4451 19.8945 28.1062 16.5563 24.001 16.5563Z" fill="#08AE66" stroke="#08AE66" />
+                        <path fill-rule="evenodd" clip-rule="evenodd" d="M27.9823 20.872C28.0995 21.0034 28.1654 21.1816 28.1654 21.3674C28.1654 21.5532 28.0995 21.7314 27.9823 21.8628L23.2951 27.1144C23.2332 27.1838 23.1597 27.2388 23.0787 27.2764C22.9978 27.314 22.911 27.3333 22.8234 27.3333C22.7358 27.3333 22.6491 27.314 22.5681 27.2764C22.4872 27.2388 22.4136 27.1838 22.3517 27.1144L20.0229 24.5056C19.9632 24.441 19.9156 24.3637 19.8828 24.2782C19.85 24.1927 19.8328 24.1008 19.8321 24.0077C19.8313 23.9147 19.8472 23.8224 19.8786 23.7363C19.91 23.6502 19.9565 23.572 20.0152 23.5062C20.0739 23.4404 20.1437 23.3884 20.2206 23.3532C20.2974 23.3179 20.3798 23.3002 20.4628 23.301C20.5458 23.3018 20.6279 23.3211 20.7042 23.3579C20.7805 23.3946 20.8495 23.448 20.9072 23.5149L22.8232 25.6617L27.0976 20.872C27.1557 20.8069 27.2247 20.7553 27.3005 20.72C27.3764 20.6848 27.4578 20.6667 27.5399 20.6667C27.6221 20.6667 27.7035 20.6848 27.7793 20.72C27.8552 20.7553 27.9242 20.8069 27.9823 20.872Z" fill="#08AE66" />
                     </svg>
+
                 </div>
-                <h2>Thank you, your application has been submitted successfully</h2>
-                <p>We will contact you shortly.</p>
-                <button type="button" class="btn yellow thank-you-btn" id="thankYouCloseBtn">Ok</button>
+                <div class="thank-you-message">
+                    <h2>Thank you, your application has been submitted successfully</h2>
+                    <p>We will contact you shortly.</p>
+                </div>
+
             </div>
+            <button type="button" class=" thank-you-btn" id="thankYouCloseBtn">Ok</button>
         </div>
     </div>
 </div>

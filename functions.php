@@ -76,6 +76,9 @@ require_once get_template_directory() . '/inc/ajax/course-application-handler.ph
 // google reviews integration
 require_once get_template_directory() . '/inc/admin/google.php';
 
+// Course applications admin
+require_once get_template_directory() . '/inc/admin/course-applications-admin.php';
+
 // Initialize controllers
 add_action('after_setup_theme', ['BookingController', 'init']);
 add_action('after_setup_theme', ['BookingPopupController', 'init']);
