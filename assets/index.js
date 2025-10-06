@@ -306,6 +306,15 @@ document.onclick = (e) => {
   } else if (has(e.target, '#burger')) {
     window.scrollTo(0, 0);
     toggle([btn, menu, header]);
+  } else if (has(e.target, '.open-popup-details')) {
+    const btn = e.target.closest('.open-popup-details');
+    const card = btn.closest('.course-card');
+    const id = card.getAttribute('data-id');
+    const popup = g(`.popup-details[data-id="${id}"]`);
+    add(popup);
+  } else if (has(e.target, '.popup-details__close')) {
+    const popup = e.target.closest('.popup-details');
+    remove(popup);
   } else if (has(e.target, '.gallery-section__images .image')) {
     const image = e.target.closest('.image');
     const index = Number(image.getAttribute('data-index'));
@@ -323,12 +332,13 @@ document.onclick = (e) => {
     remove(g('.popup-join'));
   } else if (has(e.target, '.sunny-friends-table-section__button')) {
     tabFn?.(e.target);
+  } else {
+    remove(g('.popup-details'));
   }
 };
 
 initMasterPopup();
 
-// Re-initialize master popup on DOM content loaded
 document.addEventListener('DOMContentLoaded', () => {
   initMasterPopup();
 });

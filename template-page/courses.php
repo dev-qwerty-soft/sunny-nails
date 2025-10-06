@@ -8,7 +8,6 @@ $courses = new WP_Query([
   'posts_per_page' => -1,
   'order' => 'ASC',
 ]);
-
 $posts = $courses->posts;
 $categories = get_terms(['taxonomy' => 'course_cat', 'hide_empty' => false]);
 ?>
@@ -60,7 +59,6 @@ $categories = get_terms(['taxonomy' => 'course_cat', 'hide_empty' => false]);
     $master_name = isset($master->post_title) ? $master->post_title : '';
     $days = get_field('duration_days', $id);
     $seats = get_field('seats_available', $id);
-
     $master_html = "<div data-id='$master_id' data-altegio-id='$master_id_altegio' class='popup-details__master'>";
     $master_html .= "<div class='popup-details__master--wrapper'>";
     $master_html .= "<img src='$master_image' class='popup-details__master--image' width='50' height='50' decoding='async' loading='eager' fetchpriority='high' alt='$master_name'>";
@@ -76,21 +74,17 @@ $categories = get_terms(['taxonomy' => 'course_cat', 'hide_empty' => false]);
           </div>";
     $master_html .= '</div>';
     $master_html .= '</div>';
-
     $description = get_field('description', $id);
-
     $price_html = '';
-
     if ($new_price && $new_price > 0) {
       $price_html = "<span class='popup-details--old-price'>$$price</span>";
       $price_html .= "<span class='popup-details--price'>$$new_price</span>";
     } else {
       $price_html = "<span class='popup-details--price'>$price</span>";
     }
-
     $info = get_field('info', $id);
-
     echo "<div class='popup-details' data-id='$id'>
+        <button type='button' aria-label='Close' class='popup-details__close'></button>
         <div class='popup-details__text'>
           <div class='popup-details--date'>$date</div>
           <h2 class='popup-details--title'>$title</h2>
@@ -114,15 +108,17 @@ $categories = get_terms(['taxonomy' => 'course_cat', 'hide_empty' => false]);
             <b>$seats</b>
           </div>
           <div class='popup-details--trainer'>
-            <span>Trainer:</span>
+            <span class='popup-details--trainer-label'>Trainer:</span>
             $master_html
+            <p class='popup-details--description'>$description</p>
+            <div class='popup-details--bottom'>
+              <div class='popup-details--price-wrapper'>
+                <span class='popup-details--price-label'>Price:</span>
+                $price_html
+              </div>
+              <span class='popup-details--info'>$info</span>
+            </div>
           </div>
-          <p class='popup-details--description'>$description</p>
-          <div class='popup-details--price'>
-            <span class='popup-details--price-label'>Price:</span>
-            $price_html
-          </div>
-          <span class='popup-details--info'>$info</span>
         </div>
       </div>";
     wp_reset_postdata();
