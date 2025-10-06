@@ -23,10 +23,11 @@ if ($categories && is_array($categories) && !empty($categories)) {
 }
 $master = get_field('related_master', $id);
 ?>
-<div class="course-card" data-id="<?= $id ?>" data-categories="<?= implode(
-  ' ',
-  $categories_slugs,
-) ?>">
+<div class="course-card"
+  data-id="<?= $id ?>"
+  data-course-title="<?= esc_attr($title) ?>"
+  data-course-price="<?= $new_price && $new_price > 0 ? $new_price : $price ?>"
+  data-categories="<?= implode(' ', $categories_slugs) ?>">
   <div class="course-card__header">
     <?php
     $date = get_field('date', $id);

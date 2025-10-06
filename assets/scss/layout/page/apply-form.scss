@@ -257,6 +257,9 @@
       transform: translateY(get-d(-22px)) scale(0.85);
       font-size: get-d(12px);
       color: #9a9a9a;
+      @include respond(xl) {
+        font-size: 12px;
+      }
     }
 
     @media screen and (min-width: 1980px) {
@@ -342,7 +345,6 @@
       display: flex;
       align-items: center;
       gap: get-d(8px);
-      color: #85754f; // Gold color for selected text
 
       @include respond(xl) {
         gap: 8px;
@@ -357,15 +359,6 @@
           width: 16px;
           height: 16px;
         }
-
-        path {
-          fill: #85754f; // Gold color for selected icon
-        }
-      }
-
-      span {
-        font-weight: 500;
-        color: #85754f; // Gold color for selected text
       }
     }
   }
@@ -677,7 +670,7 @@
         }
         .file-action-btn {
           padding: get-d(8px) get-d(16px);
-          border-radius: 50px;
+          border-radius: get-d(50px);
           border: 1px solid #dbd6cb;
           background: transparent;
           font-size: get-d(14px);
@@ -690,6 +683,7 @@
           white-space: nowrap;
 
           @include respond(xl) {
+            border-radius: 50px;
             padding: 8px 16px;
             font-size: 14px;
           }
@@ -878,63 +872,6 @@
 
   @include respond(xl) {
     margin-top: 32px;
-  }
-}
-
-.btn {
-  width: fit-content;
-  padding: get-d(16px);
-  border: none;
-  border-radius: 50px;
-  font-size: get-d(16px);
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: get-d(8px);
-  text-decoration: none;
-  text-align: center;
-
-  @include respond(xl) {
-    padding: 16px;
-    font-size: 16px;
-    gap: 8px;
-  }
-
-  &.yellow {
-    background: $bg-yellow;
-    color: $bg-grey;
-
-    &:hover:not(:disabled) {
-      background: #f1c40f;
-      transform: translateY(-1px);
-    }
-  }
-
-  &:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-    transform: none;
-  }
-
-  &.submitting {
-    opacity: 0.6;
-    cursor: not-allowed;
-    transform: none;
-    pointer-events: none;
-  }
-
-  .btn-spinner {
-    .spinner {
-      width: 20px;
-      height: 20px;
-      border: 2px solid rgba(255, 255, 255, 0.3);
-      border-radius: 50%;
-      border-top-color: $bg-grey;
-      animation: spin 1s ease-in-out infinite;
-    }
   }
 }
 
