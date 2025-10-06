@@ -72,7 +72,7 @@ class ApplicationPopup {
   bindEvents() {
     // Submit application buttons
     document.addEventListener('click', (e) => {
-      if (e.target.matches('.btn.yellow') && e.target.textContent.trim() === 'Submit application') {
+      if (e.target.matches('.course-card--button .btn.yellow') || e.target.matches('.popup-details__text .btn.yellow')) {
         e.preventDefault();
         this.openPopup(e.target);
       }
@@ -199,7 +199,7 @@ class ApplicationPopup {
 
   openPopup(button) {
     // Get course information from the course card
-    const courseCard = button.closest('.course-card');
+    const courseCard = button.closest('.course-card') || button.closest('.popup-details');
     if (!courseCard) return;
 
     const courseId = courseCard.dataset.id || courseCard.getAttribute('data-id');
