@@ -21,15 +21,22 @@ g('section', document, true)?.forEach((element) => {
     },
   });
 
-  tl.fromTo(
-    [...element.children],
-    {
-      opacity: 0,
-      y: 75,
-    },
-    {
-      opacity: 1,
-      y: 0,
-    },
+  // Exclude .more-below button from animations
+  const childrenToAnimate = [...element.children].filter(
+    (child) => !child.classList.contains('more-below'),
   );
+
+  if (childrenToAnimate.length > 0) {
+    tl.fromTo(
+      childrenToAnimate,
+      {
+        opacity: 0,
+        y: 75,
+      },
+      {
+        opacity: 1,
+        y: 0,
+      },
+    );
+  }
 });
