@@ -221,6 +221,7 @@
     cursor: pointer;
     z-index: 2;
     opacity: 1 !important;
+    transition: all 0.3s ease;
     animation: bounce 2s infinite;
     @include respond(xl) {
       padding: 10px 16px 10px 14px;
@@ -240,6 +241,10 @@
     }
     @include respond(xs) {
       top: 530px;
+    }
+    &:hover {
+      scale: 1.05;
+      transition: all 0.3s ease;
     }
     svg {
       width: 16px;
