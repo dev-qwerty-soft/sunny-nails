@@ -5,6 +5,8 @@ import './js/services.js';
 import './js/parnters.js';
 import './js/apply-form.js';
 import './js/application-popup.js';
+import './js/first-visit-popup.js';
+import './js/clear-inline-styles.js';
 import 'swiper/css';
 import 'swiper/css/pagination';
 import 'swiper/css/scrollbar';

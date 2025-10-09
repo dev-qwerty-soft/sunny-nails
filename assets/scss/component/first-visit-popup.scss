@@ -1,0 +1,286 @@
+/**
+ * First Visit Popup Component Styles
+ * Yellow background with white cards layout
+ */
+
+.first-visit-popup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 10000;
+  display: none;
+
+  &__overlay {
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &__container {
+    background: $bg-color;
+    border-radius: get-d(10px);
+    max-width: get-d(520px);
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+    padding: get-d(40px) get-d(20px);
+    animation: popupSlideIn 0.3s ease-out;
+    @include respond(xl) {
+      padding: 40px 20px;
+      border-radius: 10px;
+      max-width: 520px;
+    }
+    @include respond(md) {
+      padding: 70px 25px 30px 25px;
+      height: 100%;
+      max-height: 100vh;
+    }
+  }
+
+  &__close {
+    position: absolute;
+    top: get-d(20px);
+    right: get-d(20px);
+    width: get-d(29px);
+    height: get-d(29px);
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    z-index: 1;
+    @include respond(xl) {
+      top: 20px;
+      right: 20px;
+      width: 29px;
+      height: 29px;
+    }
+    @include respond(md) {
+    }
+    svg {
+      width: get-d(24px);
+      height: get-d(24px);
+      @include respond(xl) {
+        width: 24px;
+        height: 24px;
+      }
+    }
+
+    &:hover {
+      background: rgba(255, 255, 255, 1);
+      transform: scale(1.1);
+    }
+  }
+
+  &__content {
+    text-align: center;
+  }
+  .popup-header {
+    padding: 0;
+    margin-bottom: get-d(28px);
+    @include respond(xl) {
+      margin-bottom: 28px;
+    }
+    .popup-header-title h2,
+    .popup-header-title {
+      color: $text-dark;
+      text-align: center;
+      font-size: get-d(36px);
+      font-weight: 500;
+      line-height: 120%; /* 43.2px */
+      letter-spacing: -1.08px;
+      @include respond(xl) {
+        font-size: 36px;
+      }
+      span {
+        color: $text-dark;
+        background: $yellow;
+        border-radius: get-d(100px);
+        padding: 0 get-d(24px) get-d(8px);
+        @include respond(xl) {
+          border-radius: 100px;
+          padding: 0 24px 8px;
+        }
+      }
+    }
+
+    &__highlight {
+      position: relative;
+      display: inline-block;
+
+      svg {
+        display: block;
+      }
+
+      .highlight-text {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: get-d(16px);
+        font-weight: 600;
+        color: #333;
+      }
+    }
+  }
+
+  .popup-image {
+    min-height: get-d(200px);
+    @include respond(xl) {
+      min-height: 200px;
+    }
+    @include respond(md) {
+      min-height: 240px;
+    }
+    img {
+      max-width: 100%;
+      height: auto;
+      object-fit: cover;
+      border-radius: get-d(10px);
+      // Оптимизация для быстрой загрузки
+      will-change: transform;
+      image-rendering: auto;
+
+      @include respond(xl) {
+        border-radius: 10px;
+      }
+      @include respond(md) {
+        min-height: 240px;
+      }
+    }
+  }
+
+  .journey-options {
+    position: relative;
+    z-index: 2;
+    margin-top: get-d(-70px);
+    display: flex;
+    padding: 0 get-d(20px);
+    gap: get-d(16px);
+    @include respond(xl) {
+      margin-top: -70px;
+      gap: 16px;
+      padding: 0 20px;
+    }
+    @include respond(md) {
+      margin-top: -110px;
+      flex-direction: column;
+    }
+  }
+
+  .journey-option {
+    display: flex;
+    flex-direction: column;
+    width: calc(50% - get-d(8px));
+    background: white;
+    border-radius: get-d(14px);
+    padding: get-d(20px);
+    transition: all 0.3s ease;
+    flex: 1;
+    text-align: center;
+    @include respond(xl) {
+      border-radius: 14px;
+      padding: 20px;
+    }
+    @include respond(md) {
+      width: 100%;
+      margin-bottom: get-d(16px);
+    }
+
+    .option-icon {
+      width: get-d(40px);
+      height: get-d(40px);
+      aspect-ratio: 1/1;
+      background: transparent;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto get-d(20px) auto;
+      @include respond(xl) {
+        width: 40px;
+        height: 40px;
+        aspect-ratio: 1/1;
+      }
+      @include respond(md) {
+      }
+      img {
+        width: get-d(40px);
+        height: get-d(40px);
+        object-fit: contain;
+        // Оптимизация для быстрой загрузки иконок
+        will-change: transform;
+        image-rendering: auto;
+        @include respond(xl) {
+          width: 40px;
+          height: 40px;
+        }
+      }
+    }
+
+    .option-content {
+      margin-bottom: get-d(20px);
+
+      h3 {
+        margin-bottom: get-d(4px);
+        color: var(--black, #302f34);
+        text-align: center;
+        font-size: get-d(18px);
+        font-weight: 600;
+        line-height: normal;
+        @include respond(xl) {
+          font-size: 18px;
+          margin-bottom: 4px;
+        }
+      }
+
+      p {
+        font-size: get-d(14px);
+        color: &text-dark;
+        text-align: center;
+        font-style: normal;
+        font-weight: 400;
+        line-height: 20px; /* 142.857% */
+        @include respond(xl) {
+          font-size: 14px;
+        }
+      }
+    }
+
+    .option-button {
+      margin-top: auto;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      padding: get-d(4px) get-d(4px) get-d(4px) get-d(16px);
+      height: get-d(40px) !important;
+      @include respond(xl) {
+        padding: 4px 4px 4px 16px;
+        height: 40px !important;
+      }
+    }
+  }
+
+  // Animation keyframes
+  @keyframes popupSlideIn {
+    from {
+      opacity: 0;
+      transform: scale(0.9) translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+    }
+  }
+
+  // Hide popup when no script support
+  .no-js .first-visit-popup {
+    display: none !important;
+  }
+}
