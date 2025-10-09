@@ -142,6 +142,9 @@
   font-weight: 500;
   color: #302f34;
   line-height: 1.2;
+
+  max-width: 500px;
+
   @media screen and (max-width: 768px) {
     flex-direction: column;
     align-items: start;
