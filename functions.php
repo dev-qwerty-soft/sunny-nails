@@ -13,14 +13,12 @@ add_action('acf/init', function () {
   }
 });
 add_filter('acf/settings/save_json', 'my_acf_json_save_point');
-function my_acf_json_save_point($path)
-{
+function my_acf_json_save_point($path) {
   return get_stylesheet_directory() . '/acf-json';
 }
 
 add_filter('acf/settings/load_json', 'my_acf_json_load_point');
-function my_acf_json_load_point($paths)
-{
+function my_acf_json_load_point($paths) {
   $paths[] = get_stylesheet_directory() . '/acf-json';
   return $paths;
 }
@@ -36,8 +34,7 @@ add_filter('upload_mimes', function ($mimes) {
  * @param string $relative_path Relative path to the asset file.
  * @return string Cache-busted URL with file modification time.
  */
-function cache_busted_url($relative_path)
-{
+function cache_busted_url($relative_path) {
   $file_path = get_template_directory() . '/' . ltrim($relative_path, '/');
   $file_url = get_template_directory_uri() . '/' . ltrim($relative_path, '/');
 

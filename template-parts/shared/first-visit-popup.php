@@ -15,21 +15,20 @@ $partners_page_id = $partners_page ? $partners_page->ID : get_option('page_on_fr
 $popup_title = get_field('partners_pop-up_title', $partners_page_id) ?: 'Choose Your Journey';
 $popup_image = get_field('partners_pop-up_image', $partners_page_id);
 $popup_cards = get_field('partners_pop-up_card', $partners_page_id);
-
 ?>
 
 <?php if ($show_popup): ?>
     <?php
     // Предзагрузка изображений для ускорения
     if ($popup_image) {
-        echo '<link rel="preload" as="image" href="' . esc_url($popup_image['url']) . '">';
+      echo '<link rel="preload" as="image" href="' . esc_url($popup_image['url']) . '">';
     }
     if ($popup_cards) {
-        foreach ($popup_cards as $card) {
-            if (isset($card['icon']['url'])) {
-                echo '<link rel="preload" as="image" href="' . esc_url($card['icon']['url']) . '">';
-            }
+      foreach ($popup_cards as $card) {
+        if (isset($card['icon']['url'])) {
+          echo '<link rel="preload" as="image" href="' . esc_url($card['icon']['url']) . '">';
         }
+      }
     }
     ?>
     <div id="first-visit-popup" class="first-visit-popup">
@@ -60,7 +59,9 @@ $popup_cards = get_field('partners_pop-up_card', $partners_page_id);
                     <?php if ($popup_cards): ?>
                         <div class="journey-options">
                             <?php foreach ($popup_cards as $index => $card): ?>
-                                <div class="journey-option <?php echo $index === 0 ? 'business-owner' : 'customer'; ?>">
+                                <div class="journey-option <?php echo $index === 0
+                                  ? 'business-owner'
+                                  : 'customer'; ?>">
                                     <?php if ($card['icon']): ?>
                                         <div class="option-icon">
                                             <img src="<?php echo esc_url($card['icon']['url']); ?>"
@@ -81,26 +82,30 @@ $popup_cards = get_field('partners_pop-up_card', $partners_page_id);
 
                                     <?php if ($card['link']): ?>
                                         <?php
-
                                         $link_url = '';
                                         $link_target = '';
                                         $link_title = '';
 
                                         if (is_array($card['link'])) {
-                                            $link_url = $card['link']['url'] ?? '';
-                                            $link_target = '_blank';
-                                            $link_title = $card['link']['title'] ?? ($index === 0 ? 'Apply as Partner' : 'See Benefits');
+                                          $link_url = $card['link']['url'] ?? '';
+                                          $link_target = '_blank';
+                                          $link_title =
+                                            $card['link']['title'] ??
+                                            ($index === 0 ? 'Apply as Partner' : 'See Benefits');
                                         } else {
-                                            $link_url = $card['link'];
-                                            $link_target = '_blank';
-                                            $link_title = $index === 0 ? 'Apply as Partner' : 'See Benefits';
+                                          $link_url = $card['link'];
+                                          $link_target = '_blank';
+                                          $link_title =
+                                            $index === 0 ? 'Apply as Partner' : 'See Benefits';
                                         }
                                         ?>
                                         <?php if ($link_url): ?>
                                             <a href="<?php echo esc_url($link_url); ?>"
                                                 class="option-button btn yellow popup-link-close"
                                                 target="<?php echo esc_attr($link_target); ?>"
-                                                data-option="<?php echo $index === 0 ? 'business' : 'customer'; ?>">
+                                                data-option="<?php echo $index === 0
+                                                  ? 'business'
+                                                  : 'customer'; ?>">
                                                 <?php echo esc_html($link_title); ?>
 
                                             </a>

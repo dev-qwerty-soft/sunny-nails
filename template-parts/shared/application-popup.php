@@ -6,267 +6,268 @@ $user_phone = '';
 $user_phone_country = '+380'; // Default to Ukraine
 
 if (is_user_logged_in()) {
-    $current_user = wp_get_current_user();
-    $user_id = get_current_user_id();
+  $current_user = wp_get_current_user();
+  $user_id = get_current_user_id();
 
-    // Check if plugin is active and table exists
-    $plugin_active = false;
-    $user_data = null;
+  // Check if plugin is active and table exists
+  $plugin_active = false;
+  $user_data = null;
 
-    // Try to get data from sunny_friends_customers table directly
-    global $wpdb;
-    $registrations_table = $wpdb->prefix . 'sunny_friends_customers';
+  // Try to get data from sunny_friends_customers table directly
+  global $wpdb;
+  $registrations_table = $wpdb->prefix . 'sunny_friends_customers';
 
-    // Check if table exists to avoid SQL errors
-    $table_exists = $wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s', $registrations_table)) == $registrations_table;
+  // Check if table exists to avoid SQL errors
+  $table_exists =
+    $wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s', $registrations_table)) ==
+    $registrations_table;
 
-    if ($table_exists) {
-        $user_data = $wpdb->get_row($wpdb->prepare(
-            "SELECT * FROM $registrations_table WHERE user_id = %d",
-            $user_id
-        ));
+  if ($table_exists) {
+    $user_data = $wpdb->get_row(
+      $wpdb->prepare("SELECT * FROM $registrations_table WHERE user_id = %d", $user_id),
+    );
 
-        if ($user_data) {
-            $plugin_active = true;
+    if ($user_data) {
+      $plugin_active = true;
 
-            // Try different name fields from Sunny Friends plugin
-            if (!empty($user_data->name)) {
-                $user_name = $user_data->name;
-            } elseif (!empty($user_data->first_name) && !empty($user_data->last_name)) {
-                $user_name = trim($user_data->first_name . ' ' . $user_data->last_name);
-            } elseif (!empty($user_data->first_name)) {
-                $user_name = $user_data->first_name;
-            } elseif (!empty($user_data->full_name)) {
-                $user_name = $user_data->full_name;
-            } else {
-                $user_name = '';
-            }
+      // Try different name fields from Sunny Friends plugin
+      if (!empty($user_data->name)) {
+        $user_name = $user_data->name;
+      } elseif (!empty($user_data->first_name) && !empty($user_data->last_name)) {
+        $user_name = trim($user_data->first_name . ' ' . $user_data->last_name);
+      } elseif (!empty($user_data->first_name)) {
+        $user_name = $user_data->first_name;
+      } elseif (!empty($user_data->full_name)) {
+        $user_name = $user_data->full_name;
+      } else {
+        $user_name = '';
+      }
 
-            $user_email = $user_data->email;
-            $phone = $user_data->phone;
+      $user_email = $user_data->email;
+      $phone = $user_data->phone;
 
-            // Parse country code and phone number
-            $user_phone_country = '+380'; // Default to Ukraine
-            $user_phone = '';
+      // Parse country code and phone number
+      $user_phone_country = '+380'; // Default to Ukraine
+      $user_phone = '';
 
-            if ($phone) {
-                // Parse country code from phone number
-                $phone_cleaned = preg_replace('/[^\d+]/', '', $phone);
+      if ($phone) {
+        // Parse country code from phone number
+        $phone_cleaned = preg_replace('/[^\d+]/', '', $phone);
 
-                // List of country codes to check (longest first)
-                $country_codes = [
-                    '+380',  // Ukraine
-                    '+1',    // USA/Canada
-                    '+7',    // Russia/Kazakhstan
-                    '+44',   // UK
-                    '+49',   // Germany
-                    '+33',   // France
-                    '+39',   // Italy
-                    '+34',   // Spain
-                    '+31',   // Netherlands
-                    '+48',   // Poland
-                    '+86',   // China
-                    '+81',   // Japan
-                    '+82',   // South Korea
-                    '+91',   // India
-                    '+55',   // Brazil
-                    '+52',   // Mexico
-                    '+61',   // Australia
-                    '+64',   // New Zealand
-                    '+27',   // South Africa
-                    '+20',   // Egypt
-                    '+90',   // Turkey
-                    '+98',   // Iran
-                    '+92',   // Pakistan
-                    '+63',   // Philippines
-                    '+66',   // Thailand
-                    '+84',   // Vietnam
-                    '+62',   // Indonesia
-                    '+60',   // Malaysia
-                    '+65',   // Singapore
-                    '+852',  // Hong Kong
-                    '+853',  // Macau
-                    '+886',  // Taiwan
-                    '+972',  // Israel
-                    '+971',  // UAE
-                    '+966',  // Saudi Arabia
-                    '+974',  // Qatar
-                    '+965',  // Kuwait
-                    '+973',  // Bahrain
-                    '+968',  // Oman
-                    '+962',  // Jordan
-                    '+961',  // Lebanon
-                    '+963',  // Syria
-                    '+964',  // Iraq
-                    '+98',   // Iran
-                    '+93',   // Afghanistan
-                    '+994',  // Azerbaijan
-                    '+995',  // Georgia
-                    '+374',  // Armenia
-                    '+375',  // Belarus
-                    '+371',  // Latvia
-                    '+372',  // Estonia
-                    '+370',  // Lithuania
-                    '+373',  // Moldova
-                    '+381',  // Serbia
-                    '+382',  // Montenegro
-                    '+385',  // Croatia
-                    '+386',  // Slovenia
-                    '+387',  // Bosnia and Herzegovina
-                    '+389',  // North Macedonia
-                    '+420',  // Czech Republic
-                    '+421',  // Slovakia
-                    '+36',   // Hungary
-                    '+40',   // Romania
-                    '+359',  // Bulgaria
-                    '+30',   // Greece
-                    '+357',  // Cyprus
-                    '+356',  // Malta
-                    '+351',  // Portugal
-                    '+32',   // Belgium
-                    '+352',  // Luxembourg
-                    '+41',   // Switzerland
-                    '+43',   // Austria
-                    '+45',   // Denmark
-                    '+46',   // Sweden
-                    '+47',   // Norway
-                    '+358',  // Finland
-                    '+354',  // Iceland
-                ];
+        // List of country codes to check (longest first)
+        $country_codes = [
+          '+380', // Ukraine
+          '+1', // USA/Canada
+          '+7', // Russia/Kazakhstan
+          '+44', // UK
+          '+49', // Germany
+          '+33', // France
+          '+39', // Italy
+          '+34', // Spain
+          '+31', // Netherlands
+          '+48', // Poland
+          '+86', // China
+          '+81', // Japan
+          '+82', // South Korea
+          '+91', // India
+          '+55', // Brazil
+          '+52', // Mexico
+          '+61', // Australia
+          '+64', // New Zealand
+          '+27', // South Africa
+          '+20', // Egypt
+          '+90', // Turkey
+          '+98', // Iran
+          '+92', // Pakistan
+          '+63', // Philippines
+          '+66', // Thailand
+          '+84', // Vietnam
+          '+62', // Indonesia
+          '+60', // Malaysia
+          '+65', // Singapore
+          '+852', // Hong Kong
+          '+853', // Macau
+          '+886', // Taiwan
+          '+972', // Israel
+          '+971', // UAE
+          '+966', // Saudi Arabia
+          '+974', // Qatar
+          '+965', // Kuwait
+          '+973', // Bahrain
+          '+968', // Oman
+          '+962', // Jordan
+          '+961', // Lebanon
+          '+963', // Syria
+          '+964', // Iraq
+          '+98', // Iran
+          '+93', // Afghanistan
+          '+994', // Azerbaijan
+          '+995', // Georgia
+          '+374', // Armenia
+          '+375', // Belarus
+          '+371', // Latvia
+          '+372', // Estonia
+          '+370', // Lithuania
+          '+373', // Moldova
+          '+381', // Serbia
+          '+382', // Montenegro
+          '+385', // Croatia
+          '+386', // Slovenia
+          '+387', // Bosnia and Herzegovina
+          '+389', // North Macedonia
+          '+420', // Czech Republic
+          '+421', // Slovakia
+          '+36', // Hungary
+          '+40', // Romania
+          '+359', // Bulgaria
+          '+30', // Greece
+          '+357', // Cyprus
+          '+356', // Malta
+          '+351', // Portugal
+          '+32', // Belgium
+          '+352', // Luxembourg
+          '+41', // Switzerland
+          '+43', // Austria
+          '+45', // Denmark
+          '+46', // Sweden
+          '+47', // Norway
+          '+358', // Finland
+          '+354', // Iceland
+        ];
 
-                foreach ($country_codes as $code) {
-                    if (strpos($phone_cleaned, $code) === 0) {
-                        $user_phone_country = $code;
-                        $user_phone = substr($phone_cleaned, strlen($code));
-                        break;
-                    }
-                }
-
-                // If no country code found, assume it's Ukraine and the whole number is phone
-                if (empty($user_phone)) {
-                    $user_phone = $phone_cleaned;
-                }
-            }
+        foreach ($country_codes as $code) {
+          if (strpos($phone_cleaned, $code) === 0) {
+            $user_phone_country = $code;
+            $user_phone = substr($phone_cleaned, strlen($code));
+            break;
+          }
         }
+
+        // If no country code found, assume it's Ukraine and the whole number is phone
+        if (empty($user_phone)) {
+          $user_phone = $phone_cleaned;
+        }
+      }
     }
+  }
 
-    // Fallback to WordPress user data if plugin is not active or no custom data
-    if (!$plugin_active) {
-        $user_name = trim($current_user->first_name . ' ' . $current_user->last_name);
-        if (empty($user_name)) {
-            $user_name = $current_user->display_name;
-        }
-        $user_email = $current_user->user_email;
-
-        // Try to get phone from user meta as fallback
-        $user_phone_meta = get_user_meta($user_id, 'phone', true);
-        if ($user_phone_meta) {
-            $phone = $user_phone_meta;
-
-            // Use the same parsing logic as above
-            $user_phone_country = '+380'; // Default to Ukraine
-            $user_phone = '';
-
-            if ($phone) {
-                // Parse country code from phone number
-                $phone_cleaned = preg_replace('/[^\d+]/', '', $phone);
-
-                // List of country codes to check (longest first)
-                $country_codes = [
-                    '+380',  // Ukraine
-                    '+1',    // USA/Canada
-                    '+7',    // Russia/Kazakhstan
-                    '+44',   // UK
-                    '+49',   // Germany
-                    '+33',   // France
-                    '+39',   // Italy
-                    '+34',   // Spain
-                    '+31',   // Netherlands
-                    '+48',   // Poland
-                    '+86',   // China
-                    '+81',   // Japan
-                    '+82',   // South Korea
-                    '+91',   // India
-                    '+55',   // Brazil
-                    '+52',   // Mexico
-                    '+61',   // Australia
-                    '+64',   // New Zealand
-                    '+27',   // South Africa
-                    '+20',   // Egypt
-                    '+90',   // Turkey
-                    '+98',   // Iran
-                    '+92',   // Pakistan
-                    '+63',   // Philippines
-                    '+66',   // Thailand
-                    '+84',   // Vietnam
-                    '+62',   // Indonesia
-                    '+60',   // Malaysia
-                    '+65',   // Singapore
-                    '+852',  // Hong Kong
-                    '+853',  // Macau
-                    '+886',  // Taiwan
-                    '+972',  // Israel
-                    '+971',  // UAE
-                    '+966',  // Saudi Arabia
-                    '+974',  // Qatar
-                    '+965',  // Kuwait
-                    '+973',  // Bahrain
-                    '+968',  // Oman
-                    '+962',  // Jordan
-                    '+961',  // Lebanon
-                    '+963',  // Syria
-                    '+964',  // Iraq
-                    '+98',   // Iran
-                    '+93',   // Afghanistan
-                    '+994',  // Azerbaijan
-                    '+995',  // Georgia
-                    '+374',  // Armenia
-                    '+375',  // Belarus
-                    '+371',  // Latvia
-                    '+372',  // Estonia
-                    '+370',  // Lithuania
-                    '+373',  // Moldova
-                    '+381',  // Serbia
-                    '+382',  // Montenegro
-                    '+385',  // Croatia
-                    '+386',  // Slovenia
-                    '+387',  // Bosnia and Herzegovina
-                    '+389',  // North Macedonia
-                    '+420',  // Czech Republic
-                    '+421',  // Slovakia
-                    '+36',   // Hungary
-                    '+40',   // Romania
-                    '+359',  // Bulgaria
-                    '+30',   // Greece
-                    '+357',  // Cyprus
-                    '+356',  // Malta
-                    '+351',  // Portugal
-                    '+32',   // Belgium
-                    '+352',  // Luxembourg
-                    '+41',   // Switzerland
-                    '+43',   // Austria
-                    '+45',   // Denmark
-                    '+46',   // Sweden
-                    '+47',   // Norway
-                    '+358',  // Finland
-                    '+354',  // Iceland
-                ];
-
-                foreach ($country_codes as $code) {
-                    if (strpos($phone_cleaned, $code) === 0) {
-                        $user_phone_country = $code;
-                        $user_phone = substr($phone_cleaned, strlen($code));
-                        break;
-                    }
-                }
-
-                // If no country code found, assume it's Ukraine and the whole number is phone
-                if (empty($user_phone)) {
-                    $user_phone = $phone_cleaned;
-                }
-            }
-        }
+  // Fallback to WordPress user data if plugin is not active or no custom data
+  if (!$plugin_active) {
+    $user_name = trim($current_user->first_name . ' ' . $current_user->last_name);
+    if (empty($user_name)) {
+      $user_name = $current_user->display_name;
     }
+    $user_email = $current_user->user_email;
+
+    // Try to get phone from user meta as fallback
+    $user_phone_meta = get_user_meta($user_id, 'phone', true);
+    if ($user_phone_meta) {
+      $phone = $user_phone_meta;
+
+      // Use the same parsing logic as above
+      $user_phone_country = '+380'; // Default to Ukraine
+      $user_phone = '';
+
+      if ($phone) {
+        // Parse country code from phone number
+        $phone_cleaned = preg_replace('/[^\d+]/', '', $phone);
+
+        // List of country codes to check (longest first)
+        $country_codes = [
+          '+380', // Ukraine
+          '+1', // USA/Canada
+          '+7', // Russia/Kazakhstan
+          '+44', // UK
+          '+49', // Germany
+          '+33', // France
+          '+39', // Italy
+          '+34', // Spain
+          '+31', // Netherlands
+          '+48', // Poland
+          '+86', // China
+          '+81', // Japan
+          '+82', // South Korea
+          '+91', // India
+          '+55', // Brazil
+          '+52', // Mexico
+          '+61', // Australia
+          '+64', // New Zealand
+          '+27', // South Africa
+          '+20', // Egypt
+          '+90', // Turkey
+          '+98', // Iran
+          '+92', // Pakistan
+          '+63', // Philippines
+          '+66', // Thailand
+          '+84', // Vietnam
+          '+62', // Indonesia
+          '+60', // Malaysia
+          '+65', // Singapore
+          '+852', // Hong Kong
+          '+853', // Macau
+          '+886', // Taiwan
+          '+972', // Israel
+          '+971', // UAE
+          '+966', // Saudi Arabia
+          '+974', // Qatar
+          '+965', // Kuwait
+          '+973', // Bahrain
+          '+968', // Oman
+          '+962', // Jordan
+          '+961', // Lebanon
+          '+963', // Syria
+          '+964', // Iraq
+          '+98', // Iran
+          '+93', // Afghanistan
+          '+994', // Azerbaijan
+          '+995', // Georgia
+          '+374', // Armenia
+          '+375', // Belarus
+          '+371', // Latvia
+          '+372', // Estonia
+          '+370', // Lithuania
+          '+373', // Moldova
+          '+381', // Serbia
+          '+382', // Montenegro
+          '+385', // Croatia
+          '+386', // Slovenia
+          '+387', // Bosnia and Herzegovina
+          '+389', // North Macedonia
+          '+420', // Czech Republic
+          '+421', // Slovakia
+          '+36', // Hungary
+          '+40', // Romania
+          '+359', // Bulgaria
+          '+30', // Greece
+          '+357', // Cyprus
+          '+356', // Malta
+          '+351', // Portugal
+          '+32', // Belgium
+          '+352', // Luxembourg
+          '+41', // Switzerland
+          '+43', // Austria
+          '+45', // Denmark
+          '+46', // Sweden
+          '+47', // Norway
+          '+358', // Finland
+          '+354', // Iceland
+        ];
+
+        foreach ($country_codes as $code) {
+          if (strpos($phone_cleaned, $code) === 0) {
+            $user_phone_country = $code;
+            $user_phone = substr($phone_cleaned, strlen($code));
+            break;
+          }
+        }
+
+        // If no country code found, assume it's Ukraine and the whole number is phone
+        if (empty($user_phone)) {
+          $user_phone = $phone_cleaned;
+        }
+      }
+    }
+  }
 }
 ?>
 
@@ -292,14 +293,18 @@ if (is_user_logged_in()) {
                     <div class="form-fields">
                         <div class="form-group">
                             <input type="text" id="applicant-name" name="applicant[name]" placeholder=" "
-                                value="<?php echo is_user_logged_in() ? esc_attr($user_name) : ''; ?>"
+                                value="<?php echo is_user_logged_in()
+                                  ? esc_attr($user_name)
+                                  : ''; ?>"
                                 required />
                             <label for="applicant-name">Name</label>
                         </div>
 
                         <div class="form-group">
                             <input type="email" id="applicant-email" name="applicant[email]" placeholder=" "
-                                value="<?php echo is_user_logged_in() ? esc_attr($user_email) : ''; ?>"
+                                value="<?php echo is_user_logged_in()
+                                  ? esc_attr($user_email)
+                                  : ''; ?>"
                                 required />
                             <label for="applicant-email">Email</label>
                         </div>
@@ -313,241 +318,245 @@ if (is_user_logged_in()) {
                                             // Set default selected country based on user data
                                             $selected_country = 'Ukraine +380'; // Default
                                             if (is_user_logged_in() && $user_phone_country) {
-                                                $country_names = [
-                                                    '+65' => 'Singapore',
-                                                    '+93' => 'Afghanistan',
-                                                    '+355' => 'Albania',
-                                                    '+213' => 'Algeria',
-                                                    '+1684' => 'American Samoa',
-                                                    '+376' => 'Andorra',
-                                                    '+244' => 'Angola',
-                                                    '+1264' => 'Anguilla',
-                                                    '+54' => 'Argentina',
-                                                    '+374' => 'Armenia',
-                                                    '+297' => 'Aruba',
-                                                    '+61' => 'Australia',
-                                                    '+43' => 'Austria',
-                                                    '+994' => 'Azerbaijan',
-                                                    '+1242' => 'Bahamas',
-                                                    '+973' => 'Bahrain',
-                                                    '+880' => 'Bangladesh',
-                                                    '+1246' => 'Barbados',
-                                                    '+375' => 'Belarus',
-                                                    '+32' => 'Belgium',
-                                                    '+501' => 'Belize',
-                                                    '+229' => 'Benin',
-                                                    '+1441' => 'Bermuda',
-                                                    '+975' => 'Bhutan',
-                                                    '+591' => 'Bolivia',
-                                                    '+387' => 'Bosnia and Herzegovina',
-                                                    '+267' => 'Botswana',
-                                                    '+55' => 'Brazil',
-                                                    '+673' => 'Brunei',
-                                                    '+359' => 'Bulgaria',
-                                                    '+226' => 'Burkina Faso',
-                                                    '+257' => 'Burundi',
-                                                    '+855' => 'Cambodia',
-                                                    '+237' => 'Cameroon',
-                                                    '+1' => 'Canada',
-                                                    '+238' => 'Cape Verde',
-                                                    '+1345' => 'Cayman Islands',
-                                                    '+236' => 'Central African Republic',
-                                                    '+235' => 'Chad',
-                                                    '+56' => 'Chile',
-                                                    '+86' => 'China',
-                                                    '+57' => 'Colombia',
-                                                    '+269' => 'Comoros',
-                                                    '+682' => 'Cook Islands',
-                                                    '+506' => 'Costa Rica',
-                                                    '+385' => 'Croatia',
-                                                    '+53' => 'Cuba',
-                                                    '+599' => 'Curacao',
-                                                    '+357' => 'Cyprus',
-                                                    '+420' => 'Czech Republic',
-                                                    '+243' => 'Congo (DRC)',
-                                                    '+45' => 'Denmark',
-                                                    '+253' => 'Djibouti',
-                                                    '+1767' => 'Dominica',
-                                                    '+1809' => 'Dominican Republic',
-                                                    '+670' => 'East Timor',
-                                                    '+593' => 'Ecuador',
-                                                    '+20' => 'Egypt',
-                                                    '+503' => 'El Salvador',
-                                                    '+240' => 'Equatorial Guinea',
-                                                    '+291' => 'Eritrea',
-                                                    '+372' => 'Estonia',
-                                                    '+268' => 'Eswatini',
-                                                    '+251' => 'Ethiopia',
-                                                    '+298' => 'Faroe Islands',
-                                                    '+679' => 'Fiji',
-                                                    '+358' => 'Finland',
-                                                    '+33' => 'France',
-                                                    '+594' => 'French Guiana',
-                                                    '+689' => 'French Polynesia',
-                                                    '+241' => 'Gabon',
-                                                    '+220' => 'Gambia',
-                                                    '+995' => 'Georgia',
-                                                    '+49' => 'Germany',
-                                                    '+233' => 'Ghana',
-                                                    '+350' => 'Gibraltar',
-                                                    '+30' => 'Greece',
-                                                    '+299' => 'Greenland',
-                                                    '+1473' => 'Grenada',
-                                                    '+590' => 'Guadeloupe',
-                                                    '+1671' => 'Guam',
-                                                    '+502' => 'Guatemala',
-                                                    '+44' => 'Guernsey',
-                                                    '+224' => 'Guinea',
-                                                    '+245' => 'Guinea-Bissau',
-                                                    '+592' => 'Guyana',
-                                                    '+509' => 'Haiti',
-                                                    '+504' => 'Honduras',
-                                                    '+852' => 'Hong Kong',
-                                                    '+36' => 'Hungary',
-                                                    '+354' => 'Iceland',
-                                                    '+91' => 'India',
-                                                    '+62' => 'Indonesia',
-                                                    '+98' => 'Iran',
-                                                    '+964' => 'Iraq',
-                                                    '+353' => 'Ireland',
-                                                    '+44' => 'Isle of Man',
-                                                    '+972' => 'Israel',
-                                                    '+39' => 'Italy',
-                                                    '+225' => 'Ivory Coast',
-                                                    '+1876' => 'Jamaica',
-                                                    '+81' => 'Japan',
-                                                    '+44' => 'Jersey',
-                                                    '+962' => 'Jordan',
-                                                    '+7' => 'Kazakhstan',
-                                                    '+254' => 'Kenya',
-                                                    '+686' => 'Kiribati',
-                                                    '+383' => 'Kosovo',
-                                                    '+965' => 'Kuwait',
-                                                    '+996' => 'Kyrgyzstan',
-                                                    '+856' => 'Laos',
-                                                    '+371' => 'Latvia',
-                                                    '+961' => 'Lebanon',
-                                                    '+266' => 'Lesotho',
-                                                    '+231' => 'Liberia',
-                                                    '+218' => 'Libya',
-                                                    '+423' => 'Liechtenstein',
-                                                    '+370' => 'Lithuania',
-                                                    '+352' => 'Luxembourg',
-                                                    '+853' => 'Macau',
-                                                    '+389' => 'Macedonia',
-                                                    '+261' => 'Madagascar',
-                                                    '+265' => 'Malawi',
-                                                    '+60' => 'Malaysia',
-                                                    '+960' => 'Maldives',
-                                                    '+223' => 'Mali',
-                                                    '+356' => 'Malta',
-                                                    '+692' => 'Marshall Islands',
-                                                    '+596' => 'Martinique',
-                                                    '+222' => 'Mauritania',
-                                                    '+230' => 'Mauritius',
-                                                    '+262' => 'Mayotte',
-                                                    '+52' => 'Mexico',
-                                                    '+691' => 'Micronesia',
-                                                    '+373' => 'Moldova',
-                                                    '+377' => 'Monaco',
-                                                    '+976' => 'Mongolia',
-                                                    '+382' => 'Montenegro',
-                                                    '+1664' => 'Montserrat',
-                                                    '+212' => 'Morocco',
-                                                    '+258' => 'Mozambique',
-                                                    '+95' => 'Myanmar',
-                                                    '+264' => 'Namibia',
-                                                    '+674' => 'Nauru',
-                                                    '+977' => 'Nepal',
-                                                    '+31' => 'Netherlands',
-                                                    '+687' => 'New Caledonia',
-                                                    '+64' => 'New Zealand',
-                                                    '+505' => 'Nicaragua',
-                                                    '+227' => 'Niger',
-                                                    '+234' => 'Nigeria',
-                                                    '+683' => 'Niue',
-                                                    '+850' => 'North Korea',
-                                                    '+1670' => 'Northern Mariana Islands',
-                                                    '+47' => 'Norway',
-                                                    '+968' => 'Oman',
-                                                    '+92' => 'Pakistan',
-                                                    '+680' => 'Palau',
-                                                    '+970' => 'Palestine',
-                                                    '+507' => 'Panama',
-                                                    '+675' => 'Papua New Guinea',
-                                                    '+595' => 'Paraguay',
-                                                    '+51' => 'Peru',
-                                                    '+63' => 'Philippines',
-                                                    '+48' => 'Poland',
-                                                    '+351' => 'Portugal',
-                                                    '+1787' => 'Puerto Rico',
-                                                    '+974' => 'Qatar',
-                                                    '+242' => 'Republic of the Congo',
-                                                    '+262' => 'Reunion',
-                                                    '+40' => 'Romania',
-                                                    '+7' => 'Russia',
-                                                    '+250' => 'Rwanda',
-                                                    '+590' => 'Saint Barthelemy',
-                                                    '+1869' => 'Saint Kitts and Nevis',
-                                                    '+1758' => 'Saint Lucia',
-                                                    '+590' => 'Saint Martin',
-                                                    '+1784' => 'St. Vincent & Grenadines',
-                                                    '+685' => 'Samoa',
-                                                    '+378' => 'San Marino',
-                                                    '+239' => 'Sao Tome and Principe',
-                                                    '+966' => 'Saudi Arabia',
-                                                    '+221' => 'Senegal',
-                                                    '+381' => 'Serbia',
-                                                    '+248' => 'Seychelles',
-                                                    '+232' => 'Sierra Leone',
-                                                    '+1721' => 'Sint Maarten',
-                                                    '+421' => 'Slovakia',
-                                                    '+386' => 'Slovenia',
-                                                    '+677' => 'Solomon Islands',
-                                                    '+252' => 'Somalia',
-                                                    '+27' => 'South Africa',
-                                                    '+82' => 'South Korea',
-                                                    '+211' => 'South Sudan',
-                                                    '+34' => 'Spain',
-                                                    '+94' => 'Sri Lanka',
-                                                    '+249' => 'Sudan',
-                                                    '+597' => 'Suriname',
-                                                    '+47' => 'Svalbard and Jan Mayen',
-                                                    '+46' => 'Sweden',
-                                                    '+41' => 'Switzerland',
-                                                    '+963' => 'Syria',
-                                                    '+886' => 'Taiwan',
-                                                    '+992' => 'Tajikistan',
-                                                    '+255' => 'Tanzania',
-                                                    '+66' => 'Thailand',
-                                                    '+228' => 'Togo',
-                                                    '+676' => 'Tonga',
-                                                    '+1868' => 'Trinidad and Tobago',
-                                                    '+216' => 'Tunisia',
-                                                    '+90' => 'Turkey',
-                                                    '+993' => 'Turkmenistan',
-                                                    '+1649' => 'Turks and Caicos Islands',
-                                                    '+688' => 'Tuvalu',
-                                                    '+1340' => 'U.S. Virgin Islands',
-                                                    '+256' => 'Uganda',
-                                                    '+380' => 'Ukraine',
-                                                    '+971' => 'United Arab Emirates',
-                                                    '+44' => 'United Kingdom',
-                                                    '+1' => 'United States',
-                                                    '+598' => 'Uruguay',
-                                                    '+998' => 'Uzbekistan',
-                                                    '+678' => 'Vanuatu',
-                                                    '+39' => 'Vatican',
-                                                    '+58' => 'Venezuela',
-                                                    '+84' => 'Vietnam',
-                                                    '+212' => 'Western Sahara',
-                                                    '+967' => 'Yemen',
-                                                    '+260' => 'Zambia',
-                                                    '+263' => 'Zimbabwe',
-                                                ];
-                                                $selected_country = isset($country_names[$user_phone_country])
-                                                    ? $country_names[$user_phone_country] . ' ' . $user_phone_country
-                                                    : 'Singapore +65';
+                                              $country_names = [
+                                                '+65' => 'Singapore',
+                                                '+93' => 'Afghanistan',
+                                                '+355' => 'Albania',
+                                                '+213' => 'Algeria',
+                                                '+1684' => 'American Samoa',
+                                                '+376' => 'Andorra',
+                                                '+244' => 'Angola',
+                                                '+1264' => 'Anguilla',
+                                                '+54' => 'Argentina',
+                                                '+374' => 'Armenia',
+                                                '+297' => 'Aruba',
+                                                '+61' => 'Australia',
+                                                '+43' => 'Austria',
+                                                '+994' => 'Azerbaijan',
+                                                '+1242' => 'Bahamas',
+                                                '+973' => 'Bahrain',
+                                                '+880' => 'Bangladesh',
+                                                '+1246' => 'Barbados',
+                                                '+375' => 'Belarus',
+                                                '+32' => 'Belgium',
+                                                '+501' => 'Belize',
+                                                '+229' => 'Benin',
+                                                '+1441' => 'Bermuda',
+                                                '+975' => 'Bhutan',
+                                                '+591' => 'Bolivia',
+                                                '+387' => 'Bosnia and Herzegovina',
+                                                '+267' => 'Botswana',
+                                                '+55' => 'Brazil',
+                                                '+673' => 'Brunei',
+                                                '+359' => 'Bulgaria',
+                                                '+226' => 'Burkina Faso',
+                                                '+257' => 'Burundi',
+                                                '+855' => 'Cambodia',
+                                                '+237' => 'Cameroon',
+                                                '+1' => 'Canada',
+                                                '+238' => 'Cape Verde',
+                                                '+1345' => 'Cayman Islands',
+                                                '+236' => 'Central African Republic',
+                                                '+235' => 'Chad',
+                                                '+56' => 'Chile',
+                                                '+86' => 'China',
+                                                '+57' => 'Colombia',
+                                                '+269' => 'Comoros',
+                                                '+682' => 'Cook Islands',
+                                                '+506' => 'Costa Rica',
+                                                '+385' => 'Croatia',
+                                                '+53' => 'Cuba',
+                                                '+599' => 'Curacao',
+                                                '+357' => 'Cyprus',
+                                                '+420' => 'Czech Republic',
+                                                '+243' => 'Congo (DRC)',
+                                                '+45' => 'Denmark',
+                                                '+253' => 'Djibouti',
+                                                '+1767' => 'Dominica',
+                                                '+1809' => 'Dominican Republic',
+                                                '+670' => 'East Timor',
+                                                '+593' => 'Ecuador',
+                                                '+20' => 'Egypt',
+                                                '+503' => 'El Salvador',
+                                                '+240' => 'Equatorial Guinea',
+                                                '+291' => 'Eritrea',
+                                                '+372' => 'Estonia',
+                                                '+268' => 'Eswatini',
+                                                '+251' => 'Ethiopia',
+                                                '+298' => 'Faroe Islands',
+                                                '+679' => 'Fiji',
+                                                '+358' => 'Finland',
+                                                '+33' => 'France',
+                                                '+594' => 'French Guiana',
+                                                '+689' => 'French Polynesia',
+                                                '+241' => 'Gabon',
+                                                '+220' => 'Gambia',
+                                                '+995' => 'Georgia',
+                                                '+49' => 'Germany',
+                                                '+233' => 'Ghana',
+                                                '+350' => 'Gibraltar',
+                                                '+30' => 'Greece',
+                                                '+299' => 'Greenland',
+                                                '+1473' => 'Grenada',
+                                                '+590' => 'Guadeloupe',
+                                                '+1671' => 'Guam',
+                                                '+502' => 'Guatemala',
+                                                '+44' => 'Guernsey',
+                                                '+224' => 'Guinea',
+                                                '+245' => 'Guinea-Bissau',
+                                                '+592' => 'Guyana',
+                                                '+509' => 'Haiti',
+                                                '+504' => 'Honduras',
+                                                '+852' => 'Hong Kong',
+                                                '+36' => 'Hungary',
+                                                '+354' => 'Iceland',
+                                                '+91' => 'India',
+                                                '+62' => 'Indonesia',
+                                                '+98' => 'Iran',
+                                                '+964' => 'Iraq',
+                                                '+353' => 'Ireland',
+                                                '+44' => 'Isle of Man',
+                                                '+972' => 'Israel',
+                                                '+39' => 'Italy',
+                                                '+225' => 'Ivory Coast',
+                                                '+1876' => 'Jamaica',
+                                                '+81' => 'Japan',
+                                                '+44' => 'Jersey',
+                                                '+962' => 'Jordan',
+                                                '+7' => 'Kazakhstan',
+                                                '+254' => 'Kenya',
+                                                '+686' => 'Kiribati',
+                                                '+383' => 'Kosovo',
+                                                '+965' => 'Kuwait',
+                                                '+996' => 'Kyrgyzstan',
+                                                '+856' => 'Laos',
+                                                '+371' => 'Latvia',
+                                                '+961' => 'Lebanon',
+                                                '+266' => 'Lesotho',
+                                                '+231' => 'Liberia',
+                                                '+218' => 'Libya',
+                                                '+423' => 'Liechtenstein',
+                                                '+370' => 'Lithuania',
+                                                '+352' => 'Luxembourg',
+                                                '+853' => 'Macau',
+                                                '+389' => 'Macedonia',
+                                                '+261' => 'Madagascar',
+                                                '+265' => 'Malawi',
+                                                '+60' => 'Malaysia',
+                                                '+960' => 'Maldives',
+                                                '+223' => 'Mali',
+                                                '+356' => 'Malta',
+                                                '+692' => 'Marshall Islands',
+                                                '+596' => 'Martinique',
+                                                '+222' => 'Mauritania',
+                                                '+230' => 'Mauritius',
+                                                '+262' => 'Mayotte',
+                                                '+52' => 'Mexico',
+                                                '+691' => 'Micronesia',
+                                                '+373' => 'Moldova',
+                                                '+377' => 'Monaco',
+                                                '+976' => 'Mongolia',
+                                                '+382' => 'Montenegro',
+                                                '+1664' => 'Montserrat',
+                                                '+212' => 'Morocco',
+                                                '+258' => 'Mozambique',
+                                                '+95' => 'Myanmar',
+                                                '+264' => 'Namibia',
+                                                '+674' => 'Nauru',
+                                                '+977' => 'Nepal',
+                                                '+31' => 'Netherlands',
+                                                '+687' => 'New Caledonia',
+                                                '+64' => 'New Zealand',
+                                                '+505' => 'Nicaragua',
+                                                '+227' => 'Niger',
+                                                '+234' => 'Nigeria',
+                                                '+683' => 'Niue',
+                                                '+850' => 'North Korea',
+                                                '+1670' => 'Northern Mariana Islands',
+                                                '+47' => 'Norway',
+                                                '+968' => 'Oman',
+                                                '+92' => 'Pakistan',
+                                                '+680' => 'Palau',
+                                                '+970' => 'Palestine',
+                                                '+507' => 'Panama',
+                                                '+675' => 'Papua New Guinea',
+                                                '+595' => 'Paraguay',
+                                                '+51' => 'Peru',
+                                                '+63' => 'Philippines',
+                                                '+48' => 'Poland',
+                                                '+351' => 'Portugal',
+                                                '+1787' => 'Puerto Rico',
+                                                '+974' => 'Qatar',
+                                                '+242' => 'Republic of the Congo',
+                                                '+262' => 'Reunion',
+                                                '+40' => 'Romania',
+                                                '+7' => 'Russia',
+                                                '+250' => 'Rwanda',
+                                                '+590' => 'Saint Barthelemy',
+                                                '+1869' => 'Saint Kitts and Nevis',
+                                                '+1758' => 'Saint Lucia',
+                                                '+590' => 'Saint Martin',
+                                                '+1784' => 'St. Vincent & Grenadines',
+                                                '+685' => 'Samoa',
+                                                '+378' => 'San Marino',
+                                                '+239' => 'Sao Tome and Principe',
+                                                '+966' => 'Saudi Arabia',
+                                                '+221' => 'Senegal',
+                                                '+381' => 'Serbia',
+                                                '+248' => 'Seychelles',
+                                                '+232' => 'Sierra Leone',
+                                                '+1721' => 'Sint Maarten',
+                                                '+421' => 'Slovakia',
+                                                '+386' => 'Slovenia',
+                                                '+677' => 'Solomon Islands',
+                                                '+252' => 'Somalia',
+                                                '+27' => 'South Africa',
+                                                '+82' => 'South Korea',
+                                                '+211' => 'South Sudan',
+                                                '+34' => 'Spain',
+                                                '+94' => 'Sri Lanka',
+                                                '+249' => 'Sudan',
+                                                '+597' => 'Suriname',
+                                                '+47' => 'Svalbard and Jan Mayen',
+                                                '+46' => 'Sweden',
+                                                '+41' => 'Switzerland',
+                                                '+963' => 'Syria',
+                                                '+886' => 'Taiwan',
+                                                '+992' => 'Tajikistan',
+                                                '+255' => 'Tanzania',
+                                                '+66' => 'Thailand',
+                                                '+228' => 'Togo',
+                                                '+676' => 'Tonga',
+                                                '+1868' => 'Trinidad and Tobago',
+                                                '+216' => 'Tunisia',
+                                                '+90' => 'Turkey',
+                                                '+993' => 'Turkmenistan',
+                                                '+1649' => 'Turks and Caicos Islands',
+                                                '+688' => 'Tuvalu',
+                                                '+1340' => 'U.S. Virgin Islands',
+                                                '+256' => 'Uganda',
+                                                '+380' => 'Ukraine',
+                                                '+971' => 'United Arab Emirates',
+                                                '+44' => 'United Kingdom',
+                                                '+1' => 'United States',
+                                                '+598' => 'Uruguay',
+                                                '+998' => 'Uzbekistan',
+                                                '+678' => 'Vanuatu',
+                                                '+39' => 'Vatican',
+                                                '+58' => 'Venezuela',
+                                                '+84' => 'Vietnam',
+                                                '+212' => 'Western Sahara',
+                                                '+967' => 'Yemen',
+                                                '+260' => 'Zambia',
+                                                '+263' => 'Zimbabwe',
+                                              ];
+                                              $selected_country = isset(
+                                                $country_names[$user_phone_country],
+                                              )
+                                                ? $country_names[$user_phone_country] .
+                                                  ' ' .
+                                                  $user_phone_country
+                                                : 'Singapore +65';
                                             }
                                             echo esc_html($selected_country);
                                             ?>
@@ -559,257 +568,273 @@ if (is_user_logged_in()) {
                                     <div class="country-dropdown" id="applicationCountryDropdown">
                                         <?php
                                         $countries = [
-                                            '+65' => 'Singapore',
-                                            '+93' => 'Afghanistan',
-                                            '+355' => 'Albania',
-                                            '+213' => 'Algeria',
-                                            '+1684' => 'American Samoa',
-                                            '+376' => 'Andorra',
-                                            '+244' => 'Angola',
-                                            '+1264' => 'Anguilla',
-                                            '+54' => 'Argentina',
-                                            '+374' => 'Armenia',
-                                            '+297' => 'Aruba',
-                                            '+61' => 'Australia',
-                                            '+43' => 'Austria',
-                                            '+994' => 'Azerbaijan',
-                                            '+1242' => 'Bahamas',
-                                            '+973' => 'Bahrain',
-                                            '+880' => 'Bangladesh',
-                                            '+1246' => 'Barbados',
-                                            '+375' => 'Belarus',
-                                            '+32' => 'Belgium',
-                                            '+501' => 'Belize',
-                                            '+229' => 'Benin',
-                                            '+1441' => 'Bermuda',
-                                            '+975' => 'Bhutan',
-                                            '+591' => 'Bolivia',
-                                            '+387' => 'Bosnia and Herzegovina',
-                                            '+267' => 'Botswana',
-                                            '+55' => 'Brazil',
-                                            '+673' => 'Brunei',
-                                            '+359' => 'Bulgaria',
-                                            '+226' => 'Burkina Faso',
-                                            '+257' => 'Burundi',
-                                            '+855' => 'Cambodia',
-                                            '+237' => 'Cameroon',
-                                            '+1' => 'Canada',
-                                            '+238' => 'Cape Verde',
-                                            '+1345' => 'Cayman Islands',
-                                            '+236' => 'Central African Republic',
-                                            '+235' => 'Chad',
-                                            '+56' => 'Chile',
-                                            '+86' => 'China',
-                                            '+57' => 'Colombia',
-                                            '+269' => 'Comoros',
-                                            '+682' => 'Cook Islands',
-                                            '+506' => 'Costa Rica',
-                                            '+385' => 'Croatia',
-                                            '+53' => 'Cuba',
-                                            '+599' => 'Curacao',
-                                            '+357' => 'Cyprus',
-                                            '+420' => 'Czech Republic',
-                                            '+243' => 'Congo (DRC)',
-                                            '+45' => 'Denmark',
-                                            '+253' => 'Djibouti',
-                                            '+1767' => 'Dominica',
-                                            '+1809' => 'Dominican Republic',
-                                            '+670' => 'East Timor',
-                                            '+593' => 'Ecuador',
-                                            '+20' => 'Egypt',
-                                            '+503' => 'El Salvador',
-                                            '+240' => 'Equatorial Guinea',
-                                            '+291' => 'Eritrea',
-                                            '+372' => 'Estonia',
-                                            '+268' => 'Eswatini',
-                                            '+251' => 'Ethiopia',
-                                            '+298' => 'Faroe Islands',
-                                            '+679' => 'Fiji',
-                                            '+358' => 'Finland',
-                                            '+33' => 'France',
-                                            '+594' => 'French Guiana',
-                                            '+689' => 'French Polynesia',
-                                            '+241' => 'Gabon',
-                                            '+220' => 'Gambia',
-                                            '+995' => 'Georgia',
-                                            '+49' => 'Germany',
-                                            '+233' => 'Ghana',
-                                            '+350' => 'Gibraltar',
-                                            '+30' => 'Greece',
-                                            '+299' => 'Greenland',
-                                            '+1473' => 'Grenada',
-                                            '+590' => 'Guadeloupe',
-                                            '+1671' => 'Guam',
-                                            '+502' => 'Guatemala',
-                                            '+44' => 'Guernsey',
-                                            '+224' => 'Guinea',
-                                            '+245' => 'Guinea-Bissau',
-                                            '+592' => 'Guyana',
-                                            '+509' => 'Haiti',
-                                            '+504' => 'Honduras',
-                                            '+852' => 'Hong Kong',
-                                            '+36' => 'Hungary',
-                                            '+354' => 'Iceland',
-                                            '+91' => 'India',
-                                            '+62' => 'Indonesia',
-                                            '+98' => 'Iran',
-                                            '+964' => 'Iraq',
-                                            '+353' => 'Ireland',
-                                            '+44' => 'Isle of Man',
-                                            '+972' => 'Israel',
-                                            '+39' => 'Italy',
-                                            '+225' => 'Ivory Coast',
-                                            '+1876' => 'Jamaica',
-                                            '+81' => 'Japan',
-                                            '+44' => 'Jersey',
-                                            '+962' => 'Jordan',
-                                            '+7' => 'Kazakhstan',
-                                            '+254' => 'Kenya',
-                                            '+686' => 'Kiribati',
-                                            '+383' => 'Kosovo',
-                                            '+965' => 'Kuwait',
-                                            '+996' => 'Kyrgyzstan',
-                                            '+856' => 'Laos',
-                                            '+371' => 'Latvia',
-                                            '+961' => 'Lebanon',
-                                            '+266' => 'Lesotho',
-                                            '+231' => 'Liberia',
-                                            '+218' => 'Libya',
-                                            '+423' => 'Liechtenstein',
-                                            '+370' => 'Lithuania',
-                                            '+352' => 'Luxembourg',
-                                            '+853' => 'Macau',
-                                            '+389' => 'Macedonia',
-                                            '+261' => 'Madagascar',
-                                            '+265' => 'Malawi',
-                                            '+60' => 'Malaysia',
-                                            '+960' => 'Maldives',
-                                            '+223' => 'Mali',
-                                            '+356' => 'Malta',
-                                            '+692' => 'Marshall Islands',
-                                            '+596' => 'Martinique',
-                                            '+222' => 'Mauritania',
-                                            '+230' => 'Mauritius',
-                                            '+262' => 'Mayotte',
-                                            '+52' => 'Mexico',
-                                            '+691' => 'Micronesia',
-                                            '+373' => 'Moldova',
-                                            '+377' => 'Monaco',
-                                            '+976' => 'Mongolia',
-                                            '+382' => 'Montenegro',
-                                            '+1664' => 'Montserrat',
-                                            '+212' => 'Morocco',
-                                            '+258' => 'Mozambique',
-                                            '+95' => 'Myanmar',
-                                            '+264' => 'Namibia',
-                                            '+674' => 'Nauru',
-                                            '+977' => 'Nepal',
-                                            '+31' => 'Netherlands',
-                                            '+687' => 'New Caledonia',
-                                            '+64' => 'New Zealand',
-                                            '+505' => 'Nicaragua',
-                                            '+227' => 'Niger',
-                                            '+234' => 'Nigeria',
-                                            '+683' => 'Niue',
-                                            '+850' => 'North Korea',
-                                            '+1670' => 'Northern Mariana Islands',
-                                            '+47' => 'Norway',
-                                            '+968' => 'Oman',
-                                            '+92' => 'Pakistan',
-                                            '+680' => 'Palau',
-                                            '+970' => 'Palestine',
-                                            '+507' => 'Panama',
-                                            '+675' => 'Papua New Guinea',
-                                            '+595' => 'Paraguay',
-                                            '+51' => 'Peru',
-                                            '+63' => 'Philippines',
-                                            '+48' => 'Poland',
-                                            '+351' => 'Portugal',
-                                            '+1787' => 'Puerto Rico',
-                                            '+974' => 'Qatar',
-                                            '+242' => 'Republic of the Congo',
-                                            '+262' => 'Reunion',
-                                            '+40' => 'Romania',
-                                            '+7' => 'Russia',
-                                            '+250' => 'Rwanda',
-                                            '+590' => 'Saint Barthelemy',
-                                            '+1869' => 'Saint Kitts and Nevis',
-                                            '+1758' => 'Saint Lucia',
-                                            '+590' => 'Saint Martin',
-                                            '+1784' => 'St. Vincent & Grenadines',
-                                            '+685' => 'Samoa',
-                                            '+378' => 'San Marino',
-                                            '+239' => 'Sao Tome and Principe',
-                                            '+966' => 'Saudi Arabia',
-                                            '+221' => 'Senegal',
-                                            '+381' => 'Serbia',
-                                            '+248' => 'Seychelles',
-                                            '+232' => 'Sierra Leone',
-                                            '+1721' => 'Sint Maarten',
-                                            '+421' => 'Slovakia',
-                                            '+386' => 'Slovenia',
-                                            '+677' => 'Solomon Islands',
-                                            '+252' => 'Somalia',
-                                            '+27' => 'South Africa',
-                                            '+82' => 'South Korea',
-                                            '+211' => 'South Sudan',
-                                            '+34' => 'Spain',
-                                            '+94' => 'Sri Lanka',
-                                            '+249' => 'Sudan',
-                                            '+597' => 'Suriname',
-                                            '+47' => 'Svalbard and Jan Mayen',
-                                            '+46' => 'Sweden',
-                                            '+41' => 'Switzerland',
-                                            '+963' => 'Syria',
-                                            '+886' => 'Taiwan',
-                                            '+992' => 'Tajikistan',
-                                            '+255' => 'Tanzania',
-                                            '+66' => 'Thailand',
-                                            '+228' => 'Togo',
-                                            '+676' => 'Tonga',
-                                            '+1868' => 'Trinidad and Tobago',
-                                            '+216' => 'Tunisia',
-                                            '+90' => 'Turkey',
-                                            '+993' => 'Turkmenistan',
-                                            '+1649' => 'Turks and Caicos Islands',
-                                            '+688' => 'Tuvalu',
-                                            '+1340' => 'U.S. Virgin Islands',
-                                            '+256' => 'Uganda',
-                                            '+380' => 'Ukraine',
-                                            '+971' => 'United Arab Emirates',
-                                            '+44' => 'United Kingdom',
-                                            '+1' => 'United States',
-                                            '+598' => 'Uruguay',
-                                            '+998' => 'Uzbekistan',
-                                            '+678' => 'Vanuatu',
-                                            '+39' => 'Vatican',
-                                            '+58' => 'Venezuela',
-                                            '+84' => 'Vietnam',
-                                            '+212' => 'Western Sahara',
-                                            '+967' => 'Yemen',
-                                            '+260' => 'Zambia',
-                                            '+263' => 'Zimbabwe',
+                                          '+65' => 'Singapore',
+                                          '+93' => 'Afghanistan',
+                                          '+355' => 'Albania',
+                                          '+213' => 'Algeria',
+                                          '+1684' => 'American Samoa',
+                                          '+376' => 'Andorra',
+                                          '+244' => 'Angola',
+                                          '+1264' => 'Anguilla',
+                                          '+54' => 'Argentina',
+                                          '+374' => 'Armenia',
+                                          '+297' => 'Aruba',
+                                          '+61' => 'Australia',
+                                          '+43' => 'Austria',
+                                          '+994' => 'Azerbaijan',
+                                          '+1242' => 'Bahamas',
+                                          '+973' => 'Bahrain',
+                                          '+880' => 'Bangladesh',
+                                          '+1246' => 'Barbados',
+                                          '+375' => 'Belarus',
+                                          '+32' => 'Belgium',
+                                          '+501' => 'Belize',
+                                          '+229' => 'Benin',
+                                          '+1441' => 'Bermuda',
+                                          '+975' => 'Bhutan',
+                                          '+591' => 'Bolivia',
+                                          '+387' => 'Bosnia and Herzegovina',
+                                          '+267' => 'Botswana',
+                                          '+55' => 'Brazil',
+                                          '+673' => 'Brunei',
+                                          '+359' => 'Bulgaria',
+                                          '+226' => 'Burkina Faso',
+                                          '+257' => 'Burundi',
+                                          '+855' => 'Cambodia',
+                                          '+237' => 'Cameroon',
+                                          '+1' => 'Canada',
+                                          '+238' => 'Cape Verde',
+                                          '+1345' => 'Cayman Islands',
+                                          '+236' => 'Central African Republic',
+                                          '+235' => 'Chad',
+                                          '+56' => 'Chile',
+                                          '+86' => 'China',
+                                          '+57' => 'Colombia',
+                                          '+269' => 'Comoros',
+                                          '+682' => 'Cook Islands',
+                                          '+506' => 'Costa Rica',
+                                          '+385' => 'Croatia',
+                                          '+53' => 'Cuba',
+                                          '+599' => 'Curacao',
+                                          '+357' => 'Cyprus',
+                                          '+420' => 'Czech Republic',
+                                          '+243' => 'Congo (DRC)',
+                                          '+45' => 'Denmark',
+                                          '+253' => 'Djibouti',
+                                          '+1767' => 'Dominica',
+                                          '+1809' => 'Dominican Republic',
+                                          '+670' => 'East Timor',
+                                          '+593' => 'Ecuador',
+                                          '+20' => 'Egypt',
+                                          '+503' => 'El Salvador',
+                                          '+240' => 'Equatorial Guinea',
+                                          '+291' => 'Eritrea',
+                                          '+372' => 'Estonia',
+                                          '+268' => 'Eswatini',
+                                          '+251' => 'Ethiopia',
+                                          '+298' => 'Faroe Islands',
+                                          '+679' => 'Fiji',
+                                          '+358' => 'Finland',
+                                          '+33' => 'France',
+                                          '+594' => 'French Guiana',
+                                          '+689' => 'French Polynesia',
+                                          '+241' => 'Gabon',
+                                          '+220' => 'Gambia',
+                                          '+995' => 'Georgia',
+                                          '+49' => 'Germany',
+                                          '+233' => 'Ghana',
+                                          '+350' => 'Gibraltar',
+                                          '+30' => 'Greece',
+                                          '+299' => 'Greenland',
+                                          '+1473' => 'Grenada',
+                                          '+590' => 'Guadeloupe',
+                                          '+1671' => 'Guam',
+                                          '+502' => 'Guatemala',
+                                          '+44' => 'Guernsey',
+                                          '+224' => 'Guinea',
+                                          '+245' => 'Guinea-Bissau',
+                                          '+592' => 'Guyana',
+                                          '+509' => 'Haiti',
+                                          '+504' => 'Honduras',
+                                          '+852' => 'Hong Kong',
+                                          '+36' => 'Hungary',
+                                          '+354' => 'Iceland',
+                                          '+91' => 'India',
+                                          '+62' => 'Indonesia',
+                                          '+98' => 'Iran',
+                                          '+964' => 'Iraq',
+                                          '+353' => 'Ireland',
+                                          '+44' => 'Isle of Man',
+                                          '+972' => 'Israel',
+                                          '+39' => 'Italy',
+                                          '+225' => 'Ivory Coast',
+                                          '+1876' => 'Jamaica',
+                                          '+81' => 'Japan',
+                                          '+44' => 'Jersey',
+                                          '+962' => 'Jordan',
+                                          '+7' => 'Kazakhstan',
+                                          '+254' => 'Kenya',
+                                          '+686' => 'Kiribati',
+                                          '+383' => 'Kosovo',
+                                          '+965' => 'Kuwait',
+                                          '+996' => 'Kyrgyzstan',
+                                          '+856' => 'Laos',
+                                          '+371' => 'Latvia',
+                                          '+961' => 'Lebanon',
+                                          '+266' => 'Lesotho',
+                                          '+231' => 'Liberia',
+                                          '+218' => 'Libya',
+                                          '+423' => 'Liechtenstein',
+                                          '+370' => 'Lithuania',
+                                          '+352' => 'Luxembourg',
+                                          '+853' => 'Macau',
+                                          '+389' => 'Macedonia',
+                                          '+261' => 'Madagascar',
+                                          '+265' => 'Malawi',
+                                          '+60' => 'Malaysia',
+                                          '+960' => 'Maldives',
+                                          '+223' => 'Mali',
+                                          '+356' => 'Malta',
+                                          '+692' => 'Marshall Islands',
+                                          '+596' => 'Martinique',
+                                          '+222' => 'Mauritania',
+                                          '+230' => 'Mauritius',
+                                          '+262' => 'Mayotte',
+                                          '+52' => 'Mexico',
+                                          '+691' => 'Micronesia',
+                                          '+373' => 'Moldova',
+                                          '+377' => 'Monaco',
+                                          '+976' => 'Mongolia',
+                                          '+382' => 'Montenegro',
+                                          '+1664' => 'Montserrat',
+                                          '+212' => 'Morocco',
+                                          '+258' => 'Mozambique',
+                                          '+95' => 'Myanmar',
+                                          '+264' => 'Namibia',
+                                          '+674' => 'Nauru',
+                                          '+977' => 'Nepal',
+                                          '+31' => 'Netherlands',
+                                          '+687' => 'New Caledonia',
+                                          '+64' => 'New Zealand',
+                                          '+505' => 'Nicaragua',
+                                          '+227' => 'Niger',
+                                          '+234' => 'Nigeria',
+                                          '+683' => 'Niue',
+                                          '+850' => 'North Korea',
+                                          '+1670' => 'Northern Mariana Islands',
+                                          '+47' => 'Norway',
+                                          '+968' => 'Oman',
+                                          '+92' => 'Pakistan',
+                                          '+680' => 'Palau',
+                                          '+970' => 'Palestine',
+                                          '+507' => 'Panama',
+                                          '+675' => 'Papua New Guinea',
+                                          '+595' => 'Paraguay',
+                                          '+51' => 'Peru',
+                                          '+63' => 'Philippines',
+                                          '+48' => 'Poland',
+                                          '+351' => 'Portugal',
+                                          '+1787' => 'Puerto Rico',
+                                          '+974' => 'Qatar',
+                                          '+242' => 'Republic of the Congo',
+                                          '+262' => 'Reunion',
+                                          '+40' => 'Romania',
+                                          '+7' => 'Russia',
+                                          '+250' => 'Rwanda',
+                                          '+590' => 'Saint Barthelemy',
+                                          '+1869' => 'Saint Kitts and Nevis',
+                                          '+1758' => 'Saint Lucia',
+                                          '+590' => 'Saint Martin',
+                                          '+1784' => 'St. Vincent & Grenadines',
+                                          '+685' => 'Samoa',
+                                          '+378' => 'San Marino',
+                                          '+239' => 'Sao Tome and Principe',
+                                          '+966' => 'Saudi Arabia',
+                                          '+221' => 'Senegal',
+                                          '+381' => 'Serbia',
+                                          '+248' => 'Seychelles',
+                                          '+232' => 'Sierra Leone',
+                                          '+1721' => 'Sint Maarten',
+                                          '+421' => 'Slovakia',
+                                          '+386' => 'Slovenia',
+                                          '+677' => 'Solomon Islands',
+                                          '+252' => 'Somalia',
+                                          '+27' => 'South Africa',
+                                          '+82' => 'South Korea',
+                                          '+211' => 'South Sudan',
+                                          '+34' => 'Spain',
+                                          '+94' => 'Sri Lanka',
+                                          '+249' => 'Sudan',
+                                          '+597' => 'Suriname',
+                                          '+47' => 'Svalbard and Jan Mayen',
+                                          '+46' => 'Sweden',
+                                          '+41' => 'Switzerland',
+                                          '+963' => 'Syria',
+                                          '+886' => 'Taiwan',
+                                          '+992' => 'Tajikistan',
+                                          '+255' => 'Tanzania',
+                                          '+66' => 'Thailand',
+                                          '+228' => 'Togo',
+                                          '+676' => 'Tonga',
+                                          '+1868' => 'Trinidad and Tobago',
+                                          '+216' => 'Tunisia',
+                                          '+90' => 'Turkey',
+                                          '+993' => 'Turkmenistan',
+                                          '+1649' => 'Turks and Caicos Islands',
+                                          '+688' => 'Tuvalu',
+                                          '+1340' => 'U.S. Virgin Islands',
+                                          '+256' => 'Uganda',
+                                          '+380' => 'Ukraine',
+                                          '+971' => 'United Arab Emirates',
+                                          '+44' => 'United Kingdom',
+                                          '+1' => 'United States',
+                                          '+598' => 'Uruguay',
+                                          '+998' => 'Uzbekistan',
+                                          '+678' => 'Vanuatu',
+                                          '+39' => 'Vatican',
+                                          '+58' => 'Venezuela',
+                                          '+84' => 'Vietnam',
+                                          '+212' => 'Western Sahara',
+                                          '+967' => 'Yemen',
+                                          '+260' => 'Zambia',
+                                          '+263' => 'Zimbabwe',
                                         ];
                                         $singapore_code = '+65';
-                                        $user_code = is_user_logged_in() && $user_phone_country ? $user_phone_country : $singapore_code;
+                                        $user_code =
+                                          is_user_logged_in() && $user_phone_country
+                                            ? $user_phone_country
+                                            : $singapore_code;
 
-                                        echo '<div class="country-option' . ($user_code === $singapore_code ? ' selected' : '') .
-                                            '" data-value="' . $singapore_code . '" data-country="Singapore">Singapore +65</div>';
+                                        echo '<div class="country-option' .
+                                          ($user_code === $singapore_code ? ' selected' : '') .
+                                          '" data-value="' .
+                                          $singapore_code .
+                                          '" data-country="Singapore">Singapore +65</div>';
 
                                         $other_countries = $countries;
                                         unset($other_countries[$singapore_code]);
                                         asort($other_countries);
                                         foreach ($other_countries as $code => $name) {
-                                            $selected = $user_code === $code ? ' selected' : '';
-                                            echo '<div class="country-option' . $selected .
-                                                '" data-value="' . $code . '" data-country="' . $name . '">' .
-                                                $name . ' ' . $code . '</div>';
+                                          $selected = $user_code === $code ? ' selected' : '';
+                                          echo '<div class="country-option' .
+                                            $selected .
+                                            '" data-value="' .
+                                            $code .
+                                            '" data-country="' .
+                                            $name .
+                                            '">' .
+                                            $name .
+                                            ' ' .
+                                            $code .
+                                            '</div>';
                                         }
                                         ?>
                                     </div>
                                 </div>
                                 <input type="tel" id="applicant-phone" name="applicant[phone]" placeholder=" Enter Phone Number"
-                                    value="<?php echo is_user_logged_in() ? esc_attr($user_phone) : ''; ?>"
+                                    value="<?php echo is_user_logged_in()
+                                      ? esc_attr($user_phone)
+                                      : ''; ?>"
                                     required />
                             </div>
                             <label class="phone-label" for="applicant-phone">Phone Number</label>

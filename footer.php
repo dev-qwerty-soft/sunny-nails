@@ -32,10 +32,8 @@
   const themeUrl = "<?= get_template_directory_uri() ?>";
 </script>
 
-<?php
-// Include application popup
-get_template_part('template-parts/shared/application-popup');
-?>
+<?php // Include application popup
+get_template_part('template-parts/shared/application-popup'); ?>
 
 <?php wp_footer(); ?>
 </body>

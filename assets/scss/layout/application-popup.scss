@@ -508,7 +508,6 @@
   }
 }
 
-// Thank You Popup
 .thank-you-popup {
   position: fixed;
   top: 0;
@@ -557,7 +556,26 @@
     }
     .success-icon {
       margin-bottom: 0;
+      width: get-d(48px);
+      height: get-d(48px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      & svg {
+        width: get-d(48px);
+        height: get-d(48px);
+        @include respond(md) {
+          width: 48px;
+          height: 48px;
+        }
+      }
+      @include respond(md) {
+        margin-bottom: 0;
+        width: 48px;
+        height: 48px;
+      }
     }
+    
     .thank-you-popup__content {
       display: flex;
       gap: get-d(16px);
@@ -565,6 +583,7 @@
       @include respond(md) {
         gap: 16px;
         margin-bottom: 25px;
+        flex-direction: column;
       }
     }
     h2 {
@@ -574,6 +593,7 @@
       font-weight: 600;
       line-height: 120%;
       font-family: $font-family;
+      text-align: left;
       margin-bottom: get-d(4px);
       @include respond(md) {
         margin-bottom: 16px;
@@ -584,6 +604,7 @@
 
     p {
       margin: 0;
+      text-align: left;
       color: #9a9a9a;
       font-size: get-d(14px);
       font-weight: 400;
@@ -601,7 +622,7 @@
     padding: get-d(8px) get-d(20px);
     justify-content: center;
     align-items: center;
-    border-radius: get-d(50px);
+    border-radius: 100vw;
     background: var(--yellow, #fdc41f);
     color: var(--black, #302f34);
     text-align: center;
@@ -609,11 +630,13 @@
     font-size: get-d(14px);
     font-weight: 500;
     line-height: get-d(20px); /* 142.857% */
-    @include respond(xl) {
-      min-width: 90px;
+    @include respond(md) {
+      min-width: auto;
+      width: 100%;
       padding: 8px 20px;
       font-size: 14px;
       line-height: 20px;
     }
   }
+  
 }
