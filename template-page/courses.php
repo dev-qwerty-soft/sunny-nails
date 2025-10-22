@@ -9,7 +9,7 @@ $courses = new WP_Query([
   'order' => 'ASC',
 ]);
 $posts = $courses->posts;
-$categories = get_terms(['taxonomy' => 'course_cat', 'hide_empty' => false]);
+$categoriesGlobal = get_terms(['taxonomy' => 'course_cat', 'hide_empty' => false]);
 ?>
 <main>
   <?php foreach ($posts as $post) {
@@ -130,9 +130,9 @@ $categories = get_terms(['taxonomy' => 'course_cat', 'hide_empty' => false]);
         <p class="paragraph"><?= get_field('courses_page_text') ?></p>
       </div>
       <div class="courses-section__filters">
-        <?php if ($categories && is_array($categories) && !empty($categories)) {
+        <?php if ($categoriesGlobal && is_array($categoriesGlobal) && !empty($categoriesGlobal)) {
           echo "<button class='filter active' data-slug='all'>All</button>";
-          foreach ($categories as $category) {
+          foreach ($categoriesGlobal as $category) {
             $name = $category->name;
             $slug = $category->slug;
             echo "<button class='filter' data-slug='$slug'>$name</button>";

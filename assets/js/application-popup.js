@@ -72,7 +72,10 @@ class ApplicationPopup {
   bindEvents() {
     // Submit application buttons
     document.addEventListener('click', (e) => {
-      if (e.target.matches('.course-card--button .btn.yellow') || e.target.matches('.popup-details__text .btn.yellow')) {
+      if (
+        e.target.matches('.course-card--button .btn.yellow') ||
+        e.target.matches('.popup-details__text .btn.yellow')
+      ) {
         e.preventDefault();
         this.openPopup(e.target);
       }

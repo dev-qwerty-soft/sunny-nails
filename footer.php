@@ -33,6 +33,7 @@
 </script>
 
 <?php // Include application popup
+
 get_template_part('template-parts/shared/application-popup'); ?>
 
 <?php wp_footer(); ?>

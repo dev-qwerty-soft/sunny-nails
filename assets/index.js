@@ -340,6 +340,29 @@ document.onclick = (e) => {
   }
 };
 
+const filters = document.querySelectorAll('.courses-section__filters .filter');
+const courseCards = document.querySelectorAll('.course-card');
+
+filters.forEach((filter) => {
+  filter.addEventListener('click', function () {
+    filters.forEach((f) => f.classList.remove('active'));
+    this.classList.add('active');
+    const selectedCategory = this.getAttribute('data-slug');
+
+    courseCards.forEach((card) => {
+      const cardCategories = card.getAttribute('data-categories');
+
+      if (selectedCategory === 'all') {
+        card.classList.add('active');
+      } else if (cardCategories && cardCategories.includes(selectedCategory)) {
+        card.classList.add('active');
+      } else {
+        card.classList.remove('active');
+      }
+    });
+  });
+});
+
 initMasterPopup();
 
 document.addEventListener('DOMContentLoaded', () => {

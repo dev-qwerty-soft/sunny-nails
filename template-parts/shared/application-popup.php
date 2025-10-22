@@ -1,9 +1,8 @@
 <?php
-// Get user data for auto-fill if logged in
 $user_name = '';
 $user_email = '';
 $user_phone = '';
-$user_phone_country = '+380'; // Default to Ukraine
+$user_phone_country = '+65'; // Default to Ukraine
 
 if (is_user_logged_in()) {
   $current_user = wp_get_current_user();
@@ -174,6 +173,7 @@ if (is_user_logged_in()) {
 
         // List of country codes to check (longest first)
         $country_codes = [
+          '+65', // Singapore
           '+380', // Ukraine
           '+1', // USA/Canada
           '+7', // Russia/Kazakhstan
@@ -202,7 +202,7 @@ if (is_user_logged_in()) {
           '+84', // Vietnam
           '+62', // Indonesia
           '+60', // Malaysia
-          '+65', // Singapore
+
           '+852', // Hong Kong
           '+853', // Macau
           '+886', // Taiwan
@@ -270,8 +270,6 @@ if (is_user_logged_in()) {
   }
 }
 ?>
-
-<!-- Application Popup -->
 <div id="application-popup" class="application-popup" style="display: none;">
     <div class="application-popup__overlay">
         <div class="application-popup__container">
@@ -855,9 +853,6 @@ if (is_user_logged_in()) {
 
                         </button>
                     </div>
-
-
-
                 </form>
             </div>
             </button>
@@ -866,8 +861,6 @@ if (is_user_logged_in()) {
     </div>
 </div>
 </div>
-
-<!-- Thank You Popup -->
 <div id="thank-you-popup" class="thank-you-popup" style="display: none;">
     <div class="thank-you-popup__overlay">
         <div class="thank-you-popup__container">

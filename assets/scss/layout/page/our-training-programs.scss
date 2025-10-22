@@ -112,6 +112,10 @@
   background: #ffffffbf;
   border-radius: get-d(10px);
   backdrop-filter: blur(54px);
+  display: none;
+  &.active {
+    display: block;
+  }
   @include respond(lg) {
     padding: get-lg(20px);
     border-radius: get-lg(10px);
@@ -553,7 +557,7 @@
       content: '';
       width: get-d(20px);
       height: get-d(20px);
-      background: url('../svg/calendar.svg') center / contain no-repeat;
+      background: url('../svg/time.svg') center / contain no-repeat;
       display: block;
       @include respond(lg) {
         width: get-lg(20px);
@@ -826,7 +830,7 @@
         content: '';
         width: get-d(16px);
         height: get-d(16px);
-        background: url('../svg/calendar-new.svg') center / contain no-repeat;
+        background: url('../svg/time (1).svg') center / contain no-repeat;
         display: block;
         @include respond(lg) {
           width: get-lg(16px);
@@ -1162,7 +1166,12 @@
       font-size: 16px;
       margin-bottom: 24px;
     }
-    & h1, h2, h3, h4, h5, h6 {
+    & h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
       font-weight: 600;
       font-size: get-d(16px);
       line-height: 140%;

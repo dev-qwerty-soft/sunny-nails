@@ -381,6 +381,9 @@
           width: calc(50% - 5px);
           min-width: 120px;
         }
+        @include respond(xs) {
+          width: 100%;
+        }
       }
       label {
         top: 0;
@@ -575,7 +578,7 @@
         height: 48px;
       }
     }
-    
+
     .thank-you-popup__content {
       display: flex;
       gap: get-d(16px);
@@ -638,5 +641,4 @@
       line-height: 20px;
     }
   }
-  
 }

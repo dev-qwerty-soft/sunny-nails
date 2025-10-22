@@ -23,7 +23,7 @@ if ($categories && is_array($categories) && !empty($categories)) {
 }
 $master = get_field('related_master', $id);
 ?>
-<div class="course-card"
+<div class="course-card active"
   data-id="<?= $id ?>"
   data-course-title="<?= esc_attr($title) ?>"
   data-course-price="<?= $new_price && $new_price > 0 ? $new_price : $price ?>"
