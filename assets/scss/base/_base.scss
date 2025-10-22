@@ -20,9 +20,8 @@ body {
   min-height: 100vh;
   background: $bg-color;
   color: $bg-grey;
-  // --vh-min: 500px;
   &:has(.burger-menu.active),
-  &:has(.popup-join.active) {
+  &:has(.popup-join.active), &:has(.popup-details.active) {
     height: 100vh;
     overflow: hidden;
   }
@@ -41,7 +40,7 @@ body {
     opacity: 0;
     transition: opacity 0.5s;
   }
-  &:has(.popup-join.active) {
+  &:has(.popup-join.active), &:has(.popup-details.active) {
     &::before {
       opacity: 1;
       pointer-events: all;
