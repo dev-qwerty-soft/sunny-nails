@@ -94,8 +94,8 @@
       }
 
       &.active {
-        background: $bg-yellow;
-        border-color: $bg-yellow;
+        background: $bg-yellow !important;
+        border-color: $bg-yellow !important;
       }
       &:hover {
         background: #f1e3be;
@@ -164,6 +164,11 @@
         height: 16px;
       }
     }
+  }
+  &__text {
+    display: grid;
+    grid-template-columns: 100%;
+    grid-auto-rows: auto;
   }
   &--date {
     border-radius: 100vw;
@@ -326,7 +331,7 @@
     font-weight: 400;
     font-size: get-d(14px);
     line-height: 120%;
-    color: #302f34;
+    color: rgba(#302f34, 70%);
     padding: get-d(12px) 0;
     display: flex;
     align-items: center;
@@ -337,6 +342,7 @@
       background: url('../svg/info.svg') center / contain no-repeat;
       display: block;
       margin-right: get-d(4px);
+      opacity: 0.7;
     }
     @include respond(lg) {
       font-size: get-lg(14px);
@@ -448,6 +454,7 @@
       }
       & span {
         margin: 0 !important;
+        font-weight: 400 !important;
       }
     }
     & .star {

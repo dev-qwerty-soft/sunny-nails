@@ -87,8 +87,14 @@ $master = get_field('related_master', $id);
     echo '</div>';
   } ?>
   <div class="course-card__footer">
-    <span class="course-card--info"><?= get_field('info', $id) ?></span>
-    <?php if ($new_price && $new_price > 0) {
+    <?php 
+      $info = get_field('info', $id);
+      if($info) {
+        echo "<span class='course-card--info'>$info</span>";
+      } else {
+        echo "<span class='course-card--price-text'>Price:</span>";
+      }
+    if ($new_price && $new_price > 0) {
       echo "<span class='course-card--old-price'>$$price</span>";
       echo "<span class='course-card--price'>$$new_price</span>";
     } else {
