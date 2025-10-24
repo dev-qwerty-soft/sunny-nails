@@ -25,6 +25,7 @@
     grid-gap: get-d(20px);
     display: grid;
     width: 100%;
+    grid-auto-rows: 1fr;
     @include respond(lg) {
       grid-gap: get-lg(20px);
       grid-template-columns: repeat(2, 1fr);
@@ -113,8 +114,10 @@
   border-radius: get-d(10px);
   backdrop-filter: blur(54px);
   display: none;
+  grid-template-columns: 100%;
+  grid-template-rows: repeat(1, max-content) 1fr repeat(3, max-content);
   &.active {
-    display: block;
+    display: grid;
   }
   @include respond(lg) {
     padding: get-lg(20px);
@@ -168,7 +171,7 @@
   &__text {
     display: grid;
     grid-template-columns: 100%;
-    grid-auto-rows: auto;
+    grid-auto-rows: max-content;
   }
   &--date {
     border-radius: 100vw;
@@ -332,9 +335,9 @@
     font-size: get-d(14px);
     line-height: 120%;
     color: rgba(#302f34, 70%);
-    padding: get-d(12px) 0;
     display: flex;
     align-items: center;
+    height: get-d(37px);
     &::before {
       content: '';
       width: get-d(16px);
@@ -346,7 +349,7 @@
     }
     @include respond(lg) {
       font-size: get-lg(14px);
-      padding: get-lg(12px) 0;
+      height: get-lg(37px);
       &::before {
         width: get-lg(16px);
         height: get-lg(16px);
@@ -355,7 +358,7 @@
     }
     @include respond(md) {
       font-size: 14px;
-      padding: 4px 0;
+      height: 37px;
       &::before {
         width: 16px;
         height: 16px;
@@ -363,6 +366,23 @@
         min-width: 16px;
         min-height: 16px;
       }
+    }
+  }
+  &--price-text {
+    font-weight: 400;
+    font-size: get-d(16px);
+    line-height: 120%;
+    color: rgba(#302f34, 70%);
+    display: flex;
+    height: get-d(37px);
+    align-items: center;
+    @include respond(lg) {
+      font-size: get-lg(16px);
+      height: get-lg(37px);
+    }
+    @include respond(md) {
+      font-size: 16px;
+      height: 37px;
     }
   }
   &--old-price {
@@ -610,8 +630,9 @@
   }
   @include respond(md) {
     padding: 50px 25px;
-    grid-gap: 30px;
+    grid-gap: 0px;
     grid-template-columns: 100%;
+    grid-template-rows: repeat(3, max-content);
     width: 100vw;
     height: 100vh;
     overflow: auto;
@@ -659,6 +680,7 @@
       font-size: 14px;
       padding: 8px 12px;
       border: 1px solid #9a9a9a;
+      display: none;
     }
   }
   &--title {
@@ -672,8 +694,12 @@
       margin: get-lg(16px) 0;
     }
     @include respond(md) {
-      font-size: 36px;
-      margin: 16px 0;
+      margin: 0 0 10px 0;
+      font-size: 24px;
+      line-height: 100%;
+      letter-spacing: -3%;
+      text-align: center;
+      justify-self: center;
     }
   }
   &__text {
@@ -681,6 +707,11 @@
     grid-template-columns: 100%;
     grid-template-rows: repeat(2, auto) 1fr auto;
     justify-items: start;
+    @include respond(md) {
+      & .btn {
+        display: none;
+      }
+    }
   }
   &__card {
     width: 100%;
@@ -908,15 +939,18 @@
       border-radius: 10px;
       grid-gap: 6px;
       & span {
-        font-size: 12px;
+        font-size: 14px;
         grid-gap: 6px;
       }
       & b {
-        font-size: 14px;
+        font-size: 16px;
       }
     }
   }
   &--rate {
+    & span {
+      font-weight: 400 !important;
+    }
     & .star {
       width: get-d(16px);
       height: get-d(16px);
@@ -969,13 +1003,15 @@
     @include respond(lg) {
       font-size: get-lg(14px);
       grid-gap: get-lg(6px);
+      margin-bottom: get-lg(12px);
       &::before {
         width: get-lg(16px);
         height: get-lg(16px);
       }
     }
     @include respond(md) {
-      font-size: 12px;
+      font-size: 14px;
+      margin-bottom: 12px;
       grid-gap: 6px;
       &::before {
         width: 16px;
@@ -1059,7 +1095,7 @@
     font-weight: 400;
     font-size: get-d(14px);
     line-height: 120%;
-    color: #302f34;
+    color: rgba(#302f34, 70%);
     display: flex;
     align-items: center;
     &::before {
@@ -1069,6 +1105,7 @@
       background: url('../svg/info.svg') center / contain no-repeat;
       display: block;
       margin-right: get-d(4px);
+      opacity: 0.7;
     }
     @include respond(lg) {
       font-size: get-lg(14px);
@@ -1170,8 +1207,11 @@
       font-size: get-lg(16px);
     }
     @include respond(md) {
-      font-size: 16px;
-      margin-bottom: 24px;
+      font-size: 14px;
+      margin-bottom: 16px;
+      & p {
+        font-size: 14px;
+      }
     }
     & h1,
     h2,
@@ -1186,7 +1226,7 @@
         font-size: get-lg(16px);
       }
       @include respond(md) {
-        font-size: 16px;
+        font-size: 14px;
       }
     }
     & ul {
@@ -1196,7 +1236,39 @@
       }
       @include respond(md) {
         padding-left: 16px;
+        & li {
+          font-size: 14px;
+        }
       }
+    }
+  }
+
+  & .btn {
+    padding: get-d(10px) get-d(24px);
+    font-size: get-d(14px);
+    font-weight: 500;
+    line-height: get-d(20px);
+    @include respond(lg) {
+      padding: get-lg(10px) get-lg(24px);
+      font-size: get-lg(14px);
+      line-height: get-lg(20px);
+    }
+    @include respond(md) {
+      padding: 10px 24px;
+      font-size: 14px;
+      line-height: 20px;
+    }
+    &.phone {
+      display: none;
+      @include respond(md) {
+        display: block;
+        margin-top: 20px;
+        width: auto;
+        justify-self: center;
+      }
+    }
+    &::before {
+      display: none;
     }
   }
 }

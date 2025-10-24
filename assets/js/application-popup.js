@@ -74,7 +74,9 @@ class ApplicationPopup {
     document.addEventListener('click', (e) => {
       if (
         e.target.matches('.course-card--button .btn.yellow') ||
-        e.target.matches('.popup-details__text .btn.yellow')
+        e.target.matches('.popup-details__text .btn.yellow') ||
+        e.target.matches('.popup-details .btn.yellow.phone')
+
       ) {
         e.preventDefault();
         this.openPopup(e.target);

@@ -120,6 +120,7 @@ $categoriesGlobal = get_terms(['taxonomy' => 'course_cat', 'hide_empty' => false
             </div>
           </div>
         </div>
+        <button type='button' class='btn yellow phone'>Submit application</button>
       </div>";
     wp_reset_postdata();
   } ?>
