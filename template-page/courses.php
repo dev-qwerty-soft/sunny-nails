@@ -76,13 +76,23 @@ $categoriesGlobal = get_terms(['taxonomy' => 'course_cat', 'hide_empty' => false
     $master_html .= '</div>';
     $description = get_field('description', $id);
     $price_html = '';
+    $info_html = '';
+
+    $info = get_field('info', $id);
+
+    if ($info) {
+      $info_html = "<span class='popup-details--info'>$info</span>";
+    } else {
+      $info_html = '';
+    }
+
     if ($new_price && $new_price > 0) {
       $price_html = "<span class='popup-details--old-price'>$$price</span>";
       $price_html .= "<span class='popup-details--price'>$$new_price</span>";
     } else {
-      $price_html = "<span class='popup-details--price'>$price</span>";
+      $price_html = "<span class='popup-details--price'>$$price</span>";
     }
-    $info = get_field('info', $id);
+
     echo "<div class='popup-details' data-id='$id'>
         <button type='button' aria-label='Close' class='popup-details__close'></button>
         <div class='popup-details__text'>
@@ -116,7 +126,7 @@ $categoriesGlobal = get_terms(['taxonomy' => 'course_cat', 'hide_empty' => false
                 <span class='popup-details--price-label'>Price:</span>
                 $price_html
               </div>
-              <span class='popup-details--info'>$info</span>
+              $info_html
             </div>
           </div>
         </div>

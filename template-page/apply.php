@@ -2,34 +2,27 @@
 /*
 Template Name: Apply Page
 */
-
 if (!defined('ABSPATH')) {
   exit();
 }
-
 // Initialize variables for messages
 $success_message = '';
 $errors = [];
-
 // Check for success/error messages from session or query params
 if (isset($_GET['success']) && $_GET['success'] == '1') {
   $success_message =
     'Your partner application has been submitted successfully! We will review it and get back to you soon.';
 }
-
 if (isset($_GET['error'])) {
   $errors[] = sanitize_text_field($_GET['error']);
 }
-
 $apply_image = get_field('apply_image') ?: '';
 $apply_form_title = get_field('apply_form_title') ?: 'Become Our Partner';
 $apply_form_description =
   get_field('apply_form_description') ?:
   'Expand your opportunities by collaborating with our salon.';
-
 get_header();
 ?>
-
 <main class="sunny-apply-page">
     <div class="sunny-apply-container">
         <div class="apply-section">

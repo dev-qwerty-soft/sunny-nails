@@ -5,7 +5,6 @@
 
 $slides = get_field('slider_section_images');
 $slides_html = '';
-
 if ($slides && is_array($slides) && !empty($slides)) {
   foreach ($slides as $slide) {
     $image = $slide['image'];
@@ -20,7 +19,6 @@ if ($slides && is_array($slides) && !empty($slides)) {
     }
   }
 }
-
 get_header();
 ?>
 <main>

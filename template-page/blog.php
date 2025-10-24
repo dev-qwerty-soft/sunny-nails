@@ -1,10 +1,8 @@
 <?php
-
 /**
  * Template Name: Blog Page
  */
 get_header();
-
 $all_posts = new WP_Query([
   'posts_per_page' => -1,
   'post_status' => 'publish',
@@ -26,12 +24,10 @@ if ($all_posts->have_posts()) {
   }
   wp_reset_postdata();
 }
-
 $categories = get_categories([
   'hide_empty' => true,
 ]);
 ?>
-
 <main class="blog-main">
     <section class="blog-hero">
         <div class="blog-hero-bg">

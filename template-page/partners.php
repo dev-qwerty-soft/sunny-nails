@@ -1,10 +1,8 @@
 <?php
-
 /**
  * Template Name: Partners Page
  */
 get_header();
-
 $hero_title = get_field('title');
 $hero_desc = get_field('description');
 $hero_image = get_field('image');
@@ -23,8 +21,6 @@ $hero_link = get_field('hero_link');
                     <?php if ($hero_desc): ?>
                         <div class="partners-hero__desc"><?= esc_html($hero_desc) ?></div>
                     <?php endif; ?>
-
-                    <!-- Hero CTA Button -->
                     <?php if ($hero_link): ?>
                         <?php
                         $link_url = is_array($hero_link) ? $hero_link['url'] : $hero_link;
