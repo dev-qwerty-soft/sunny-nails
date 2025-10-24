@@ -98,7 +98,7 @@
             "name": "info",
             "aria-label": "",
             "type": "text",
-            "instructions": "",
+            "instructions": "Empty field behavior: the card defaults to showing \"price\" text (replacing custom text\/icon), and the popup displays nothing.",
             "required": 0,
             "conditional_logic": 0,
             "wrapper": {
@@ -255,5 +255,5 @@
     "active": true,
     "description": "",
     "show_in_rest": 0,
-    "modified": 1759505678
+    "modified": 1761312762
 }
